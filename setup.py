@@ -39,13 +39,13 @@ class sdist_hg(sdist):
     def get_tip_revision(self, path=os.getcwd()):
         from mercurial.hg import repository
         from mercurial.ui import ui
-        from mercurial import node
+        #from mercurial import node  # Imported but unused.
         repo = repository(ui(), path)
         tip = repo.changelog.tip()
         return repo.changelog.rev(tip)
 
 classifiers = """\
-Development Status :: 5 - Production/Stable
+Development Status :: 2 - Pre-Alpha
 Environment :: Console
 Intended Audience :: Science/Research
 Intended Audience :: Developers
@@ -58,27 +58,26 @@ Topic :: Education
 Topic :: Software Development :: Libraries :: Python Modules
 """
 
-config = dict(name='seawater',
-              version='2.0.2',
-              packages=['seawater', 'seawater/gibbs', 'seawater/csiro',
-                        'seawater/extras', 'seawater/extras/waves',
-                        'seawater/extras/sw_extras', 'seawater/test',
-                        'seawater/gibbs3'],
-              package_data={'': ['gibbs/data/*.npz']},
+config = dict(name='oceans',
+              version='0.0.1',
+              packages=['oceans', 'oceans/colormaps', 'oceans/ff_tools',
+                        'oceans/RPStuff'],
+              package_data={'': ['colormaps/cmap_data/*.pkl']},
               license=open('LICENSE.txt').read(),
-              description='Seawater Libray for Python',
+              description='Module for oceanographic data analysis',
               long_description=open('README.txt').read(),
-              author='Filipe Fernandes, Eric Firing, Ådlandsvik Bjørn',
+              author='Filipe Fernandes',
               author_email='ocefpaf@gmail.com',
               maintainer='Filipe Fernandes',
               maintainer_email='ocefpaf@gmail.com',
-              url='http://pypi.python.org/pypi/seawater/',
-              download_url='http://pypi.python.org/packages/source/s/seawater/',
+              url='http://pypi.python.org/pypi/oceans/',
+              download_url='http://pypi.python.org/packages/source/s/oceans/',
               classifiers=filter(None, classifiers.split("\n")),
               platforms='any',
               cmdclass={'build_py': build_py},
-              #cmdclass={'sdist': sdist_hg}, # NOTE: python setup.py sdist --dev
-              keywords=['oceanography', 'seawater'],
+              # NOTE: python setup.py sdist --dev
+              #cmdclass={'sdist': sdist_hg},
+              keywords=['oceanography', 'data analysis'],
               install_requires=['numpy', 'nose']
              )
 

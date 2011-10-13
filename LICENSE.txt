@@ -1,4 +1,4 @@
-Copyright Notice and Statement for the seawater project:
+Copyright Notice and Statement for the oceans project:
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
