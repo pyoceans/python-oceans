@@ -1,0 +1,11 @@
+syntax: glob
+*~
+_build
+.*swp
+.directory
+*.pyc
+MANIFEST
+build/*
+dist/*
+oceans.egg-info/*
+oceans/TODO
