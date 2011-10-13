@@ -2,7 +2,7 @@ from __future__ import division
 
 import numpy as np
 import numpy.ma as ma
-from netCDF4 import Dataset
+
 
 def smoo1(datain, window_len=11, window='hanning'):
     r"""
@@ -26,7 +26,8 @@ def smoo1(datain, window_len=11, window='hanning'):
     See Also
     --------
     binave, binavg
-    np.hanning, np.hamming, np.bartlett, np.blackman, np.convolve scipy.signal.lfilter
+    np.hanning, np.hamming, np.bartlett, np.blackman, np.convolve,
+    scipy.signal.lfilter
 
     Notes
     -----
@@ -73,27 +74,28 @@ def smoo1(datain, window_len=11, window='hanning'):
     datain = np.asarray(datain)
 
     if datain.ndim != 1:
-        raise ValueError, "smooth only accepts 1 dimension arrays."
+        raise ValueError("smooth only accepts 1 dimension arrays.")
 
     if datain.size < window_len:
-        raise ValueError, "Input vector needs to be bigger than window size."
+        raise ValueError("Input vector needs to be bigger than window size.")
 
     if window_len < 3:
-        return x
+        return datain
 
     if not window in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
-        raise ValueError("Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'")
+        raise ValueError("""Window is on of 'flat', 'hanning', 'hamming',
+                         'bartlett', 'blackman'""")
 
-    s = np.r_[ 2 * datain[0] - datain[window_len:1:-1], datain, 2 * datain[-1]
-                                                  - datain[-1:-window_len:-1] ]
+    s = np.r_[2 * datain[0] - datain[window_len:1:-1], datain, 2 *
+                                    datain[-1] - datain[-1:-window_len:-1]]
 
-    if window == 'flat': # moving average
-        w = np.ones(window_len,'d')
+    if window == 'flat':  # Moving average.
+        w = np.ones(window_len, 'd')
     else:
-        w = eval( 'np.' + window + '(window_len)' )
+        w = eval('np.' + window + '(window_len)')
 
-    data_out = np.convolve( w / w.sum(), s , mode='same' )
-    return data_out[window_len-1:-window_len+1]
+    data_out = np.convolve(w / w.sum(), s, mode='same')
+    return data_out[window_len - 1:-window_len + 1]
 
 
 def sub2ind(shape, I, J, row_major=True):
@@ -132,14 +134,16 @@ def del_eta_del_x(U, f, g, balance, R=None):
         detadx = f * U / g
 
     elif balance == 'gradient':
-        detadx = (U**2 / R + f*U ) / g #?
+        detadx = (U ** 2 / R + f * U) / g
 
     elif balance == 'max_gradient':
-        detadx = (R*f**2) / (4*g)
+        detadx = (R * f ** 2) / (4 * g)
 
     return detadx
 
-def get_profile( x, y, f, xi, yi, order=3):
+
+def get_profile(x, y, f, xi, yi, order=3):
+    import scipy.ndimage.map_coordinates
     r"""
     Interpolate regular data.
 
@@ -174,24 +178,25 @@ def get_profile( x, y, f, xi, yi, order=3):
 
 
     """
-    conditions = [ xi.min() < x.min(),
-                   xi.max() > x.max(),
-                   yi.min() < y.min(),
-                   yi.max() > y.max() ]
+    conditions = [xi.min() < x.min(),
+                  xi.max() > x.max(),
+                  yi.min() < y.min(),
+                  yi.max() > y.max()]
 
     if True in conditions:
         print "Warning, extrapolation in being done!!"
 
-    dx = x[0,1] - x[0,0]
-    dy = y[1,0] - y[0,0]
+    dx = x[0, 1] - x[0, 0]
+    dy = y[1, 0] - y[0, 0]
 
-    jvals = (xi - x[0,0]) / dx
-    ivals = (yi - y[0,0]) / dy
+    jvals = (xi - x[0, 0]) / dx
+    ivals = (yi - y[0, 0]) / dy
 
     coords = np.array([ivals, jvals])
 
     return  scipy.ndimage.map_coordinates(f, coords, mode='nearest',
                                                         order=order)
+
 
 def gen_dates(start, end, dt=None):
     r"""
@@ -204,6 +209,7 @@ def gen_dates(start, end, dt=None):
                          dtstart=parser.parse(start),
                          until=parser.parse(end)))
     return dates
+
 
 def princomp(A, numpc=None):
     r"""
@@ -235,8 +241,10 @@ def princomp(A, numpc=None):
     # every eigenvector describe the direction
     # of a principal component.
     >>> m = np.mean(A, axis=1)
-    >>> plt.plot([0, -coeff[0,0] * 2] + m[0], [0, -coeff[0,1] * 2] + m[1], '--k')
-    >>> plt.plot([0, coeff[1,0] * 2] + m[0], [0, coeff[1,1] * 2] + m[1], '--k')
+    >>> plt.plot([0, -coeff[0,0] * 2] + m[0], [0, -coeff[0,1] * 2] +
+    ...                                                           m[1], '--k')
+    >>> plt.plot([0, coeff[1,0] * 2] + m[0], [0, coeff[1,1] * 2] +
+    ...                                                           m[1], '--k')
     >>> plt.plot(A[0,:], A[1,:], 'ob')  # The data.
     >>> plt.axis('equal')
     >>> plt.subplot(122)
@@ -269,7 +277,7 @@ def princomp(A, numpc=None):
     >>> i, dist = 1, []
     >>> for numpc in range(0, full_pc+10, 10):  # 0 10 20 ... full_pc
     >>>     coeff, score, latent = princomp(A, numpc)
-    >>>     Ar = np.dot(coeff, score).T + np.mean(A, axis=0)  # image reconstruction
+    >>>     Ar = np.dot(coeff, score).T + np.mean(A, axis=0)  # Reconstruction.
             # difference in Frobenius norm
     >>>     dist.append(linalg.norm(A - Ar, 'fro'))
             # showing the pics reconstructed with less than 50 PCs
@@ -302,7 +310,7 @@ def princomp(A, numpc=None):
     """
 
     # computing eigenvalues and eigenvectors of covariance matrix
-    M = ( A - np.mean( A.T, axis=1 ) ).T  # Subtract the mean along columns.
+    M = (A - np.mean(A.T, axis=1)).T  # Subtract the mean along columns.
     [latent, coeff] = np.linalg.eig(np.cov(M))
 
     if numpc:
@@ -310,13 +318,13 @@ def princomp(A, numpc=None):
         idx = np.argsort(latent)  # sorting the eigenvalues
         idx = idx[::-1]  # in ascending order
         # Sorting eigenvectors according to the sorted eigenvalues.
-        coeff = coeff[:,idx]
+        coeff = coeff[:, idx]
         latent = latent[idx]  # sorting eigenvalues
 
         if numpc < p or numpc >= 0:
-            coeff = coeff[:,range(numpc)] # cutting some PCs
+            coeff = coeff[:, range(numpc)]  # Cutting some PCs.
 
-    score = np.dot(coeff.T, M) # projection of the data in the new space.
+    score = np.dot(coeff.T, M)  # Projection of the data in the new space.
     return coeff, score, latent
 
 

@@ -8,13 +8,14 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Fri 09 Sep 2011 03:08:45 PM EDT
+# modified: Thu 13 Oct 2011 02:19:20 PM EDT
 #
 # obs:
 #
 
 from __future__ import division
 import numpy as np
+
 
 def uv2spdir(u, v, mag=0, rot=0):
     r"""
@@ -69,20 +70,21 @@ def uv2spdir(u, v, mag=0, rot=0):
     >>> plt.show()
     """
 
-    u, v, mag, rot = map( np.asarray, (u, v, mag, rot) )
+    u, v, mag, rot = map(np.asarray, (u, v, mag, rot))
 
-    vec = u + 1j*v
+    vec = u + 1j * v
     spd = np.abs(vec)
     ang = np.angle(vec, deg=True)
     ang = ang - mag + rot
-    ang = np.mod(90-ang, 360) # zero is North
+    ang = np.mod(90 - ang, 360)  # Zero is North.
 
     return ang, spd
 
+
 def despike(datain, slope):
     r"""
-    De-spikes a time-series by calculating point-to-point slopes and determining
-    whether a maximum allowable slope is exceeded.
+    De-spikes a time-series by calculating point-to-point slopes and
+    determining whether a maximum allowable slope is exceeded.
 
     Parameters
     ----------
@@ -128,14 +130,14 @@ def despike(datain, slope):
     modified: 23-Nov-2010
     """
 
-    datain, slope = map( np.asarray, (datain, slope) )
+    datain, slope = map(np.asarray, (datain, slope))
 
     cdata = np.zeros(datain.size)
-    cdata[0] = datain[0] #FIXME:this assume that the first point is not a spike
+    cdata[0] = datain[0]  # FIXME: Assume that the first point is not a spike.
     kk = 0
     npts = len(datain)
 
-    for k in range(1,npts,1):
+    for k in range(1, npts, 1):
         nslope = datain[k] - cdata[kk]
         # if the slope is okay, let the data through
         if abs(nslope) <= abs(slope):
@@ -145,12 +147,15 @@ def despike(datain, slope):
         else:
             n = 0
             # TODO: add a limit option for npts
-            while ( abs(nslope) > abs(slope) ) and (k+n < npts):
-                n = n+1 # keep an index for the offset from the test point
+            while (abs(nslope) > abs(slope)) and (k + n < npts):
+                n = n + 1  # keep an index for the offset from the test point
                 try:
-                    num = datain[k+n] - cdata[kk] #FIXME: index out of bounds
-                    dem = k+n - kk
-                    nslope = num/dem
+                    # FIXME: Index out of bound.
+                    #snum = datain[k + n] - cdata[kk]
+                    # TODO: Check original `snum` and `num` are defined but not
+                    # used and undefined respectively.
+                    #dem = k + n - kk
+                    #nslope = num / dem
                     # If we have a "good" slope, calculate new point using
                     # linear interpolation:
                     # point = {[(ngp - lgp)/(deltax)]*(actual distance)} + lgp
@@ -160,9 +165,9 @@ def despike(datain, slope):
                     # and the point we want to interpolate.
                     # Otherwise, let the value through
                     # (i.e. we've run out of good data)
-                    if (k+n) < npts:
+                    if (k + n) < npts:
                         pts = nslope + cdata[kk]
-                        kk = kk+1
+                        kk = kk + 1
                         cdata[kk] = pts
                     else:
                         kk = kk + 1
@@ -171,10 +176,11 @@ def despike(datain, slope):
                     print "index out of bounds"
     return cdata
 
+
 def binave(datain, r):
     r"""
-    Averages vector data in bins of length r. The last bin may be the average of
-    less than r elements. Useful for computing daily average time series
+    Averages vector data in bins of length r. The last bin may be the average
+    of less than r elements. Useful for computing daily average time series
     (with r=24 for hourly data).
 
     Parameters
@@ -199,7 +205,12 @@ def binave(datain, r):
     Examples
     --------
     >>> import ff_tools as ff
-    >>> data = [10., 11., 13., 2., 34., 21.5, 6.46, 6.27, 7.0867, 15., 123., 3.2, 0.52, 18.2, 10., 11., 13., 2., 34., 21.5, 6.46, 6.27, 7.0867, 15., 123., 3.2, 0.52, 18.2, 10., 11., 13., 2., 34., 21.5, 6.46, 6.27, 7.0867, 15., 123., 3.2, 0.52, 18.2, 10., 11., 13., 2., 34., 21.5, 6.46, 6.27, 7.0867, 15., 123., 3.2, 0.52, 18.2]
+    >>> data = [10., 11., 13., 2., 34., 21.5, 6.46, 6.27, 7.0867, 15., 123.,
+        ...     3.2, 0.52, 18.2, 10., 11., 13., 2., 34., 21.5, 6.46, 6.27,
+        ...     7.0867, 15., 123., 3.2, 0.52, 18.2, 10., 11., 13., 2., 34.,
+        ...     21.5, 6.46, 6.27, 7.0867, 15., 123., 3.2, 0.52, 18.2, 10.,
+        ...     11., 13., 2., 34., 21.5, 6.46, 6.27, 7.0867, 15., 123., 3.2,
+        ...     0.52, 18.2]
     >>> ff.binave(data, 24)
     array([ 16.564725 ,  21.1523625,  22.4670875])
 
@@ -224,8 +235,8 @@ def binave(datain, r):
     # compute bin averaged series
     l = datain.size / r
     l = np.fix(l)
-    z = datain[0:(l*r)].reshape(r, l, order='F')#.copy()
-    bindata = np.mean( z, axis=0 )
+    z = datain[0:(l * r)].reshape(r, l, order='F')  # .copy()
+    bindata = np.mean(z, axis=0)
 
     return bindata
 
@@ -253,17 +264,16 @@ you may get NaN from 0/0 if you have an empty bin, but that can be
 taken care of easily.
 """
 
+
 def psu2ppt(psu):
-    r"""
-    Converts salinity from PSU units to PPT
+    r"""Converts salinity from PSU units to PPT
     http://stommel.tamu.edu/~baum/paleo/ocean/node31.html#PracticalSalinityScale
     """
 
     a = [0.008, -0.1692, 25.3851, 14.0941, -7.0261, 2.7081]
-    ppt = ( a[1] + a[2] * psu**0.5 + a[3] * psu + a[4] * psu**1.5 + a[5]
-                                                * psu**2 + a[6] * psu**2.5 )
+    ppt = (a[1] + a[2] * psu ** 0.5 + a[3] * psu + a[4] * psu ** 1.5 + a[5] *
+                                                 psu ** 2 + a[6] * psu ** 2.5)
     return ppt
-
 
 
 def interp_nan(data):
@@ -293,9 +303,10 @@ def interp_nan(data):
 
     x = lambda z: z.nonzero()[0]
 
-    data[nans]= np.interp(x(nans), x(~nans), data[~nans])
+    data[nans] = np.interp(x(nans), x(~nans), data[~nans])
 
     return nans, data
+
 
 def spec_rot(u, v):
     r"""
@@ -353,10 +364,10 @@ def spec_rot(u, v):
 
     return puv, quv, cw, ccw
 
+
 def autocorr(x, y, M=None):
-    r"""
-    Cross-correlation.
-    Follow emery and Thomson book.
+    r"""Cross-correlation.
+    Follow emery and Thomson book "summation" notation.
 
     Parameters
     ----------
@@ -371,12 +382,17 @@ def autocorr(x, y, M=None):
     -------
     Cxy : array
           normalized cross-correlation function
+
+    Examples
+    --------
+    TODO
     """
+
     x, y = map(np.asanyarray, (x, y))
     try:
         np.broadcast(x, y)
     except ValueError:
-        pass  #TODO print error and leave
+        pass  # TODO print error and leave
 
     if not M:
         M = x.size
@@ -388,7 +404,7 @@ def autocorr(x, y, M=None):
     for k in range(0, M, 1):
         a = 0.
         for i in range(N - k):
-            a = a + (y[i] - y_bar) * (x[i+k] - x_bar)
+            a = a + (y[i] - y_bar) * (x[i + k] - x_bar)
 
         Cxy[k] = 1. / (N - k) * a
 

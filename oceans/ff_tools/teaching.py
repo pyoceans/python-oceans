@@ -9,7 +9,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Fri 09 Sep 2011 03:08:54 PM EDT
+# modified: Thu 13 Oct 2011 02:37:33 PM EDT
 #
 # obs: Just some basic example function.
 #
@@ -18,6 +18,7 @@ from __future__ import division
 
 import numpy as np
 from scipy import stats
+
 
 def cov(x, y):
     r"""
@@ -46,7 +47,7 @@ def rms(x):
     """
 
     x = np.asanyarray(x)
-    rms = np.sqrt(np.sum(x**2) / x.size)
+    rms = np.sqrt(np.sum(x ** 2) / x.size)
 
     return rms
 
@@ -58,14 +59,13 @@ def rmsd(x, y):
 
     x, y = map(np.asanyarray(x, y))
 
-    rmsd = np.sqrt(np.sum((x - y)**2) / x.size)
+    rmsd = np.sqrt(np.sum((x - y) ** 2) / x.size)
 
     return rmsd
 
 
-def allstats():
-    """
-    Compute statistics from 2 series.
+def allstats(Cr, Cf):
+    r"""Compute statistics from 2 series.
 
     statm = allstats(Cr, Cf)
 
@@ -98,9 +98,9 @@ def allstats():
                                  \          N              /
 
        - The CENTERED ROOT MEAN SQUARE DIFFERENCE is computed as:
-                               /  sum[  { [C-mean(C)] - [Cr-mean(Cr)] }.^2  ]  \
-                    RMSD = sqrt|  -------------------------------------------  |
-                               \                      N                        /
+                             /  sum[  { [C-mean(C)] - [Cr-mean(Cr)] }.^2  ]  \
+                  RMSD = sqrt|  -------------------------------------------  |
+                             \                      N                        /
 
        - The CORRELATION is computed as:
                              sum( [C-mean(C)].*[Cr-mean(Cr)] )
@@ -121,8 +121,8 @@ def allstats():
     N = len(Cr)
 
     # STD:
-    st0 = np.sqrt(np.sum((Cr - Cr.mean())**2) / N )
-    st1 = np.sqrt(np.sum((Cf - Cf.mean())**2) / N )
+    st0 = np.sqrt(np.sum((Cr - Cr.mean()) ** 2) / N)
+    st1 = np.sqrt(np.sum((Cf - Cf.mean()) ** 2) / N)
     st = np.c_[st0, st1]
 
     # MEAN:
@@ -131,8 +131,8 @@ def allstats():
     me = np.c_[me0, me1]
 
     # RMSD:
-    rms0 = np.sqrt(np.sum(((Cr - Cr.mean()) - (Cr - Cr.mean()))**2) / N)
-    rms1 = np.sqrt(np.sum(((Cf - Cf.mean()) - (Cr - Cr.mean()))**2) / N)
+    rms0 = np.sqrt(np.sum(((Cr - Cr.mean()) - (Cr - Cr.mean())) ** 2) / N)
+    rms1 = np.sqrt(np.sum(((Cf - Cf.mean()) - (Cr - Cr.mean())) ** 2) / N)
     np.c_[rms0, rms1]
 
     # CORRELATIONS:
@@ -169,6 +169,7 @@ Rohlf (1995, pp. 541-549) for a discussion of which may apply. For convenience,
 I have also compiled some rules of thumb.
 """
 
+
 def lsqfity(X, Y):
     """
     Calculate a "MODEL-1" least squares fit.
@@ -203,18 +204,18 @@ def lsqfity(X, Y):
 
     Sx = np.sum(X)
     Sy = np.sum(Y)
-    Sx2 = np.sum(X**2)
+    Sx2 = np.sum(X ** 2)
     Sxy = np.sum(X * Y)
-    Sy2 = np.sum(Y**2)
+    Sy2 = np.sum(Y ** 2)
 
     # Calculate re-used expressions.
     num = n * Sxy - Sx * Sy
-    den = n * Sx2 - Sx**2
+    den = n * Sx2 - Sx ** 2
 
     # Calculate my, by, ry, s2, smy and sby.
     my = num / den
     by = (Sx2 * Sy - Sx * Sxy) / den
-    ry = num / (np.sqrt(den) * np.sqrt(n * Sy2 - Sy**2))
+    ry = num / (np.sqrt(den) * np.sqrt(n * Sy2 - Sy ** 2))
 
     diff = Y - by - my * X
 
@@ -223,6 +224,7 @@ def lsqfity(X, Y):
     sby = np.sqrt(Sx2 * s2 / den)
 
     return my, by, ry, smy, sby
+
 
 def lsqfitx(X, Y):
     """
@@ -257,18 +259,18 @@ def lsqfitx(X, Y):
     # Calculate the sums.
     Sx = np.sum(X)
     Sy = np.sum(Y)
-    Sx2 = np.sum(X**2)
+    Sx2 = np.sum(X ** 2)
     Sxy = np.sum(X * Y)
-    Sy2 = np.sum(Y**2)
+    Sy2 = np.sum(Y ** 2)
 
     # Calculate re-used expressions.
     num = n * Sxy - Sy * Sx
-    den = n * Sy2 - Sy**2
+    den = n * Sy2 - Sy ** 2
 
     # Calculate m, a, rx, s2, sm, and sb.
     mxi = num / den
     a = (Sy2 * Sx - Sy * Sxy) / den
-    rx = num / (np.sqrt(den) * np.sqrt(n * Sx2 - Sx**2))
+    rx = num / (np.sqrt(den) * np.sqrt(n * Sx2 - Sx ** 2))
 
     diff = X - a - mxi * Y
 
@@ -350,13 +352,13 @@ def lsqfitgm(X, Y):
     b = ybar - m * xbar
 
     # Calculate more sums.
-    Sxy = np.sum(X * Y)
-    Sx2 = np.sum(X**2)
-    Sy2 = np.sum(Y**2)
+    #Sxy = np.sum(X * Y)  # FIXME: Assigned but never used.
+    Sx2 = np.sum(X ** 2)
+    #Sy2 = np.sum(Y ** 2)  # FIXME: Assigned but never used.
 
     # Calculate re-used expressions.
-    num = n * Sxy - Sx * Sy
-    den = n * Sx2 - Sx**2
+    #num = n * Sxy - Sx * Sy  # FIXME: Assigned but never used.
+    den = n * Sx2 - Sx ** 2
 
     # Calculate r, sm, sb and s2.
 
@@ -417,20 +419,20 @@ def lsqfitma(X, Y):
     V = Y - ybar
 
     Suv = np.sum(U * V)
-    Su2 = np.sum(U**2)
-    Sv2 = np.sum(V**2)
+    Su2 = np.sum(U ** 2)
+    Sv2 = np.sum(V ** 2)
 
     sigx = np.sqrt(Su2 / (n - 1))
     sigy = np.sqrt(Sv2 / (n - 1))
 
     # Calculate m, b, r, sm, and sb.
-    m = (Sv2 - Su2 + np.sqrt(((Sv2 - Su2)**2) + (4 * Suv**2))) / (2 * Suv)
+    m = (Sv2 - Su2 + np.sqrt(((Sv2 - Su2) ** 2) + (4 * Suv ** 2))) / (2 * Suv)
     b = ybar - m * xbar
     r = Suv / np.sqrt(Su2 * Sv2)
 
-    sm = (m / r) * np.sqrt((1 - r**2) / n)
-    sb1 = (sigy - sigx * m)**2
-    sb2 = (2 * sigx * sigy) + ((xbar**2 * m * (1 + r))/r**2)
+    sm = (m / r) * np.sqrt((1 - r ** 2) / n)
+    sb1 = (sigy - sigx * m) ** 2
+    sb2 = (2 * sigx * sigy) + ((xbar ** 2 * m * (1 + r)) / r ** 2)
     sb = np.sqrt((sb1 + ((1 - r) * m * sb2)) / n)
 
     return m, b, r, sm, sb
@@ -500,13 +502,13 @@ def lsqbisec(X, Y):
     b = ybar - m * xbar
 
     # Calculate more sums.
-    Sxy = np.sum(X * Y)
-    Sx2 = np.sum(X**2)
-    Sy2 = np.sum(Y**2)
+    #Sxy = np.sum(X * Y)  # FIXME: Assigned but never used.
+    Sx2 = np.sum(X ** 2)
+    #Sy2 = np.sum(Y ** 2)  # FIXME: Assigned but never used.
 
     # Calculate re-used expressions.
-    num = n * Sxy - Sx * Sy
-    den = n * Sx2 - Sx**2
+    #num = n * Sxy - Sx * Sy  # FIXME: Assigned but never used.
+    den = n * Sx2 - Sx ** 2
 
     # Calculate r, sm, sb and s2.
     r = np.sqrt(my / mx)
@@ -521,6 +523,7 @@ def lsqbisec(X, Y):
     sb = np.sqrt(Sx2 * s2 / den)
 
     return m, b, r, sm, sb
+
 
 def lsqcubic(X, Y, sX, sY, tl=1e-6):
     """
@@ -581,9 +584,9 @@ def lsqcubic(X, Y, sX, sY, tl=1e-6):
 
     while test > tl:
         # Calculate sums and other re-used expressions:
-        MC2 = MC**2
+        MC2 = MC ** 2
         W = (wX * wY) / ((MC2 * wY) + wX)
-        W2 = W**2
+        W2 = W ** 2
 
         SW = np.sum(W)
         xc = (np.sum(W * X)) / SW
@@ -592,8 +595,8 @@ def lsqcubic(X, Y, sX, sY, tl=1e-6):
         U = X - xc
         V = Y - yc
 
-        U2 = U**2
-        V2 = V**2
+        U2 = U ** 2
+        V2 = V ** 2
 
         SW2U2wX = np.sum(W2 * U2 / wX)
 
@@ -614,14 +617,13 @@ def lsqcubic(X, Y, sX, sY, tl=1e-6):
         test = np.abs((ML - MC) / ML)
         ct = ct + 1
 
-
     # Calculate m, b, r, sm, and sb.
     m = MC
     b = yc - m * xc
     r = np.sum(U * V) / np.sqrt(np.sum(U2) * np.sum(V2))
-    sm2 = (1 / (n - 2)) * (np.sum(W * (((m * U) - V)**2)) / np.sum(W * U2))
+    sm2 = (1 / (n - 2)) * (np.sum(W * (((m * U) - V) ** 2)) / np.sum(W * U2))
     sm = np.sqrt(sm2)
-    sb = np.sqrt(sm2 * (np.sum(W * (X**2)) / SW))
+    sb = np.sqrt(sm2 * (np.sum(W * (X ** 2)) / SW))
 
     return m, b, r, sm, sb, xc, yc, ct
 
@@ -662,18 +664,18 @@ def lsqfityw(X, Y, sY):
     X, Y = map(np.asanyarray, (X, Y))
 
     # Determine the size of the vector.
-    n = len(X)
+    #n = len(X)  # FIXME: Assigned but never used.
 
     # Calculate the weighting factors.
-    W = 1 / (sY**2)
+    W = 1 / (sY ** 2)
 
     # Calculate the sums.
     Sw = np.sum(W)
     Swx = np.sum(W * X)
     Swy = np.sum(W * Y)
-    Swx2 = np.sum(W * X**2)
+    Swx2 = np.sum(W * X ** 2)
     Swxy = np.sum(W * X * Y)
-    Swy2 = np.sum(W * Y**2)
+    Swy2 = np.sum(W * Y ** 2)
 
     # Determine the weighted centroid.
     xw = Swx / Sw
@@ -681,8 +683,8 @@ def lsqfityw(X, Y, sY):
 
     # Calculate re-used expressions.
     num = Sw * Swxy - Swx * Swy
-    del1 = Sw * Swx2 - Swx**2
-    del2 = Sw * Swy2 - Swy**2
+    del1 = Sw * Swx2 - Swx ** 2
+    del2 = Sw * Swy2 - Swy ** 2
 
     # Calculate mw, bw, rw, smw, and sbw.
     mw = num / del1
@@ -736,15 +738,15 @@ def lsqfityz(X, Y, sY):
     n = len(X)
 
     # Calculate the weighting factors.
-    W = 1 / (sY**2)
+    W = 1 / (sY ** 2)
 
     # Calculate the sums.
     Sw = np.sum(W)
     Swx = np.sum(W * X)
     Swy = np.sum(W * Y)
-    Swx2 = np.sum(W * X**2)
+    Swx2 = np.sum(W * X ** 2)
     Swxy = np.sum(W * X * Y)
-    Swy2 = np.sum(W * Y**2)
+    Swy2 = np.sum(W * Y ** 2)
 
     # Determine the weighted centroid.
     xz = Swx / Sw
@@ -752,13 +754,13 @@ def lsqfityz(X, Y, sY):
 
     # Calculate re-used expressions.
     num = Sw * Swxy - Swx * Swy
-    del1 = Sw * Swx2 - Swx**2
-    del2 = Sw * Swy2 - Swy**2
+    del1 = Sw * Swx2 - Swx ** 2
+    del2 = Sw * Swy2 - Swy ** 2
 
     U = X - xz
     V = Y - yz
-    U2 = U**2
-    V2 = V**2
+    U2 = U ** 2
+    #V2 = V ** 2  # FIXME: Assigned but never used.
 
     # Calculate mw, bw, rw, smw, and sbw.
     mz = num / del1
@@ -766,11 +768,12 @@ def lsqfityz(X, Y, sY):
 
     rz = num / (np.sqrt(del1 * del2))
 
-    sm2 = (1 / (n - 2)) * (np.sum(W * (((mz * U) - V)**2)) / sum(W * U2))
+    sm2 = (1 / (n - 2)) * (np.sum(W * (((mz * U) - V) ** 2)) / sum(W * U2))
     smz = np.sqrt(sm2)
-    sbz = np.sqrt(sm2 * (np.sum(W * (X**2)) / Sw))
+    sbz = np.sqrt(sm2 * (np.sum(W * (X ** 2)) / Sw))
 
     return mz, bz, rz, smz, sbz, xz, yz
+
 
 def gmregress(X, Y, alpha=0.05):
     """
@@ -844,10 +847,10 @@ def gmregress(X, Y, alpha=0.05):
     u = Y.mean() - X.mean() * v  # Intercept.
     b = np.r_[u, v]
 
-    SCv = SCY - (SCP**2) / SCX
+    SCv = SCY - (SCP ** 2) / SCX
     N = SCv / (n - 2)
     sv = np.sqrt(N / SCX)
-    t = stats.t.isf(alpha/2, n - 2)
+    t = stats.t.isf(alpha / 2, n - 2)
 
     vi = v - t * sv  # Confidence lower limit of slope.
     vs = v + t * sv  # Confidence upper limit of slope.
@@ -858,8 +861,8 @@ def gmregress(X, Y, alpha=0.05):
     R = np.corrcoef(X, Y)
     r = R[0, 1]
 
-    F = stats.f.isf(alpha, 1, n-2)
-    B = F * (1 - r**2) / (n - 2)
+    F = stats.f.isf(alpha, 1, n - 2)
+    B = F * (1 - r ** 2) / (n - 2)
 
     a = np.sqrt(B + 1)
     c = np.sqrt(B)
