@@ -1,0 +1,5 @@
+#	$Id: GMT_rainbow.cpt,v 1.2 2006/03/12 23:29:05 pwessel Exp $
+#
+# Standard rainbow colortable for hue = 300 (magenta) to 0 (red)
+# COLOR_MODEL = +HSV
+0	300	1	1	1	0	1	1

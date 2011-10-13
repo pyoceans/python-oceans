@@ -1,0 +1,5 @@
+2.0.2, xx-Apr-2011 -- python 3 support
+2.0.1, 01-Mar-2011 -- rewrite of _delta_SA
+2.0.0, 03-Feb-2011 -- implemented gibbs seawater 
+1.0.5, 07-Oct-2010 -- first full csiro
+1.0.4, 30-Aug-2010 -- Initial release (incomplete csiro)

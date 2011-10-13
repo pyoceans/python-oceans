@@ -1,0 +1,16 @@
+include README.txt
+include LICENSE.txt
+include CHANGES.txt
+include docs/matlab-test.txt
+include docs/sphinx/Makefile
+include docs/sphinx/conf.py
+include docs/sphinx/index.rst
+include seawater/*.py
+include seawater/csiro/*py
+include seawater/gibbs/*.py
+include seawater/gibbs/data/gsw_cv_v3_0.npz
+include seawater/gibbs/data/gsw_data_v3_0.npz
+include seawater/extras/__init__.py
+include seawater/extras/sw_extras/*.py
+include seawater/extras/waves/__init__.py
+include seawater/test/*.py
