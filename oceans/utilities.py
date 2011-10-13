@@ -8,12 +8,13 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  22-Jun-2011
-# modified: Wed 22 Jun 2011 02:40:29 PM EDT
+# modified: Thu 13 Oct 2011 02:44:02 PM EDT
 #
 # obs:
 #
 
 import numpy as np
+
 
 class match_args_return(object):
     """
@@ -44,9 +45,9 @@ class match_args_return(object):
         if p is not None:
             kw['p'] = newargs.pop()
         ret = self.func(*newargs, **kw)
-        if not self.masked: # return a filled array if not masked
+        if not self.masked:  # Return a filled array if not masked.
             ret = np.ma.filled(ret, np.nan)
-        if not self.array: # return scalar if not array
+        if not self.array:  # Return scalar if not array.
             ret = ret[0]
 
         return ret
