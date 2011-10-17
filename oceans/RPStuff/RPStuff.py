@@ -8,14 +8,16 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  22-Jun-2011
-# modified: Thu 13 Oct 2011 02:43:24 PM EDT
+# modified: Mon 17 Oct 2011 10:05:46 AM EDT
 #
 # obs: This "legacy" package is intended for compatibility only.
 #      Most of function should be re-written in a more pythonic way.
 #
 
+from __future__ import division
+
 import numpy as np
-from ff_tools.library import match_args_return
+from oceans.utilities import match_args_return
 
 __all__ = ['hms2h',
            'julian',
@@ -25,10 +27,24 @@ __all__ = ['hms2h',
           ]
 
 
+earth_radius = 6371.e3
+
+# TODO: at_leats_1D, float decorator
+
+
+@match_args_return
+def  h2hms(hours):
+    """Converts hours to hours, minutes, and seconds."""
+    hour = np.floor(hours)
+    mins = np.remainder(hours, 1.) * 60.
+    mn = np.floor(mins)
+    secs = np.round(np.remainder(mins, 1.) * 60.)
+    return hour, mn, secs
+
+
 @match_args_return
 def hms2h(h, m=None, s=None):
-    """
-    Converts hours, minutes, and seconds to hours.
+    """Converts hours, minutes, and seconds to hours.
 
     Usage:
         hours = hms2h(h,m,s
@@ -45,6 +61,16 @@ def hms2h(h, m=None, s=None):
         hours = h + (m + s / 60.) / 60.
 
     return hours
+
+
+@match_args_return
+def ms2hms(millisecs):
+    """Converts milliseconds to integer hour,minute,seconds."""
+    sec = np.round(millisecs / 1000)
+    hour = np.floor(sec / 3600)
+    mn = np.floor(np.remainder(sec, 3600) / 60)
+    sec = np.round(np.remainder(sec, 60))
+    return hour, mn, sec
 
 
 @match_args_return
@@ -101,6 +127,26 @@ def julian(y, m=0, d=0, h=0, mi=0, s=0):
 
 
 @match_args_return
+def jdrps2jdmat(jd):
+    """Convert Signell's Julian days to Matlab's Serial day
+    matlab's serial date = 1 at 0000 UTC, 1-Jan-0000
+    """
+    jdmat = jd - julian(0000, 1, 1, 0, 0, 0) + 1
+    return jdmat
+
+
+@match_args_return
+def jdmat2jdrps(jdmat):
+    """Convert Matlab's Serial Day to Signell's Julian days
+    matlab's serial date = 1 at 0000 UTC, 1-Jan-0000
+    """
+
+    jd = jdmat + julian(0000, 1, 1, 0, 0, 0) - 1
+
+    return jd
+
+
+@match_args_return
 def gregorian(jd):
     """
     GREGORIAN:  Converts Julian day numbers to Gregorian calendar.
@@ -141,13 +187,11 @@ def gregorian(jd):
     """
     jd = jd + 2.e-9
 
-    """
-    if you want Julian Days to start at noon...
-    h = np.remainder(jd,1)*24+12
-    i = (h >= 24)
-    jd[i] = jd[i]+1
-    h[i] = h[i]-24
-    """
+    #if you want Julian Days to start at noon...
+    #h = np.remainder(jd,1) * 24 + 12
+    #i = (h >= 24)
+    #jd[i] = jd[i] + 1
+    #h[i] = h[i] - 24
 
     secs = np.remainder(jd, 1) * 24 * 3600
 
@@ -178,13 +222,9 @@ def gregorian(jd):
 
 @match_args_return
 def s2hms(secs):
-    """
-    S2HMS:  converts seconds to integer hour,minute,seconds
+    """Converts seconds to integer hour,minute,seconds
+    Usage: hour, min, sec = s2hms(secs)"""
 
-    Usage: hour, min, sec = s2hms(secs)
-
-    Rich Signell rsignell@usgs.gov
-    """
     hr = np.floor(secs / 3600)
     mi = np.floor(np.remainder(secs, 3600) / 60)
     sc = np.round(np.remainder(secs, 60))
@@ -192,8 +232,20 @@ def s2hms(secs):
     return hr, mi, sc
 
 
+@match_args_return
+def ss2(jd):
+    """Return Gregorian start and stop dates of Julian day variable
+    Usage:  start, stop =ss2(jd)"""
+
+    start = gregorian(jd[0])
+    stop = gregorian(jd[-1])
+
+    return start, stop
+
+
+@match_args_return
 def angled(h):
-    """
+    r"""
     ANGLED: Returns the phase angles in degrees of a matrix with complex
             elements.
 
@@ -206,3 +258,105 @@ def angled(h):
     pd = np.angle(h, deg=True)
 
     return pd
+
+
+@match_args_return
+def ij2ind(a, i, j):
+    m, n = a.shape
+    return m * i - j + 1  # TODO: Check this +1
+
+
+@match_args_return
+def ind2ij(a, ind):
+    """ind2ij returns i, j indices of array."""
+
+    m, n = a.shape
+    j = np.ceil(ind / m)
+    i = np.remainder(ind, m)
+    i[i == 0] = m
+
+    return i, j
+
+
+@match_args_return
+def rms(u):
+    """Compute root mean square for each column of matrix u."""
+    # TODO: use an axis arg.
+    if u.ndim > 1:
+        m, n = u.shape
+    else:
+        m = u.size
+
+    return np.sqrt(np.sum(u ** 2) / m)
+
+
+@match_args_return
+def z0toCn(z0, H):
+    r"""
+    Convert roughness height z0 to Chezy "C" and Manning's "n" which is a
+    function of the water depth
+
+    Inputs:
+        z0 = roughness height (meters)
+        H = water depth (meters) (can be vector)
+    Outputs:
+        C = Chezy "C" (non-dimensional)
+        n = Manning's "n" (non-dimensional)
+
+    Example:
+        C, n = z0toCn(0.003, np.arange(2, 200))
+        finds vectors C and n corresponding to a z0=0.003 and
+        a range of water depths from 2--200 meters
+    """
+
+    k_s = 30 * z0
+    C = 18 * np.log10(12 * H / k_s)
+    n = (H ** (1.0 / 6.0)) / C
+
+    return C, n
+
+
+@match_args_return
+def z0tocd(z0, zr):
+    """Calculates CD at a given ZR corresponding to Z0."""
+
+    cd = (0.4 * np.ones(z0.size) / np.log(zr / z0)) ** 2
+
+    return cd
+
+
+@match_args_return
+def short_calc(amin, amax):
+    rang = 32767 - (-32767)
+    add_offset = (amax + amin) * 0.5
+    scale_factor = (amax - amin) / rang
+
+    return add_offset, scale_factor
+
+# TODO: Check basemap
+#def ll2utm(lon, lat, zone):
+    """LL2UTM convert lat,lon to UTM."""
+    # m_proj('UTM','ellipsoid','wgs84','zone',zone)
+    # x, y = m_ll2xy(lon,lat,'clip','off')
+    #return x, y
+
+#def ll2merc(lon, lat):
+    #m_proj('mercator')
+    #x, y = m_ll2xy(lon, lat)
+
+    ## Convert mercator to meters
+    #x = x * earth_radius
+    #y = y * earth_radius
+    #return x, y
+
+#def merc2ll(x, y):
+    #"""LL2MERC Converts lon,lat to Mercator."""
+    #m_proj('mercator')
+    #lon, lat = m_xy2ll(x / earth_radius, y / earth_radius)
+    #return lon, lat
+
+#def utm2ll(x, y, zone):
+    #"""Convert UTM to lat, lon."""
+    #m_proj('UTM','ellipsoid','wgs84','zone',zone)
+    #lon, lat = m_xy2ll(x,y)
+    #return lon,lat
