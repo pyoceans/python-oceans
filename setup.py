@@ -78,7 +78,7 @@ config = dict(name='oceans',
               # NOTE: python setup.py sdist --dev
               #cmdclass={'sdist': sdist_hg},
               keywords=['oceanography', 'data analysis'],
-              install_requires=['numpy', 'nose']
+              install_requires=['numpy', 'scipy', 'nose']
              )
 
 setup(**config)
