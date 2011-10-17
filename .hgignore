@@ -9,3 +9,5 @@ build/*
 dist/*
 oceans.egg-info/*
 TODO
+oceans/ff_tools/ocfis/*.m
+oceans/RPStuff/RPSstuff/*.m
