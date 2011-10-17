@@ -13,4 +13,8 @@
 # obs:
 #
 
+"""
+Miscellaneous tools from (mostly) Rich Signell.
+"""
+
 from RPStuff import *
