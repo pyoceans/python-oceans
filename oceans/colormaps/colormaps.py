@@ -15,7 +15,7 @@
 
 import numpy as np
 import matplotlib as mpl
-
+from scipy.signal import sawtooth
 
 class Cmat2Cmpl(object):
     """Convert matlab style colormap to matplotlib style Enter a list non
@@ -350,10 +350,10 @@ class Cmat2Cmpl(object):
                          38, 35, 33, 31, 29, 26, 24, 22, 20, 17, 15, 13, 11,
                          8, 6, 4, 2, 0]])
 
-    def phasemap(self, M=256):
+    def phasemap(self, m=256):
         """Colormap periodic/circular data (phase.)"""
 
-        theta = 2 * np.pi * np.arange(M) / M
+        theta = 2 * np.pi * np.arange(m) / m
         circ = np.exp(1j * theta)
 
         # Vertices of color triangle
@@ -382,70 +382,79 @@ class Cmat2Cmpl(object):
 
         return cmap
 
-    #def colormap_dict(self,cmap_name):
-        #""" list of predefined colormaps """
+    def zebra(a=4, n=None, m=0.5):
+        """Zebra palette colormap with NBANDS broad bands and NENTRIES rows in
+        the color map.
 
-        #cmpl = {'cbathy':cbathy_rgb}
+        The default is 4 broad bands
 
-        #if cmap_name in cmpl.keys():
-            #rgb = cmpl[cmap_name]
-            #return rgb
-        #else:
-            # TODO: Exception
-            #msg="""There is no %s in the dictionary, type colormap_dict() to
-            #get a list" % cmap_name"""
+        cmap = zebra(nbands, nentries)
 
-    #%  function map = zebra(a,n,m);
-    #% zebra palette colormap with NBANDS broad bands and NENTRIES rows in
-    #% the color map - just try it, e.g. colormap(zebra)
-    #%
-    #% The default is 4 broad bands
-    #%
-    #% MAP = ZEBRA(NBANDS,NENTRIES)
-    #%
-    #% see Hooker, S. B. et al, Detecting Dipole Ring Separatrices with Zebra
-    #% Palettes, IEEE Transactions on Geosciences and Remote Sensing, vol. 33,
-    #% 1306-1312, 1995
+        see Hooker, S. B. et al, Detecting Dipole Ring Separatrices with Zebra
+        Palettes, IEEE Transactions on Geosciences and Remote Sensing, vol. 33,
+        1306-1312, 1995
 
-    #if nargin < 3
-    #m = 0.5; % saturation and value go from m to 1
-    #% don't use m = 0
-    #end
-    #if nargin < 2
-    #n  = size(get(gcf,'colormap'), 1);  % number of entries in the colormap
-    #end
-    #if nargin < 1
-    #a = 4; % there are this many large bands in the palette
-    #end
+        Notes
+        -----
+        Saturation and value go from m to 1 don't use m = 0.
+        a = 4 -> there are this many large bands in the palette
+        """
 
-    #x = 0:(n-1);
-    #hue = exp(-3*x/n);
-    #sat = m+(1-m)*(0.5*(1+sawtooth(2*pi*x/(n/a))));
-    #val = m+(1-m)*0.5*(1+cos(2*pi*x/(n/a/2)));
+        x = np.arange(0, n)
+        hue = np.exp(-3. * x / n)
+        sat = m + (1. - m) * (0.5 * (1. + sawtooth(2. * np.pi * x / (n / a))))
+        val = m + (1. - m) * 0.5 * (1. + np.cos(2. * np.pi * x / (n / a / 2.)))
 
-    #map = [hue(:) sat(:) val(:)];
-    #map = hsv2rgb(map);
+        cmap = np.r_[hue, sat, val]
+        cmap = hsv2rgb(cmap)
 
-    #% ctopo.m - colormap for positive/negative data with grayscale only
-    #% obs: original from cushman-roisin book cd-rom
+        return cmap
 
-    #values  = [0.:(1-0.)*1/(m-1):1].';
-    #map    = [values values values];
+    def ctopo(self, m):
+        r"""Colormap for positive/negative data with gray scale only
+        original from cushman-roisin book cd-rom."""
+        dx = (1. - 0.) * 1. / (m - 1.)
+        values = np.arange(0., 1., dx) * 255
+        cmap = np.r_[values, values, values]
 
+        return np.int32(cmap)
+
+
+    def avhrr(self, m):
+        r"""AHVRR colormap used by NOAA Coastwatch."""
+
+        x = np.arange(0, m - 1) / (m - 1)
+
+        xr = [0.0, 0.2, 0.4, 0.5, 0.6, 0.8, 1.0]
+        rr = [0.5, 1.0, 1.0, 0.5, 0.5, 0.0, 0.5]
+        r = np.interp(xr, rr, x)
+
+        xg = [0.0, 0.4, 0.6, 1.0]
+        gg = [0.0, 1.0, 1.0, 0.0]
+        g = np.interp(xg, gg, x)
+
+        xb = [0.0, 0.2, 0.4, 0.5, 0.6, 0.8, 1.0]
+        bb = [0.0, 0.0, 0.5, 0.5, 1.0, 1.0, 0.5]
+        b = np.interp(xb,bb,x)
+
+        return np.flipud(np.r_[r, g, b])
+
+# TODO: Show all colormaps
 #import numpy as np
 #import matplotlib as mpl
-   #1 from pylab import *
-   #2 from numpy import outer
-   #3 rc('text', usetex=False)
-   #4 a=outer(arange(0, 1, 0.01),ones(10))
-   #5 figure(figsize=(10, 5))
-   #6 subplots_adjust(top=0.8,bottom=0.05,left=0.01,right=0.99)
-   #7 maps=[m for m in cm.datad if not m.endswith("_r")]
-   #8 maps.sort()
-   #9 l=len(maps)+1
-  #10 for i, m in enumerate(maps):
-  #11     subplot(1,l,i+1)
-  #12     axis("off")
-  #13     imshow(a,aspect='auto',cmap=get_cmap(m),origin="lower")
-  #14     title(m,rotation=90,fontsize=10)
-  #15 savefig("colormaps.png",dpi=100,facecolor='gray')
+#from pylab import *
+#from numpy import outer
+#rc('text', usetex=False)
+#a = outer(arange(0, 1, 0.01), ones(10))
+#figure(figsize=(10, 5))
+#subplots_adjust(top=0.8, bottom=0.05, left=0.01, right=0.99)
+#maps=[m for m in cm.datad if not m.endswith("_r")]
+#maps.sort()
+#l = len(maps) + 1
+#for i, m in enumerate(maps):
+    #subplot(1, l, i + 1)
+    #axis("off")
+    #imshow(a, aspect='auto', cmap=get_cmap(m), origin="lower")
+    #title(m, rotation=90, fontsize=10)
+
+#savefig("colormaps.png", dpi=100, facecolor='gray')
