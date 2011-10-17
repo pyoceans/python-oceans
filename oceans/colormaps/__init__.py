@@ -16,4 +16,5 @@ __version__    = "0.0.1"
 __maintainer__ = "Filipe Fernandes"
 __email__      = "ocefpaf@gmail.com"
 __status__     = "Alpha"
+
 __all__        = ['colormaps']
