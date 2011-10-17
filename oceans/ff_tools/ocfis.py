@@ -14,8 +14,38 @@
 #
 
 from __future__ import division
+
 import numpy as np
 
+def spdir2uv(spd, ang, deg=False):
+    r"""
+    Computes u, v components from speed and
+    direction.
+
+    Parameters
+    ----------
+    spd : array_like
+          speed [m s :sup:`-1`]
+    ang : array_like
+          direction [deg]
+    deg : bool
+          option, True if data is in degrees. Default is False
+
+    Returns
+    -------
+    u : array_like
+        zonal wind velocity [m s :sup:`-1`]
+    v : array_like
+        meridional wind velocity [m s :sup:`-1`]
+    """
+
+    if deg:
+        ang = np.deg2rad(ang)
+
+    # Calculate U (E-W) and V (N-S) components
+    u = spd * np.cos(ang)
+    v = spd * np.sin(ang)
+    return u, v
 
 def uv2spdir(u, v, mag=0, rot=0):
     r"""
@@ -151,11 +181,11 @@ def despike(datain, slope):
                 n = n + 1  # keep an index for the offset from the test point
                 try:
                     # FIXME: Index out of bound.
-                    #snum = datain[k + n] - cdata[kk]
+                    num = datain[k + n] - cdata[kk]
                     # TODO: Check original `snum` and `num` are defined but not
                     # used and undefined respectively.
-                    #dem = k + n - kk
-                    #nslope = num / dem
+                    dem = k + n - kk
+                    nslope = num / dem
                     # If we have a "good" slope, calculate new point using
                     # linear interpolation:
                     # point = {[(ngp - lgp)/(deltax)]*(actual distance)} + lgp
@@ -172,8 +202,8 @@ def despike(datain, slope):
                     else:
                         kk = kk + 1
                         cdata[kk] = datain[k]
-                except:
-                    print "index out of bounds"
+                except:  # TODO: raise
+                    print("Index out of bounds")
     return cdata
 
 
@@ -392,7 +422,7 @@ def autocorr(x, y, M=None):
     try:
         np.broadcast(x, y)
     except ValueError:
-        pass  # TODO print error and leave
+        pass  # TODO: Print error and leave gracefully.
 
     if not M:
         M = x.size
@@ -409,3 +439,58 @@ def autocorr(x, y, M=None):
         Cxy[k] = 1. / (N - k) * a
 
     return Cxy / (np.std(y) * np.std(x))
+
+
+def mld(S, T, P):
+    r"""Compute a mixed layer depth (MLD) from vertical profiles of salinity
+    and temperature.
+
+    There are many criteria out there to compute a MLD, the one used here
+    defined MLD as the first depth for which:
+    ST(T(z), S(z)) > ST(T(z=0) - 0.8, S(z=0))
+
+    FIXME: Reference for this definition.
+
+    Parameters
+    ----------
+    S : array
+        Salinity [g/Kg]
+    CT : array
+        Conservative Temperature [degC]
+    Z : array
+        Depth [m]
+
+    Returns
+    -------
+    mld : array
+        Mixed layer depth [m]
+
+    """
+
+    # TODO: Use gsw
+    #P = 0.09998 * 9.81 * np.abs(Z)
+    #depth = gsw.z_from_p(?)
+    #T = sw_ptmp(S, T, P, 0)
+
+    zmin, iz0 = np.abs(Z).min(), np.abs(Z).argmin()
+
+    if np.isnan(T[iz0]):
+        iz0 = iz0 + 1
+
+    SST = T[iz0]
+    SSS = S[iz0]
+
+    SST08 = SST - 0.8
+    #SSS   = SSS + 35
+    #gsw.dens
+    Surfadens08 = densjmd95(SSS, SST08, P[iz0]) - 1000
+    ST = densjmd95(S, T, P) - 1000
+
+    mm = ST > Surfadens08
+    if mm.any():
+        mld = Z[mm]
+    else:
+        # TODO: raise
+        mld = np.NaN
+
+    return mld
