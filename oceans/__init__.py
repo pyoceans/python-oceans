@@ -13,9 +13,10 @@ __version__ = "0.0.1"
 __maintainer__ = "Filipe Fernandes"
 __email__ = "ocefpaf@gmail.com"
 __status__ = "Alpha"
+
 __all__ = ['ff_tools, colormaps, RPStuff']
 
-#import library
+
 import RPStuff
 import ff_tools
-import utilities
+import colormaps
