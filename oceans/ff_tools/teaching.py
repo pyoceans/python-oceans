@@ -42,9 +42,7 @@ def cov(x, y):
 
 
 def rms(x):
-    r"""
-    Compute root mean square
-    """
+    r"""Compute root mean square."""
 
     x = np.asanyarray(x)
     rms = np.sqrt(np.sum(x ** 2) / x.size)
@@ -53,9 +51,7 @@ def rms(x):
 
 
 def rmsd(x, y):
-    r"""
-    Compute root mean square difference (or distance)
-    """
+    r"""Compute root mean square difference (or distance)."""
 
     x, y = map(np.asanyarray(x, y))
 
