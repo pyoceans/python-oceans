@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Thu 13 Oct 2011 02:19:20 PM EDT
+# modified: Mon 24 Oct 2011 05:07:29 PM EDT
 #
 # obs:
 #
@@ -16,6 +16,7 @@
 from __future__ import division
 
 import numpy as np
+
 
 def spdir2uv(spd, ang, deg=False):
     r"""
@@ -46,6 +47,7 @@ def spdir2uv(spd, ang, deg=False):
     u = spd * np.cos(ang)
     v = spd * np.sin(ang)
     return u, v
+
 
 def uv2spdir(u, v, mag=0, rot=0):
     r"""
@@ -375,10 +377,10 @@ def spec_rot(u, v):
     .. [1] J. Gonella Deep Sea Res., 833-846, 1972.
     """
 
-    # Individual components fourier series.
+    # Individual components Fourier series.
     fu, fv = map(np.fft.fft, (u, v))
 
-    # Autospectra of the scalar components.
+    # Auto-spectra of the scalar components.
     pu = fu * np.conj(fu)
     pv = fv * np.conj(fv)
 
@@ -389,14 +391,15 @@ def spec_rot(u, v):
     quv = -fu.real * fv.imag + fv.real * fu.imag
 
     # Rotatory components
+    # TODO: Check the division, 4 or 8?
     cw = (pu + pv - 2 * quv) / 8.
     ccw = (pu + pv + 2 * quv) / 8.
 
     return puv, quv, cw, ccw
 
 
-def autocorr(x, y, M=None):
-    r"""Cross-correlation.
+def lagcorr(x, y, M=None):
+    r"""Compute lagged correlation between two series.
     Follow emery and Thomson book "summation" notation.
 
     Parameters
