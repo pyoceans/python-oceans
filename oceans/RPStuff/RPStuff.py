@@ -8,15 +8,18 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  22-Jun-2011
-# modified: Mon 17 Oct 2011 10:05:46 AM EDT
+# modified: Mon 24 Oct 2011 03:39:28 PM EDT
 #
 # obs: This "legacy" package is intended for compatibility only.
 #      Most of function should be re-written in a more pythonic way.
 #
 
 from __future__ import division
+from datetime import datetime
 
 import numpy as np
+import numpy.ma as ma
+
 from oceans.utilities import match_args_return
 
 __all__ = ['hms2h',
@@ -332,6 +335,104 @@ def short_calc(amin, amax):
     scale_factor = (amax - amin) / rang
 
     return add_offset, scale_factor
+
+
+@match_args_return
+def gsum(x, **kw):
+    r"""Just like sum, except that it skips over bad points."""
+    xnew = ma.masked_invalid(x)
+    return np.sum(xnew, **kw)
+
+
+@match_args_return
+def gmean(x, **kw):
+    r"""Just like mean, except that it skips over bad points."""
+    xnew = ma.masked_invalid(x)
+    return np.mean(xnew, **kw)
+
+
+@match_args_return
+def gmedian(x, **kw):
+    r"""Just like median, except that it skips over bad points."""
+    xnew = ma.masked_invalid(x)
+    return np.median(xnew, **kw)
+
+
+@match_args_return
+def gmin(x, **kw):
+    r"""Just like min, except that it skips over bad points."""
+    xnew = ma.masked_invalid(x)
+    return np.min(xnew, **kw)
+
+
+@match_args_return
+def gmax(x, **kw):
+    r"""Just like max, except that it skips over bad points."""
+    xnew = ma.masked_invalid(x)
+    return np.max(xnew, **kw)
+
+
+@match_args_return
+def gstd(x, **kw):
+    r"""Just like std, except that it skips over bad points."""
+    xnew = ma.masked_invalid(x)
+    return np.std(xnew, **kw)
+
+# TODO
+#/home/filipe/00-NOBKP/matlab_2010b/toolbox/map/map/distance.m
+#def near(x, x0, n=1):
+    #r"""Finds the indices of x that are closest to the point x0.  x is an
+    #array, x0 is a point, n is the number of closest points to get (in order
+    #of increasing distance).  Distance is the abs(x-x0).
+    #"""
+
+    #distance, index = sort(abs(x-x0))
+    #distance = distance(0:n)
+    #index = index(0:n)
+
+    #return index, distance
+
+#@match_args_return
+#def nearxy(x, y, x0, y0, dist=None):
+    #r"""Finds the indices of (x,y) that are closest to the point (x0,y0).
+
+    #Finds the closest point and the distance:
+        #index, distance = nearxy(x, y, x0, y0)
+
+    #Finds all points closer than the value of dist:
+        #index, distance = nearxy(x, y, x0, y0, dist)
+    #"""
+
+    #distance = np.sqrt((x - x0) ** 2 + (y - y0) ** 2)
+    #if not dist:
+        #index = np.where(distance <= dist)  # Finds points closer than dist.
+    #else:
+        #index = np.where(distance == distance.min())  # Finds closest point.
+        #index = index[0]
+
+    #distance = distance[index]
+    #return index, distance
+
+
+def swantime(a):
+    r"""Converts SWAN default time format to datetime object."""
+    if isinstance(a, str):
+        a = float(a)
+        a = np.asanyarray(a)
+
+    year = np.floor(a / 1e4)
+    a = a - year * 1e4
+    mon = np.floor(a / 1e2)
+    a = a - mon * 1e2
+    day = np.floor(a)
+    a = a - day
+    hour = np.floor(a * 1e2)
+    a = a - hour / 1e2
+    mn = np.floor(a * 1e4)
+    a = a - mn / 1e4
+    sec = np.floor(a * 1e6)
+
+    return datetime(year, mon, day, hour, mn, sec)
 
 # TODO: Check basemap
 #def ll2utm(lon, lat, zone):
