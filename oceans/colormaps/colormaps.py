@@ -8,14 +8,19 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  11-Oct-2010
-# modified: Thu 13 Oct 2011 01:25:59 PM EDT
+# modified: Tue 01 Nov 2011 01:43:47 PM EDT
 #
 # obs:
 #
 
+from __future__ import division
+
+from colorsys import hsv_to_rgb
+
 import numpy as np
 import matplotlib as mpl
 from scipy.signal import sawtooth
+
 
 class Cmat2Cmpl(object):
     """Convert matlab style colormap to matplotlib style Enter a list non
@@ -405,8 +410,8 @@ class Cmat2Cmpl(object):
         sat = m + (1. - m) * (0.5 * (1. + sawtooth(2. * np.pi * x / (n / a))))
         val = m + (1. - m) * 0.5 * (1. + np.cos(2. * np.pi * x / (n / a / 2.)))
 
-        cmap = np.r_[hue, sat, val]
-        cmap = hsv2rgb(cmap)
+        cmap = [hsv_to_rgb(h, s, v) for h, s, v in zip(hue, sat, val)]
+        cmap = np.asarray(cmap)
 
         return cmap
 
@@ -418,7 +423,6 @@ class Cmat2Cmpl(object):
         cmap = np.r_[values, values, values]
 
         return np.int32(cmap)
-
 
     def avhrr(self, m):
         r"""AHVRR colormap used by NOAA Coastwatch."""
@@ -435,7 +439,7 @@ class Cmat2Cmpl(object):
 
         xb = [0.0, 0.2, 0.4, 0.5, 0.6, 0.8, 1.0]
         bb = [0.0, 0.0, 0.5, 0.5, 1.0, 1.0, 0.5]
-        b = np.interp(xb,bb,x)
+        b = np.interp(xb, bb, x)
 
         return np.flipud(np.r_[r, g, b])
 
