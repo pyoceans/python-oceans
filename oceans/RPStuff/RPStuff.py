@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  22-Jun-2011
-# modified: Mon 24 Oct 2011 03:39:28 PM EDT
+# modified: Thu 27 Oct 2011 08:08:19 PM EDT
 #
 # obs: This "legacy" package is intended for compatibility only.
 #      Most of function should be re-written in a more pythonic way.
@@ -433,6 +433,44 @@ def swantime(a):
     sec = np.floor(a * 1e6)
 
     return datetime(year, mon, day, hour, mn, sec)
+
+
+@match_args_return
+def shift(a, b, n):
+    r"""a and b are vectors
+    n is number of points of a to cut off
+    anew and bnew will be the same length.
+    """
+
+    #la, lb = a.size, lb = b.size
+
+    anew = a[range(0 + n, len(a)), :]
+
+    if len(anew) > len(b):
+        anew = anew[range(0, len(b)), :]
+        bnew = b
+    else:
+        bnew = b[range(0, len(anew)), :]
+
+    return anew, bnew
+
+
+@match_args_return
+def lagcor(a, b, n):
+    r"""Finds lagged correlations between two series.
+    a and b are two column vectors
+    n is range of lags
+    cor is correlation as fn of lag
+    """
+    cor = []
+    for i in range(0, n + 1):
+        d1, d2 = shift(a, b, i)
+        ind = ~np.isnan(d1 + d2)
+        c = np.corrcoef(d1[ind], d2[ind])
+        if len(c) > 1:
+            cor.append(c[0, 1])
+
+    return cor
 
 # TODO: Check basemap
 #def ll2utm(lon, lat, zone):
