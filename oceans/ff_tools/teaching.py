@@ -27,7 +27,7 @@ def cov(x, y):
     input:  x,y -> data sets x and y
     c -> covariance of x and y
 
-    Just a reaching tool...
+    Just a teaching tool...
     """
 
     x, y = map(np.asanyarray, (x, y))
@@ -50,12 +50,20 @@ def rms(x):
     return rms
 
 
-def rmsd(x, y):
-    r"""Compute root mean square difference (or distance)."""
+def rmsd(x, y, normalize=False):
+    r"""Compute root mean square difference (or distance).
 
-    x, y = map(np.asanyarray(x, y))
+    The normalized root-mean-square deviation or error (NRMSD or NRMSE) is the
+    RMSD divided by the range of observed values.  The value is often expressed
+    as a percentage, where lower values indicate less residual variance.
+    """
+
+    x, y = map(np.asanyarray, (x, y))
 
     rmsd = np.sqrt(np.sum((x - y) ** 2) / x.size)
+
+    if normalize:
+        rmsd = rmsd / x.ptp()
 
     return rmsd
 
@@ -223,7 +231,7 @@ def lsqfity(X, Y):
 
 
 def lsqfitx(X, Y):
-    """
+    r"""
     Calculate a "MODEL-1" least squares fit.
 
     The line is fit by MINIMIZING the residuals in X only.
@@ -285,7 +293,7 @@ def lsqfitx(X, Y):
 
 
 def lsqfitgm(X, Y):
-    """Calculate a "MODEL-2" least squares fit.
+    r"""Calculate a "MODEL-2" least squares fit.
 
     The SLOPE of the line is determined by calculating the GEOMETRIC MEAN
     of the slopes from the regression of Y-on-X and X-on-Y.
@@ -373,7 +381,7 @@ def lsqfitgm(X, Y):
 
 
 def lsqfitma(X, Y):
-    """
+    r"""
     Calculate a "MODEL-2" least squares fit.
 
     The line is fit by MINIMIZING the NORMAL deviates.
@@ -435,7 +443,7 @@ def lsqfitma(X, Y):
 
 
 def lsqbisec(X, Y):
-    """
+    r"""
     Calculate a "MODEL-2" least squares fit.
 
     The SLOPE of the line is determined by calculating the slope of the line
@@ -522,7 +530,7 @@ def lsqbisec(X, Y):
 
 
 def lsqcubic(X, Y, sX, sY, tl=1e-6):
-    """
+    r"""
     Calculate a MODEL-2 least squares fit from weighted data.
 
     The line is fit by MINIMIZING the weighted residuals in both x & y.
@@ -694,7 +702,7 @@ def lsqfityw(X, Y, sY):
 
 
 def lsqfityz(X, Y, sY):
-    """
+    r"""
     Calculate a "MODEL-1" least squares fit to WEIGHTED x,y-data pairs:
     The line is fit by MINIMIZING the WEIGHTED residuals in Y only.
 
@@ -772,7 +780,7 @@ def lsqfityz(X, Y, sY):
 
 
 def gmregress(X, Y, alpha=0.05):
-    """
+    r"""
     GMREGRESS Geometric Mean Regression (Reduced Major Axis Regression).
     Model II regression should be used when the two variables in the
     regression equation are random and subject to error, i.e. not

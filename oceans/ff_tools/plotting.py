@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Thu 13 Oct 2011 02:06:20 PM EDT
+# modified: Tue 01 Nov 2011 01:39:41 PM EDT
 #
 # obs: some Functions were based on:
 # http://www.trondkristiansen.com/?page_id=1071
@@ -16,6 +16,7 @@
 
 import numpy as np
 from netCDF4 import Dataset
+
 
 def etopo_subset(min_lat, max_lat, min_lon, max_lon, tfile=None, smoo=False):
     r"""Get a etopo subset.
