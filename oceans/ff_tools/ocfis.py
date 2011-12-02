@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Mon 24 Oct 2011 05:07:29 PM EDT
+# modified: Fri 02 Dec 2011 11:58:58 AM EST
 #
 # obs:
 #
@@ -16,6 +16,9 @@
 from __future__ import division
 
 import numpy as np
+import scipy.stats as stats
+import matplotlib.mlab as mlab
+import matplotlib.cbook as cbook
 
 
 def spdir2uv(spd, ang, deg=False):
@@ -497,3 +500,71 @@ def mld(S, T, P):
         mld = np.NaN
 
     return mld
+
+def psd_ci(x, NFFT=256, Fs=2, detrend=mlab.detrend_none,
+                    window=mlab.window_hanning, noverlap=0, pad_to=None,
+                    sides='default', scale_by_freq=None, smooth=None,
+                    Confidencelevel=0.9):
+    r"""Extention of matplotlib.mlab.psd The power spectral density with
+    upper and lower limits within confidence level You should not use
+    Welch's method here, instead you can use smoother in frequency domain
+    with *smooth*
+
+    Same input as matplotlib.mlab.psd except the following new inputs
+
+    *smooth*
+        smoothing window in frequency domain for example, 1-2-1 filter is
+        [1,2,1] default is None.
+
+    *Confidencelevel*
+        Confidence level to estimate upper and lower (default 0.9).
+
+    Returns the tuple (*Pxx*, *freqs*, *upper*, *lower*).
+    upper and lower are limits of psd within confidence level.
+
+    Original: http://oceansciencehack.blogspot.com/2010/04/psd.html
+
+    Examples
+    --------
+    TODO
+    """
+    Pxxtemp, freqs = mlab.psd(x, NFFT, Fs, detrend, window, noverlap,
+                              pad_to, sides, scale_by_freq)
+
+    # Un-commented if you want to get Minobe-san's result
+    # Pxxtemp = Pxxtemp / float(NFFT) / 2. * ((np.abs(window) ** 2).mean())
+
+    # Smoothing.
+    if smooth is not None:
+        smooth = np.asarray(smooth)
+        avfnc = smooth / np.float(np.sum(smooth))
+        Pxx = np.convolve(Pxxtemp, avfnc, mode="same")
+        #Pxx = np.convolve(Pxxtemp[:, 0], avfnc, mode="same")
+    else:
+        Pxx = Pxxtemp
+        #Pxx = Pxxtemp[:, 0]
+        avfnc = np.asarray([1.])
+
+    # Estimate upper and lower estimate with equivalent degree of freedom.
+    if pad_to is None:
+        pad_to = NFFT
+
+    if cbook.iterable(window):
+        assert(len(window) == NFFT)
+        windowVals = window
+    else:
+        windowVals = window(np.ones((NFFT,), x.dtype))
+
+    # Equivalent degree of freedom.
+    edof = (1. + (1. / np.sum(avfnc ** 2) - 1.) * np.float(NFFT) /
+                                          np.float(pad_to) * windowVals.mean())
+
+    a1 = (1. - Confidencelevel) / 2.
+    a2 = 1. - a1
+
+    lower = Pxx * stats.chi2.ppf(a1, 2 * edof) / stats.chi2.ppf(0.50, 2 * edof)
+    upper = Pxx * stats.chi2.ppf(a2, 2 * edof) / stats.chi2.ppf(0.50, 2 * edof)
+
+    cl = np.c_[upper, lower]
+
+    return Pxx, freqs, cl
