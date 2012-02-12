@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # __init__.py
@@ -8,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  22-Jun-2011
-# modified: Thu 13 Oct 2011 01:39:56 PM EDT
+# modified: Sun 12 Feb 2012 02:00:19 PM EST
 #
 # obs:
 #
@@ -17,3 +16,4 @@ from ff_tools import *
 from ocfis import *
 from plotting import *
 from teaching import *
+from time_series import *
