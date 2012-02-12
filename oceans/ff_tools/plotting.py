@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-#
+# -*- coding: utf-8 -*-
 #
 # plotting.py
 #
@@ -13,6 +12,8 @@
 # obs: some Functions were based on:
 # http://www.trondkristiansen.com/?page_id=1071
 #
+
+from __future__ import division
 
 import numpy as np
 from netCDF4 import Dataset
