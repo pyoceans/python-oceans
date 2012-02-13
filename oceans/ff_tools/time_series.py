@@ -378,3 +378,21 @@ def complex_demodulation(series, f, fc, axis=-1):
 
     #return cc, amplitude, phase, dfs, filtered_series
     return new_series
+
+def plot_spectrum(data, fs):
+    """Plots a Single-Sided Amplitude Spectrum of y(t)."""
+    n = len(data)  # Length of the signal.
+    k = np.arange(n)
+    T = n / fs
+    frq = k / T  # Two sides frequency range.
+    frq = frq[range(n // 2)]  # One side frequency range
+
+    # fft computing and normalization
+    Y = np.fft.fft(data) / n
+    Y = Y[range(n // 2)]
+
+    # Plotting the spectrum.
+    plt.semilogx(frq, np.abs(Y), 'r')
+    plt.xlabel('Freq (Hz)')
+    plt.ylabel('|Y(freq)|')
+    plt.show()
