@@ -61,11 +61,11 @@ class TimeSeries(object):
         k = np.arange(n)
         T = n / self.fs
         frq = k / T  # Two sides frequency range.
-        frq = frq[range(n / 2)]  # One side frequency range
+        frq = frq[range(n // 2)]  # One side frequency range
 
         # fft computing and normalization
         Y = np.fft.fft(self.data) / n
-        Y = Y[range(n / 2)]
+        Y = Y[range(n // 2)]
 
         # Plotting the spectrum.
         plt.semilogx(frq, np.abs(Y), 'r')
@@ -341,7 +341,7 @@ def psd_ci(x, NFFT=256, Fs=2, detrend=mlab.detrend_none,
     return Pxx, freqs, cl
 
 
-def complex_demodulation(series, f, fc):
+def complex_demodulation(series, f, fc, axis=-1):
     """Perform a Complex Demodulation
     It acts as a bandpass filter for "f".
 
@@ -357,7 +357,7 @@ def complex_demodulation(series, f, fc):
     fc = fc * 1 / T
 
     # De mean data.
-    d = series.data - series.data.mean()
+    d = series.data - series.data.mean(axis=axis)
     dfs = d * np.exp(2. * np.pi * 1j * (1. / T) * series.time_in_seconds)
 
     # make a 5th order butter filter
@@ -366,10 +366,15 @@ def complex_demodulation(series, f, fc):
 
     [b, a] = signal.butter(5, Wn, btype='low')
 
-    # FIXME: These are a factor of a thousand different from matlab, why?
+    # FIXME: These are a factor of a thousand different from Matlab, why?
     cc = signal.filtfilt(b, a, dfs) * 1e3
     amplitude = 2 * np.abs(cc)
 
     phase = np.arctan2(np.imag(cc), np.real(cc))
 
-    return cc, amplitude, phase, dfs
+    filtered_series = amplitude * np.exp(-2 * np.pi * 1j * (1 / T) * series.time_in_seconds)
+
+    new_series = TimeSeries(filtered_series.real, series.time)
+
+    #return cc, amplitude, phase, dfs, filtered_series
+    return new_series
