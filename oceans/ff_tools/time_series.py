@@ -367,7 +367,7 @@ def complex_demodulation(series, f, fc, axis=-1):
     [b, a] = signal.butter(5, Wn, btype='low')
 
     # FIXME: These are a factor of a thousand different from Matlab, why?
-    cc = signal.filtfilt(b, a, dfs) * 1e3
+    cc = signal.filtfilt(b, a, dfs)  #FIXME: * 1e3
     amplitude = 2 * np.abs(cc)
 
     phase = np.arctan2(np.imag(cc), np.real(cc))
