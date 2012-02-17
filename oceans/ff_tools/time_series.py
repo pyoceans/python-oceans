@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  12-Feb-2012
-# modified: Sun 12 Feb 2012 01:53:24 PM EST
+# modified: Fri 17 Feb 2012 10:29:03 AM EST
 #
 # obs:
 #
@@ -367,17 +367,20 @@ def complex_demodulation(series, f, fc, axis=-1):
     [b, a] = signal.butter(5, Wn, btype='low')
 
     # FIXME: These are a factor of a thousand different from Matlab, why?
-    cc = signal.filtfilt(b, a, dfs)  #FIXME: * 1e3
+    cc = signal.filtfilt(b, a, dfs)  # FIXME: * 1e3
     amplitude = 2 * np.abs(cc)
 
-    phase = np.arctan2(np.imag(cc), np.real(cc))
+    # TODO: Fix the outputs
+    #phase = np.arctan2(np.imag(cc), np.real(cc))
 
-    filtered_series = amplitude * np.exp(-2 * np.pi * 1j * (1 / T) * series.time_in_seconds)
+    filtered_series = amplitude * np.exp(-2 * np.pi * 1j *
+                                         (1 / T) * series.time_in_seconds)
 
     new_series = TimeSeries(filtered_series.real, series.time)
 
     #return cc, amplitude, phase, dfs, filtered_series
     return new_series
+
 
 def plot_spectrum(data, fs):
     """Plots a Single-Sided Amplitude Spectrum of y(t)."""
