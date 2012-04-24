@@ -395,3 +395,34 @@ def mld(S, T, P):
         mld = np.NaN
 
     return mld
+
+def fft_lowpass(signal, low, high):
+    r"""Performs a low pass filer on the series.
+    low and high specifies the boundary of the filter.
+
+    obs: From tappy's filters.py.
+    """
+
+    if len(signal) % 2:
+        result = np.fft.rfft(signal, len(signal))
+    else:
+        result = np.fft.rfft(signal)
+
+    freq = np.fft.fftfreq(len(signal))[:len(signal) / 2 + 1]
+    factor = np.ones_like(freq)
+    factor[freq > low] = 0.0
+    sl = np.logical_and(high < freq, freq < low)
+    a = factor[sl]
+
+    # Create float array of required length and reverse.
+    a = np.arange(len(a) + 2).astype(float)[::-1]
+
+    # Ramp from 1 to 0 exclusive.
+    a = (a/a[0])[1:-1]
+
+    # Insert ramp into factor.
+    factor[sl] = a
+
+    result = result * factor
+
+    return np.fft.irfft(result, len(signal))
