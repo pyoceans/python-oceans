@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  22-Jun-2011
-# modified: Sun 12 Feb 2012 02:00:19 PM EST
+# modified: Thu 03 May 2012 03:58:15 PM EDT
 #
 # obs:
 #
@@ -17,3 +17,4 @@ from ocfis import *
 from plotting import *
 from teaching import *
 from time_series import *
+from windrose import *
