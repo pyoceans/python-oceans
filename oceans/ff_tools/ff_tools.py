@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  12-Feb-2012
-# modified:
+# modified: Thu 03 May 2012 10:04:04 AM EDT
 #
 # obs:
 #
@@ -136,7 +136,8 @@ def princomp(A, numpc=None):
     Performs principal components analysis (PCA) on the n-by-p data matrix A
     Rows of A correspond to observations, columns to variables.
 
-    http://glowingpython.blogspot.com/2011/07/principal-component-analysis-with-numpy.html?spref=tw
+    http://glowingpython.blogspot.com/
+    2011/07/principal-component-analysis-with-numpy.html?spref=tw
 
     Returns :
         coeff :
@@ -259,3 +260,47 @@ def strip_mask(arr, fill_value=np.NaN):
         return mask, arr
     else:
         return arr
+
+
+def shiftdim(x, n=None):
+    """
+    #http://www.python-it.org/forum/index.php?topic=4688.0
+    a = np.rand(1,1,3,1,2)
+    print(a.shape)
+    print(a.ndim)
+    print(range(a.ndim))
+    print(np.roll(range(a.ndim), -2))
+    print(a.transpose(np.roll(range(a.ndim), -2)))
+
+    b = shiftdim(a)
+    print(b.shape)
+
+    c = shiftdim(b, -2)
+    print(c.shape)
+
+    print(c==a)
+    """
+
+    if n is None:
+        # returns the array B with the same number of
+        # elements as X but with any leading singleton
+        # dimensions removed.
+        return x.reshape(no_leading_ones(x.shape))
+    elif n >= 0:
+        # When n is positive, shiftdim shifts the dimensions
+        # to the left and wraps the n leading dimensions to the end.
+        return x.transpose(np.roll(range(x.ndim), -n))
+    else:
+        # When n is negative, shiftdim shifts the dimensions
+        # to the right and pads with singletons.
+        return x.reshape((1,) * -n + x.shape)
+
+
+def no_leading_ones(x):
+    """Used in shiftdim."""
+    x = np.atleast_1d(x)
+    if x[0] == 1:
+        x = x[1:]
+        return no_leading_ones(x)
+    else:
+        return x
