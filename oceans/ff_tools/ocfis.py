@@ -274,29 +274,29 @@ def binave(datain, r):
 
     return bindata
 
-"""
-function [mu, bins] = bindata(x, y, numbins);
-%function [mu, bins] = bindata(x, y, numbins);
-% bins the data y according to x and returns the bins and the average
-% value of y for that bin
 
-bins = linspace(min(x), max(x), numbins);
-[n,bin] = histc(x, bins);
-mu = NaN*zeros(size(bins));
-for k = [1:numbins],
-  ind = find(bin==k);
-  if (~isempty(ind))
-    mu(k) = mean(y(ind));
-  end
-end
+def binavg(x, y, db):
+    r"""TODO:
+    y = np.random.random(20)
+    x = np.arange(len(y))
+    binavg(x, y, 2)
+    """
+    # Cut the corners.
+    x_min, x_max = np.ceil(x.min()), np.floor(x.max())
+    x = x.clip(x_min, x_max)
 
-[n,bins] = histc(x,linspace(min(x),max(x),numbins));
-ty = sparse(1:length(x),bin,y);
-mu = full(sum(ty)./sum(ty~=0))
+    xbin = np.arange(x_min, x_max, db)
+    inds = np.digitize(x, xbin)
 
-you may get NaN from 0/0 if you have an empty bin, but that can be
-taken care of easily.
-"""
+    #for n in range(x.size):
+        #print xbin[inds[n]-1], "<=", x[n], "<", xbin[inds[n]]
+
+    ybin = np.array([y[inds == i].mean() for i in range(1, len(xbin))])
+    xbin = np.array([x[inds == i].mean() for i in range(1, len(xbin))])
+
+    return xbin, ybin
+
+
 
 
 def psu2ppt(psu):
