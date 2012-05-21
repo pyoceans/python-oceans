@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Fri 02 Dec 2011 11:58:58 AM EST
+# modified: Mon 21 May 2012 03:52:20 PM EDT
 #
 # obs:
 #
@@ -15,15 +15,10 @@
 from __future__ import division
 
 import numpy as np
-import scipy.stats as stats
-import matplotlib.mlab as mlab
-import matplotlib.cbook as cbook
 
 
 def spdir2uv(spd, ang, deg=False):
-    r"""
-    Computes u, v components from speed and
-    direction.
+    r"""Computes u, v components from speed and direction.
 
     Parameters
     ----------
@@ -52,9 +47,8 @@ def spdir2uv(spd, ang, deg=False):
 
 
 def uv2spdir(u, v, mag=0, rot=0):
-    r"""
-    Computes speed and direction from u, v components. Allows for rotation and
-    magnetic declination correction.
+    r"""Computes speed and direction from u, v components. Allows for rotation
+    and magnetic declination correction.
 
     Parameters
     ----------
@@ -116,8 +110,7 @@ def uv2spdir(u, v, mag=0, rot=0):
 
 
 def despike(datain, slope):
-    r"""
-    De-spikes a time-series by calculating point-to-point slopes and
+    r"""De-spikes a time-series by calculating point-to-point slopes and
     determining whether a maximum allowable slope is exceeded.
 
     Parameters
@@ -164,30 +157,33 @@ def despike(datain, slope):
     modified: 23-Nov-2010
     """
 
-    datain, slope = map(np.asarray, (datain, slope))
+    datain, slope = map(np.asanyarray, (datain, slope))
 
-    cdata = np.zeros(datain.size)
+    cdata = np.zeros_like(datain) + np.NaN
+
+    offset = datain.min()
+    if offset < 0:
+        datain = datain - offset
+    else:
+        offset = 0
+
     cdata[0] = datain[0]  # FIXME: Assume that the first point is not a spike.
-    kk = 0
-    npts = len(datain)
+    kk, npts = 0, len(datain)
 
     for k in range(1, npts, 1):
-        nslope = datain[k] - cdata[kk]
-        # if the slope is okay, let the data through
-        if abs(nslope) <= abs(slope):
-            kk = kk + 1
-            cdata[kk] = datain[k]
-        # if slope is not okay, look for the next data point
-        else:
-            n = 0
-            # TODO: add a limit option for npts
-            while (abs(nslope) > abs(slope)) and (k + n < npts):
-                n = n + 1  # keep an index for the offset from the test point
-                try:
-                    # FIXME: Index out of bound.
+        try:
+            nslope = datain[k] - cdata[kk]
+            # if the slope is okay, let the data through
+            if abs(nslope) <= abs(slope):
+                kk = kk + 1
+                cdata[kk] = datain[k]
+            # if slope is not okay, look for the next data point
+            else:
+                n = 0
+                # TODO: add a limit option for npts.
+                while (abs(nslope) > abs(slope)) and (k + n < npts):
+                    n = n + 1  # Keep index for the offset from the test point.
                     num = datain[k + n] - cdata[kk]
-                    # TODO: Check original `snum` and `num` are defined but not
-                    # used and undefined respectively.
                     dem = k + n - kk
                     nslope = num / dem
                     # If we have a "good" slope, calculate new point using
@@ -206,16 +202,16 @@ def despike(datain, slope):
                     else:
                         kk = kk + 1
                         cdata[kk] = datain[k]
-                except:  # TODO: raise
-                    print("Index out of bounds")
-    return cdata
+        except IndexError:
+            print("Index out of bounds at %s" % k)
+            continue
+    return cdata + offset
 
 
 def binave(datain, r):
-    r"""
-    Averages vector data in bins of length r. The last bin may be the average
-    of less than r elements. Useful for computing daily average time series
-    (with r=24 for hourly data).
+    r"""Averages vector data in bins of length r. The last bin may be the
+    average of less than r elements. Useful for computing daily average time
+    series (with r=24 for hourly data).
 
     Parameters
     ----------
@@ -276,32 +272,40 @@ def binave(datain, r):
 
 
 def binavg(x, y, db):
-    r"""TODO:
+    r""" TODO: x as datetime object and db as timedelta.
+    Bins y(x) into db spacing.  The spacing is given in `x` units.
     y = np.random.random(20)
     x = np.arange(len(y))
-    binavg(x, y, 2)
+    xb, yb = binavg(x, y, 2)
+    plt.figure()
+    plt.plot(x, y, 'k.-')
+    plt.plot(xb, yb, 'r.-')
     """
     # Cut the corners.
     x_min, x_max = np.ceil(x.min()), np.floor(x.max())
     x = x.clip(x_min, x_max)
 
+    # This is used to get the `inds`.
     xbin = np.arange(x_min, x_max, db)
     inds = np.digitize(x, xbin)
 
+    # But this is the center of the bins.
+    xbin = xbin - (db / 2.)
+
+    # FIXME there is an IndexError if I want to show this.
     #for n in range(x.size):
         #print xbin[inds[n]-1], "<=", x[n], "<", xbin[inds[n]]
 
-    ybin = np.array([y[inds == i].mean() for i in range(1, len(xbin))])
-    xbin = np.array([x[inds == i].mean() for i in range(1, len(xbin))])
+    ybin = np.array([y[inds == i].mean() for i in range(0, len(xbin))])
+    #xbin = np.array([x[inds == i].mean() for i in range(0, len(xbin))])
 
     return xbin, ybin
 
 
-
-
 def psu2ppt(psu):
     r"""Converts salinity from PSU units to PPT
-    http://stommel.tamu.edu/~baum/paleo/ocean/node31.html#PracticalSalinityScale
+    http://stommel.tamu.edu/~baum/paleo/ocean/node31.html
+    #PracticalSalinityScale
     """
 
     a = [0.008, -0.1692, 25.3851, 14.0941, -7.0261, 2.7081]
@@ -396,6 +400,7 @@ def mld(S, T, P):
 
     return mld
 
+
 def fft_lowpass(signal, low, high):
     r"""Performs a low pass filer on the series.
     low and high specifies the boundary of the filter.
@@ -418,7 +423,7 @@ def fft_lowpass(signal, low, high):
     a = np.arange(len(a) + 2).astype(float)[::-1]
 
     # Ramp from 1 to 0 exclusive.
-    a = (a/a[0])[1:-1]
+    a = (a / a[0])[1:-1]
 
     # Insert ramp into factor.
     factor[sl] = a
