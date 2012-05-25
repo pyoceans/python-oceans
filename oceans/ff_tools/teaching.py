@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Thu 13 Oct 2011 02:37:33 PM EDT
+# modified: Fri 25 May 2012 04:01:44 PM EDT
 #
 # obs: Just some basic example function.
 #
@@ -18,15 +18,29 @@ from __future__ import division
 import numpy as np
 from scipy import stats
 
+__all__ = [
+           'cov',
+           'rms',
+           'rmsd',
+           'allstats',
+           'lsqfity',
+           'lsqfitx',
+           'lsqfitgm',
+           'lsqfitma',
+           'lsqbisec',
+           'lsqcubic',
+           'lsqfityw',
+           'lsqfityz',
+           'gmregress',
+           'r_earth'
+           ]
+
 
 def cov(x, y):
-    r"""
-    Compute covariance for x,y
+    r"""Compute covariance for `x`, `y`
 
-    input:  x,y -> data sets x and y
-    c -> covariance of x and y
-
-    Just a teaching tool...
+    input:  `x`, `y` -> data sets `x` and `y`
+    `c` -> covariance of `x` and `y`
     """
 
     x, y = map(np.asanyarray, (x, y))
@@ -34,7 +48,7 @@ def cov(x, y):
     x = x - x.mean()
     y = y - y.mean()
 
-    # compute covariance
+    # Compute covariance.
     c = np.dot(x, y) / (x.size - 1)
 
     return c
@@ -230,8 +244,7 @@ def lsqfity(X, Y):
 
 
 def lsqfitx(X, Y):
-    r"""
-    Calculate a "MODEL-1" least squares fit.
+    r"""Calculate a "MODEL-1" least squares fit.
 
     The line is fit by MINIMIZING the residuals in X only.
 
@@ -876,3 +889,92 @@ def gmregress(X, Y, alpha=0.05):
     bintjm = np.r_[np.c_[pi, ps], np.c_[qi, qs]]
 
     return b, bintr, bintjm
+
+
+def r_earth(lon=None, lat=None):
+    r"""Radius of the earth as a function of latitude and longitude using the
+    WGS-84 earth ellipsoid.
+
+    Parameters
+    ----------
+    lon : float
+          longitude [Degrees East]
+    lat : float
+          latitude [Degrees North]
+        Input 1D data
+
+    Returns
+    -------
+    r : float
+    radius of earth [m] at corresponding point on ellipsoid
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import oceans.ff_tools as ff
+    >>> a, b = 6378137.0, 6356752.314245  # In meters.
+    >>> print('''WGS-84 semi-major and semi-minor axes a = %s and b = %s''' %
+    ...       (a,b))
+    >>> radius = ff.r_earth()
+    >>> print("R3 %s m" % radians)  # Default
+
+    >>> north_r = ff.r_earth(lat=90,lon=0)
+    >>> print("North %s m" % north_r)
+    >>> assert np.allclose(b, north_r)
+
+    >>> south_r = ff.r_earth(lat=-90, lon=0)
+    >>> print("South %s m" % south_r)
+    >>> assert np.allclose(b, south_r)
+
+    >>> east_r = ff.r_earth(lat=0,lon=90)
+    >>> print("East %s m" % east_r)
+    >>> assert np.allclose(a, east_r)
+
+    >>> west_r = ff.r_earth(lat=0,lon=-90)
+    >>> print("West %s m " % west_r)
+    >>> assert np.allclose(a, west_r)
+
+    >>> dateline_r = ff.r_earth(lat=0,lon=180)
+    >>> print("Dateline %s m" % dateline_r)
+    >>> assert np.allclose(a, dateline_r)
+
+    >>> # Original definition of meter occurs at this latitude (48.276841).
+    >>> original_m = 2.0 * np.pi * ff.r_earth(lat=48.276841, lon=0) / 4.0
+    >>> print("10 million? %s m" % original_m)
+    >>> assert np.allclose(1e7, original_m)
+
+    Notes
+    -----
+    Based on http://staff.washington.edu/bdjwww/earth_radius.py
+    """
+
+    # WGS-84 semi-major and semi-minor axes,
+    a, b = 6378137.0, 6356752.314245  # In meters.
+
+    if (lon is None) or (lat is None):
+        # Best known single estimate (this is R3; could use R1 or R2 as well)
+        # Geometric mean radius, sphere of equivalent volume.
+        return (a ** 2 * b) ** (1. / 3.)
+
+    """Convert to physicist's spherical coordinates (e.g. Arfken, 1985)
+    phi = azimuthal angle, 0 <= phi < 2 pi
+    theta = polar angle, 0 <= theta <= pi
+    Conversion notes:
+    phi is longitude converted to radians.
+    theta is co-latitude: theta = pi/2 - lat (after lat converted to radians).
+    """
+
+    # Spherical coordinates
+    phi = lon * np.pi / 180.
+    theta = np.pi / 2. - lat * np.pi / 180.
+
+    """The equation of an ellipsoid is $x^2 /a^2 + y^2/a^2 + z^2/b^2 = 1$,
+    with two "a" axes because the earth is fat around the equator.  Now use
+    x = r sin(theta) cos(phi), y = r sin(theta) sin(phi), z = r cos(theta),
+    and we easily obtain the next equation."""
+
+    inv_r_squared = ((np.sin(theta) * np.cos(phi) / a) ** 2 +
+                     (np.sin(theta) * np.sin(phi) / a) ** 2 +
+                     (np.cos(theta) / b) ** 2)
+
+    return 1.0 / np.sqrt(inv_r_squared)
