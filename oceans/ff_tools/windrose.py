@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""
-CeCILL-B FREE SOFTWARE LICENSE AGREEMENT
-
+"""CeCILL-B FREE SOFTWARE LICENSE AGREEMENT
 
     Notice
 
@@ -533,6 +531,8 @@ from matplotlib.projections.polar import PolarAxes
 
 # The starting zorder for all drawing, negative to have the grid on
 ZBASE, RESOLUTION = -1000, 100
+
+
 class WindroseAxes(PolarAxes):
     """Create a wind-rose axes."""
 
@@ -555,7 +555,8 @@ class WindroseAxes(PolarAxes):
         self.theta_labels = ['E', 'N-E', 'N', 'N-W', 'W', 'S-W', 'S', 'S-E']
         if 0:
             self.theta_labels = [u'90\u00B0', u'45\u00B0', u'0\u00B0',
-            u'315\u00B0', u'270\u00B0', u'225\u00B0', u'180\u00B0', u'135\u00B0']
+                                 u'315\u00B0', u'270\u00B0', u'225\u00B0',
+                                 u'180\u00B0', u'135\u00B0']
         self.set_thetagrids(angles=self.theta_angles, labels=self.theta_labels)
 
         self._info = {'dir': list(),
@@ -641,7 +642,7 @@ class WindroseAxes(PolarAxes):
                       for i in range(len(labels) - 1)]
 
             # Hack to replace inf and 0 for > and <.
-            labels[-1] = labels[-1].replace(' : inf', '').replace('[','[>')
+            labels[-1] = labels[-1].replace(' : inf', '').replace('[', '[>')
             labels[0] = labels[0].replace('[0.0 : ', '[<')
             return labels
 
@@ -1021,7 +1022,6 @@ def clean(dir, var):
 
 if __name__ == '__main__':
     import numpy as np
-    import matplotlib.pyplot as plt
     vv = np.random.random(500) * 6
     dv = np.random.random(500) * 360
     fig = plt.figure(figsize=(8, 8), dpi=80, facecolor='w', edgecolor='w')
@@ -1038,29 +1038,19 @@ if __name__ == '__main__':
     plt.setp(l.get_texts(), fontsize=8)
     plt.show()
 
-from windrose import WindroseAxes
-from matplotlib import pyplot as plt
-import matplotlib.cm as cm
-from numpy.random import random
-from numpy import arange
-
-#Create wind speed and direction variables
-ws = random(500) * 6
-wd = random(500) * 360
-
-
-def new_axes():
-    fig = plt.figure(figsize=(8, 8), dpi=80, facecolor='w', edgecolor='w')
-    rect = [0.1, 0.1, 0.8, 0.8]
-    ax = WindroseAxes(fig, rect, axisbg='w')
-    fig.add_axes(ax)
-    return ax
+    #def new_axes():
+        #fig = plt.figure(figsize=(8, 8), dpi=80, facecolor='w', edgecolor='w')
+        #rect = [0.1, 0.1, 0.8, 0.8]
+        #ax = WindroseAxes(fig, rect, axisbg='w')
+        #fig.add_axes(ax)
+        #return ax
 
     #def set_legend(ax):
         #l = ax.legend(axespad=-0.10)
         #plt.setp(l.get_texts(), fontsize=8)
 
-    ## Wind-rose like a stacked histogram with normed (displayed in percent) results
+    ## Wind-rose like a stacked histogram with normed values (displayed in
+    ##percent).
     #ax = new_axes()
     #ax.bar(wd, ws, normed=True, opening=0.8, edgecolor='white')
     #set_legend(ax)
