@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  12-Feb-2012
-# modified: Fri 17 Feb 2012 10:29:03 AM EST
+# modified: Fri 25 May 2012 01:12:55 PM EDT
 #
 # obs:
 #
@@ -22,9 +22,19 @@ import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 import matplotlib.cbook as cbook
 
+__all__ = ['TimeSeries',
+           'smoo1',
+           'spec_rot',
+           'lagcorr',
+           'psd_ci',
+           'complex_demodulation',
+           'plot_spectrum',
+           'medfilt1'
+          ]
+
 
 class TimeSeries(object):
-    """ Time-series object to store data and time information.
+    r""" Time-series object to store data and time information.
     Contains some handy methods... Still a work in progress.
     """
     def __init__(self, data, time):
@@ -56,7 +66,7 @@ class TimeSeries(object):
         self.time_in_seconds = np.asanyarray(time_in_seconds)
 
     def plot_spectrum(self):
-        """Plots a Single-Sided Amplitude Spectrum of y(t)."""
+        r"""Plots a Single-Sided Amplitude Spectrum of y(t)."""
         n = len(self.data)  # Length of the signal.
         k = np.arange(n)
         T = n / self.fs
@@ -75,8 +85,7 @@ class TimeSeries(object):
 
 
 def smoo1(datain, window_len=11, window='hanning'):
-    r"""
-    Smooth the data using a window with requested size.
+    r"""Smooth the data using a window with requested size.
 
     Parameters
     ----------
@@ -95,8 +104,6 @@ def smoo1(datain, window_len=11, window='hanning'):
 
     See Also
     --------
-    binave, binavg
-    np.hanning, np.hamming, np.bartlett, np.blackman, np.convolve,
     scipy.signal.lfilter
 
     Notes
@@ -109,32 +116,31 @@ def smoo1(datain, window_len=11, window='hanning'):
 
     Examples
     --------
-    >>> import matplotlib.pyplot as plt
     >>> import numpy as np
-    >>> import ff_tools as ff
+    >>> import matplotlib.pyplot as plt
+    >>> import oceans.ff_tools as ff
     >>> time = np.linspace( -4, 4, 100 )
     >>> series = np.sin(time)
     >>> noise_series = series + np.random.randn( len(time) ) * 0.1
     >>> data_out = ff.smoo1(series)
     >>> ws = 31
-    >>> plt.subplot(211)
-    >>> plt.plot( np.ones(ws) )
+    >>> ax = plt.subplot(211)
+    >>> _ = ax.plot(np.ones(ws))
     >>> windows = ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']
-    >>> plt.hold(True)
     >>> for w in windows[1:]:
-    >>>     eval('plt.plot(np.'+w+'(ws) )')
-    >>> plt.axis([0,30,0,1.1])
-    >>> plt.legend(windows)
-    >>> plt.title("The smoothing windows")
-    >>> plt.subplot(212)
-    >>> plt.plot(series)
-    >>> plt.plot(noise_series)
+    ...     _ = eval('plt.plot(np.' + w + '(ws) )')
+    >>> _ = ax.axis([0, 30, 0, 1.1])
+    >>> _ = ax.legend(windows)
+    >>> _ = plt.title("The smoothing windows")
+    >>> ax = plt.subplot(212)
+    >>> _ = ax.plot(series)
+    >>> _ = ax.plot(noise_series)
     >>> for w in windows:
-    >>>     plt.plot( ff.smoo1(noise_series, 10, w) )
+    ...     _ = plt.plot(ff.smoo1(noise_series, 10, w))
     >>> l = ['original signal', 'signal with noise']
     >>> l.extend(windows)
-    >>> plt.legend(l)
-    >>> plt.title("Smoothing a noisy signal")
+    >>> leg = ax.legend(l)
+    >>> _ = plt.title("Smoothing a noisy signal")
     >>> plt.show()
 
     TODO: window parameter can be the window itself (i.e. an array)
@@ -169,8 +175,7 @@ def smoo1(datain, window_len=11, window='hanning'):
 
 
 def spec_rot(u, v):
-    r"""
-    Compute the rotary spectra from u,v velocity components
+    r"""Compute the rotary spectra from u,v velocity components
 
     Parameters
     ----------
@@ -197,8 +202,7 @@ def spec_rot(u, v):
 
     Examples
     --------
-    TODO
-    puv, quv, cw, ccw = spec_rot(u, v)
+    TODO: puv, quv, cw, ccw = spec_rot(u, v)
 
     References
     ----------
@@ -246,7 +250,7 @@ def lagcorr(x, y, M=None):
 
     Examples
     --------
-    TODO
+    TODO: Emery and Thomson.
     """
 
     x, y = map(np.asanyarray, (x, y))
@@ -293,11 +297,71 @@ def psd_ci(x, NFFT=256, Fs=2, detrend=mlab.detrend_none,
     Returns the tuple (*Pxx*, *freqs*, *upper*, *lower*).
     upper and lower are limits of psd within confidence level.
 
-    Original: http://oceansciencehack.blogspot.com/2010/04/psd.html
-
     Examples
     --------
-    TODO
+    >>> import numpy as np
+    >>> from scipy import signal
+    >>> import matplotlib.pyplot as plt
+    >>> import oceans.ff_tools as ff
+    >>> fig = plt.figure()
+    >>> for npnl in range(4):
+    ...     tlng, nsmpl = 100, 1000
+    ...     if npnl==0:
+    ...         nfft = 100
+    ...         taper = signal.boxcar(tlng)
+    ...         avfnc = [1, 1, 1, 1, 1]
+    ...         cttl = "no padding, boxcar, 5-running"
+    ...     elif npnl==1:
+    ...         nfft = 100
+    ...         taper = signal.hamming(tlng)
+    ...         avfnc = [1, 1, 1, 1, 1]
+    ...         cttl = "no padding, hamming, 5-running"
+    ...     elif npnl==2:
+    ...         nfft = 200
+    ...         taper = signal.boxcar(tlng)
+    ...         avfnc = [1, 1, 1, 1, 1]
+    ...         cttl = "double padding, boxcar, 5-running"
+    ...     elif npnl==3:
+    ...         nfft = 200
+    ...         taper = signal.hamming(tlng)
+    ...         avfnc = np.convolve([1, 2, 1], [1, 2, 1])
+    ...         cttl = "double padding, hamming, double 1-2-1"
+    ...     tsrs = np.random.randn(tlng, nsmpl)
+    ...     ds_psd = np.zeros([nfft / 2 + 1, nsmpl])
+    ...     upper_psd = np.zeros([nfft / 2 + 1, nsmpl])
+    ...     lower_psd = np.zeros([nfft / 2 + 1, nsmpl])
+    ...     for n in range(nsmpl):
+    ...         a, b, ci = ff.psd_ci(tsrs[:,n], NFFT=tlng, pad_to=nfft,
+    ...                              Fs=1, window=taper, smooth=avfnc,
+    ...                              Confidencelevel=0.9)
+    ...         ds_psd[:,n] = a[:]
+    ...         upper_psd[:, n] = ci[:, 0]
+    ...         lower_psd[:, n] = ci[:, 1]
+    ...         frq = b[:]
+    ...     # 90% confidence level by Monte-Carlo.
+    ...     srt_psd = np.sort(ds_psd, axis=1)
+    ...     c = np.zeros([frq.size, 2])
+    ...     c[:, 0] = np.log10(srt_psd[:, nsmpl * 0.05])
+    ...     c[:, 1] = np.log10(srt_psd[:, nsmpl * 0.95])
+    ...     # Estimate from extended degree of freedom.
+    ...     ce = np.zeros([frq.size, 2])
+    ...     ce[:, 0] = np.log10(np.sort(upper_psd, axis=1)[:, nsmpl * 0.5])
+    ...     ce[:, 1] = np.log10(np.sort(lower_psd, axis=1)[:, nsmpl * 0.5])
+    ...     ax = plt.subplot(2, 2, npnl + 1)
+    ...     _ = ax.plot(frq, c, 'b', frq, ce, 'r')
+    ...     _ = plt.title(cttl)
+    ...     _ = plt.xlabel('frq')
+    ...     _ = plt.ylabel('psd')
+    ...     if (npnl==0):
+    ...         _ = plt.legend(('Monte-carlo', '', 'Theory'), 'lower center',
+    ...                         labelspacing=0.05)
+    >>> _ = plt.subplots_adjust(wspace=0.6, hspace=0.4)
+    >>> plt.show()
+
+    Notes
+    -----
+    Based on http://oceansciencehack.blogspot.com/2010/04/psd.html
+
     """
     Pxxtemp, freqs = mlab.psd(x, NFFT, Fs, detrend, window, noverlap,
                               pad_to, sides, scale_by_freq)
@@ -309,11 +373,11 @@ def psd_ci(x, NFFT=256, Fs=2, detrend=mlab.detrend_none,
     if smooth is not None:
         smooth = np.asarray(smooth)
         avfnc = smooth / np.float(np.sum(smooth))
-        Pxx = np.convolve(Pxxtemp, avfnc, mode="same")
-        #Pxx = np.convolve(Pxxtemp[:, 0], avfnc, mode="same")
+        #Pxx = np.convolve(Pxxtemp, avfnc, mode="same")
+        Pxx = np.convolve(Pxxtemp[:, 0], avfnc, mode="same")
     else:
-        Pxx = Pxxtemp
-        #Pxx = Pxxtemp[:, 0]
+        #Pxx = Pxxtemp
+        Pxx = Pxxtemp[:, 0]
         avfnc = np.asarray([1.])
 
     # Estimate upper and lower estimate with equivalent degree of freedom.
@@ -342,8 +406,8 @@ def psd_ci(x, NFFT=256, Fs=2, detrend=mlab.detrend_none,
 
 
 def complex_demodulation(series, f, fc, axis=-1):
-    """Perform a Complex Demodulation
-    It acts as a bandpass filter for "f".
+    r"""Perform a Complex Demodulation
+    It acts as a bandpass filter for `f`.
 
     series => Time-Series object with data and datetime
     f => inertial frequency in rad/sec
@@ -383,7 +447,7 @@ def complex_demodulation(series, f, fc, axis=-1):
 
 
 def plot_spectrum(data, fs):
-    """Plots a Single-Sided Amplitude Spectrum of y(t)."""
+    r"""Plots a Single-Sided Amplitude Spectrum of y(t)."""
     n = len(data)  # Length of the signal.
     k = np.arange(n)
     T = n / fs
@@ -399,3 +463,107 @@ def plot_spectrum(data, fs):
     plt.xlabel('Freq (Hz)')
     plt.ylabel('|Y(freq)|')
     plt.show()
+
+
+def medfilt1(x, L=3):
+    r"""Median filter for 1d arrays.
+
+    Performs a discrete one-dimensional median filter with window length `L` to
+    input vector `x`.  Produces a vector the same size as `x`.  Boundaries are
+    handled by shrinking `L` at edges; no data outside of `x` is used in
+    producing the median filtered output.
+
+    Parameters
+    ----------
+    x : array_like
+        Input 1D data
+    L : integer
+        Window length
+
+    Returns
+    -------
+    xout : array_like
+           Numpy 1d array of median filtered result; same size as x
+
+    Examples
+    --------
+    >>> import matplotlib.pyplot as plt
+    >>> import oceans.ff_tools as ff
+    >>> # 100 pseudo-random integers ranging from 1 to 100, plus three large
+    >>> # outliers for illustration.
+    >>> x = np.r_[np.ceil(np.random.rand(25)*100), [1000],
+    ...           np.ceil(np.random.rand(25)*100), [2000],
+    ...           np.ceil(np.random.rand(25)*100), [3000],
+    ...           np.ceil(np.random.rand(25)*100)]
+    >>> L = 2
+    >>> xout = ff.medfilt1(x=x, L=L)
+    >>> ax = plt.subplot(211)
+    >>> l1, l2 = ax.plot(x), ax.plot(xout)
+    >>> ax.grid(True)
+    >>> y1min, y1max = np.min(xout) * 0.5, np.max(xout) * 2.0
+    >>> _ = ax.legend(['x (pseudo-random)','xout'])
+    >>> _ = ax.set_title('''Median filter with window length %s.
+    ...                 Removes outliers, tracks remaining signal)''' % L)
+    >>> L = 103
+    >>> xout = ff.medfilt1(x=x, L=L)
+    >>> ax = plt.subplot(212)
+    >>> l1, l2, = ax.plot(x), ax.plot(xout)
+    >>> ax.grid(True)
+    >>> y2min, y2max = np.min(xout) * 0.5, np.max(xout) * 2.0
+    >>> _ = ax.legend(["Same x (pseudo-random)", "xout"])
+    >>> _ = ax.set_title('''Median filter with window length %s.
+    ...              Removes outliers and noise''' % L)
+    >>> ax = plt.subplot(211)
+    >>> _ = ax.set_ylim([min(y1min, y2min), max(y1max, y2max)])
+    >>> ax = plt.subplot(212)
+    >>> _ = ax.set_ylim([min(y1min, y2min), max(y1max, y2max)])
+    >>> plt.show()
+
+    Notes
+    -----
+    Based on: http://staff.washington.edu/bdjwww/medfilt.py
+    """
+
+    xin = np.atleast_1d(np.asanyarray(x))
+    N = len(x)
+    L = int(L)  # Ensure L is odd integer so median requires no interpolation.
+    if L % 2 == 0:
+        L += 1
+
+    if N < 2:
+        raise ValueError("Input sequence must be >= 2")
+        return None
+
+    if L < 2:
+        raise ValueError("Input filter window length must be >=2")
+        return None
+
+    if L > N:
+        raise ValueError('''Input filter window length must be shorter than
+                         series: L = %d, len(x) = %d''' % (L, N))
+        return None
+
+    if xin.ndim > 1:
+        raise ValueError("input sequence has to be 1d: ndim = %s" % xin.ndim)
+        return None
+
+    xout = np.zeros_like(xin) + np.NaN
+
+    Lwing = (L - 1) // 2
+
+    # NOTE: Use np.ndenumerate in case I expand to +1D case
+    for i, xi in enumerate(xin):
+        if i < Lwing:  # Left boundary.
+            xout[i] = np.median(xin[0:i + Lwing + 1])   # (0 to i + Lwing)
+        elif i >= N - Lwing:  # Right boundary.
+            xout[i] = np.median(xin[i - Lwing:N])  # (i-Lwing to N-1)
+        else:  # Middle (N-2*Lwing input vector and filter window overlap).
+            xout[i] = np.median(xin[i - Lwing:i + Lwing + 1])
+            # (i-Lwing to i+Lwing)
+
+    return xout
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
