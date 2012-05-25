@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  12-Feb-2012
-# modified: Fri 25 May 2012 01:12:55 PM EDT
+# modified: Fri 25 May 2012 04:01:55 PM EDT
 #
 # obs:
 #
@@ -29,7 +29,11 @@ __all__ = ['TimeSeries',
            'psd_ci',
            'complex_demodulation',
            'plot_spectrum',
-           'medfilt1'
+           'medfilt1',
+           'fft_lowpass',
+           'despike',
+           'binave',
+           'binavg'
           ]
 
 
@@ -563,6 +567,230 @@ def medfilt1(x, L=3):
 
     return xout
 
+
+def fft_lowpass(signal, low, high):
+    r"""Performs a low pass filer on the series.
+    low and high specifies the boundary of the filter.
+
+    obs: From tappy's filters.py.
+    """
+
+    if len(signal) % 2:
+        result = np.fft.rfft(signal, len(signal))
+    else:
+        result = np.fft.rfft(signal)
+
+    freq = np.fft.fftfreq(len(signal))[:len(signal) / 2 + 1]
+    factor = np.ones_like(freq)
+    factor[freq > low] = 0.0
+    sl = np.logical_and(high < freq, freq < low)
+    a = factor[sl]
+
+    # Create float array of required length and reverse.
+    a = np.arange(len(a) + 2).astype(float)[::-1]
+
+    # Ramp from 1 to 0 exclusive.
+    a = (a / a[0])[1:-1]
+
+    # Insert ramp into factor.
+    factor[sl] = a
+
+    result = result * factor
+
+    return np.fft.irfft(result, len(signal))
+
+
+def despike(datain, slope):
+    r"""De-spikes a time-series by calculating point-to-point slopes and
+    determining whether a maximum allowable slope is exceeded.
+
+    Parameters
+    ----------
+    datain : array_like
+             any time series
+    slope : float
+            diff slope threshold [in data units]
+
+    Returns
+    -------
+    cdata : array_like
+            clean time series
+
+    See Also
+    --------
+    TODO
+
+    Notes
+    -----
+    Dangerous de-spiking technique, use with caution!
+    Recommend only for highly noisy (lousy?) series.
+
+    Examples
+    --------
+    >>> import matplotlib.pyplot as plt
+    >>> import numpy as np
+    >>> import ff_tools as ff
+    >>> time = np.linspace(-4, 4, 100)
+    >>> series = np.sin(time)
+    >>> spiked = series + np.random.randn( len(time) ) * 0.3
+    >>> cdata = ff.despike(spiked, 0.15 )
+    >>> plt.plot(time, series, 'k')
+    >>> plt.plot(time, spiked, 'r.')
+    >>> plt.plot(time, cdata, 'bo')
+    >>> plt.show()
+
+    References
+    ----------
+    TODO
+
+    author:   Filipe P. A. Fernandes
+    date:     23-Nov-2010
+    modified: 23-Nov-2010
+    """
+
+    datain, slope = map(np.asanyarray, (datain, slope))
+
+    cdata = np.zeros_like(datain) + np.NaN
+
+    offset = datain.min()
+    if offset < 0:
+        datain = datain - offset
+    else:
+        offset = 0
+
+    cdata[0] = datain[0]  # FIXME: Assume that the first point is not a spike.
+    kk, npts = 0, len(datain)
+
+    for k in range(1, npts, 1):
+        try:
+            nslope = datain[k] - cdata[kk]
+            # if the slope is okay, let the data through
+            if abs(nslope) <= abs(slope):
+                kk = kk + 1
+                cdata[kk] = datain[k]
+            # if slope is not okay, look for the next data point
+            else:
+                n = 0
+                # TODO: add a limit option for npts.
+                while (abs(nslope) > abs(slope)) and (k + n < npts):
+                    n = n + 1  # Keep index for the offset from the test point.
+                    num = datain[k + n] - cdata[kk]
+                    dem = k + n - kk
+                    nslope = num / dem
+                    # If we have a "good" slope, calculate new point using
+                    # linear interpolation:
+                    # point = {[(ngp - lgp)/(deltax)]*(actual distance)} + lgp
+                    # ngp = next good point
+                    # lgp = last good point
+                    # actual distance = 1, the distance between the last lgp
+                    # and the point we want to interpolate.
+                    # Otherwise, let the value through
+                    # (i.e. we've run out of good data)
+                    if (k + n) < npts:
+                        pts = nslope + cdata[kk]
+                        kk = kk + 1
+                        cdata[kk] = pts
+                    else:
+                        kk = kk + 1
+                        cdata[kk] = datain[k]
+        except IndexError:
+            print("Index out of bounds at %s" % k)
+            continue
+    return cdata + offset
+
+
+def binave(datain, r):
+    r"""Averages vector data in bins of length r. The last bin may be the
+    average of less than r elements. Useful for computing daily average time
+    series (with r=24 for hourly data).
+
+    Parameters
+    ----------
+    data : array_like
+    r : int
+        bin length
+
+    Returns
+    -------
+    bindata : array_like
+              bin-averaged vector
+
+    See Also
+    --------
+    TODO
+
+    Notes
+    -----
+    Original from MATLAB AIRSEA TOOLBOX.
+
+    Examples
+    --------
+    >>> import ff_tools as ff
+    >>> data = [10., 11., 13., 2., 34., 21.5, 6.46, 6.27, 7.0867, 15., 123.,
+        ...     3.2, 0.52, 18.2, 10., 11., 13., 2., 34., 21.5, 6.46, 6.27,
+        ...     7.0867, 15., 123., 3.2, 0.52, 18.2, 10., 11., 13., 2., 34.,
+        ...     21.5, 6.46, 6.27, 7.0867, 15., 123., 3.2, 0.52, 18.2, 10.,
+        ...     11., 13., 2., 34., 21.5, 6.46, 6.27, 7.0867, 15., 123., 3.2,
+        ...     0.52, 18.2]
+    >>> ff.binave(data, 24)
+    array([ 16.564725 ,  21.1523625,  22.4670875])
+
+    References
+    ----------
+    TODO
+
+    03/08/1997: version 1.0
+    09/19/1998: version 1.1 (vectorized by RP)
+    08/05/1999: version 2.0
+    02/04/2010: Translated to python by FF
+    """
+
+    datain, r = np.asarray(datain), np.asarray(r, dtype=np.int)
+
+    if datain.ndim != 1:
+        raise ValueError("Must be a 1D array")
+
+    if r <= 0:
+        raise ValueError("Bin size R must be a positive integer.")
+
+    # compute bin averaged series
+    l = datain.size / r
+    l = np.fix(l)
+    z = datain[0:(l * r)].reshape(r, l, order='F')  # .copy()
+    bindata = np.mean(z, axis=0)
+
+    return bindata
+
+
+def binavg(x, y, db):
+    r""" TODO: x as datetime object and db as timedelta.
+    Bins y(x) into db spacing.  The spacing is given in `x` units.
+    y = np.random.random(20)
+    x = np.arange(len(y))
+    xb, yb = binavg(x, y, 2)
+    plt.figure()
+    plt.plot(x, y, 'k.-')
+    plt.plot(xb, yb, 'r.-')
+    """
+    # Cut the corners.
+    x_min, x_max = np.ceil(x.min()), np.floor(x.max())
+    x = x.clip(x_min, x_max)
+
+    # This is used to get the `inds`.
+    xbin = np.arange(x_min, x_max, db)
+    inds = np.digitize(x, xbin)
+
+    # But this is the center of the bins.
+    xbin = xbin - (db / 2.)
+
+    # FIXME there is an IndexError if I want to show this.
+    #for n in range(x.size):
+        #print xbin[inds[n]-1], "<=", x[n], "<", xbin[inds[n]]
+
+    ybin = np.array([y[inds == i].mean() for i in range(0, len(xbin))])
+    #xbin = np.array([x[inds == i].mean() for i in range(0, len(xbin))])
+
+    return xbin, ybin
 
 if __name__ == '__main__':
     import doctest
