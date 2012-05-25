@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Tue 01 Nov 2011 01:39:41 PM EDT
+# modified: Fri 25 May 2012 04:00:23 PM EDT
 #
 # obs: some Functions were based on:
 # http://www.trondkristiansen.com/?page_id=1071
@@ -18,12 +18,19 @@ from __future__ import division
 import numpy as np
 from netCDF4 import Dataset
 
+__all__ = [
+           'etopo_subset',
+           'laplace_X',
+           'laplace_Y',
+           'laplace_filter'
+           ]
+
 
 def etopo_subset(min_lat, max_lat, min_lon, max_lon, tfile=None, smoo=False):
     r"""Get a etopo subset.
     Should work on any netCDF with x, y, data
-    http://www.trondkristiansen.com/wp-content/uploads/downloads/2011/07/contourICEMaps.py
-    """
+    http://www.trondkristiansen.com/wp-content/uploads/downloads/
+    2011/07/contourICEMaps.py"""
 
     if not tfile:
         # TODO: Check for a online dap version of this file.
@@ -90,8 +97,8 @@ def etopo_subset(min_lat, max_lat, min_lon, max_lon, tfile=None, smoo=False):
 
 def laplace_X(F, M):
     r"""1D Laplace Filter in X-direction (axis=1)
-    http://www.trondkristiansen.com/wp-content/uploads/downloads/2010/09/laplaceFilter.py
-    """
+    http://www.trondkristiansen.com/wp-content/uploads/downloads/
+    2010/09/laplaceFilter.py"""
 
     jmax, imax = F.shape
 
@@ -109,8 +116,8 @@ def laplace_X(F, M):
 
 def laplace_Y(F, M):
     r"""1D Laplace Filter in Y-direction (axis=1)
-    http://www.trondkristiansen.com/wp-content/uploads/downloads/2010/09/laplaceFilter.py
-    """
+    http://www.trondkristiansen.com/wp-content/uploads/downloads/
+    2010/09/laplaceFilter.py"""
 
     jmax, imax = F.shape
 
@@ -129,8 +136,8 @@ def laplace_Y(F, M):
 def laplace_filter(F, M=None):
     r"""Laplace filter a 2D field with mask.  The mask may cause laplace_X and
     laplace_Y to not commute. Take average of both directions.
-    http://www.trondkristiansen.com/wp-content/uploads/downloads/2010/09/laplaceFilter.py
-    """
+    http://www.trondkristiansen.com/wp-content/uploads/downloads/
+    2010/09/laplaceFilter.py"""
 
     if M == None:
         M = np.ones_like(F)
