@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Mon 21 May 2012 03:52:20 PM EDT
+# modified: Fri 25 May 2012 04:00:15 PM EDT
 #
 # obs:
 #
@@ -15,6 +15,17 @@
 from __future__ import division
 
 import numpy as np
+import numpy.ma as ma
+
+import gsw
+
+__all__ = [
+           'spdir2uv',
+           'uv2spdir',
+           'interp_nan',
+           'mld',
+           'del_eta_del_x'
+           ]
 
 
 def spdir2uv(spd, ang, deg=False):
@@ -109,211 +120,6 @@ def uv2spdir(u, v, mag=0, rot=0):
     return ang, spd
 
 
-def despike(datain, slope):
-    r"""De-spikes a time-series by calculating point-to-point slopes and
-    determining whether a maximum allowable slope is exceeded.
-
-    Parameters
-    ----------
-    datain : array_like
-             any time series
-    slope : float
-            diff slope threshold [in data units]
-
-    Returns
-    -------
-    cdata : array_like
-            clean time series
-
-    See Also
-    --------
-    TODO
-
-    Notes
-    -----
-    Dangerous de-spiking technique, use with caution!
-    Recommend only for highly noisy (lousy?) series.
-
-    Examples
-    --------
-    >>> import matplotlib.pyplot as plt
-    >>> import numpy as np
-    >>> import ff_tools as ff
-    >>> time = np.linspace(-4, 4, 100)
-    >>> series = np.sin(time)
-    >>> spiked = series + np.random.randn( len(time) ) * 0.3
-    >>> cdata = ff.despike(spiked, 0.15 )
-    >>> plt.plot(time, series, 'k')
-    >>> plt.plot(time, spiked, 'r.')
-    >>> plt.plot(time, cdata, 'bo')
-    >>> plt.show()
-
-    References
-    ----------
-    TODO
-
-    author:   Filipe P. A. Fernandes
-    date:     23-Nov-2010
-    modified: 23-Nov-2010
-    """
-
-    datain, slope = map(np.asanyarray, (datain, slope))
-
-    cdata = np.zeros_like(datain) + np.NaN
-
-    offset = datain.min()
-    if offset < 0:
-        datain = datain - offset
-    else:
-        offset = 0
-
-    cdata[0] = datain[0]  # FIXME: Assume that the first point is not a spike.
-    kk, npts = 0, len(datain)
-
-    for k in range(1, npts, 1):
-        try:
-            nslope = datain[k] - cdata[kk]
-            # if the slope is okay, let the data through
-            if abs(nslope) <= abs(slope):
-                kk = kk + 1
-                cdata[kk] = datain[k]
-            # if slope is not okay, look for the next data point
-            else:
-                n = 0
-                # TODO: add a limit option for npts.
-                while (abs(nslope) > abs(slope)) and (k + n < npts):
-                    n = n + 1  # Keep index for the offset from the test point.
-                    num = datain[k + n] - cdata[kk]
-                    dem = k + n - kk
-                    nslope = num / dem
-                    # If we have a "good" slope, calculate new point using
-                    # linear interpolation:
-                    # point = {[(ngp - lgp)/(deltax)]*(actual distance)} + lgp
-                    # ngp = next good point
-                    # lgp = last good point
-                    # actual distance = 1, the distance between the last lgp
-                    # and the point we want to interpolate.
-                    # Otherwise, let the value through
-                    # (i.e. we've run out of good data)
-                    if (k + n) < npts:
-                        pts = nslope + cdata[kk]
-                        kk = kk + 1
-                        cdata[kk] = pts
-                    else:
-                        kk = kk + 1
-                        cdata[kk] = datain[k]
-        except IndexError:
-            print("Index out of bounds at %s" % k)
-            continue
-    return cdata + offset
-
-
-def binave(datain, r):
-    r"""Averages vector data in bins of length r. The last bin may be the
-    average of less than r elements. Useful for computing daily average time
-    series (with r=24 for hourly data).
-
-    Parameters
-    ----------
-    data : array_like
-    r : int
-        bin length
-
-    Returns
-    -------
-    bindata : array_like
-              bin-averaged vector
-
-    See Also
-    --------
-    TODO
-
-    Notes
-    -----
-    Original from MATLAB AIRSEA TOOLBOX.
-
-    Examples
-    --------
-    >>> import ff_tools as ff
-    >>> data = [10., 11., 13., 2., 34., 21.5, 6.46, 6.27, 7.0867, 15., 123.,
-        ...     3.2, 0.52, 18.2, 10., 11., 13., 2., 34., 21.5, 6.46, 6.27,
-        ...     7.0867, 15., 123., 3.2, 0.52, 18.2, 10., 11., 13., 2., 34.,
-        ...     21.5, 6.46, 6.27, 7.0867, 15., 123., 3.2, 0.52, 18.2, 10.,
-        ...     11., 13., 2., 34., 21.5, 6.46, 6.27, 7.0867, 15., 123., 3.2,
-        ...     0.52, 18.2]
-    >>> ff.binave(data, 24)
-    array([ 16.564725 ,  21.1523625,  22.4670875])
-
-    References
-    ----------
-    TODO
-
-    03/08/1997: version 1.0
-    09/19/1998: version 1.1 (vectorized by RP)
-    08/05/1999: version 2.0
-    02/04/2010: Translated to python by FF
-    """
-
-    datain, r = np.asarray(datain), np.asarray(r, dtype=np.int)
-
-    if datain.ndim != 1:
-        raise ValueError("Must be a 1D array")
-
-    if r <= 0:
-        raise ValueError("Bin size R must be a positive integer.")
-
-    # compute bin averaged series
-    l = datain.size / r
-    l = np.fix(l)
-    z = datain[0:(l * r)].reshape(r, l, order='F')  # .copy()
-    bindata = np.mean(z, axis=0)
-
-    return bindata
-
-
-def binavg(x, y, db):
-    r""" TODO: x as datetime object and db as timedelta.
-    Bins y(x) into db spacing.  The spacing is given in `x` units.
-    y = np.random.random(20)
-    x = np.arange(len(y))
-    xb, yb = binavg(x, y, 2)
-    plt.figure()
-    plt.plot(x, y, 'k.-')
-    plt.plot(xb, yb, 'r.-')
-    """
-    # Cut the corners.
-    x_min, x_max = np.ceil(x.min()), np.floor(x.max())
-    x = x.clip(x_min, x_max)
-
-    # This is used to get the `inds`.
-    xbin = np.arange(x_min, x_max, db)
-    inds = np.digitize(x, xbin)
-
-    # But this is the center of the bins.
-    xbin = xbin - (db / 2.)
-
-    # FIXME there is an IndexError if I want to show this.
-    #for n in range(x.size):
-        #print xbin[inds[n]-1], "<=", x[n], "<", xbin[inds[n]]
-
-    ybin = np.array([y[inds == i].mean() for i in range(0, len(xbin))])
-    #xbin = np.array([x[inds == i].mean() for i in range(0, len(xbin))])
-
-    return xbin, ybin
-
-
-def psu2ppt(psu):
-    r"""Converts salinity from PSU units to PPT
-    http://stommel.tamu.edu/~baum/paleo/ocean/node31.html
-    #PracticalSalinityScale
-    """
-
-    a = [0.008, -0.1692, 25.3851, 14.0941, -7.0261, 2.7081]
-    ppt = (a[1] + a[2] * psu ** 0.5 + a[3] * psu + a[4] * psu ** 1.5 + a[5] *
-                                                 psu ** 2 + a[6] * psu ** 2.5)
-    return ppt
-
-
 def interp_nan(data):
     r"""Linear interpolate of NaNs in a record.
 
@@ -346,88 +152,128 @@ def interp_nan(data):
     return nans, data
 
 
-def mld(S, T, P):
-    r"""Compute a mixed layer depth (MLD) from vertical profiles of salinity
-    and temperature.
+def del_eta_del_x(U, f, g, balance='geostrophic', R=None):
+    r"""Calculate :mat: `\frac{\partial \eta} {\partial x}` for different
+    force balances
 
-    There are many criteria out there to compute a MLD, the one used here
-    defined MLD as the first depth for which:
-    ST(T(z), S(z)) > ST(T(z=0) - 0.8, S(z=0))
+    Parameters:
+    ----------
+    U : array_like
+        velocity magnitude [m/s]
+    f : float
+        Coriolis parameter
+    d : float
+        Acceleration of gravity
+    balance : str, optional
+              geostrophic [default], gradient or max_gradient
+    R : float, optional
+        Radius
+    """
 
-    FIXME: Reference for this definition.
+    if balance == 'geostrophic':
+        detadx = f * U / g
+
+    elif balance == 'gradient':
+        detadx = (U ** 2 / R + f * U) / g
+
+    elif balance == 'max_gradient':
+        detadx = (R * f ** 2) / (4 * g)
+
+    return detadx
+
+
+def mld(SA, CT, p, criterion='pdvar'):
+    r"""Compute the mixed layer depth.
 
     Parameters
     ----------
-    S : array
-        Salinity [g/Kg]
-    CT : array
-        Conservative Temperature [degC]
-    Z : array
-        Depth [m]
+    SA : array_like
+         Absolute Salinity  [g/kg]
+    CT : array_like
+         Conservative Temperature [:math:`^\circ` C (ITS-90)]
+    p : array_like
+        sea pressure [dbar]
+    criterion : str, optional
+               MLD Criteria
+
+    Mixed layer depth criteria are:
+
+    'temperature' : Computed based on constant temperature difference
+    criterion, CT(0) - T[mld] = 0.5 degree C.
+
+    'density' : computed based on the constant potential density difference
+    criterion, pd[0] - pd[mld] = 0.125 in sigma units.
+
+    `pdvar` : computed based on variable potential density criterion
+    pd[0] - pd[mld] = var(T[0], S[0]), where var is a variable potential
+    density difference which corresponds to constant temperature difference of
+    0.5 degree C.
 
     Returns
     -------
-    mld : array
-        Mixed layer depth [m]
+    MLD : array_like
+          Mixed layer depth
+    idx_mld : bool array
+              Boolean array in the shape of p with MLD index.
 
+
+    Examples
+    --------
+    >>> import matplotlib.pyplot as plt
+    >>> import oceans.ff_tools as ff
+    >>> import gsw
+    >>> from gsw.utilities import Dict2Struc
+    >>> # Read data file with check value profiles
+    >>> datadir = os.path.join(os.path.dirname(gsw.utilities.__file__), 'data')
+    >>> cv = Dict2Struc(np.load(os.path.join(datadir, 'gsw_cv_v3_0.npz')))
+    >>> SA, CT, p = (cv.SA_chck_cast[:, 0], cv.CT_chck_cast[:, 0],
+    ...              cv.p_chck_cast[:, 0])
+    >>> fig, (ax1, ax2, ax3) = plt.subplots(nrows=1, ncols=3, sharey=True)
+    >>> ax1.plot(CT, -p, 'b.-')
+    >>> MDL, idx = ff.mld(SA, CT, p, criterion='temperature')
+    >>> ax1.plot(CT[idx], -p[idx], 'ro')
+    >>> ax2.plot(CT, -p, 'b.-')
+    >>> MDL, idx = ff.mld(SA, CT, p, criterion='density')
+    >>> ax2.plot(CT[idx], -p[idx], 'ro')
+    >>> ax3.plot(CT, -p, 'b.-')
+    >>> MDL, idx = ff.mld(SA, CT, p, criterion='pdvar')
+    >>> ax3.plot(CT[idx], -p[idx], 'ro')
+    >>> ax3.set_ylim(-500, 0)
+    >>> plt.show()
+
+    References
+    ----------
+    .. [1] Monterey, G., and S. Levitus, 1997: Seasonal variability of mixed
+    layer depth for the World Ocean. NOAA Atlas, NESDIS 14, 100 pp.
+    Washington, D.C.
     """
 
-    # TODO: Use gsw
-    #P = 0.09998 * 9.81 * np.abs(Z)
-    #depth = gsw.z_from_p(?)
-    #T = sw_ptmp(S, T, P, 0)
+    SA, CT, p = map(np.asanyarray, (SA, CT, p))
+    SA, CT, p = np.broadcast_arrays(SA, CT, p)
+    SA, CT, p = map(ma.masked_invalid, (SA, CT, p))
 
-    zmin, iz0 = np.abs(Z).min(), np.abs(Z).argmin()
+    p_min, idx = p.min(), p.argmin()
 
-    if np.isnan(T[iz0]):
-        iz0 = iz0 + 1
+    sigma = gsw.rho(SA, CT, p_min) - 1000.
 
-    SST = T[iz0]
-    SSS = S[iz0]
+    # Temperature and Salinity at the surface,
+    T0, S0, Sig0 = CT[idx], SA[idx], sigma[idx]
 
-    SST08 = SST - 0.8
-    #SSS   = SSS + 35
-    #gsw.dens
-    Surfadens08 = densjmd95(SSS, SST08, P[iz0]) - 1000
-    ST = densjmd95(S, T, P) - 1000
+    # NOTE: The temperature difference criterion for MLD
+    Tdiff = T0 - 0.5  # 0.8 on the matlab original
 
-    mm = ST > Surfadens08
-    if mm.any():
-        mld = Z[mm]
+    if criterion == 'temperature':
+        idx_mld = (CT > Tdiff)
+    elif criterion == 'pdvar':
+        pdvar_diff = gsw.rho(S0, Tdiff, p_min) - 1000.
+        idx_mld = (sigma <= pdvar_diff)
+    elif criterion == 'density':
+        sig_diff = Sig0 + 0.125
+        idx_mld = (sigma <= sig_diff)
     else:
-        # TODO: raise
-        mld = np.NaN
+        raise NameError("Unknown criteria %s" % criterion)
 
-    return mld
+    MLD = ma.masked_all_like(p)
+    MLD[idx_mld] = p[idx_mld]
 
-
-def fft_lowpass(signal, low, high):
-    r"""Performs a low pass filer on the series.
-    low and high specifies the boundary of the filter.
-
-    obs: From tappy's filters.py.
-    """
-
-    if len(signal) % 2:
-        result = np.fft.rfft(signal, len(signal))
-    else:
-        result = np.fft.rfft(signal)
-
-    freq = np.fft.fftfreq(len(signal))[:len(signal) / 2 + 1]
-    factor = np.ones_like(freq)
-    factor[freq > low] = 0.0
-    sl = np.logical_and(high < freq, freq < low)
-    a = factor[sl]
-
-    # Create float array of required length and reverse.
-    a = np.arange(len(a) + 2).astype(float)[::-1]
-
-    # Ramp from 1 to 0 exclusive.
-    a = (a / a[0])[1:-1]
-
-    # Insert ramp into factor.
-    factor[sl] = a
-
-    result = result * factor
-
-    return np.fft.irfft(result, len(signal))
+    return MLD.max(axis=0), idx_mld
