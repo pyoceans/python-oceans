@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Fri 25 May 2012 04:00:15 PM EDT
+# modified: Mon 28 May 2012 10:55:57 PM EDT
 #
 # obs:
 #
@@ -24,7 +24,8 @@ __all__ = [
            'uv2spdir',
            'interp_nan',
            'mld',
-           'del_eta_del_x'
+           'del_eta_del_x',
+           'pcaben'
            ]
 
 
@@ -52,14 +53,15 @@ def spdir2uv(spd, ang, deg=False):
         ang = np.deg2rad(ang)
 
     # Calculate U (E-W) and V (N-S) components
-    u = spd * np.cos(ang)
-    v = spd * np.sin(ang)
+    u = spd * np.sin(ang)
+    v = spd * np.cos(ang)
     return u, v
 
 
 def uv2spdir(u, v, mag=0, rot=0):
-    r"""Computes speed and direction from u, v components. Allows for rotation
-    and magnetic declination correction.
+    r"""Computes speed and direction from u, v components.
+    Converts rectangular to polar coordinate, geographic convention
+    Allows for rotation and magnetic declination correction.
 
     Parameters
     ----------
@@ -89,9 +91,10 @@ def uv2spdir(u, v, mag=0, rot=0):
 
     Examples
     --------
+    >>> import numpy as np
     >>> import matplotlib.pyplot as plt
-    >>> import ff_tools as ff
-    >>> from windrose import WindroseAxes
+    >>> import oceans.ff_tools as ff
+    >>> from oceans.ff_tools.windrose import WindroseAxes
     >>> def new_axes():
     >>>     fig = plt.figure(figsize=(8, 8), facecolor='w', edgecolor='w')
     >>>     rect = [0.1, 0.1, 0.8, 0.8]
@@ -101,7 +104,7 @@ def uv2spdir(u, v, mag=0, rot=0):
     >>> def set_legend(ax):
     >>>     l = ax.legend(axespad=-0.10)
     >>>     plt.setp(l.get_texts(), fontsize=8)
-    >>> u, v = [0,1,-2], [3,1,0]
+    >>> u, v = [0., 1., -2., -1., 1.], [3., 1., 0., -1., -1.]
     >>> wd, ws = ff.uv2spdir(u,v)
     >>> ax = new_axes()
     >>> ax.bar(wd, ws, normed=True, opening=0.8, edgecolor='white')
@@ -116,6 +119,13 @@ def uv2spdir(u, v, mag=0, rot=0):
     ang = np.angle(vec, deg=True)
     ang = ang - mag + rot
     ang = np.mod(90 - ang, 360)  # Zero is North.
+
+    #spd = np.zeros_like(u) + np.NaN
+    #ang = np.zeros_like(u) + np.NaN
+    #for k in range(0:n):
+        #for kk in range(0:m):
+            #spd[kk, k] = np.sqrt(u[kk, i]**2 + v[kk, k]**2)
+            #ang[kk, k] = np.atan2(v[kk, i], u[kk, k]) * (180. / np.pi)
 
     return ang, spd
 
@@ -277,3 +287,78 @@ def mld(SA, CT, p, criterion='pdvar'):
     MLD[idx_mld] = p[idx_mld]
 
     return MLD.max(axis=0), idx_mld
+
+
+def pcaben(u, v):
+    r"""Principal components of 2-d (e.g. current meter) data
+    calculates ellipse parameters for currents.
+
+    Parameters
+    ----------
+    u : array_like
+        zonal wind velocity [m s :sup:`-1`]
+    v : array_like
+        meridional wind velocity [m s :sup:`-1`]
+
+    Returns
+    -------
+    major axis (majrax)
+    minor axis (minrax)
+    major azimuth (majaz)
+    minor azimuth (minaz)
+    elipticity (elptcty)
+
+    Examples
+    --------
+    >>> import matplotlib.pyplot as plt
+    >>> import oceans.ff_tools as ff
+    >>> u, v = [0., 1., -2., -1., 1.], [3., 1., 0., -1., -1.]
+    >>> fig, ax = plt.subplots()
+    >>> _ = ax.plot(x1, y1,'-r', x2, y2, 'r-')
+    >>> ax.set_aspect('equal')
+    >>> _ = ax.set_xlabel('U component')
+    >>> _ = ax.set_ylabel('V component')
+    >>> _ = ax.plot(u, v, 'r.')
+    >>> mdir, mspd = ff.uv2spdir(mu, mv)
+    >>> _ = ax.plot([0, mu],[0, mv], '-b')
+    >>> plt.show()
+    >>> print('Mean u = %f\nMean v = %f\n' % (mu, mv))
+    >>> print('Mean magnitude: %f\nDirection: %f\n' % (mspd, mdir))
+    >>> print('Axis 1 Length: %f\nAzimuth: %f\n' % (majrax, majaz))
+    >>> print('Axis 2 Length: %f\nAzimuth: %f\n' % (minrax, minaz))
+
+    Notes:
+    http://pubs.usgs.gov/of/2002/of02-217/m-files/pcaben.m
+    """
+
+    mu, mv = u.mean(), v.mean()
+    C = np.cov(u, v)
+    D, V = np.linalg.eig(C)
+
+    x1 = np.r_[0.5 * np.sqrt(D[0]) * V[0, 0],
+              -0.5 * np.sqrt(D[0]) * V[0, 0]]
+    y1 = np.r_[0.5 * np.sqrt(D[0]) * V[1, 0],
+              -0.5 * np.sqrt(D[0]) * V[1, 0]]
+    x2 = np.r_[0.5 * np.sqrt(D[1]) * V[0, 1],
+              -0.5 * np.sqrt(D[1]) * V[0, 1]]
+    y2 = np.r_[0.5 * np.sqrt(D[1]) * V[1, 1],
+              -0.5 * np.sqrt(D[1]) * V[1, 1]]
+
+    mdir, mspd = uv2spdir(mu, mv)
+
+    leng, az = np.array([np.NaN, np.NaN]), np.array([np.NaN, np.NaN])
+    az[0], leng[0] = uv2spdir(x1[0], y1[0])
+    az[1], leng[1] = uv2spdir(x2[1], y2[1])
+
+    if (leng[0] >= leng[1]):
+        majr, majaz = leng[0], az[0]
+        minr, minaz = leng[1], az[1]
+    else:
+        majr, majaz = leng[1], az[1]
+        minr, minaz = leng[0], az[0]
+
+    majrax = majr * 2
+    minrax = minr * 2
+    elptcty = 1 - minr / majr
+
+    return majrax, majaz, minrax, minaz, elptcty
