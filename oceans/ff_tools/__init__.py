@@ -18,3 +18,4 @@ from plotting import *
 from teaching import *
 from time_series import *
 from windrose import *
+from matlabpipe import *
