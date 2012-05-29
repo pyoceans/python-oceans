@@ -519,6 +519,7 @@ __license__ = 'CeCILL-B'
 __url__ = 'http://sourceforge.net/projects/windrose/files/windrose/'
 """
 
+import numpy as np
 import matplotlib
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
@@ -1021,7 +1022,6 @@ def clean(dir, var):
     return dir[ind], var[ind]
 
 if __name__ == '__main__':
-    import numpy as np
     vv = np.random.random(500) * 6
     dv = np.random.random(500) * 360
     fig = plt.figure(figsize=(8, 8), dpi=80, facecolor='w', edgecolor='w')
