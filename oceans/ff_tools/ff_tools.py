@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  12-Feb-2012
-# modified: Fri 25 May 2012 03:59:47 PM EDT
+# modified: Thu 31 May 2012 02:04:52 PM EDT
 #
 # obs:
 #
@@ -18,9 +18,11 @@ import warnings
 
 import numpy as np
 import numpy.ma as ma
+
+from netCDF4 import num2date
+from dateutil import rrule, parser
 from scipy.ndimage import map_coordinates
 
-from dateutil import rrule, parser
 
 __all__ = [
            'get_profile',
@@ -99,7 +101,7 @@ def get_profile(x, y, f, xi, yi, order=3):
 
     coords = np.array([ivals, jvals])
 
-    return  map_coordinates(f, coords, mode='nearest', order=order)
+    return map_coordinates(f, coords, mode='nearest', order=order)
 
 
 def gen_dates(start, end, dt=None):
@@ -292,6 +294,13 @@ def shiftdim(x, n=None):
         # When n is negative, shiftdim shifts the dimensions
         # to the right and pads with singletons.
         return x.reshape((1,) * -n + x.shape)
+
+
+def nc_time(time):
+    r"""Convert netcdf time variable to a datetime obj."""
+    units = time.units
+    calendar = time.calendar
+    return num2date(time[:], units, calendar=calendar)
 
 if __name__ == '__main__':
     import doctest
