@@ -2,7 +2,7 @@
 #
 # __init__.py
 #
-# purpose:  load ff_tools module
+# purpose:  load mlabwrpa module
 # author:   Filipe P. A. Fernandes
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
@@ -12,9 +12,4 @@
 # obs:
 #
 
-from ff_tools import *
-from ocfis import *
-from plotting import *
-from teaching import *
-from time_series import *
-from windrose import *
+from matlabpipe import MatlabPipe

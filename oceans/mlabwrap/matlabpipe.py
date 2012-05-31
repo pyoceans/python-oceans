@@ -91,13 +91,17 @@ class MatlabPipe(object):
         self.expected_output_end = '%s\n>> ' % self.command_end_string
         self.stdout_to_read = ''
 
-    def open(self, print_matlab_welcome=True):
+    def open(self, print_matlab_welcome=False):
         r"""Opens the matlab process."""
+        # TODO: -nojvm, -nodesktop, -nosplash, and -nodisplay as options
         if self.process and not self.process.returncode:
             raise MatlabConnectionError('Matlab(TM) process is still active. '
                                         'Use close to close it')
-        self.process = subprocess.Popen([self.matlab_process_path, '-nojvm',
-                                         '-nodesktop'],
+        self.process = subprocess.Popen([self.matlab_process_path,
+                                         '-nojvm',
+                                         '-nodesktop',
+                                         '-nosplash',
+                                         '-nodisplay'],
                                         stdin=subprocess.PIPE,
                                         stdout=subprocess.PIPE,
                                         stderr=subprocess.STDOUT)
@@ -221,7 +225,7 @@ class MatlabPipe(object):
             if on_new_output:
                 on_new_output(tail_to_remove)
             all_output.write(tail_to_remove)
-            if not select.select([self.process.stdout], [], [], 10)[0]:
+            if not select.select([self.process.stdout], [], [], 20)[0]:
                 raise MatlabConnectionError('timeout')
             new_output = self.process.stdout.read(65536)
             output_tail += new_output
