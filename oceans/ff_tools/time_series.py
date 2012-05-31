@@ -21,6 +21,7 @@ import scipy.signal as signal
 import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 import matplotlib.cbook as cbook
+from pandas import date_range, datetools
 
 __all__ = ['TimeSeries',
            'smoo1',
@@ -33,7 +34,8 @@ __all__ = ['TimeSeries',
            'fft_lowpass',
            'despike',
            'binave',
-           'binavg'
+           'binavg',
+           'bin_dates'
           ]
 
 
@@ -42,8 +44,7 @@ class TimeSeries(object):
     Contains some handy methods... Still a work in progress.
     """
     def __init__(self, data, time):
-        """
-        data : array_like
+        r"""data : array_like
             Just a data container
         time : datetime object
             The series time information.
@@ -763,8 +764,7 @@ def binave(datain, r):
 
 
 def binavg(x, y, db):
-    r""" TODO: x as datetime object and db as timedelta.
-    Bins y(x) into db spacing.  The spacing is given in `x` units.
+    r"""Bins y(x) into db spacing.  The spacing is given in `x` units.
     y = np.random.random(20)
     x = np.arange(len(y))
     xb, yb = binavg(x, y, 2)
@@ -791,6 +791,17 @@ def binavg(x, y, db):
     #xbin = np.array([x[inds == i].mean() for i in range(0, len(xbin))])
 
     return xbin, ybin
+
+
+def bin_dates(ts, freq, tz=None):
+    r"""Take a pandas time Series and return a new Series on the specified
+    frequency.
+    FIXME: There is a bug when I use tz that two means are reported!
+    """
+    new_index = date_range(start=ts.index[0], end=ts.index[-1],
+                           freq=freq, tz=tz)
+
+    return ts.groupby(new_index.asof).mean()
 
 if __name__ == '__main__':
     import doctest
