@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  12-Feb-2012
-# modified: Fri 25 May 2012 04:01:55 PM EDT
+# modified: Thu 31 May 2012 10:49:50 PM EDT
 #
 # obs:
 #
@@ -16,12 +16,14 @@
 from __future__ import division
 
 import numpy as np
-import scipy.stats as stats
 import scipy.signal as signal
 import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 import matplotlib.cbook as cbook
-from pandas import date_range, datetools
+
+from scipy.stats import nanmean, nanstd, chi2
+from pandas import Series, date_range, isnull
+from scipy.interpolate import InterpolatedUnivariateSpline
 
 __all__ = ['TimeSeries',
            'smoo1',
@@ -32,10 +34,12 @@ __all__ = ['TimeSeries',
            'plot_spectrum',
            'medfilt1',
            'fft_lowpass',
-           'despike',
+           'despike_slope',
            'binave',
            'binavg',
-           'bin_dates'
+           'bin_dates',
+           'series_spline',
+           'despike',
           ]
 
 
@@ -402,8 +406,8 @@ def psd_ci(x, NFFT=256, Fs=2, detrend=mlab.detrend_none,
     a1 = (1. - Confidencelevel) / 2.
     a2 = 1. - a1
 
-    lower = Pxx * stats.chi2.ppf(a1, 2 * edof) / stats.chi2.ppf(0.50, 2 * edof)
-    upper = Pxx * stats.chi2.ppf(a2, 2 * edof) / stats.chi2.ppf(0.50, 2 * edof)
+    lower = Pxx * chi2.ppf(a1, 2 * edof) / chi2.ppf(0.50, 2 * edof)
+    upper = Pxx * chi2.ppf(a2, 2 * edof) / chi2.ppf(0.50, 2 * edof)
 
     cl = np.c_[upper, lower]
 
@@ -601,7 +605,7 @@ def fft_lowpass(signal, low, high):
     return np.fft.irfft(result, len(signal))
 
 
-def despike(datain, slope):
+def despike_slope(datain, slope):
     r"""De-spikes a time-series by calculating point-to-point slopes and
     determining whether a maximum allowable slope is exceeded.
 
@@ -738,8 +742,6 @@ def binave(datain, r):
 
     References
     ----------
-    TODO
-
     03/08/1997: version 1.0
     09/19/1998: version 1.1 (vectorized by RP)
     08/05/1999: version 2.0
@@ -757,7 +759,7 @@ def binave(datain, r):
     # compute bin averaged series
     l = datain.size / r
     l = np.fix(l)
-    z = datain[0:(l * r)].reshape(r, l, order='F')  # .copy()
+    z = datain[0:(l * r)].reshape(r, l, order='F')
     bindata = np.mean(z, axis=0)
 
     return bindata
@@ -793,15 +795,60 @@ def binavg(x, y, db):
     return xbin, ybin
 
 
-def bin_dates(ts, freq, tz=None):
+# Slowly converting all the Time-series to work with a Pandas Series.
+def bin_dates(self, freq, tz=None):
     r"""Take a pandas time Series and return a new Series on the specified
     frequency.
     FIXME: There is a bug when I use tz that two means are reported!
     """
-    new_index = date_range(start=ts.index[0], end=ts.index[-1],
+    new_index = date_range(start=self.index[0], end=self.index[-1],
                            freq=freq, tz=tz)
 
-    return ts.groupby(new_index.asof).mean()
+    new_series = self.groupby(new_index.asof).mean()
+
+    # I want the averages at the center
+    new_series.index = new_series.index + freq.delta / 2
+    return new_series
+
+
+def series_spline(self):
+    r"""Fill NaNs using a spline interpolation."""
+
+    inds, values = np.arange(len(self)), self.values
+
+    invalid = isnull(values)
+    valid = -invalid
+
+    firstIndex = valid.argmax()
+    valid = valid[firstIndex:]
+    invalid = invalid[firstIndex:]
+    inds = inds[firstIndex:]
+
+    result = values.copy()
+    s = InterpolatedUnivariateSpline(inds[valid], values[firstIndex:][valid])
+    result[firstIndex:][invalid] = s(inds[invalid])
+
+    return Series(result, index=self.index, name=self.name)
+
+
+def despike(self, verbose=False):
+    r"""Replace spikes with np.NaN.
+    Removing spikes that are >= 3 * std."""
+    result = self.values.copy()
+    outliers = (np.abs(self.values - nanmean(self.values)) >= 3 *
+                nanstd(self.values))
+    counter = 0
+    removed = np.count_nonzero(outliers)
+    while outliers.any():
+        result[outliers] = np.NaN
+        outliers = np.abs(result - nanmean(result)) >= 3 * nanstd(result)
+        counter += 1
+        removed += np.count_nonzero(outliers)
+    if verbose:
+        print("Number of iterations: %s points removed: %s" %
+              (counter, removed))
+    return Series(result, index=self.index, name=self.name)
+
 
 if __name__ == '__main__':
     import doctest
