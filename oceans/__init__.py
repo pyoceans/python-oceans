@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-ff_tools
-========
+ocean toolbox
+=============
 """
 
 __authors__ = ['Filipe Fernandes']
@@ -14,10 +14,15 @@ __maintainer__ = "Filipe Fernandes"
 __email__ = "ocefpaf@gmail.com"
 __status__ = "Alpha"
 
-__all__ = ['ff_tools, colormaps, RPStuff']
+__all__ = ['RPStuff',
+           'colormaps',
+           'ff_tools',
+           'mlabwrap'
+           'plotting']
 
 
 import RPStuff
-import ff_tools
 import colormaps
+import ff_tools
 import mlabwrap
+import plotting
