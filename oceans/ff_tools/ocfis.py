@@ -331,7 +331,8 @@ def pcaben(u, v):
     http://pubs.usgs.gov/of/2002/of02-217/m-files/pcaben.m
     """
 
-    mu, mv = u.mean(), v.mean()
+    u, v = np.broadcast_arrays(u, v)
+
     C = np.cov(u, v)
     D, V = np.linalg.eig(C)
 
@@ -344,21 +345,25 @@ def pcaben(u, v):
     y2 = np.r_[0.5 * np.sqrt(D[1]) * V[1, 1],
               -0.5 * np.sqrt(D[1]) * V[1, 1]]
 
-    mdir, mspd = uv2spdir(mu, mv)
+    mdir, mspd = uv2spdir(u.mean(), v.mean())
 
-    leng, az = np.array([np.NaN, np.NaN]), np.array([np.NaN, np.NaN])
-    az[0], leng[0] = uv2spdir(x1[0], y1[0])
-    az[1], leng[1] = uv2spdir(x2[1], y2[1])
+    # Length and direction.
+    az, leng = np.c_[uv2spdir(x1[0], y1[0]), uv2spdir(x2[1], y2[1])]
 
     if (leng[0] >= leng[1]):
-        majr, majaz = leng[0], az[0]
-        minr, minaz = leng[1], az[1]
+        majrax, majaz = leng[0], az[0]
+        minrax, minaz = leng[1], az[1]
     else:
-        majr, majaz = leng[1], az[1]
-        minr, minaz = leng[0], az[0]
+        majrax, majaz = leng[1], az[1]
+        minrax, minaz = leng[0], az[0]
 
-    majrax = majr * 2
-    minrax = minr * 2
-    elptcty = 1 - minr / majr
+    # NOTE: 1 - minrax / majrax is flatness
+    #elptcty = 1 - minrax / majrax
+    # NOTE: Negative (positive) means clockwise (anti-clockwise).
+    elptcty = minrax / majrax
+
+    # Radius to diameter.
+    majrax *= 2
+    minrax *= 2
 
     return majrax, majaz, minrax, minaz, elptcty
