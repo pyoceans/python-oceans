@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  12-Feb-2012
-# modified: Thu 31 May 2012 10:49:50 PM EDT
+# modified: Thu 07 Jun 2012 04:55:38 PM EDT
 #
 # obs:
 #
@@ -806,8 +806,8 @@ def bin_dates(self, freq, tz=None):
 
     new_series = self.groupby(new_index.asof).mean()
 
-    # I want the averages at the center
-    new_series.index = new_series.index + freq.delta / 2
+    # I want the averages at the center.
+    new_series.index = new_series.index + freq.delta // 2
     return new_series
 
 
