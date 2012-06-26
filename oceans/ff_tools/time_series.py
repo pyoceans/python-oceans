@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  12-Feb-2012
-# modified: Thu 07 Jun 2012 04:55:38 PM EDT
+# modified: Tue 26 Jun 2012 04:02:10 PM BRT
 #
 # obs:
 #
@@ -831,22 +831,31 @@ def series_spline(self):
     return Series(result, index=self.index, name=self.name)
 
 
-def despike(self, verbose=False):
+def despike(self, n=3, recursive=False, verbose=False):
     r"""Replace spikes with np.NaN.
-    Removing spikes that are >= 3 * std."""
+    Removing spikes that are >= n * std.
+    default n = 3."""
+
     result = self.values.copy()
-    outliers = (np.abs(self.values - nanmean(self.values)) >= 3 *
+    outliers = (np.abs(self.values - nanmean(self.values)) >= n *
                 nanstd(self.values))
-    counter = 0
+
     removed = np.count_nonzero(outliers)
-    while outliers.any():
-        result[outliers] = np.NaN
-        outliers = np.abs(result - nanmean(result)) >= 3 * nanstd(result)
-        counter += 1
-        removed += np.count_nonzero(outliers)
-    if verbose:
-        print("Number of iterations: %s points removed: %s" %
-              (counter, removed))
+    result[outliers] = np.NaN
+
+    if verbose and not recursive:
+        print("Removing from %s\n # removed: %s" % (self.name, removed))
+
+    counter = 0
+    if recursive:
+        while outliers.any():
+            result[outliers] = np.NaN
+            outliers = np.abs(result - nanmean(result)) >= n * nanstd(result)
+            counter += 1
+            removed += np.count_nonzero(outliers)
+        if verbose:
+            print("Removing from %s\nNumber of iterations: %s # removed: %s" %
+            (self.name, counter, removed))
     return Series(result, index=self.index, name=self.name)
 
 
