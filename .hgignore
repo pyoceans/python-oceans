@@ -1,4 +1,5 @@
 syntax: glob
+.hgignore
 *~
 _build
 .*swp
@@ -12,3 +13,4 @@ TODO
 oceans/ff_tools/ocfis/*.m
 oceans/RPStuff/RPSstuff/*
 code-todo/*
+oceans/ctd/data/*
