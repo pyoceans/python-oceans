@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# deco.py
+# utilities.py
 #
-# purpose:
+# purpose:  Some handy functions used throughout this package.
 # author:   Filipe P. A. Fernandes
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  22-Jun-2011
-# modified: Thu 13 Oct 2011 02:44:02 PM EDT
+# modified: Tue 26 Jun 2012 04:44:08 PM BRT
 #
 # obs:
 #
@@ -17,11 +17,10 @@ import numpy as np
 
 
 class match_args_return(object):
-    """
-    Function decorator to homogenize input arguments and to
-    make the output match the original input with respect to
-    scalar versus array, and masked versus ndarray.
-    """
+    r"""Function decorator to homogenize input arguments and to make the output
+    match the original input with respect to scalar versus array, and masked
+    versus ndarray."""
+
     def __init__(self, func):
         self.func = func
         self.__doc__ = func.__doc__

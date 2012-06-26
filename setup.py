@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import oceans
 
 try:
     from setuptools import setup
@@ -18,13 +19,9 @@ except ImportError:  # Python 2
 
 
 class sdist_hg(sdist):
-    """
-    Automatically generate the latest development version when creating a
-    source distribution.
-    """
-    user_options = sdist.user_options + [
-            ('dev', None, "Add a dev marker")
-            ]
+    r"""Automatically generate the latest development version when creating a
+    source distribution."""
+    user_options = sdist.user_options + [('dev', None, "Add a dev marker")]
 
     def initialize_options(self):
         sdist.initialize_options(self)
@@ -37,8 +34,8 @@ class sdist_hg(sdist):
         sdist.run(self)
 
     def get_tip_revision(self, path=os.getcwd()):
-        from mercurial.hg import repository
         from mercurial.ui import ui
+        from mercurial.hg import repository
         #from mercurial import node  # Imported but unused.
         repo = repository(ui(), path)
         tip = repo.changelog.tip()
@@ -59,13 +56,18 @@ Topic :: Software Development :: Libraries :: Python Modules
 """
 
 config = dict(name='oceans',
-              version='0.0.1',
-              packages=['oceans', 'oceans/colormaps', 'oceans/ff_tools',
-                        'oceans/RPStuff'],
+              version=oceans.__version__,
+              packages=['oceans', 'oceans/colormaps',
+                                  'oceans/ctd',
+                                  'oceans/ff_tools',
+                                  'oceans/mlabwrap',
+                                  'oceans/plotting',
+                                  'oceans/RPStuff',
+                                  'oceans/sandbox'],
               package_data={'': ['colormaps/cmap_data/*.pkl']},
               license=open('LICENSE.txt').read(),
               description='Module for oceanographic data analysis',
-              long_description=open('README.txt').read(),
+              long_description=open('README.rst').read(),
               author='Filipe Fernandes',
               author_email='ocefpaf@gmail.com',
               maintainer='Filipe Fernandes',

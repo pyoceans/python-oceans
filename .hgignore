@@ -3,6 +3,7 @@ syntax: glob
 *~
 _build
 .*swp
+*.nc
 .directory
 *.pyc
 MANIFEST
