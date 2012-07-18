@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  22-Jun-2011
-# modified: Thu 27 Oct 2011 08:08:19 PM EDT
+# modified: Wed 18 Jul 2012 09:30:18 AM BRT
 #
 # obs: This "legacy" package is intended for compatibility only.
 #      Most of function should be re-written in a more pythonic way.
@@ -26,8 +26,9 @@ __all__ = ['hms2h',
            'julian',
            'gregorian',
            's2hms',
-           'angled'
-          ]
+           'angled',
+           'coast2bln',
+           'fixcoast']
 
 
 earth_radius = 6371.e3
@@ -53,7 +54,7 @@ def hms2h(h, m=None, s=None):
         hours = hms2h(h,m,s
         hours = hms2h(hhmmss)
     """
-    if (m == None) and (s == None):
+    if not m and not s:
         hms = h
         h = np.floor(hms / 10000.)
         ms = hms - h * 10000.
@@ -499,3 +500,53 @@ def lagcor(a, b, n):
     #m_proj('UTM','ellipsoid','wgs84','zone',zone)
     #lon, lat = m_xy2ll(x,y)
     #return lon,lat
+
+
+def coast2bln(coast, bln_file):
+    r"""Converts a matlab coast (two column array w/ nan for line breaks) into
+    a Surfer blanking file.
+
+    Where coast is a two column vector and bln_file is the output file name.
+
+    Needs `fixcoast`."""
+
+    c2 = fixcoast(coast)
+    ind = np.where(np.isnan(c2[:, 0]))[0]
+    n = len(ind) - 1
+    bln = c2.copy()
+
+    for i in range(0, n - 1):
+        ii = range(ind[i] + 1, ind[i + 1])
+        NP = int(len(ii))
+        bln[ind[i], 0] = NP
+        bln[ind[i], 1] = int(1)
+
+    bln = bln[:-1]
+    np.savetxt(bln_file, bln, fmt='%g')
+
+
+def fixcoast(coast):
+    r"""FIXCOAST  Makes sure coastlines meet Signell's conventions.
+
+    Fixes coastline is in the format we want.  Assumes that lon/lat are in the
+    first two columns of the matrix coast, and that coastline segments are
+    separated by rows of NaNs (or -99999s).  This routine ensures that only 1
+    row of NaNs separates each segment, and makes sure that the first and last
+    rows contain NaNs."""
+
+    ind = coast == -99999.
+    coast[ind] = np.NaN
+
+    ind = np.where(np.isnan(coast[:, 0]))[0]
+    dind = np.diff(ind)
+    idup = np.where(dind == 1)[0]
+
+    coast = np.delete(coast, ind[idup], axis=0)
+
+    if not np.isnan(coast[0, 0]):
+        coast = np.insert(coast, 0, np.NaN, axis=0)
+
+    if not np.isnan(coast[-1, -1]):
+        coast = np.append(coast, np.c_[np.NaN, np.NaN], axis=0)
+
+    return coast
