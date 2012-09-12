@@ -26,6 +26,7 @@ __all__ = ['RPStuff',
 import RPStuff
 import colormaps
 import ctd
+import datasets
 import ff_tools
 import mlabwrap
 import plotting
