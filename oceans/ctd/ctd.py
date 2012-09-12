@@ -6,7 +6,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  22-Jun-2012
-# modified: Tue 26 Jun 2012 04:03:12 PM BRT
+# modified: Wed 12 Sep 2012 11:38:55 AM BRT
 #
 # obs: Instead of sub-classing I opted for a "Monkey Patch" approach
 #      following Wes own suggestion.
@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 import mpl_toolkits.axisartist as AA
 from mpl_toolkits.axes_grid1 import host_subplot
 
-# CTDProfile is a Monkey Patched DataFrame.
+# CTDProfile is a just Monkey Patched pandas DataFrame!
 from pandas import DataFrame as CTDProfile
 
 from oceans.ff_tools.time_series import despike
@@ -29,15 +29,14 @@ deg = u"\u00b0"
 """ TODO:
 Methods:
   * Series or DataFrame
-    - remove spikes
     - smooth
     - interpolate, find MLD
     - find barrier
     - plot profile
   * Methods (Panel):
-    - geostrophic velocityq
+    - geostrophic velocity
     - plot section,
-    - station map
+    - station map (lon, lat)
 """
 
 
@@ -66,8 +65,8 @@ def read_ctd(self, fname):
     recarray = np.loadtxt(fname, dtype=dtype, skiprows=header)
     #exclude* = ['SCANS', 'OBS', 'SV', 'DEPTH', 'SAL']
     cast = pandas.DataFrame.from_records(recarray, index='PRES',
-                                            exclude=None,  # exclude*
-                                            coerce_float=True)
+                                         exclude=None,  # exclude*
+                                         coerce_float=True)
 
     # Sort the index in ascending order.
     # TODO: Add a flag to identify up-/down-cast.
@@ -98,8 +97,7 @@ def bindata(self, db=1., plot=False):
     newdf = self.groupby(shifted.asof).mean()
     newdf.index = new_index  # Not shifted.
 
-    if plot:
-        # TODO: Add salinity at the same plot.
+    if plot:  # TODO: Add salinity at the same plot.
         fig, ax = plt.subplots()
         ax.plot(self.TEMP, self.index, 'k-.', label='Original')
         ax.plot(newdf.TEMP, newdf.index, 'ro', label='Binned')
@@ -142,10 +140,10 @@ def plot_ctd(self, station=None, title=None, subplots=False, **kwds):
         title = r"Station %s profile" % station
 
     ax0.text(0.5, 0.99, title,
-                        horizontalalignment='center',
-                        verticalalignment='center',
-                        transform=fig.transFigure,
-                        rotation='horizontal')
+             horizontalalignment='center',
+             verticalalignment='center',
+             transform=fig.transFigure,
+             rotation='horizontal')
 
     ax0.legend(shadow=True, fancybox=True, numpoints=1, loc='best')
     if subplots:
@@ -154,6 +152,18 @@ def plot_ctd(self, station=None, title=None, subplots=False, **kwds):
     plt.show()
 
     return fig, (ax0, ax1)
+
+
+# Utilities.
+def normalize_names(name):
+    r"""Convert arbitrary column names into a consistent format.
+    Te result is a lower case name with spaces replaced with underscores and no
+    leading or trailing whitespace."""
+    name = name.strip()
+    name = name.strip('*')
+    name = name.lower()
+    name = name.replace(' ', '_')
+    return name
 
 
 def despike_ctd(self, n=3, recursive=False, verbose=False):
