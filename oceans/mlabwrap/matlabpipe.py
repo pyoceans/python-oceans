@@ -44,25 +44,22 @@ def find_matlab_process(binary='matlab'):
         return None
 
 
-def find_matlab_version(process_path):
+def find_matlab_version(matlab_version):
     r"""Tries to guess matlab's version according to its process path.
     If we couldn't guess the version, None is returned."""
-    bin_path = os.path.dirname(process_path)
-    matlab_path = os.path.dirname(bin_path)
-    matlab_dir_name = os.path.basename(matlab_path)
-    version = matlab_dir_name.replace('MATLAB_R', '').replace('.app', '')
     #version = $(matlab -nodesktop -nodisplay -nosplash -nojvm -r \
             #"try, version -release ;quit")
-    if not is_valid_version_code(version):
+    version = None
+    if not is_valid_version_code(matlab_version):
         return None
     return version
 
 
 def is_valid_version_code(version):
     r"""Checks that the given version code is valid."""
-    return version != None and len(version) == 5 and \
-    int(version[:4]) in range(1990, 2050) and \
-    version[4] in ['h', 'g', 'f', 'e', 'd', 'c', 'b', 'a']
+    return (version is not None and len(version) == 5 and
+            int(version[:4]) in range(1990, 2050) and
+            version[4] in ['h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'])
 
 
 class MatlabPipe(object):
@@ -74,16 +71,20 @@ class MatlabPipe(object):
     To load numpy data to the matlab shell use 'put'.
     To retrieve numpy data from the matlab shell use 'get'."""
 
-    def __init__(self, matlab_process_path='guess', matlab_version='guess'):
-        if matlab_process_path == 'guess':
-            matlab_process_path = find_matlab_process()
-        if matlab_version == 'guess':
-            matlab_version = find_matlab_version(matlab_process_path)
-        if not is_valid_version_code(matlab_version):
-            raise ValueError('Invalid version code %s' % matlab_version)
-        if not os.path.exists(matlab_process_path):
-            raise ValueError('Matlab process path %s does not exist' %
-                             matlab_process_path)
+    def __init__(self, matlab_process_path=None, matlab_version=None):
+        if matlab_process_path and matlab_version:
+            if matlab_process_path == 'guess':
+                matlab_process_path = find_matlab_process()
+            if matlab_version == 'guess':
+                matlab_version = find_matlab_version(matlab_process_path)
+            if not is_valid_version_code(matlab_version):
+                raise ValueError('Invalid version code %s' % matlab_version)
+            if not os.path.exists(matlab_process_path):
+                raise ValueError('Matlab process path %s does not exist' %
+                                 matlab_process_path)
+        else:
+            raise NameError('''Matlab process path and/or version must be
+                               explicitly specified or use "guess".''')
         self.matlab_version = (int(matlab_version[:4]), matlab_version[4])
         self.matlab_process_path = matlab_process_path
         self.process = None
@@ -179,7 +180,7 @@ class MatlabPipe(object):
         single_itme = isinstance(names_to_get, (unicode, str))
         if single_itme:
             names_to_get = [names_to_get]
-        if names_to_get == None:
+        if names_to_get:
             self.process.stdin.write('save stdio;\n')
         else:
             # Make sure that we throw an exception if names are not defined.
@@ -249,6 +250,10 @@ if __name__ == '__main__':
         def setUp(self):
             self.matlab = MatlabPipe(matlab_process_path='guess',
                                      matlab_version='2010b')
+
+            self.matlab = MatlabPipe(matlab_process_path='guess',
+                                     matlab_version='guess')  # Not working.
+            self.matlab = MatlabPipe(matlab_process_path='guess')
             self.matlab.open()
 
         def tearDown(self):
