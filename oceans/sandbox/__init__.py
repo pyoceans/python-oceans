@@ -9,7 +9,7 @@
 # created:  22-Jun-2011
 # modified: Tue 26 Jun 2012 04:22:15 PM BRT
 #
-# obs:
+# obs: Contains untested scripts. Use caution.
 #
 
 from sandbox import *
