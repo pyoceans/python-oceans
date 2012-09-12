@@ -48,7 +48,7 @@ def get_indices(min_lat, max_lat, min_lon, max_lon, lons, lats):
     indices.append(distances1[0])
     indices.append(distances2[0])
 
-    distances1, distances2, indices = [], [], []
+    distances1, distances2 = [], []
     index = 1
     for point in lons:
         s1 = max_lon - point
@@ -78,9 +78,9 @@ def woa_subset(min_lat, max_lat, min_lon, max_lon, woa_file=None):
 
     if not woa_file:
         # TODO: Check for a online dap version of this file.
-        tfile = '/home/filipe/00-NOBKP/OcFisData/ETOPO2v2g_f4.nc'
+        woa_file = None
 
-    woa = Dataset(tfile, 'r')
+    woa = Dataset(woa_file, 'r')
 
     lons = woa.variables["x"][:]
     lats = woa.variables["y"][:]
@@ -99,7 +99,15 @@ def etopo_subset(min_lat, max_lat, min_lon, max_lon, tfile=None, smoo=False):
     r"""Get a etopo subset.
     Should work on any netCDF with x, y, data
     http://www.trondkristiansen.com/wp-content/uploads/downloads/
-    2011/07/contourICEMaps.py"""
+    2011/07/contourICEMaps.py
+
+    Example
+    -------
+    >>> offset = 5
+    >>> lonStart, lonEnd, latStart, latEnd = -43, -30.0, -22.0, -17.0
+    >>> lons, lats, bathy = etopo_subset(latStart - offset, latEnd + offset,
+    ...                                  lonStart - offset, lonEnd + offset, smoo=True)
+    """
 
     if not tfile:
         # TODO: Check for a online dap version of this file.
