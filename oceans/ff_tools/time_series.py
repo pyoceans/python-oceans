@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  12-Feb-2012
-# modified: Tue 26 Jun 2012 04:02:10 PM BRT
+# modified: Wed 12 Sep 2012 11:52:51 AM BRT
 #
 # obs:
 #
@@ -25,22 +25,23 @@ from scipy.stats import nanmean, nanstd, chi2
 from pandas import Series, date_range, isnull
 from scipy.interpolate import InterpolatedUnivariateSpline
 
-__all__ = ['TimeSeries',
-           'smoo1',
-           'spec_rot',
-           'lagcorr',
-           'psd_ci',
-           'complex_demodulation',
-           'plot_spectrum',
-           'medfilt1',
-           'fft_lowpass',
-           'despike_slope',
-           'binave',
-           'binavg',
-           'bin_dates',
-           'series_spline',
-           'despike',
-          ]
+__all__ = [
+    'TimeSeries',
+    'smoo1',
+    'spec_rot',
+    'lagcorr',
+    'psd_ci',
+    'complex_demodulation',
+    'plot_spectrum',
+    'medfilt1',
+    'fft_lowpass',
+    'despike_slope',
+    'binave',
+    'binavg',
+    'bin_dates',
+    'series_spline',
+    'despike',
+]
 
 
 class TimeSeries(object):
@@ -172,7 +173,7 @@ def smoo1(datain, window_len=11, window='hanning'):
                          'bartlett', 'blackman'""")
 
     s = np.r_[2 * datain[0] - datain[window_len:1:-1], datain, 2 *
-                                    datain[-1] - datain[-1:-window_len:-1]]
+              datain[-1] - datain[-1:-window_len:-1]]
 
     if window == 'flat':  # Moving average.
         w = np.ones(window_len, 'd')
@@ -286,9 +287,9 @@ def lagcorr(x, y, M=None):
 
 
 def psd_ci(x, NFFT=256, Fs=2, detrend=mlab.detrend_none,
-                    window=mlab.window_hanning, noverlap=0, pad_to=None,
-                    sides='default', scale_by_freq=None, smooth=None,
-                    Confidencelevel=0.9):
+           window=mlab.window_hanning, noverlap=0, pad_to=None,
+           sides='default', scale_by_freq=None, smooth=None,
+           Confidencelevel=0.9):
     r"""Extention of matplotlib.mlab.psd The power spectral density with
     upper and lower limits within confidence level You should not use
     Welch's method here, instead you can use smoother in frequency domain
@@ -401,7 +402,7 @@ def psd_ci(x, NFFT=256, Fs=2, detrend=mlab.detrend_none,
 
     # Equivalent degree of freedom.
     edof = (1. + (1. / np.sum(avfnc ** 2) - 1.) * np.float(NFFT) /
-                                          np.float(pad_to) * windowVals.mean())
+            np.float(pad_to) * windowVals.mean())
 
     a1 = (1. - Confidencelevel) / 2.
     a2 = 1. - a1
@@ -800,7 +801,17 @@ def bin_dates(self, freq, tz=None):
     r"""Take a pandas time Series and return a new Series on the specified
     frequency.
     FIXME: There is a bug when I use tz that two means are reported!
+
+    Examples
+    --------
+    import numpy as np
+    from pandas import Series, date_range
+    n = 365
+    sig = np.random.rand(n) + 2 * np.cos(2 * np.pi * np.arange(n))
+    dates = date_range(start='1/1/2000', end='30/12/2000', periods=365, freq='D')
+    series = Series(data=sig, index=dates)
     """
+    #closed='left', label='left'
     new_index = date_range(start=self.index[0], end=self.index[-1],
                            freq=freq, tz=tz)
 
@@ -855,9 +866,29 @@ def despike(self, n=3, recursive=False, verbose=False):
             removed += np.count_nonzero(outliers)
         if verbose:
             print("Removing from %s\nNumber of iterations: %s # removed: %s" %
-            (self.name, counter, removed))
+                  (self.name, counter, removed))
     return Series(result, index=self.index, name=self.name)
 
+
+def md_trenberth(x):
+    r"""Returns the filtered series using the Trenberth filter as described
+    on Monthly Weather Review, vol. 112, No. 2, Feb 1984.
+
+    Input data: series x of dimension 1Xn (must be at least dimension 11)
+    Output data: y = md_trenberth(x) where y has dimension 1X(n-10)
+    """
+    x = np.asanyarray(x)
+    weight = np.array([0.02700, 0.05856, 0.09030, 0.11742, 0.13567, 0.14210,
+                       0.13567, 0.11742, 0.09030, 0.05856, 0.02700])
+
+    sz = len(x)
+    y = np.zeros(sz - 10)
+    for i in range(5, sz - 5):
+        y[i - 5] = 0
+        for j in range(11):
+            y[i - 5] = y[i - 5] + x[i - 6 + j + 1] * weight[j]
+
+    return y
 
 if __name__ == '__main__':
     import doctest
