@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  12-Feb-2012
-# modified: Thu 31 May 2012 02:04:52 PM EDT
+# modified: Wed 12 Sep 2012 11:39:35 AM BRT
 #
 # obs:
 #
@@ -25,15 +25,15 @@ from scipy.ndimage import map_coordinates
 
 
 __all__ = [
-           'get_profile',
-           'gen_dates',
-           'princomp',
-           'strip_mask',
-           'shiftdim'
-           ]
+    'get_profile',
+    'gen_dates',
+    'princomp',
+    'strip_mask',
+    'shiftdim'
+]
 
 
-def get_profile(x, y, f, xi, yi, order=3):
+def get_profile(x, y, f, xi, yi, mode='nearest', order=3):
     r"""Interpolate regular data.
 
     Parameters
@@ -101,7 +101,7 @@ def get_profile(x, y, f, xi, yi, order=3):
 
     coords = np.array([ivals, jvals])
 
-    return map_coordinates(f, coords, mode='nearest', order=order)
+    return map_coordinates(f, coords, mode=mode, order=order)
 
 
 def gen_dates(start, end, dt=None):
@@ -116,7 +116,7 @@ def gen_dates(start, end, dt=None):
     list(gen_dates(start, end, dt=rrule.YEARLY))
     """
     dates = (rrule.rrule(dt, dtstart=parser.parse(start),
-                             until=parser.parse(end)))
+                         until=parser.parse(end)))
     return dates
 
 
