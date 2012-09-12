@@ -7,9 +7,10 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  22-Jun-2011
-# modified: Tue 26 Jun 2012 11:34:38 AM BRT
+# modified: Wed 12 Sep 2012 11:38:12 AM BRT
 #
 # obs:
 #
 
 from ctd import *
+from cruise import *
