@@ -283,9 +283,9 @@ def weim(x, N, kind='hann', badflag=-9999, beta=14):
             kind = 'hanning'
             # Computing outer product to make a 2D window out of the original
             # 1D windows.
-            wstr = 'np.' + kind + '(N)'
-        w = eval(wstr)
+        wstr = 'np.' + kind + '(N)'
 
+    w = eval(wstr)
     x = np.asarray(x).flatten()
     Fnan = np.isnan(x).flatten()
 
