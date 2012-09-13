@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Wed 12 Sep 2012 11:56:24 AM BRT
+# modified: Thu 13 Sep 2012 12:14:20 PM BRT
 #
 # obs:
 #
@@ -15,13 +15,63 @@
 
 from __future__ import division
 
+import matplotlib
 import numpy as np
+import numpy.ma as ma
+import matplotlib.pyplot as plt
 
 from matplotlib.lines import Line2D
 from matplotlib.artist import Artist
-from matplotlib.mlab import dist_point_to_segment
 
-# Based on http://matplotlib.org/examples/event_handling/poly_editor.html
+
+def landmask(M, color='0.8'):
+    r"""Plot land mask.
+    http://www.trondkristiansen.com/wp-content/uploads/downloads/
+    2011/07/mpl_util.py
+    """
+    # Make a constant colormap, default = grey
+    constmap = np.matplotlib.colors.ListedColormap([color])
+
+    jmax, imax = M.shape
+    # X and Y give the grid cell boundaries,
+    # one more than number of grid cells + 1
+    # half integers (grid cell centers are integers)
+    X = -0.5 + np.arange(imax + 1)
+    Y = -0.5 + np.arange(jmax + 1)
+
+    # Draw the mask by pcolor.
+    M = ma.masked_where(M > 0, M)
+    plt.pcolor(X, Y, M, shading='flat', cmap=constmap)
+
+
+def LevelColormap(levels, cmap=None):
+    r"""Make a colormap based on an increasing sequence of levels.
+    http://www.trondkristiansen.com/wp-content/uploads/downloads/
+    2011/07/mpl_util.py
+    """
+
+    # Start with an existing colormap.
+    if not cmap:
+        cmap = plt.get_cmap()
+
+    # Spread the colors maximally.
+    nlev = len(levels)
+    S = np.arange(nlev, dtype='float') / (nlev - 1)
+    A = cmap(S)
+
+    # Normalize the levels to interval [0, 1]
+    levels = np.array(levels, dtype='float')
+    L = (levels - levels[0]) / (levels[-1] - levels[0])
+
+    # Make the colour dictionary
+    R = [(L[i], A[i, 0], A[i, 0]) for i in xrange(nlev)]
+    G = [(L[i], A[i, 1], A[i, 1]) for i in xrange(nlev)]
+    B = [(L[i], A[i, 2], A[i, 2]) for i in xrange(nlev)]
+    cdict = dict(red=tuple(R), green=tuple(G), blue=tuple(B))
+
+    return matplotlib.colors.LinearSegmentedColormap('%s_levels' %
+                                                     cmap.name, cdict, 256)
+
 
 def get_pointsxy(points):
     r"""Return x, y of the given point object."""
@@ -54,6 +104,8 @@ class EditPoints(object):
     >>> ax.set_xlim((-2, 2))
     >>> ax.set_ylim((-2, 2))
     >>> plt.show()
+
+    Based on http://matplotlib.org/examples/event_handling/poly_editor.html
     """
 
     showpoint = True
@@ -72,7 +124,7 @@ class EditPoints(object):
                            linestyle='none', animated=True)
         self.ax.add_line(self.line)
 
-        cid = self.points.add_callback(self.points_changed)
+        #cid = self.points.add_callback(self.points_changed)
         self._ind = None  # The active point.
 
         canvas.mpl_connect('draw_event', self.draw_callback)
@@ -142,7 +194,6 @@ class EditPoints(object):
         self._ind = None
         print("\nButton released %s" % self._ind)
 
-
     def key_press_callback(self, event):
         r"""Whenever a key is pressed."""
         if not event.inaxes:
@@ -180,7 +231,6 @@ class EditPoints(object):
 
         self.canvas.draw()
 
-
     def motion_notify_callback(self, event):
         r"""On mouse movement."""
         if not self.showpoint:
@@ -212,4 +262,3 @@ class EditPoints(object):
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
-
