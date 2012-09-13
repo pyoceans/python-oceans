@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  05-Sep-2012
-# modified: Wed 12 Sep 2012 11:58:05 AM BRT
+# modified: Thu 13 Sep 2012 11:05:32 AM BRT
 #
 # obs:
 #
@@ -18,7 +18,6 @@ import matplotlib.pyplot as plt
 
 from matplotlib import rcParams
 from oceans.datasets import get_depth
-from mpl_toolkits.basemap import Basemap
 from matplotlib.ticker import MultipleLocator
 
 
@@ -82,10 +81,12 @@ class Chart(object):
     r"""Geo-reference a raster nautical chart."""
     def __init__(self, image='cadeia_vitoria_trindade.png',
                  window=[-47., -14., -24., -3.],  # Chart 20
-                 lon_tick_interval=100.0 / 60.0,
-                 lat_tick_interval=100.0 / 60.0):
+                 lon_tick_interval=2.0 / 60.0,
+                 lat_tick_interval=2.0 / 60.0,
+                 **kw):
         r"""Enter a the window corners as:
-        window=[lower left lon, upper right lon, lower left lat, upper right lat]
+        window=[lower left lon, upper right lon,
+                lower left lat, upper right lat]
         And the lon_tick_interval, lat_tick_interval tick intervals.
 
         Example
@@ -96,6 +97,7 @@ class Chart(object):
         >>> chart.update_ticks(ax)
         """
 
+        self.kw = kw
         self.image = image
         self.window = window
         self.lon_tick_interval = lon_tick_interval
@@ -132,39 +134,37 @@ class Chart(object):
             return ((u"%d\N{DEGREE SIGN}" + fmt + "'%s ") %
                     (abs(deg), abs(min), dir))
 
-    def update_ticks(self, ax):
+    def update_ticks(self):
         xlocator = MultipleLocator(self.lon_tick_interval)
         ylocator = MultipleLocator(self.lat_tick_interval)
-        ax.xaxis.set_major_locator(xlocator)
-        ax.yaxis.set_major_locator(ylocator)
+        self.ax.xaxis.set_major_locator(xlocator)
+        self.ax.yaxis.set_major_locator(ylocator)
         xlab = []
-        for xtick in ax.get_xticks():
+        for xtick in self.ax.get_xticks():
             xlab.append(self.deg2str(xtick, ref='lon'))
-        ax.set_xticklabels(xlab)
+        self.ax.set_xticklabels(xlab)
         ylab = []
-        for ytick in ax.get_yticks():
+        for ytick in self.ax.get_yticks():
             ylab.append(self.deg2str(ytick, ref='lat'))
-        ax.set_yticklabels(ylab)
-        ax.fmt_xdata = lambda x: self.deg2str(x, ref='lon', fmt="%5.3f",
-                                               usetex=False)
-        ax.fmt_ydata = lambda y: self.deg2str(y, ref='lat', fmt="%5.3f",
-                                               usetex=False)
+        self.ax.set_yticklabels(ylab)
+        self.ax.fmt_xdata = lambda x: self.deg2str(x, ref='lon', fmt="%5.3f",
+                                                   usetex=False)
+        self.ax.fmt_ydata = lambda y: self.deg2str(y, ref='lat', fmt="%5.3f",
+                                                   usetex=False)
         plt.draw()
 
-    def update_aspect(self, ax):
-        aspect = 1.0 / np.cos(np.mean(ax.get_ylim()) * np.pi / 180.)
-        ax.set_aspect(aspect, adjustable='box', anchor='C')
+    def update_aspect(self):
+        aspect = 1.0 / np.cos(np.mean(self.ax.get_ylim()) * np.pi / 180.)
+        self.ax.set_aspect(aspect, adjustable='box', anchor='C')
         plt.draw()
 
-    def plot(self, ax=None):
-        if ax is None:
-            fig, ax = plt.subplots(figsize=(6, 6))
-        ax.imshow(self.image, extent=self.window)
-        aspect = 1.0 / np.cos(np.mean(ax.get_ylim()) * np.pi / 180.)
-        ax.set_aspect(aspect, adjustable='box', anchor='C')
-        self.update_ticks(ax)
+    def plot(self):
+        self.fig, self.ax = plt.subplots(**self.kw)
+        self.ax.imshow(self.image, extent=self.window)
+        self.update_aspect()
+        self.update_ticks()
 
-        return fig, ax
+        return self.fig, self.ax
 
 if __name__ == '__main__':
     import doctest
