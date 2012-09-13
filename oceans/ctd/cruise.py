@@ -16,8 +16,10 @@ import gsw
 import numpy as np
 import matplotlib.pyplot as plt
 
-from mpl_toolkits.basemap import Basemap
+from matplotlib import rcParams
 from oceans.datasets import get_depth
+from mpl_toolkits.basemap import Basemap
+from matplotlib.ticker import MultipleLocator
 
 
 def cruise_time(lon, lat, vel=8):
@@ -28,7 +30,7 @@ def cruise_time(lon, lat, vel=8):
     return np.sum(dist / vel)
 
 
-def get_cruise_time(m, vel=8, times=1):
+def get_cruise_time(fig, m, vel=8, times=1):
     r"""Click on two points of the Basemap object `m` to compute the
     cruise time at the velocity `vel` in nots (default=8 nots)."""
 
@@ -45,7 +47,7 @@ def get_cruise_time(m, vel=8, times=1):
     return np.sum(total)
 
 
-class Transec(object):
+class Transect(object):
     r"""Container class to store oceanographic transect.
     Info (`lon`, `lat`, `depth`)."""
 
@@ -76,58 +78,94 @@ class Transec(object):
         return (self.station_time() + self.navigation_time())
 
 
+class Chart(object):
+    r"""Geo-reference a raster nautical chart."""
+    def __init__(self, image='cadeia_vitoria_trindade.png',
+                 window=[-47., -14., -24., -3.],  # Chart 20
+                 lon_tick_interval=100.0 / 60.0,
+                 lat_tick_interval=100.0 / 60.0):
+        r"""Enter a the window corners as:
+        window=[lower left lon, upper right lon, lower left lat, upper right lat]
+        And the lon_tick_interval, lat_tick_interval tick intervals.
+
+        Example
+        -------
+        >>> chart = Chart(image='cadeia_vitoria_trindade.png')
+        >>> fig, ax = chart.plot()
+        >>> ax.axis([-43., -31., -22., -16.5])
+        >>> chart.update_ticks(ax)
+        """
+
+        self.image = image
+        self.window = window
+        self.lon_tick_interval = lon_tick_interval
+        self.lat_tick_interval = lat_tick_interval
+        if self.image is not None:
+            if isinstance(self.image, str):
+                self.image = plt.imread(self.image)
+
+    def deg2str(self, deg, ref='lon', fmt="%3.1f", usetex=True):
+        r"""Enter number in degree and decimal degree `deg, a `ref` either lat
+        or lon."""
+        min = 60 * (deg - np.floor(deg))
+        deg = np.floor(deg)
+        if min != 0.0:
+            deg += 1.0
+            min -= 60.0
+        if ref == 'lon':
+            if deg < 0.0:
+                dir = 'W'
+            elif deg > 0.0:
+                dir = 'E'
+            else:
+                dir = ''
+        elif ref == 'lat':
+            if deg < 0.0:
+                dir = 'S'
+            elif deg > 0.0:
+                dir = 'N'
+            else:
+                dir = ''
+        if rcParams['text.usetex'] and usetex:
+            return (r"%d$^\circ$" + fmt + "'%s ") % (abs(deg), abs(min), dir)
+        else:
+            return ((u"%d\N{DEGREE SIGN}" + fmt + "'%s ") %
+                    (abs(deg), abs(min), dir))
+
+    def update_ticks(self, ax):
+        xlocator = MultipleLocator(self.lon_tick_interval)
+        ylocator = MultipleLocator(self.lat_tick_interval)
+        ax.xaxis.set_major_locator(xlocator)
+        ax.yaxis.set_major_locator(ylocator)
+        xlab = []
+        for xtick in ax.get_xticks():
+            xlab.append(self.deg2str(xtick, ref='lon'))
+        ax.set_xticklabels(xlab)
+        ylab = []
+        for ytick in ax.get_yticks():
+            ylab.append(self.deg2str(ytick, ref='lat'))
+        ax.set_yticklabels(ylab)
+        ax.fmt_xdata = lambda x: self.deg2str(x, ref='lon', fmt="%5.3f",
+                                               usetex=False)
+        ax.fmt_ydata = lambda y: self.deg2str(y, ref='lat', fmt="%5.3f",
+                                               usetex=False)
+        plt.draw()
+
+    def update_aspect(self, ax):
+        aspect = 1.0 / np.cos(np.mean(ax.get_ylim()) * np.pi / 180.)
+        ax.set_aspect(aspect, adjustable='box', anchor='C')
+        plt.draw()
+
+    def plot(self, ax=None):
+        if ax is None:
+            fig, ax = plt.subplots(figsize=(6, 6))
+        ax.imshow(self.image, extent=self.window)
+        aspect = 1.0 / np.cos(np.mean(ax.get_ylim()) * np.pi / 180.)
+        ax.set_aspect(aspect, adjustable='box', anchor='C')
+        self.update_ticks(ax)
+
+        return fig, ax
+
 if __name__ == '__main__':
-    # Load stations positions from Abrolhos II.
-    lond, lonm, latd, latm, prof = np.loadtxt('grade_abrolhosII.dat',
-                                              unpack=True)
-    lon, lat = lond + lonm / 60., latd + latm / 60.
-
-    # Load new positions.
-    lon_02, lat_02 = np.loadtxt('ambes_extra_transect.dat', unpack=True)
-    depths_02 = get_depth(lon_02, lat_02)
-
-    lon_06, lat_06 = np.loadtxt('ambes_transec4_complement.dat', unpack=True)
-    depths_06 = get_depth(lon_06, lat_06)
-
-    # Create the figure.
-    lonStart, lonEnd, latStart, latEnd = -47, -30.0, -23.0, -17.0
-    m = Basemap(projection='merc', llcrnrlon=-59.0, urcrnrlon=-25.0,
-                llcrnrlat=-38.0, urcrnrlat=9.0, lat_ts=20, resolution='i')
-    fig, ax = plt.subplots(figsize=(20, 20), facecolor='w')
-    m.ax = ax
-    image = plt.imread('../../../Nautical_chart_01/chart_brazil_small.png')
-    m.imshow(image, origin='upper')
-    lon_lim, lat_lim = m([lonStart, lonEnd], [latStart, latEnd])
-    m.ax.axis([lon_lim[0], lon_lim[1], lat_lim[0], lat_lim[1]])
-
-    # Plotting the cruise stations.
-    kw = dict(marker='o', linestyle='none', markersize=10,
-              markeredgecolor='k', latlon=True)
-
-    m.plot(lon, lat, markerfacecolor='r', label='Abrolhos II', **kw)
-    m.plot(lon_02, lat_02, markerfacecolor='g', label='Transec 02', **kw)
-    m.plot(lon_06, lat_06, markerfacecolor='b', label='New positions', **kw)
-
-    plt.show()
-
-    # Create transect objects.
-    tran_00 = Transec(lon[:11], lat[:11], prof[:11])
-    tran_01 = Transec(lon[11:25], lat[11:25], prof[11:25])
-    tran_02 = Transec(lon_02, lat_02, depths_02)
-    tran_03 = Transec(lon[25:51], lat[25:51], prof[25:51])
-    tran_04 = Transec(lon[51:62], lat[51:62], prof[51:62])
-    tran_05 = Transec(lon[62:78], lat[62:78], prof[62:78])
-    tran_06 = Transec(np.r_[lon[78:], lon_06],
-                      np.r_[lat[78:], lat_06],
-                      np.r_[prof[78:], depths_06])
-
-    # Compute the time.
-    total_transect_time = (tran_00.transect_time() + tran_01.transect_time() +
-                           tran_02.transect_time() + tran_03.transect_time() +
-                           tran_04.transect_time() + tran_05.transect_time() +
-                           tran_06.transect_time())
-
-    total_cruise_time = get_cruise_time(m, vel=8, times=6)
-    total_time = (total_transect_time + total_cruise_time) / 60. / 60. / 24.
-    total_time += total_time * 0.2  # Add 20 % "buffer" time.
-    print("Total cruise time is %s" % (total_time))
+    import doctest
+    doctest.testmod()
