@@ -124,7 +124,7 @@ class EditPoints(object):
                            linestyle='none', animated=True)
         self.ax.add_line(self.line)
 
-        #cid = self.points.add_callback(self.points_changed)
+        cid = self.points.add_callback(self.points_changed)
         self._ind = None  # The active point.
 
         canvas.mpl_connect('draw_event', self.draw_callback)
@@ -165,7 +165,7 @@ class EditPoints(object):
         if d[ind] >= self.epsilon:
             ind = None
 
-        print("\nGot point (%s, %s) ind: %s" % (event.xdata, event.ydata, ind))
+        print("\nClicked at (%s, %s)" % (event.xdata, event.ydata))
         return ind
 
     def button_press_callback(self, event):
@@ -178,12 +178,10 @@ class EditPoints(object):
             return
         self._ind = self.get_ind_under_point(event)
 
-        # Testing:
+        # Get point position.
         x, y = get_pointsxy(self.points)
         self.pick_pos = (x[self._ind], y[self._ind])
-        print("\nPick: (%s, %s)" % self.pick_pos)
-
-        print("\nself._ind: %s" % self._ind)
+        print("\nGot point: (%s), ind: %s" % (self.pick_pos, self._ind))
 
     def button_release_callback(self, event):
         r"""Whenever a mouse button is released."""
@@ -192,7 +190,7 @@ class EditPoints(object):
         if not event.button:
             return
         self._ind = None
-        print("\nButton released %s" % self._ind)
+        print("\nButton released.")
 
     def key_press_callback(self, event):
         r"""Whenever a key is pressed."""
@@ -203,7 +201,7 @@ class EditPoints(object):
             self.line.set_visible(self.showpoint)
             if not self.showpoint:
                 self._ind = None
-            print("\nToggle")
+            print("\nToggle %d" % self.showpoint)
             return get_pointsxy(self.points)
         elif event.key == 'd':
             x, y = get_pointsxy(self.points)
@@ -235,7 +233,8 @@ class EditPoints(object):
         r"""On mouse movement."""
         if not self.showpoint:
             return
-        if not self._ind:
+        # NOTE: 0 index trigger this if I choose a "pythonic" way here.
+        if self._ind == None:
             return
         if not event.inaxes:
             return
