@@ -80,6 +80,7 @@ def get_pointsxy(points):
 
 class EditPoints(object):
     r"""Edit points on a graph with the mouse.
+    Handles only one set of points.
 
     Key-bindings
 
@@ -97,22 +98,22 @@ class EditPoints(object):
     >>> r = 1.5
     >>> xs = r * np.cos(theta)
     >>> ys = r * np.sin(theta)
-    #  Handles only one set of points.
     >>> points = ax.plot(xs, ys, 'ko')[0]
-    >>> p = EditPoints(fig, ax, points)
-    >>> ax.set_title('Click and drag a point to move it')
-    >>> ax.set_xlim((-2, 2))
-    >>> ax.set_ylim((-2, 2))
+    >>> p = EditPoints(fig, ax, points, verbose=False)
+    >>> _ = ax.set_title('Click and drag a point to move it')
+    >>> _ = ax.set_xlim((-2, 2))
+    >>> _ = ax.set_ylim((-2, 2))
     >>> plt.show()
 
     Based on http://matplotlib.org/examples/event_handling/poly_editor.html
     """
 
     showpoint = True
-    # FIXME: This is in data units!!! I need to convert to pixel units.
     epsilon = 5  # max pixel distance to count as a point hit.
 
     def __init__(self, fig, ax, points, verbose=True):
+        if matplotlib.is_interactive():
+                matplotlib.interactive(False)
         if points is None:
             raise RuntimeError("""You must first add the points to a figure or
             canvas before defining the interactor""")
@@ -126,7 +127,7 @@ class EditPoints(object):
                            linestyle='none', animated=True)
         self.ax.add_line(self.line)
 
-        #cid = self.points.add_callback(self.points_changed)
+        cid = self.points.add_callback(self.points_changed)
         self._ind = None  # The active point.
 
         canvas.mpl_connect('draw_event', self.draw_callback)
@@ -161,11 +162,13 @@ class EditPoints(object):
             tolerance."""
 
         # Display coordinates.
-        x, y = get_pointsxy(self.points)
-        d = np.sqrt((x - event.xdata) ** 2 + (y - event.ydata) ** 2)
+        arr = self.ax.transData.transform(self.points.get_xydata())
+        x, y = arr[:, 0], arr[:, 1]
+        d = np.sqrt((x - event.x) ** 2 + (y - event.y) ** 2)
         indseq = np.nonzero(np.equal(d, np.amin(d)))[0]
         ind = indseq[0]
-
+        if self.verbose:
+            print("d[ind] %s epsilon %s" % (d[ind], self.epsilon))
         if d[ind] >= self.epsilon:
             ind = None
 
