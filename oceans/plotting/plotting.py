@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Thu 13 Sep 2012 12:14:20 PM BRT
+# modified: Tue 18 Sep 2012 11:50:26 AM BRT
 #
 # obs:
 #
@@ -109,22 +109,24 @@ class EditPoints(object):
     """
 
     showpoint = True
+    # FIXME: This is in data units!!! I need to convert to pixel units.
     epsilon = 5  # max pixel distance to count as a point hit.
 
-    def __init__(self, fig, ax, points):
+    def __init__(self, fig, ax, points, verbose=True):
         if points is None:
             raise RuntimeError("""You must first add the points to a figure or
             canvas before defining the interactor""")
         canvas = fig.canvas
         self.dragged = None
         self.ax = ax
+        self.verbose = verbose
         self.points = points
         x, y = get_pointsxy(points)
         self.line = Line2D(x, y, marker='o', markerfacecolor='r',
                            linestyle='none', animated=True)
         self.ax.add_line(self.line)
 
-        cid = self.points.add_callback(self.points_changed)
+        #cid = self.points.add_callback(self.points_changed)
         self._ind = None  # The active point.
 
         canvas.mpl_connect('draw_event', self.draw_callback)
@@ -140,7 +142,8 @@ class EditPoints(object):
         self.ax.draw_artist(self.line)
         self.canvas.blit(self.ax.bbox)
 
-        print("\nDrawing...")
+        if self.verbose:
+            print("\nDrawing...")
 
     def points_changed(self, points):
         r"""This method is called whenever the points object is called."""
@@ -150,7 +153,8 @@ class EditPoints(object):
         # Don't use the points visibility state.
         self.line.set_visible(vis)
 
-        print("\nPoints modified.")
+        if self.verbose:
+            print("\nPoints modified.")
 
     def get_ind_under_point(self, event):
         r"""Get the index of the point under mouse if within epsilon
@@ -165,7 +169,8 @@ class EditPoints(object):
         if d[ind] >= self.epsilon:
             ind = None
 
-        print("\nClicked at (%s, %s)" % (event.xdata, event.ydata))
+        if self.verbose:
+            print("\nClicked at (%s, %s)" % (event.xdata, event.ydata))
         return ind
 
     def button_press_callback(self, event):
@@ -181,7 +186,9 @@ class EditPoints(object):
         # Get point position.
         x, y = get_pointsxy(self.points)
         self.pick_pos = (x[self._ind], y[self._ind])
-        print("\nGot point: (%s), ind: %s" % (self.pick_pos, self._ind))
+
+        if self.verbose:
+            print("\nGot point: (%s), ind: %s" % (self.pick_pos, self._ind))
 
     def button_release_callback(self, event):
         r"""Whenever a mouse button is released."""
@@ -190,7 +197,8 @@ class EditPoints(object):
         if not event.button:
             return
         self._ind = None
-        print("\nButton released.")
+        if self.verbose:
+            print("\nButton released.")
 
     def key_press_callback(self, event):
         r"""Whenever a key is pressed."""
@@ -201,20 +209,24 @@ class EditPoints(object):
             self.line.set_visible(self.showpoint)
             if not self.showpoint:
                 self._ind = None
-            print("\nToggle %d" % self.showpoint)
+
+            if self.verbose:
+                print("\nToggle %d" % self.showpoint)
             return get_pointsxy(self.points)
         elif event.key == 'd':
             x, y = get_pointsxy(self.points)
             ind = self.get_ind_under_point(event)
             if ind is not None:
+                if self.verbose:
+                    print("\nDeleted (%s, %s) ind: %s" % (x[ind], y[ind], ind))
                 x = np.delete(x, ind)
                 y = np.delete(y, ind)
                 self.points.set_xdata(x)
                 self.points.set_ydata(y)
                 self.line.set_data(self.points.get_data())
-            print("\nDeleted (%s, %s) ind: %s" % (x[ind], y[ind], ind))
         elif event.key == 'i':
-            print("Insert point")
+            if self.verbose:
+                print("Insert point")
             xs, ys = self.points.get_xdata(), self.points.get_ydata()
             ex, ey = event.xdata, event.ydata
             for i in range(len(xs) - 1):
@@ -225,7 +237,8 @@ class EditPoints(object):
                     self.points.set_ydata(np.r_[self.points.get_ydata(), ey])
                     self.line.set_data(self.points.get_data())
                     break
-            print("\nInserting: (%s, %s)" % (event.xdata, event.ydata))
+            if self.verbose:
+                print("\nInserting: (%s, %s)" % (event.xdata, event.ydata))
 
         self.canvas.draw()
 
@@ -245,8 +258,9 @@ class EditPoints(object):
         dy = event.ydata - self.pick_pos[1]
         x[self._ind] = self.pick_pos[0] + dx
         y[self._ind] = self.pick_pos[1] + dy
-        print("\nevent.xdata %s" % event.xdata)
-        print("\nevent.ydata %s" % event.ydata)
+        if self.verbose:
+            print("\nevent.xdata %s" % event.xdata)
+            print("\nevent.ydata %s" % event.ydata)
         self.points.set_xdata(x)
         self.points.set_ydata(y)
         self.line.set_data(zip(self.points.get_data()))
@@ -255,7 +269,8 @@ class EditPoints(object):
         self.ax.draw_artist(self.line)
         self.canvas.blit(self.ax.bbox)
 
-        print("\nMoving")
+        if self.verbose:
+            print("\nMoving")
 
 
 if __name__ == '__main__':
