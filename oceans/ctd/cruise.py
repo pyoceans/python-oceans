@@ -21,18 +21,11 @@ from oceans.datasets import get_depth
 from matplotlib.ticker import MultipleLocator
 
 
-def cruise_time(lon, lat, vel=8):
-    r"""Compute the time it takes to navigate all the stations.
-    Assumes cruise velocity even though it is a bad assumption!"""
-    dist = gsw.distance(lon, lat, p=0)
-    vel *= 0.514444  # Convert to meters per seconds.
-    return np.sum(dist / vel)
-
-
 def get_cruise_time(fig, m, vel=8, times=1):
     r"""Click on two points of the Basemap object `m` to compute the
     cruise time at the velocity `vel` in nots (default=8 nots)."""
 
+    vel *= 0.514444  # Convert to meters per seconds.
     print("Click on the first and last point of navigation for %s sections." %
           times)
 
@@ -40,7 +33,9 @@ def get_cruise_time(fig, m, vel=8, times=1):
     while times:
         points = np.array(fig.ginput(n=2))
         lon, lat = m(points[:, 0], points[:, 1], inverse=True)
-        total.append(cruise_time(lon, lat, vel=vel))
+        dist = gsw.distance(lon, lat, p=0)
+        time = np.sum(dist / vel)
+        total.append(time)
         times -= 1
 
     return np.sum(total)
@@ -61,20 +56,28 @@ class Transect(object):
         self.depth = depth
 
     def station_time(self, ctdvel=1.):
-        r"""Compute the time that it takes for each oceanographic station in
+        r"""Time it takes for each oceanographic station in
         the transect.  `ctdvel` is the ctd velocity.
         Default velocity is 1 meters per second."""
 
         # Time in seconds times two (up-/downcast).
         return np.sum(np.abs(self.depth) / ctdvel * 2)
 
-    def navigation_time(self, vel=8):
-        r"""Compute the time it takes to navigate between stations."""
-        return cruise_time(self.lon, self.lat, vel=vel)
+    def cruise_stations_time(self, vel=8):
+        r"""Compute the time it takes to navigate all the stations.
+        Assumes cruise velocity even though it is a bad assumption!
+        Enter the velocity in nots."""
+        dist = self.distances()
+        vel *= 0.514444  # Convert to meters per seconds.
+        return np.sum(dist / vel)
 
     def transect_time(self):
         r"""Compute the time it takes to complete the transect in days."""
-        return (self.station_time() + self.navigation_time())
+        return (self.station_time() + self.cruise_stations_time())
+
+    def distances(self):
+        r"""Compute distances between stations."""
+        return np.c_[0, gsw.distance(self.lon, self.lat, p=0)]
 
 
 class Chart(object):
