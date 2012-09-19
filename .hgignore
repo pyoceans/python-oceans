@@ -15,3 +15,4 @@ oceans/ff_tools/ocfis/*.m
 oceans/RPStuff/RPSstuff/*
 code-todo/*
 oceans/ctd/data/*
+oceans/RPStuff/test/adriatic_coast.dat
