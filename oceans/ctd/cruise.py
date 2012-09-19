@@ -21,6 +21,12 @@ from oceans.datasets import get_depth
 from matplotlib.ticker import MultipleLocator
 
 
+def draw_arrow(m, points, **kwargs):
+    x1, y1 = points[:, 0][0], points[:, 1][0]
+    x2, y2 = points[:, 0][1], points[:, 1][1]
+    dx, dy = x2 - x1, y2 - y1
+    return m.ax.arrow(x1, y1, dx, dy, **kwargs)
+
 def get_cruise_time(fig, m, vel=8, times=1):
     r"""Click on two points of the Basemap object `m` to compute the
     cruise time at the velocity `vel` in nots (default=8 nots)."""
@@ -32,6 +38,8 @@ def get_cruise_time(fig, m, vel=8, times=1):
     total = []
     while times:
         points = np.array(fig.ginput(n=2))
+        draw_arrow(m, points, width=2500., color='k', shape='full', overhang=0,
+                   alpha=0.85, zorder=10)
         lon, lat = m(points[:, 0], points[:, 1], inverse=True)
         dist = gsw.distance(lon, lat, p=0)
         time = np.sum(dist / vel)
@@ -51,9 +59,14 @@ class Transect(object):
         if not depth.all():
             print("Depth not provided, getting depth from etopo2.")
             depth = get_depth(lon, lat)
-        self.lon = lon
-        self.lat = lat
-        self.depth = depth
+
+        # Sort by longitude
+        # FIXME: Maybe that is not the best option.
+        # The ideal should be sorted by distance from the coast.
+        sort = lon.argsort()
+        self.lon = lon[sort]
+        self.lat = lat[sort]
+        self.depth = depth[sort]
 
     def station_time(self, ctdvel=1.):
         r"""Time it takes for each oceanographic station in
@@ -77,7 +90,7 @@ class Transect(object):
 
     def distances(self):
         r"""Compute distances between stations."""
-        return np.c_[0, gsw.distance(self.lon, self.lat, p=0)]
+        return gsw.distance(self.lon, self.lat, p=0)
 
 
 class Chart(object):
