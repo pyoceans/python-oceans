@@ -379,6 +379,10 @@ def smoo2(A, hei, wid, kind='hann', badflag=-9999, beta=14):
     -------
     As      : 2D array
               The smoothed array.
+    TODO
+    ----
+    This function definitely needs optimization.
+    It is extremely computationally expensive.
 
     André Palóczy Filho (paloczy@gmail.com)
     April 2012
@@ -433,39 +437,38 @@ def smoo2(A, hei, wid, kind='hann', badflag=-9999, beta=14):
 
             # Tiling window and input array at the edges.
             # Upper edge.
-        if upp < 0:
-            wupp = wupp - upp
-            upp = 0
+            if upp < 0:
+                wupp = wupp - upp
+                upp = 0
 
-        # Left edge.
-        if lef < 0:
-            wlef = wlef - lef
-            lef = 0
+            # Left edge.
+            if lef < 0:
+                wlef = wlef - lef
+                lef = 0
 
-        # Bottom edge.
-        if low > imax:
-            ex = low - imax
-            wlow = wlow - ex
-            low = imax
+            # Bottom edge.
+            if low > imax:
+                ex = low - imax
+                wlow = wlow - ex
+                low = imax
 
-        # Right edge.
-        if rig > jmax:
-            ex = rig - jmax
-            wrig = wrig - ex
-            rig = jmax
+            # Right edge.
+            if rig > jmax:
+                ex = rig - jmax
+                wrig = wrig - ex
+                rig = jmax
 
-        # Computing smoothed value at point (i, j).
-        Ac = A[upp:low, lef:rig]
-        wdwc = wdw[wupp:wlow, wlef:wrig]
-        fnan = np.isnan(Ac)
-        Ac[fnan] = 0
-        wdwc[fnan] = 0  # Eliminating NaNs from mean computation.
-        fbad = Ac == badflag
-        wdwc[fbad] = 0  # Eliminating bad data from mean computation.
-        a = Ac * wdwc
-        As[i, j] = a.sum() / wdwc.sum()
-
-    # Assigning NaN to the positions holding NaNs in the input array.
+            # Computing smoothed value at point (i, j).
+            Ac = A[upp:low, lef:rig]
+            wdwc = wdw[wupp:wlow, wlef:wrig]
+            fnan = np.isnan(Ac)
+            Ac[fnan] = 0
+            wdwc[fnan] = 0  # Eliminating NaNs from mean computation.
+            fbad = Ac == badflag
+            wdwc[fbad] = 0  # Eliminating bad data from mean computation.
+            a = Ac * wdwc
+            As[i, j] = a.sum() / wdwc.sum()
+    # Assigning NaN to the positions holding NaNs in the original array.
     As[Fnan] = np.NaN
 
     return As
