@@ -25,7 +25,9 @@ def draw_arrow(m, points, **kwargs):
     x1, y1 = points[:, 0][0], points[:, 1][0]
     x2, y2 = points[:, 0][1], points[:, 1][1]
     dx, dy = x2 - x1, y2 - y1
-    return m.ax.arrow(x1, y1, dx, dy, **kwargs)
+    arrow = m.ax.arrow(x1, y1, dx, dy, **kwargs)
+    plt.draw()
+    return arrow
 
 def get_cruise_time(fig, m, vel=8, times=1):
     r"""Click on two points of the Basemap object `m` to compute the
