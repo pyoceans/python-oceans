@@ -111,7 +111,7 @@ def etopo_subset(min_lat, max_lat, min_lon, max_lon, tfile=None, smoo=False):
 
     if not tfile:
         # TODO: Check for a online dap version of this file.
-        tfile = '/home/filipe/00-NOBKP/OcFisData/ETOPO2v2g_f4.nc'
+        tfile = 'http://opendap.ccst.inpe.br/Misc/etopo2/ETOPO2v2c_f4.nc'
 
     etopo = Dataset(tfile, 'r')
 
