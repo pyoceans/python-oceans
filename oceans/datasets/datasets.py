@@ -184,6 +184,8 @@ def laplace_filter(F, M=None):
 
 def get_depth(lon, lat):
     r"""Find the depths for each station on the etopo2 database."""
+    lon,lat = map(np.asanyarray, (lon,lat))
+
     lons, lats, bathy = etopo_subset(lat.min() - 5, lat.max() + 5,
                                      lon.min() - 5, lon.max() + 5, smoo=False)
 
