@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  05-Sep-2012
-# modified: Thu 13 Sep 2012 11:05:32 AM BRT
+# modified: Sat 13 Oct 2012 01:51:52 AM BRT
 #
 # obs:
 #
@@ -29,9 +29,10 @@ def draw_arrow(m, points, **kwargs):
     plt.draw()
     return arrow
 
-def get_cruise_time(fig, m, vel=8, times=1):
+
+def get_cruise_time(fig, m, vel=7, times=1):
     r"""Click on two points of the Basemap object `m` to compute the
-    cruise time at the velocity `vel` in nots (default=8 nots)."""
+    cruise time at the velocity `vel` in nots (default=7 nots)."""
 
     vel *= 0.514444  # Convert to meters per seconds.
     print("Click on the first and last point of navigation for %s sections." %
@@ -78,7 +79,7 @@ class Transect(object):
         # Time in seconds times two (up-/downcast).
         return np.sum(np.abs(self.depth) / ctdvel * 2)
 
-    def cruise_stations_time(self, vel=8):
+    def cruise_stations_time(self, vel=7):
         r"""Compute the time it takes to navigate all the stations.
         Assumes cruise velocity even though it is a bad assumption!
         Enter the velocity in nots."""
@@ -93,6 +94,12 @@ class Transect(object):
     def distances(self):
         r"""Compute distances between stations."""
         return gsw.distance(self.lon, self.lat, p=0)
+
+    def save_csv(self, fname):
+        r"""Save the radial as a Comma Separated Value file."""
+        np.savetxt(fname, np.c_[self.lon, self.lat, np.abs(self.depth)],
+                   header='longitude,latitude,depth', comments='',
+                   fmt='%3.8f,%3.8f,%i')
 
 
 class Chart(object):
