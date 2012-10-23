@@ -13,7 +13,12 @@
 # obs:
 #
 
+import os
 import numpy as np
+
+
+def basename(fname):
+    return os.path.splitext(os.path.basename(fname))
 
 
 class match_args_return(object):
