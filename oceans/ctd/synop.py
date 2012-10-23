@@ -7,13 +7,14 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  13-Sep-2012
-# modified: Thu 13 Sep 2012 05:28:12 PM BRT
+# modified: Sat 13 Oct 2012 01:53:58 AM BRT
 #
 # obs:  Mostly backwards compatible functions.  There are newer and better ways
 # to do all this!!!
 #
 
 import numpy as np
+
 
 # Objective analysis in the same fashion as `scaloa.m`.
 def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None):
@@ -79,7 +80,7 @@ def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None):
     # Create an example with real data.
 
     n = len(x)
-    x, y = np.reshape(x, (1, n)), np.reshape(y, (1 ,n))
+    x, y = np.reshape(x, (1, n)), np.reshape(y, (1, n))
 
     # Squared distance matrix between the observations.
     d2 = ((np.tile(x, (n, 1)).T - np.tile(x, (n, 1))) ** 2 +
@@ -112,7 +113,8 @@ def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None):
         t = np.reshape(t, (n, 1))
         tp = np.dot(C, np.linalg.solve(A, t))
         if 0:  # NOTE: `scaloa2.m`
-            mD = np.sum(np.linalg.solve(A, t)) / np.sum(np.sum(np.linalg.inv(A)))
+            mD = (np.sum(np.linalg.solve(A, t)) /
+                  np.sum(np.sum(np.linalg.inv(A))))
             t = t - mD
             tp = (C * (np.linalg.solve(A, t)))
             tp = tp + mD * np.ones(tp.shape)
