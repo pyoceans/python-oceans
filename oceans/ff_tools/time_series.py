@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  12-Feb-2012
-# modified: Wed 12 Sep 2012 11:52:51 AM BRT
+# modified: Sat 13 Oct 2012 10:41:33 PM BRT
 #
 # obs:
 #
@@ -804,12 +804,13 @@ def bin_dates(self, freq, tz=None):
 
     Examples
     --------
-    import numpy as np
-    from pandas import Series, date_range
-    n = 365
-    sig = np.random.rand(n) + 2 * np.cos(2 * np.pi * np.arange(n))
-    dates = date_range(start='1/1/2000', end='30/12/2000', periods=365, freq='D')
-    series = Series(data=sig, index=dates)
+    >>> import numpy as np
+    >>> from pandas import Series, date_range
+    >>> n = 365
+    >>> sig = np.random.rand(n) + 2 * np.cos(2 * np.pi * np.arange(n))
+    >>> dates = date_range(start='1/1/2000', end='30/12/2000', periods=365,
+    ...                    freq='D')
+    >>> series = Series(data=sig, index=dates)
     """
     #closed='left', label='left'
     new_index = date_range(start=self.index[0], end=self.index[-1],
