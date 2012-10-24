@@ -61,7 +61,7 @@ def ncview(args):
         nc = Dataset(ncfile, 'r')
     except Exception, err:
         raise Exception("Problem while reading ncfile %s.\nError: %s" %
-                              (ncfile, err.args[0]))
+                        (ncfile, err.args[0]))
 
     # Check variable.
     try:
@@ -72,7 +72,7 @@ def ncview(args):
     except KeyError:
         variables = ', '.join(nc.variables.keys())
         raise KeyError("Variable %s not found.  Choose from: %s" %
-              (variable, variables))
+                       (variable, variables))
 
     # NOTE: I assume 3D model output (time, lon, lat).
     ndim = len(variable.dimensions)
@@ -104,8 +104,8 @@ def plot_map(lon, lat):
     llcrnrlat, urcrnrlat = lat.min(), lat.max()
 
     m = Basemap(projection='merc', llcrnrlon=llcrnrlon, urcrnrlon=urcrnrlon,
-                                   llcrnrlat=llcrnrlat, urcrnrlat=urcrnrlat,
-                                   resolution='i')
+                llcrnrlat=llcrnrlat, urcrnrlat=urcrnrlat,
+                resolution='i')
 
 
 def plot():
@@ -127,8 +127,8 @@ def plot():
 
     ax = grid[-1]
     im = ax.imshow(var, interpolation='nearest', origin='lower',
-                extent=(x[0], x[-1], y[0], y[-1]),
-                vmin=vmin, vmax=vmax)
+                   extent=(x[0], x[-1], y[0], y[-1]),
+                   vmin=vmin, vmax=vmax)
 
     plt.show()
 
