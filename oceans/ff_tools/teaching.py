@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Fri 25 May 2012 04:01:44 PM EDT
+# modified: Sat 13 Oct 2012 10:40:21 PM BRT
 #
 # obs: Just some basic example function.
 #
@@ -18,8 +18,7 @@ from __future__ import division
 import numpy as np
 from scipy import stats
 
-__all__ = [
-           'cov',
+__all__ = ['cov',
            'rms',
            'rmsd',
            'allstats',
@@ -32,8 +31,9 @@ __all__ = [
            'lsqfityw',
            'lsqfityz',
            'gmregress',
-           'r_earth'
-           ]
+           'r_earth',
+           'cart2pol',
+           'pol2cart']
 
 
 def cov(x, y):
@@ -645,7 +645,7 @@ def lsqcubic(X, Y, sX, sY, tl=1e-6):
 
 
 def lsqfityw(X, Y, sY):
-    """
+    r"""
     Calculate a "MODEL-1" least squares fit to WEIGHTED x,y-data pairs:
 
     The line is fit by MINIMIZING the WEIGHTED residuals in Y only.
@@ -978,3 +978,29 @@ def r_earth(lon=None, lat=None):
                      (np.cos(theta) / b) ** 2)
 
     return 1.0 / np.sqrt(inv_r_squared)
+
+
+def  cart2pol(x, y, units='deg'):
+    r"""Convert from Cartesian to polar coordinates
+
+    **usage**:
+        theta, radius = pol2cart(x, y, units='deg')
+
+    units refers to the rad or deg for theta that should be returned."""
+    radius = np.hypot(x, y)
+    theta = np.arctan2(y, x)
+    if units in ['deg', 'degs']:
+        theta = theta * 180 / np.pi
+    return theta, radius
+
+
+def pol2cart(theta, radius, units='deg'):
+    r"""Convert from polar to Cartesian coordinates
+
+    **usage**:
+        x, y = pol2cart(theta, radius, units='deg')."""
+    if units in ['deg', 'degs']:
+        theta = theta * np.pi / 180.0
+    x = radius * np.cos(theta)
+    y = radius * np.sin(theta)
+    return x, y
