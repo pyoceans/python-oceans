@@ -1,56 +1,56 @@
-#http://code.google.com/p/danapeerlab/source/browse/trunk/freecell/depends/common/python/
+##############################################################################
+################## mlabwrap: transparently wraps matlab(tm) ##################
+##############################################################################
+##
+## o author: Alexander Schmolck <a.schmolck@gmx.net>
+## o created: 2002-05-29 21:51:59+00:40
+## o version: see `__version__`
+## o keywords: matlab wrapper
+## o license: MIT
+## o FIXME:
+##   - it seems proxies can somehow still 'disappear', maybe in connection
+##     with exceptions in the matlab workspace?
+##   - add test that defunct proxy-values are culled from matlab workspace
+##     (for some reason ipython seems to keep them alive somehwere, even after
+##     a zaphist, should find out what causes that!)
+##   - add tests for exception handling!
+##   - the proxy getitem/setitem only works quite properly for 1D arrays
+##     (matlab's moronic syntax also means that 'foo(bar)(watz)' is not the
+##     same as 'tmp = foo(bar); tmp(watz)' -- indeed chances are the former
+##     will fail (not, apparently however with 'foo{bar}{watz}' (blech)). This
+##     would make it quite hard to the proxy thing 'properly' for nested
+##     proxies, so things may break down for complicated cases but can be
+##     easily fixed manually e.g.: ``mlab._set('tmp', foo(bar));
+##     mlab._get('tmp',remove=True)[watz]``
+##   - Guess there should be some in principle avoidable problems with
+##     assignments to sub-proxies (in addition to the more fundamental,
+##     unavoidable problem that ``proxy[index].part = foo`` can't work as
+##     expected if ``proxy[index]`` is a marshallable value that doesn't need
+##     to be proxied itself; see below for workaround).
+## o XXX:
+##   - better support of string 'arrays'
+##   - multi-dimensional arrays are unsupported
+##   - treatment of lists, tuples and arrays with non-numerical values (these
+##     should presumably be wrapped into wrapper classes MlabCell etc.)
+##   - should test classes and further improve struct support?
+##   - should we transform 1D vectors into row vectors when handing them to
+##     matlab?
+##   - what should be flattend? Should there be a scalarization opition?
+##   - ``autosync_dirs`` is a bit of a hack (and maybe``handle_out``, too)...
+##   - is ``global mlab`` in unpickling of proxies OK?
+##   - hasattr fun for proxies (__deepcopy__ etc.)
+##   - check pickling
+## o TODO:
+##   - delattr
+##   - better error reporting: test for number of input args etc.
+##   - add cloning of proxies.
+##   - pickling for nested proxies (and session management for pickling)
+##   - more tests
+## o !!!:
+##   - matlab complex arrays are intelligently of type 'double'
+##   - ``class('func')`` but ``class(var)``
 
-#mlabwrap: transparently wraps matlab(tm)
-
-#o author: Alexander Schmolck <a.schmolck@gmx.net>
-#o created: 2002-05-29 21:51:59+00:40
-#o version: see `__version__`
-#o keywords: matlab wrapper
-#o license: MIT
-#o FIXME:
-  #- it seems proxies can somehow still 'disappear', maybe in connection
-    #with exceptions in the matlab workspace?
-  #- add test that defunct proxy-values are culled from matlab workspace
-    #(for some reason ipython seems to keep them alive somehwere, even after
-    #a zaphist, should find out what causes that!)
-  #- add tests for exception handling!
-  #- the proxy getitem/setitem only works quite properly for 1D arrays
-    #(matlab's moronic syntax also means that 'foo(bar)(watz)' is not the
-    #same as 'tmp = foo(bar); tmp(watz)' -- indeed chances are the former
-    #will fail (not, apparently however with 'foo{bar}{watz}' (blech)). This
-    #would make it quite hard to the proxy thing 'properly' for nested
-    #proxies, so things may break down for complicated cases but can be
-    #easily fixed manually e.g.: ``mlab._set('tmp', foo(bar));
-    #mlab._get('tmp',remove=True)[watz]``
-  #- Guess there should be some in principle avoidable problems with
-    #assignments to sub-proxies (in addition to the more fundamental,
-    #unavoidable problem that ``proxy[index].part = foo`` can't work as
-    #expected if ``proxy[index]`` is a marshallable value that doesn't need
-    #to be proxied itself; see below for workaround).
-#o XXX:
-  #- better support of string 'arrays'
-  #- multi-dimensional arrays are unsupported
-  #- treatment of lists, tuples and arrays with non-numerical values (these
-    #should presumably be wrapped into wrapper classes MlabCell etc.)
-  #- should test classes and further improve struct support?
-  #- should we transform 1D vectors into row vectors when handing them to
-    #matlab?
-  #- what should be flattend? Should there be a scalarization opition?
-  #- ``autosync_dirs`` is a bit of a hack (and maybe``handle_out``, too)...
-  #- is ``global mlab`` in unpickling of proxies OK?
-  #- hasattr fun for proxies (__deepcopy__ etc.)
-  #- check pickling
-#o TODO:
-  #- delattr
-  #- better error reporting: test for number of input args etc.
-  #- add cloning of proxies.
-  #- pickling for nested proxies (and session management for pickling)
-  #- more tests
-#o !!!:
-  #- matlab complex arrays are intelligently of type 'double'
-  #- ``class('func')`` but ``class(var)``
-
-r"""
+"""
 mlabwrap
 ========
 
@@ -559,7 +559,7 @@ class MlabWrap(object):
                              "','".join(tempargs))
     # this is really raw, no conversion of [[]] -> [], whatever
     def _get(self, name, remove=False):
-        r"""Directly access a variable in matlab space.
+        r"""Directly access a variable in matlab space. 
 
         This should normally not be used by user code."""
         # FIXME should this really be needed in normal operation?
@@ -594,7 +594,7 @@ class MlabWrap(object):
 
     def _set(self, name, value):
         r"""Directly set a variable `name` in matlab space to `value`.
-
+        
         This should normally not be used in user code."""
         if isinstance(value, MlabObjectProxy):
             mlabraw.eval(self._session, "%s = %s;" % (name, value._name))

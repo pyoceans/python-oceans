@@ -22,7 +22,7 @@ from oceans.mlabwrap import MatlabPipe
 
 def LineCurvature2Dpy(Vertices, Lines=None, close_matlab=True):
     r"""Call matlab and run LineCurvature2D."""
-    matlab = MatlabPipe(matlab_version='2008b')
+    matlab = MatlabPipe(matlab_process_path='guess', matlab_version='2011a')
     matlab.open()
 
     matlab.put({'Vertices': Vertices})
@@ -49,6 +49,7 @@ if __name__ == '__main__':
     data = sio.loadmat('testdata.mat', squeeze_me=True)
 
     Lines, Vertices = data['Lines'], data['Vertices']
+    Lines = np.int_(Lines)
 
     k, N = LineCurvature2Dpy(Vertices, Lines)
     k = k * 100
@@ -61,3 +62,5 @@ if __name__ == '__main__':
             np.c_[Vertices[Lines[:, 0] - 1, 1],
                   Vertices[Lines[:, 1] - 1, 1]].T, 'b')
     ax.plot(Vertices[:, 0], Vertices[:, 1], 'r.')
+
+    plt.show()
