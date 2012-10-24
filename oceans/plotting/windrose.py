@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  26-Jun-2012
-# modified: Tue 26 Jun 2012 04:54:03 PM BRT
+# modified: Wed 24 Oct 2012 11:23:07 AM BRST
 #
 # obs:
 #
@@ -119,15 +119,16 @@ class WindroseAxes(PolarAxes):
         def get_handles():
             handles = list()
             for p in self.patches_list:
-                if isinstance(p, matplotlib.patches.Polygon) or \
-                isinstance(p, matplotlib.patches.Rectangle):
+                poly = isinstance(p, matplotlib.patches.Polygon)
+                rect = isinstance(p, matplotlib.patches.Rectangle)
+                if poly or rect:
                     color = p.get_facecolor()
                 elif isinstance(p, matplotlib.lines.Line2D):
                     color = p.get_color()
                 else:
                     raise AttributeError("Can't handle patches")
                 handles.append(Rectangle((0, 0), 0.2, 0.2,
-                    facecolor=color, edgecolor='black'))
+                                         facecolor=color, edgecolor='black'))
             return handles
 
         def get_labels():
@@ -145,7 +146,7 @@ class WindroseAxes(PolarAxes):
         handles = get_handles()
         labels = get_labels()
         self.legend_ = matplotlib.legend.Legend(self, handles, labels, loc,
-                                                                     **kwargs)
+                                                **kwargs)
         return self.legend_
 
     def _init_plot(self, dir, var, **kwargs):
@@ -187,9 +188,8 @@ class WindroseAxes(PolarAxes):
         blowto = kwargs.pop('blowto', False)
 
         # Set the global information dictionary.
-        self._info['dir'], self._info['bins'], self._info['table'] = \
-                           histogram(dir, var, bins, nsector, normed, blowto)
-
+        infos = histogram(dir, var, bins, nsector, normed, blowto)
+        self._info['dir'], self._info['bins'], self._info['table'] = infos
         return bins, nbins, nsector, colors, angles, kwargs
 
     def contour(self, dir, var, **kwargs):
@@ -223,8 +223,8 @@ class WindroseAxes(PolarAxes):
         others kwargs : see help(pylab.plot)
         """
 
-        bins, nbins, nsector, colors, angles, kwargs = self._init_plot(dir,
-                                                                var, **kwargs)
+        args = self._init_plot(dir, var, **kwargs)
+        bins, nbins, nsector, colors, angles, kwargs = args
 
         # Closing lines.
         angles = np.hstack((angles, angles[-1] - 2 * np.pi / nsector))
@@ -273,8 +273,8 @@ class WindroseAxes(PolarAxes):
         others kwargs : see help(pylab.plot)
         """
 
-        bins, nbins, nsector, colors, angles, kwargs = self._init_plot(dir,
-                                                                var, **kwargs)
+        args = self._init_plot(dir, var, **kwargs)
+        bins, nbins, nsector, colors, angles, kwargs = args
         kwargs.pop('facecolor', None)
         kwargs.pop('edgecolor', None)
 
@@ -323,8 +323,8 @@ class WindroseAxes(PolarAxes):
         each sector (1.0 for no space)
         """
 
-        bins, nbins, nsector, colors, angles, kwargs = self._init_plot(dir,
-                                                                var, **kwargs)
+        args = self._init_plot(dir, var, **kwargs)
+        bins, nbins, nsector, colors, angles, kwargs = args
         kwargs.pop('facecolor', None)
         edgecolor = kwargs.pop('edgecolor', None)
         if edgecolor is not None:
@@ -380,8 +380,8 @@ class WindroseAxes(PolarAxes):
         Default : no edgecolor
         """
 
-        bins, nbins, nsector, colors, angles, kwargs = self._init_plot(dir,
-                                                                var, **kwargs)
+        args = self._init_plot(dir, var, **kwargs)
+        bins, nbins, nsector, colors, angles, kwargs = args
         kwargs.pop('facecolor', None)
         edgecolor = kwargs.pop('edgecolor', None)
         if edgecolor is not None:
@@ -441,7 +441,7 @@ def histogram(dir, var, bins, nsector, normed=False, blowto=False):
         dir[dir >= 360.] = dir[dir >= 360.] - 360
 
     table = histogram2d(x=var, y=dir, bins=[var_bins, dir_bins],
-                          normed=False)[0]
+                        normed=False)[0]
     # Add the last value to the first to have the table of North winds,
     table[:, 0] = table[:, 0] + table[:, -1]
     # and remove the last column.
