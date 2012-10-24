@@ -19,16 +19,15 @@ import numpy as np
 
 from netCDF4 import Dataset
 
+from oceans.utilities import basename
 from oceans.ff_tools import get_profile
 
-__all__ = [
-    'woa_subset',
-    'etopo_subset',
-    'laplace_X',
-    'laplace_Y',
-    'laplace_filter',
-    'get_depth'
-]
+__all__ = ['woa_subset',
+           'etopo_subset',
+           'laplace_X',
+           'laplace_Y',
+           'laplace_filter',
+           'get_depth']
 
 
 def get_indices(min_lat, max_lat, min_lon, max_lon, lons, lats):
@@ -94,7 +93,7 @@ def woa_subset(min_lat, max_lat, min_lon, max_lon, woa_file=None):
 
     return lon, lat, temperature
 
-
+# TODO: download ETOPO2v2c_f4.nc
 def etopo_subset(min_lat, max_lat, min_lon, max_lon, tfile=None, smoo=False):
     r"""Get a etopo subset.
     Should work on any netCDF with x, y, data
@@ -103,20 +102,51 @@ def etopo_subset(min_lat, max_lat, min_lon, max_lon, tfile=None, smoo=False):
 
     Example
     -------
+    >>> import matplotlib.pyplot as plt
     >>> offset = 5
+    >>> tfile = '/home/filipe/00-NOBKP/OcFisData/ETOPO1_Ice_g_gmt4.grd'
+    >>> toponame = basename(tfile)[0]
     >>> lonStart, lonEnd, latStart, latEnd = -43, -30.0, -22.0, -17.0
     >>> lons, lats, bathy = etopo_subset(latStart - offset, latEnd + offset,
-    ...                                  lonStart - offset, lonEnd + offset, smoo=True)
+    ...                                  lonStart - offset, lonEnd + offset,
+    ...                                  smoo=True, tfile=tfile)
+    >>> fig, ax = plt.subplots()
+    >>> ax.pcolormesh(lons, lats, bathy)
+    >>> ax.axis([-42, -28, -23, -15])
+    >>> ax.set_title(toponame)
+    >>> plt.show()
+    >>> offset = 0
+    >>> lonStart, lonEnd, latStart, latEnd = -43, -30.0, -22.0, -17.0
+    >>> tfile = '/home/filipe/00-NOBKP/OcFisData/ETOPO1_Bed_c_gmt4.grd'
+    >>> toponame = basename(tfile)[0]
+    >>> lons, lats, bathy = etopo_subset(latStart - offset, latEnd + offset,
+    ...                                  lonStart - offset, lonEnd + offset,
+    ...                                  smoo=True, tfile=tfile)
+
+    >>> fig, ax = plt.subplots()
+    >>> ax.pcolormesh(lons, lats, bathy)
+    >>> ax.axis([-42, -28, -23, -15])
+    >>> ax.set_title(toponame)
+    >>> plt.show()
     """
 
     if not tfile:
-        # TODO: Check for a online dap version of this file.
+        print("Specify a topography file.")
+    elif tfile == 'dap':
         tfile = 'http://opendap.ccst.inpe.br/Misc/etopo2/ETOPO2v2c_f4.nc'
+        print("Using %s" % tfile)
 
     etopo = Dataset(tfile, 'r')
 
-    lons = etopo.variables["x"][:]
-    lats = etopo.variables["y"][:]
+    toponame = basename(tfile)[0]
+
+    if 'ETOPO2v2c_f4' == toponame or 'ETOPO2v2g_f4' == toponame:
+        lons = etopo.variables["x"][:]
+        lats = etopo.variables["y"][:]
+    if 'ETOPO1_Ice_g_gmt4' == toponame or 'ETOPO1_Bed_c_gmt4' == toponame:
+        lons = etopo.variables["lon"][:]
+        lats = etopo.variables["lat"][:]
+
 
     res = get_indices(min_lat, max_lat, min_lon, max_lon, lons, lats)
 
@@ -182,11 +212,12 @@ def laplace_filter(F, M=None):
                   laplace_Y(laplace_X(F, M), M))
 
 
-def get_depth(lon, lat):
+def get_depth(lon, lat, tfile='dap'):
     r"""Find the depths for each station on the etopo2 database."""
-    lon,lat = map(np.asanyarray, (lon,lat))
+    lon, lat = map(np.asanyarray, (lon, lat))
 
     lons, lats, bathy = etopo_subset(lat.min() - 5, lat.max() + 5,
-                                     lon.min() - 5, lon.max() + 5, smoo=False)
+                                     lon.min() - 5, lon.max() + 5,
+                                     tfile=tfile, smoo=False)
 
     return get_profile(lons, lats, bathy, lon, lat, mode='nearest', order=3)
