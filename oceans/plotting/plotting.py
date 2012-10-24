@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Tue 18 Sep 2012 11:50:26 AM BRT
+# modified: Sat 13 Oct 2012 10:50:03 PM BRT
 #
 # obs:
 #
@@ -127,7 +127,7 @@ class EditPoints(object):
                            linestyle='none', animated=True)
         self.ax.add_line(self.line)
 
-        cid = self.points.add_callback(self.points_changed)
+        #cid = self.points.add_callback(self.points_changed)
         self._ind = None  # The active point.
 
         canvas.mpl_connect('draw_event', self.draw_callback)
@@ -250,7 +250,7 @@ class EditPoints(object):
         if not self.showpoint:
             return
         # NOTE: 0 index trigger this if I choose a "pythonic" way here.
-        if self._ind == None:
+        if self._ind is None:
             return
         if not event.inaxes:
             return
