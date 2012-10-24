@@ -14,7 +14,6 @@
 #
 
 import numpy as np
-import scipy.io as sio
 import matplotlib.pyplot as plt
 
 from oceans.mlabwrap import MatlabPipe
@@ -46,7 +45,7 @@ def LineCurvature2Dpy(Vertices, Lines=None, close_matlab=True):
     return k, N
 
 if __name__ == '__main__':
-    data = sio.loadmat('testdata.mat', squeeze_me=True)
+    data = np.load('testdata.npz')
 
     Lines, Vertices = data['Lines'], data['Vertices']
     Lines = np.int_(Lines)
