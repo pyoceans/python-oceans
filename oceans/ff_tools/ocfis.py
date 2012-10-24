@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Mon 28 May 2012 10:55:57 PM EDT
+# modified: Sat 13 Oct 2012 10:41:00 PM BRT
 #
 # obs:
 #
@@ -19,14 +19,12 @@ import numpy.ma as ma
 
 import gsw
 
-__all__ = [
-           'spdir2uv',
+__all__ = ['spdir2uv',
            'uv2spdir',
            'interp_nan',
            'mld',
            'del_eta_del_x',
-           'pcaben'
-           ]
+           'pcaben']
 
 
 def spdir2uv(spd, ang, deg=False):
@@ -337,13 +335,13 @@ def pcaben(u, v):
     D, V = np.linalg.eig(C)
 
     x1 = np.r_[0.5 * np.sqrt(D[0]) * V[0, 0],
-              -0.5 * np.sqrt(D[0]) * V[0, 0]]
+               -0.5 * np.sqrt(D[0]) * V[0, 0]]
     y1 = np.r_[0.5 * np.sqrt(D[0]) * V[1, 0],
-              -0.5 * np.sqrt(D[0]) * V[1, 0]]
+               -0.5 * np.sqrt(D[0]) * V[1, 0]]
     x2 = np.r_[0.5 * np.sqrt(D[1]) * V[0, 1],
-              -0.5 * np.sqrt(D[1]) * V[0, 1]]
+               -0.5 * np.sqrt(D[1]) * V[0, 1]]
     y2 = np.r_[0.5 * np.sqrt(D[1]) * V[1, 1],
-              -0.5 * np.sqrt(D[1]) * V[1, 1]]
+               -0.5 * np.sqrt(D[1]) * V[1, 1]]
 
     mdir, mspd = uv2spdir(u.mean(), v.mean())
 
