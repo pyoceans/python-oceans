@@ -11,7 +11,7 @@ build/*
 dist/*
 oceans.egg-info/*
 TODO
-oceans/ff_tools/ocfis/*.m
+*.m
 oceans/RPStuff/RPSstuff/*
 code-todo/*
 oceans/ctd/data/*
