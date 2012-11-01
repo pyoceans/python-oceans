@@ -38,7 +38,8 @@ import matplotlib.pyplot as plt
 import mpl_toolkits.axisartist as AA
 
 import gsw
-from pandas import DataFrame, Series, Index
+from pandas import DataFrame, Index
+from pandas import Series as Profile
 from scipy.stats import nanmean, nanstd
 from mpl_toolkits.axes_grid1 import host_subplot
 
@@ -357,10 +358,10 @@ def plot_vars(self, **kwds):
 
 CTD.plot = plot_vars
 
-Series.plot = plot
-Series.smooth = smooth
-Series.despike = despike
-Series.bindata = bindata
+Profile.plot = plot
+Profile.smooth = smooth
+Profile.despike = despike
+Profile.bindata = bindata
 
 Index.asof = asof
 Index.float_ = float_
