@@ -20,6 +20,7 @@ Methods:
     - find MLD (TODO: Add more methods).
     - find barrier (TODO: Check paper).
     - reindex from db to z and from z to db.
+    - Use scipy.stats.binned_statistic for bindata.
   * DataFrame
     - plot_yy
     - compare two variables
