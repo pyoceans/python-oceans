@@ -52,6 +52,7 @@ def get_cruise_time(fig, m, vel=7, times=1):
     return np.sum(total)
 
 
+#TODO: Monkey patch a DataFrame for this.
 class Transect(object):
     r"""Container class to store oceanographic transect.
     Info (`lon`, `lat`, `depth`)."""
@@ -71,13 +72,36 @@ class Transect(object):
         self.lat = lat[sort]
         self.depth = depth[sort]
 
-    def station_time(self, ctdvel=1.):
+    #FIXME:
+    def station_time_ctd(self, ctdvel=1.):
         r"""Time it takes for each oceanographic station in
         the transect.  `ctdvel` is the ctd velocity.
         Default velocity is 1 meters per second."""
 
         # Time in seconds times two (up-/downcast).
-        return np.sum(np.abs(self.depth) / ctdvel * 2)
+        depth = np.abs(self.depth)
+        depth[depth < 100.] = 100.
+        buffer_ctd = len(depth) * 900.  # 15 min preparations.
+        return np.sum(depth / ctdvel * 2) + buffer_ctd
+
+    def station_time(self):
+        r"""
+        30 min before slope.
+        1 h at the slope.
+        2 h ocean floor."""
+
+        depth = np.abs(self.depth)
+
+        coast = depth < 100
+        slope = np.logical_and(depth >= 100, depth < 1000)
+        basin = np.logical_and(depth >= 1000, depth < 2000)
+        deep = depth >= 2000
+
+        coast = 1800 * len(coast.nonzero()[0])
+        slope = 3600 * len(slope.nonzero()[0])
+        basin = 7200 * len(basin.nonzero()[0])
+        deep = 14400 * len(deep.nonzero()[0])
+        return coast + slope + basin + deep
 
     def cruise_stations_time(self, vel=7):
         r"""Compute the time it takes to navigate all the stations.
@@ -86,10 +110,6 @@ class Transect(object):
         dist = self.distances()
         vel *= 0.514444  # Convert to meters per seconds.
         return np.sum(dist / vel)
-
-    def transect_time(self):
-        r"""Compute the time it takes to complete the transect in days."""
-        return (self.station_time() + self.cruise_stations_time())
 
     def distances(self):
         r"""Compute distances between stations."""
@@ -185,7 +205,7 @@ class Chart(object):
 
     def plot(self):
         self.fig, self.ax = plt.subplots(**self.kw)
-        self.ax.imshow(self.image, extent=self.window)
+        self.ax.imshow(self.image, extent=self.window, origin='upper')
         self.update_aspect()
         self.update_ticks()
 
