@@ -311,6 +311,7 @@ def pcaben(u, v):
     >>> import matplotlib.pyplot as plt
     >>> import oceans.ff_tools as ff
     >>> u, v = [0., 1., -2., -1., 1.], [3., 1., 0., -1., -1.]
+    >>> majrax, majaz, minrax, minaz, elptcty = ff.pcaben(u, v)
     >>> fig, ax = plt.subplots()
     >>> _ = ax.plot(x1, y1,'-r', x2, y2, 'r-')
     >>> ax.set_aspect('equal')
@@ -365,3 +366,7 @@ def pcaben(u, v):
     minrax *= 2
 
     return majrax, majaz, minrax, minaz, elptcty
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
