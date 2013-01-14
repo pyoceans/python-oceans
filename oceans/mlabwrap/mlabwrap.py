@@ -559,7 +559,7 @@ class MlabWrap(object):
                              "','".join(tempargs))
     # this is really raw, no conversion of [[]] -> [], whatever
     def _get(self, name, remove=False):
-        r"""Directly access a variable in matlab space. 
+        r"""Directly access a variable in matlab space.
 
         This should normally not be used by user code."""
         # FIXME should this really be needed in normal operation?
@@ -594,7 +594,7 @@ class MlabWrap(object):
 
     def _set(self, name, value):
         r"""Directly set a variable `name` in matlab space to `value`.
-        
+
         This should normally not be used in user code."""
         if isinstance(value, MlabObjectProxy):
             mlabraw.eval(self._session, "%s = %s;" % (name, value._name))

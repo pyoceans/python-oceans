@@ -37,7 +37,7 @@ def open(arg):
     except:
       print 'Could not open matlab, is it in %s?' % matlab_path
   return ret
-  
+
 def close(matlab):
   matlab.close()
 
