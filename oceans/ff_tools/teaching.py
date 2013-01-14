@@ -1004,3 +1004,7 @@ def pol2cart(theta, radius, units='deg'):
     x = radius * np.cos(theta)
     y = radius * np.sin(theta)
     return x, y
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
