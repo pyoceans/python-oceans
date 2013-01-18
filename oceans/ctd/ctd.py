@@ -1,7 +1,7 @@
 #
 # ctd.py
 #
-# purpose:  Some classes and functions to work with ctd data.
+# purpose:  Some classes and functions to work with CTD data.
 # author:   Filipe P. A. Fernandes
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
@@ -40,7 +40,7 @@ import mpl_toolkits.axisartist as AA
 
 import gsw
 from pandas import DataFrame, Index
-from pandas import Series as Profile
+from pandas import Series
 from scipy.stats import nanmean, nanstd
 from mpl_toolkits.axes_grid1 import host_subplot
 
@@ -243,6 +243,8 @@ class CTD(DataFrame):
                     else:
                         print("Latitude not recognized.")
                         break
+                elif line.startswith('Serial Number'):
+                    serial = line.strip().split(':')[1].strip()
                 elif line.startswith('Longitude'):
                     hemisphere = line[-1]
                     lon = line.strip(hemisphere).split(':')[1].strip()
@@ -278,8 +280,11 @@ class CTD(DataFrame):
 
         # Get profile under 5 meters (after the XBT surface spike).
         cast = cast[cast.index >= 5]
+        cast.lon = lon
+        cast.lat = lat
+        cast.serial = serial
 
-        return cast, (lon, lat)
+        return cast
 
 def bindata(self, db=1.):
     r"""Bin average the index (pressure) to a given interval in decibars [db].
@@ -359,10 +364,10 @@ def plot_vars(self, **kwds):
 
 CTD.plot = plot_vars
 
-Profile.plot = plot
-Profile.smooth = smooth
-Profile.despike = despike
-Profile.bindata = bindata
+Series.plot = plot
+Series.smooth = smooth
+Series.despike = despike
+Series.bindata = bindata
 
 Index.asof = asof
 Index.float_ = float_
@@ -375,7 +380,7 @@ if __name__ == '__main__':
 
     # Plot
     if 0:
-        fig, ax = cast.plot(['t090c', 'sal00'], station='AMB 10')
+        fig, ax = cast.plot(['t090c', 'sal00'])
 
     # Remove spikes.
     if 0:
@@ -396,7 +401,7 @@ if __name__ == '__main__':
 
     # Bin average.
     if 0:
-        binned = cast.bindata(db=1.)
+        binned = cast.apply(Series.bindata, db=1.)
         # TODO: Add salinity at the same plot.
         fig, ax = plt.subplots()
         ax.plot(cast.t090c, cast.index, 'k-.', label='Original')
