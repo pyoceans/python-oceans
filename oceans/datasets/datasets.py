@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Wed 12 Sep 2012 12:00:36 PM BRT
+# modified: Tue 29 Jan 2013 03:42:22 PM BRST
 #
 # obs: some Functions were based on:
 # http://www.trondkristiansen.com/?page_id=1071
@@ -16,6 +16,7 @@
 from __future__ import division
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 from netCDF4 import Dataset
 
@@ -27,7 +28,8 @@ __all__ = ['woa_subset',
            'laplace_X',
            'laplace_Y',
            'laplace_filter',
-           'get_depth']
+           'get_depth',
+           'get_isobath']
 
 
 def get_indices(min_lat, max_lat, min_lon, max_lon, lons, lats):
@@ -93,6 +95,7 @@ def woa_subset(min_lat, max_lat, min_lon, max_lon, woa_file=None):
 
     return lon, lat, temperature
 
+
 # TODO: download ETOPO2v2c_f4.nc
 def etopo_subset(min_lat, max_lat, min_lon, max_lon, tfile=None, smoo=False):
     r"""Get a etopo subset.
@@ -146,7 +149,6 @@ def etopo_subset(min_lat, max_lat, min_lon, max_lon, tfile=None, smoo=False):
     if 'ETOPO1_Ice_g_gmt4' == toponame or 'ETOPO1_Bed_c_gmt4' == toponame:
         lons = etopo.variables["lon"][:]
         lats = etopo.variables["lat"][:]
-
 
     res = get_indices(min_lat, max_lat, min_lon, max_lon, lons, lats)
 
@@ -221,3 +223,18 @@ def get_depth(lon, lat, tfile='dap'):
                                      tfile=tfile, smoo=False)
 
     return get_profile(lons, lats, bathy, lon, lat, mode='nearest', order=3)
+
+
+def get_isobath(lon, lat, iso=-200., tfile='dap'):
+    r"""Find isobath."""
+    plt.ioff()
+    topo = get_depth(lon, lat, tfile='dap')
+
+    fig, ax = plt.subplots()
+    cs = ax.contour(lon, lat, topo, [iso])
+    path = cs.collections[0].get_paths()[0]
+    del fig
+    del ax
+    del cs
+    plt.ion()
+    return path.vertices[:, 0], path.vertices[:, 1]
