@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  05-Sep-2012
-# modified: Sat 13 Oct 2012 01:51:52 AM BRT
+# modified: Wed 30 Jan 2013 02:10:50 PM BRST
 #
 # obs:
 #
@@ -19,37 +19,16 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 from oceans.datasets import get_depth
 from matplotlib.ticker import MultipleLocator
+from oceans.ff_tools import cart2pol, pol2cart
 
-
-def draw_arrow(m, points, **kwargs):
-    x1, y1 = points[:, 0][0], points[:, 1][0]
-    x2, y2 = points[:, 0][1], points[:, 1][1]
-    dx, dy = x2 - x1, y2 - y1
-    arrow = m.ax.arrow(x1, y1, dx, dy, **kwargs)
-    plt.draw()
-    return arrow
-
-
-def get_cruise_time(fig, m, vel=7, times=1):
-    r"""Click on two points of the Basemap object `m` to compute the
-    cruise time at the velocity `vel` in nots (default=7 nots)."""
-
-    vel *= 0.514444  # Convert to meters per seconds.
-    print("Click on the first and last point of navigation for %s sections." %
-          times)
-
-    total = []
-    while times:
-        points = np.array(fig.ginput(n=2))
-        draw_arrow(m, points, width=2500., color='k', shape='full', overhang=0,
-                   alpha=0.85, zorder=10)
-        lon, lat = m(points[:, 0], points[:, 1], inverse=True)
-        dist = gsw.distance(lon, lat, p=0)
-        time = np.sum(dist / vel)
-        total.append(time)
-        times -= 1
-
-    return np.sum(total)
+__all__ = [
+           'Transect',
+           'Chart',
+           'draw_arrow',
+           'get_cruise_time',
+           'make_radial',
+           'create_transect',
+           ]
 
 
 #TODO: Monkey patch a DataFrame for this.
@@ -210,6 +189,166 @@ class Chart(object):
         self.update_ticks()
 
         return self.fig, self.ax
+
+
+def draw_arrow(m, points, **kwargs):
+    x1, y1 = points[:, 0][0], points[:, 1][0]
+    x2, y2 = points[:, 0][1], points[:, 1][1]
+    dx, dy = x2 - x1, y2 - y1
+    arrow = m.ax.arrow(x1, y1, dx, dy, **kwargs)
+    plt.draw()
+    return arrow
+
+
+def get_cruise_time(fig, m, vel=7, times=1):
+    r"""Click on two points of the Basemap object `m` to compute the
+    cruise time at the velocity `vel` in nots (default=7 nots)."""
+
+    vel *= 0.514444  # Convert to meters per seconds.
+    print("Click on the first and last point of navigation for %s sections." %
+          times)
+
+    total = []
+    while times:
+        points = np.array(fig.ginput(n=2))
+        draw_arrow(m, points, width=2500., color='k', shape='full', overhang=0,
+                   alpha=0.85, zorder=10)
+        lon, lat = m(points[:, 0], points[:, 1], inverse=True)
+        dist = gsw.distance(lon, lat, p=0)
+        time = np.sum(dist / vel)
+        total.append(time)
+        times -= 1
+
+    return np.sum(total)
+
+
+def _mid_point(lon, lat):
+    r"""Returns the mid-point between an array of positions [lon, lat]."""
+    lonc = (lon[1:] + lon[0:-1]) / 2.
+    latc = (lat[1:] + lat[0:-1]) / 2.
+    return lonc, latc
+
+
+def _make_line(lon, lat, rossby, tfile, fraction=0.5):
+    r"""Create a lon, lat station line with stations separated by a
+    `fraction` of the `rossby` radius."""
+    degree2km = 111.  # Degree to km.
+    rossby_rd = rossby / degree2km
+    rossby_rd *= fraction
+
+    dx, dy = lon[-1] - lon[0], lat[-1] - lat[0]
+    th, rd = cart2pol(dx, dy, units='deg')
+
+    radii = np.arange(rossby_rd, rd, rossby_rd)
+    lon_l, lat_l = [], []
+    for r in radii:
+        dx, dy = pol2cart(th, r)
+        lon_l.append(lon[0] + dx)
+        lat_l.append(lat[0] + dy)
+    lon, lat = map(np.array, (lon_l, lat_l))
+    depth = np.int_(-np.fix(get_depth(lon, lat, tfile=tfile)))
+    return lon, lat, depth
+
+
+def make_radial(lonStart, lonEnd, latStart, latEnd, tfile=None, rossby=25.):
+    r"""Enter first and last point of a radial and the Rossby Radius."""
+    # First guess is every 1 (0.17) minute (degree) (etopo1 resolution).
+    lon = len(np.arange(lonStart, lonEnd, 0.017))
+    lat = len(np.arange(latStart, latEnd, 0.017))
+    if lon > lat:
+        length = lon
+    elif lat > lon:
+        length = lat
+    else:
+        raise ValueError("Could not get a valid length (lon = %s, lat = %s)" %
+                         (lon, lat))
+
+    lon = np.linspace(lonStart, lonEnd, length)
+    lat = np.linspace(latStart, latEnd, length)
+    depth = -np.fix(get_depth(lon, lat, tfile=tfile))
+
+    # Eliminate spurious depths.
+    mask = depth > 0
+    lon, lat, depth = lon[mask], lat[mask], depth[mask]
+
+    # Shelf.
+    if 0:  # FIXME: etopo1 sucks at the continental shelf.
+        mask = depth <= 100.
+        lonc, latc, depthc = lon[mask], lat[mask], depth[mask]
+        coast = np.abs(np.diff(depthc)) >= 20.
+        indices = np.zeros_like(coast)
+        idx = np.where(coast)[0]
+        for k in idx:
+            indices[k] = True
+            indices[k + 1] = True
+        # Last one is always True.
+        indices[-1] = True
+        lon_c, lat_c, depth_c = lon[indices], lat[indices], depth[indices]
+
+    # Slope.
+    mask = np.logical_and(depth > 100., depth <= 1000.)
+    first = np.where(mask)[0][0]
+    last = np.where(mask)[0][-1]
+    lon_t, lat_t = (lon[first], lon[last]), (lat[first], lat[last])
+
+    # Half Rossby radius at the Slope.
+    lon_t, lat_t, depth_t = _make_line(lon_t, lat_t, tfile=tfile, rossby=25.,
+                                      fraction=0.5)
+
+    # Deep ocean.
+    mask = depth > 1000.
+    first = np.where(mask)[0][0]
+    last = np.where(mask)[0][-1]
+    lon_d, lat_d = (lon[first], lon[last]), (lat[first], lat[last])
+    # One Rossby radius after Slope.
+    lon_d, lat_d, depth_d = _make_line(lon_d, lat_d, tfile=tfile, rossby=25.,
+                                      fraction=1)
+
+    lon = np.r_[lon_t, lon_d]
+    lat = np.r_[lat_t, lat_d]
+    depth = np.r_[depth_t, depth_d]
+
+    return lon, lat, depth
+
+
+def create_transect(ax, points, tfile='dap'):
+    lonStart, lonEnd = points[0][0], points[1][0]
+    latStart, latEnd = points[0][1], points[1][1]
+    lon, lat, depth = make_radial(lonStart, lonEnd, latStart, latEnd,
+                                  tfile=tfile, rossby=25.)
+
+    # Split CTDs and XBTs.
+    mask = depth < 1000.
+    lon_ctd, lat_ctd, depth_ctd = lon[mask], lat[mask], depth[mask]
+
+    mask = depth >= 1000.
+    # Last point is always CTD+XBT.
+    if len(lon) % 2:
+        lon_xbt = np.r_[lon[mask][1::2], lon[-1]]
+        lat_xbt = np.r_[lat[mask][1::2], lat[-1]]
+        #depth_xbt = np.r_[depth[mask][1::2], depth[-1]]
+        lon_ctd = np.r_[lon_ctd, lon[mask][0::2]]
+        lat_ctd = np.r_[lat_ctd, lat[mask][0::2]]
+        depth_ctd = np.r_[depth_ctd, depth[mask][0::2]]
+    else:
+        lon_xbt = np.r_[lon[mask][1::2]]
+        lat_xbt = np.r_[lat[mask][1::2]]
+        #depth_xbt = np.r_[depth[mask][1::2]]
+        lon_ctd = np.r_[lon_ctd, lon[mask][0::2], lon[-1]]
+        lat_ctd = np.r_[lat_ctd, lat[mask][0::2], lat[-1]]
+        depth_ctd = np.r_[depth_ctd, depth[mask][0::2], depth[-1]]
+
+    ax.plot(lon_xbt, lat_xbt, 'rd', alpha=0.4)
+    ax.plot(lon_ctd, lat_ctd, 'k.')
+
+    dist = np.int_(gsw.distance(lon, lat))[0] / 1e3
+    lonc, latc = _mid_point(lon, lat)
+    for k, text in enumerate(dist):
+        ax.text(lonc[k], latc[k], str(np.int(text)))
+
+    plt.draw()
+    return Transect(lon, lat, depth)
+
 
 if __name__ == '__main__':
     import doctest
