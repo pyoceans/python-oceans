@@ -52,16 +52,17 @@ class Transect(object):
         self.depth = depth[sort]
 
     #FIXME:
-    def station_time_ctd(self, ctdvel=1.):
+    def station_time_ctd(self, ctdvel=1., prep=1800.):
         r"""Time it takes for each oceanographic station in
         the transect.  `ctdvel` is the ctd velocity.
-        Default velocity is 1 meters per second."""
+        Default velocity is 1 meters per second.
+        NOTE: 30 min preparations if using LADCP."""
 
         # Time in seconds times two (up-/downcast).
         depth = np.abs(self.depth)
-        depth[depth < 100.] = 100.
-        buffer_ctd = len(depth) * 900.  # 15 min preparations.
-        return np.sum(depth / ctdvel * 2) + buffer_ctd
+        depth[depth < 200.] = 200.  # Avoid etopo bogus depths.
+        buffer_ctd = len(depth) * prep
+        return np.sum((depth * 2) / ctdvel) + buffer_ctd
 
     def station_time(self):
         r"""
