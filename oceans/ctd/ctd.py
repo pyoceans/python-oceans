@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  22-Jun-2012
-# modified: Thu 31 Jan 2013 05:50:54 PM BRST
+# modified: Tue 05 Feb 2013 10:25:01 AM BRST
 #
 # obs: Instead of sub-classing I opted for a "Monkey Patch" approach
 #      (Wes suggestion).
@@ -36,13 +36,13 @@ Methods:
 from __future__ import division
 
 import numpy as np
+import numpy.ma as ma
 import matplotlib.pyplot as plt
 import mpl_toolkits.axisartist as AA
 
-from pandas import DataFrame, Index
-from pandas import Series
 from scipy.interpolate import interp1d
 from scipy.stats import nanmean, nanstd
+from pandas import Index, Series, DataFrame
 from mpl_toolkits.axes_grid1 import host_subplot
 
 import gsw
@@ -86,9 +86,107 @@ def check_index(ix0, ix1):
 
 
 def get_maxdepth(self):
-    depths = self.index.values
-    valids = self.apply(Series.notnull).values.T
-    return np.float_(depths * valids).max(axis=1)
+    valid_last_depth = self.apply(Series.notnull).values.T
+    return np.float_(self.index * valid_last_depth).max(axis=1)
+
+
+def plot_section(self, filled=False, **kw):
+    # Possible key words.
+    fmt = kw.pop('fnt', '%1.0f')
+    fontsize = kw.pop('fontsize', 12)
+    labelsize = kw.pop('labelsize', 11)
+    cmap = kw.pop('cmap', plt.cm.rainbow)
+    levels = kw.pop('levels', np.arange(np.floor(self.min().min()),
+                    np.ceil(self.max().max()) + 0.5, 0.5))
+
+    # Topography mask.
+    dx = kw.pop('dx', 1.)
+    kind = kw.pop('kind', 'linear')
+
+    # Get data for plotting.
+    z = self.index.values
+    h = self.get_maxdepth()
+    data = ma.masked_invalid(self.values)
+    if filled:
+        print("Filled")
+        data = extrap_sec(data.filled(fill_value=np.nan), self.lon, self.lat)
+
+    x = np.append(0, np.cumsum(gsw.distance(lon, lat)[0] / 1e3))
+    xm, hm = gen_topomask(h, self.lon, self.lat, dx=dx, kind=kind)
+
+    # Figure.
+    fig, ax = plt.subplots()
+    ax.plot(xm, hm, color='black', linewidth=1.5, zorder=3)
+    ax.fill_between(xm, hm, y2=hm.max(), color='0.9', zorder=3)
+
+    ax.plot(x, [0] * len(h), 'kv', alpha=0.5, zorder=1)
+    ax.set_xlabel('Cross-shore distance [km]', fontsize=fontsize)
+    ax.set_ylabel('Depth [m]', fontsize=fontsize)
+    ax.invert_yaxis()
+
+    ax.xaxis.set_ticks_position('top')
+    ax.xaxis.set_label_position('top')
+    ax.yaxis.set_ticks_position('left')
+    ax.yaxis.set_label_position('left')
+    ax.xaxis.set_tick_params(tickdir='out', labelsize=labelsize, pad=1)
+    ax.yaxis.set_tick_params(tickdir='out', labelsize=labelsize, pad=1)
+
+    if 0:  # TODO: +/- Black-and-White version.
+        cs = ax.contour(x, z, data, colors='grey', levels=levels,
+                        linewidths=1., alpha=1., zorder=2)
+        ax.clabel(cs, fontsize=8, colors='grey', fmt=fmt, zorder=1)
+    if 1:  # Color version.
+        cs = ax.contourf(x, z, data, cmap=cmap, levels=levels, alpha=1.,
+                         zorder=2)  # manual=True
+        # Colorbar.
+        cb = fig.colorbar(mappable=cs, ax=ax, orientation='horizontal',
+                          aspect=40, fraction=0.05, pad=0.02)
+        cb.set_label(r'$\theta$ [$^\circ$ C]', fontsize=fontsize)
+
+    return fig, ax
+
+
+def extrap_sec(data, lon, lat, fd=1.):
+    r"""Extrapolates `data` to zones where the shallow stations are shadowed by
+    the deep stations.  The shadow region usually cannot be extrapolates via
+    linear interpolation.
+
+    The extrapolation is applied using the gradients of the `data` at a certain
+    level.
+
+    Parameters
+    ----------
+    data : array_like
+          Data to be extrapolated
+    lon : array_like
+          Stations longitude
+    lat : array_like
+          Stations latitude
+    fd : float
+         Decay factor [0-1]
+
+
+    Returns
+    -------
+    Sec_extrap : array_like
+                 Extrapolated variable
+
+    Examples
+    --------
+    Sec_extrap = extrap_sec(data, lon, lat, fd=1.)
+    """
+    lon, lat = map(np.asanyarray, (lon, lat))
+
+    dist = np.r_[0, np.cumsum(gsw.distance(lon, lat)[0] / 1e3)]
+    fnan = np.isnan(data[:, -2])
+    data[fnan, -2] = data[fnan, -1]
+    for col in range(lon.size - 2, 0, -1):
+        if np.isnan(data[-1, col]):
+            a = np.where(np.isnan(data[:, col]))
+            data[a, col] = data[a, col + 1] - fd * ((((data[a, col + 2]) -
+            data[a, col + 1]) / (dist[col + 2] - dist[col + 1])) *
+            (dist[col + 1] - dist[col]))
+    return data
 
 
 def gen_topomask(h, lon, lat, dx=1., kind='linear', plot=False):
@@ -120,14 +218,13 @@ def gen_topomask(h, lon, lat, dx=1., kind='linear', plot=False):
     Examples
     --------
     >>> xm, hm = gen_topomask(h, lon, lat, dx=1., kind='linear', plot=False')
-    >>> # Save
-    >>> l = xm.size
-    >>> xm = np.resize(xm, (l, 1))
-    >>> hm = np.resize(hm, (l,1))
-    >>> arr = np.hstack((xm,hm))
-    >>> np.savetxt(filename, sarr, fmt='%.1f')
-    >>> xm, hm = xm.flatten(), hm.flatten()
-
+    >>> fig, ax = plt.subplots()
+    >>> ax.plot(xm, hm, 'k', linewidth=1.5)
+    >>> ax.plot(x, h, 'ro')
+    >>> ax.set_xlabel('Distance [km]')
+    >>> ax.set_ylabel('Depth [m]')
+    >>> ax.grid(True)
+    >>> plt.show()
 
     Author
     ------
@@ -137,19 +234,10 @@ def gen_topomask(h, lon, lat, dx=1., kind='linear', plot=False):
     h, lon, lat = map(np.asanyarray, (h, lon, lat))
     # Distance in km.
     x = np.append(0, np.cumsum(gsw.distance(lon, lat)[0] / 1e3))
-    h = gsw.z_from_p(h, lat.mean())
+    h = -gsw.z_from_p(h, lat.mean())
     Ih = interp1d(x, h, kind=kind, bounds_error=False, fill_value=h[-1])
     xm = np.arange(0, x.max() + dx, dx)
     hm = Ih(xm)
-
-    if plot:
-        fig, ax = plt.subplots()
-        ax.plot(xm, hm, 'k', linewidth=1.5, marker='x', ms=7, mfc='k', mec='k')
-        ax.plot(x, h, ls='none', marker='o', ms=5, mfc='r', mec='r')
-        ax.set_xlabel('Distance [km]', fontsize=14, fontweight='black')
-        ax.set_ylabel('Depth [m]', fontsize=14, fontweight='black')
-        ax.grid()
-        plt.show()
 
     return xm, hm
 
@@ -488,12 +576,13 @@ DataFrame.from_edf = from_edf
 DataFrame.from_fsi = from_fsi
 DataFrame.plot_vars = plot_vars
 DataFrame.get_maxdepth = get_maxdepth
-#TODO: DataFrame.section = section
+DataFrame.plot_section = plot_section
 
 Index.asof = asof
 Index.float_ = float_
 
 if __name__ == '__main__':
+    import re
     from glob import glob
     from collections import OrderedDict
     deg = u"\u00b0"  # Degree symbol.
@@ -560,9 +649,16 @@ if __name__ == '__main__':
             ax.set_xlim(x1, x2)
 
     if 1:  # Read a radial.
+        digits = re.compile(r'(\d+)')
+
+        def tokenize(fname):
+            return tuple(int(token) if match else token for token, match in
+                        ((frag, digits.search(frag)) for frag in
+                        digits.split(fname)))
+
         pattern = '/home/filipe/Dropbox/Work/LaDO/Projetos/AMBES/AMB09_data'
         pattern += '/DATA_SJ/CTD/AMB09_*_CTD_rad1.cnv'
-        fnames = sorted(glob(pattern))
+        fnames = sorted(glob(pattern), key=tokenize)
 
         Temp = OrderedDict()
         lon, lat = [], []
@@ -575,5 +671,8 @@ if __name__ == '__main__':
             Temp.update({cast.name: temp})
 
         Temp = DataFrame.from_dict(Temp)
-        h = Temp.get_maxdepth()
-        gen_topomask(h, lon, lat, dx=1., kind='linear', plot=True)
+        Temp.lon = lon
+        Temp.lat = lat
+
+        fig, ax = Temp.plot_section()
+        fig, ax = Temp.plot_section(filled=True)
