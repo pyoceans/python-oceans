@@ -49,6 +49,8 @@ import gsw
 from oceans.utilities import basename
 
 
+degree = u"\u00b0"
+
 # Utilities.
 def normalize_names(name):
     name = name.strip()
@@ -91,27 +93,37 @@ def get_maxdepth(self):
 
 
 def plot_section(self, filled=False, **kw):
-    # Possible key words.
+    # Contour key words.
     fmt = kw.pop('fnt', '%1.0f')
+    extend = kw.pop('extend', 'both')
     fontsize = kw.pop('fontsize', 12)
     labelsize = kw.pop('labelsize', 11)
     cmap = kw.pop('cmap', plt.cm.rainbow)
     levels = kw.pop('levels', np.arange(np.floor(self.min().min()),
                     np.ceil(self.max().max()) + 0.5, 0.5))
 
-    # Topography mask.
+    # Colorbar key words.
+    pad = kw.pop('pad', 0.04)
+    aspect = kw.pop('aspect', 40)
+    shrink = kw.pop('shrink', 0.9)
+    fraction = kw.pop('fraction', 0.05)
+
+    # Topography mask key words.
     dx = kw.pop('dx', 1.)
     kind = kw.pop('kind', 'linear')
+
+    # Station symbols key words.
+    color = kw.pop('color', 'k')
+    offset = kw.pop('offset', -5)
 
     # Get data for plotting.
     z = self.index.values
     h = self.get_maxdepth()
     data = ma.masked_invalid(self.values)
     if filled:
-        print("Filled")
         data = extrap_sec(data.filled(fill_value=np.nan), self.lon, self.lat)
 
-    x = np.append(0, np.cumsum(gsw.distance(lon, lat)[0] / 1e3))
+    x = np.append(0, np.cumsum(gsw.distance(self.lon, self.lat)[0] / 1e3))
     xm, hm = gen_topomask(h, self.lon, self.lat, dx=dx, kind=kind)
 
     # Figure.
@@ -119,9 +131,11 @@ def plot_section(self, filled=False, **kw):
     ax.plot(xm, hm, color='black', linewidth=1.5, zorder=3)
     ax.fill_between(xm, hm, y2=hm.max(), color='0.9', zorder=3)
 
-    ax.plot(x, [0] * len(h), 'kv', alpha=0.5, zorder=1)
+    ax.plot(x, [offset] * len(h), color=color, marker='v',
+            alpha=0.5, zorder=5)
     ax.set_xlabel('Cross-shore distance [km]', fontsize=fontsize)
     ax.set_ylabel('Depth [m]', fontsize=fontsize)
+    ax.set_ylim(offset, hm.max())
     ax.invert_yaxis()
 
     ax.xaxis.set_ticks_position('top')
@@ -133,17 +147,18 @@ def plot_section(self, filled=False, **kw):
 
     if 0:  # TODO: +/- Black-and-White version.
         cs = ax.contour(x, z, data, colors='grey', levels=levels,
-                        linewidths=1., alpha=1., zorder=2)
+                        extend=extend, linewidths=1., alpha=1., zorder=2)
         ax.clabel(cs, fontsize=8, colors='grey', fmt=fmt, zorder=1)
+        cb = None
     if 1:  # Color version.
         cs = ax.contourf(x, z, data, cmap=cmap, levels=levels, alpha=1.,
-                         zorder=2)  # manual=True
+                         extend=extend, zorder=2)  # manual=True
         # Colorbar.
-        cb = fig.colorbar(mappable=cs, ax=ax, orientation='horizontal',
-                          aspect=40, fraction=0.05, pad=0.02)
-        cb.set_label(r'$\theta$ [$^\circ$ C]', fontsize=fontsize)
-
-    return fig, ax
+        cb = fig.colorbar(mappable=cs, ax=ax, orientation='vertical',
+                          aspect=aspect, shrink=shrink, fraction=fraction,
+                          pad=pad)
+        cb.ax.set_title(ur'$\theta$ [%s C]' % degree, fontsize=fontsize)
+    return fig, ax, cb
 
 
 def extrap_sec(data, lon, lat, fd=1.):
@@ -545,7 +560,7 @@ def plot_vars(self, variables=None, **kwds):
     ax1.plot(self[variables[1]], self.index, 'b-.', label='Salinity')
 
     ax0.set_ylabel("Pressure [db]")
-    ax0.set_xlabel("Temperature [%sC]" % deg)
+    ax0.set_xlabel("Temperature [%sC]" % degree)
     ax1.set_xlabel("Salinity [kg g$^{-1}$]")
     ax1.invert_yaxis()
 
@@ -584,8 +599,8 @@ Index.float_ = float_
 if __name__ == '__main__':
     import re
     from glob import glob
+    from pandas import HDFStore
     from collections import OrderedDict
-    deg = u"\u00b0"  # Degree symbol.
 
     if 0:  # FSI.
         fname = 'data/d3_7165.txt'
@@ -611,7 +626,7 @@ if __name__ == '__main__':
                     label='de-spiked')
             ax.set_title("De-spiked vs Original data")
             ax.set_ylabel("Pressure [db]")
-            ax.set_xlabel("Temperature [%sC]" % deg)
+            ax.set_xlabel("Temperature [%sC]" % degree)
             ax.legend(shadow=True, fancybox=True, numpoints=1, loc='best')
             ax.invert_yaxis()
             offset = 0.05
@@ -625,7 +640,7 @@ if __name__ == '__main__':
             ax.plot(binned.t090c, binned.index, 'r.', label='Binned')
             ax.set_title("Binned vs Original data")
             ax.set_ylabel("Pressure [db]")
-            ax.set_xlabel("Temperature [%sC]" % deg)
+            ax.set_xlabel("Temperature [%sC]" % degree)
             ax.legend(shadow=True, fancybox=True, numpoints=1, loc='best')
             ax.invert_yaxis()
             ax.grid(True)
@@ -641,14 +656,14 @@ if __name__ == '__main__':
                     label='Smoothed')
             ax.set_title("Smoothed vs Original data")
             ax.set_ylabel("Pressure [db]")
-            ax.set_xlabel("Temperature [%sC]" % deg)
+            ax.set_xlabel("Temperature [%sC]" % degree)
             ax.legend(shadow=True, fancybox=True, numpoints=1, loc='best')
             ax.invert_yaxis()
             offset = 0.05
             x1, x2 = ax.get_xlim()[0] - offset, ax.get_xlim()[1] + offset
             ax.set_xlim(x1, x2)
 
-    if 1:  # Read a radial.
+    if 0:  # Read a radial.
         digits = re.compile(r'(\d+)')
 
         def tokenize(fname):
@@ -674,5 +689,20 @@ if __name__ == '__main__':
         Temp.lon = lon
         Temp.lat = lat
 
-        fig, ax = Temp.plot_section()
-        fig, ax = Temp.plot_section(filled=True)
+    if 0:  # Save radial
+        store = HDFStore("radial_01.h5", 'w')
+        store['temperature'] = Temp
+        store.close()
+        # FIXME: Need to find a way to serial the metadata!
+        np.savez("radial_01.npz", lon=lon, lat=lat)
+
+    if 1:  # Plot sections.
+        store = HDFStore("radial_01.h5", 'r')
+        Temp = store['temperature']
+        store.close()
+        npz = np.load("radial_01.npz")
+        Temp.lon = npz['lon']
+        Temp.lat = npz['lat']
+
+        fig, ax, cb = Temp.plot_section()
+        fig, ax, cb = Temp.plot_section(filled=True)
