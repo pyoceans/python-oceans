@@ -9,6 +9,7 @@ import colorsys
 import numpy as np
 import matplotlib as mpl
 
+
 def gmtColormap(fileName, GMTPath=None):
     if not GMTPath:
         filePath = "/usr/local/cmaps/" + fileName + ".cpt"
@@ -76,5 +77,6 @@ def gmtColormap(fileName, GMTPath=None):
         green.append([xNorm[i], g[i], g[i]])
         blue.append([xNorm[i], b[i], b[i]])
     colorDict = {"red": red, "green": green, "blue": blue}
-    cmap = mpl.colors.LinearSegmentedColormap(fileName, colorDict, N=256, gamma=1.0)
+    cmap = mpl.colors.LinearSegmentedColormap(fileName, colorDict, N=256,
+                                              gamma=1.0)
     return cmap

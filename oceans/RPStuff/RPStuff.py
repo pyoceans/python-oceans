@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  22-Jun-2011
-# modified: Wed 18 Jul 2012 09:30:18 AM BRT
+# modified: Tue 12 Feb 2013 11:53:11 AM BRST
 #
 # obs: This "legacy" package is intended for compatibility only.
 #      Most of function should be re-written in a more pythonic way.
@@ -37,7 +37,7 @@ earth_radius = 6371.e3
 
 
 @match_args_return
-def  h2hms(hours):
+def h2hms(hours):
     """Converts hours to hours, minutes, and seconds."""
     hour = np.floor(hours)
     mins = np.remainder(hours, 1.) * 60.

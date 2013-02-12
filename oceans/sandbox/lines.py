@@ -6,7 +6,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  17-Jul-2012
-# modified: Tue 17 Jul 2012 12:18:57 PM BRT
+# modified: Tue 12 Feb 2013 12:00:45 PM BRST
 #
 # obs:
 #
@@ -208,7 +208,7 @@ def LineCurvature2D(Vertices, Lines=None):
     return k
 
 
-def  inverse3(M):
+def inverse3(M):
     r"""This function does inv(M), but then for an array of 3x3 matrices."""
     adjM = np.zeros((M.shape[0], 3, 3))
     adjM[:, 0, 0] = M[:, 4] * M[:, 8] - M[:, 7] * M[:, 5]

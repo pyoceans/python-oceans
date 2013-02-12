@@ -10,11 +10,7 @@ from mpl_toolkits.axes_grid1 import AxesGrid
 
 __version__ = '0.1.0'
 
-try:
-    from netCDF4 import Dataset
-except ImportError:
-    warnings.warn("Loading scipy's netcdf instead.  No netcdf4 support.")
-    from scipy.io.netcdf import NetCDFFile as Dataset
+from netCDF4 import Dataset
 
 
 def parse_args(arglist):

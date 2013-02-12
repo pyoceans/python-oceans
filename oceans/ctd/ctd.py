@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  22-Jun-2012
-# modified: Tue 05 Feb 2013 10:25:01 AM BRST
+# modified: Tue 12 Feb 2013 12:01:33 PM BRST
 #
 # obs: Instead of sub-classing I opted for a "Monkey Patch" approach
 #      (Wes suggestion).
@@ -50,6 +50,7 @@ from oceans.utilities import basename
 
 
 degree = u"\u00b0"
+
 
 # Utilities.
 def normalize_names(name):

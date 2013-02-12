@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Sat 13 Oct 2012 10:40:21 PM BRT
+# modified: Tue 12 Feb 2013 11:54:03 AM BRST
 #
 # obs: Just some basic example function.
 #
@@ -980,7 +980,7 @@ def r_earth(lon=None, lat=None):
     return 1.0 / np.sqrt(inv_r_squared)
 
 
-def  cart2pol(x, y, units='deg'):
+def cart2pol(x, y, units='deg'):
     r"""Convert from Cartesian to polar coordinates
 
     **usage**:
