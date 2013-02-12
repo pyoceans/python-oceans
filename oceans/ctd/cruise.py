@@ -254,15 +254,12 @@ def _make_line(lon, lat, rossby, tfile, fraction=0.5):
 def make_radial(lonStart, lonEnd, latStart, latEnd, tfile=None, rossby=25.):
     r"""Enter first and last point of a radial and the Rossby Radius."""
     # First guess is every 1 (0.17) minute (degree) (etopo1 resolution).
-    lon = len(np.arange(lonStart, lonEnd, 0.017))
-    lat = len(np.arange(latStart, latEnd, 0.017))
-    if lon > lat:
-        length = lon
-    elif lat > lon:
-        length = lat
-    else:
+    x_len = len(np.arange(lonStart, lonEnd, 0.017))
+    y_len = len(np.arange(latStart, latEnd, 0.017))
+    length = x_len if x_len > y_len else y_len
+    if length <= 0:
         raise ValueError("Could not get a valid length (lon = %s, lat = %s)" %
-                         (lon, lat))
+                         (x_len, y_len))
 
     lon = np.linspace(lonStart, lonEnd, length)
     lat = np.linspace(latStart, latEnd, length)
