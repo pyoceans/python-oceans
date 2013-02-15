@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  22-Jun-2012
-# modified: Tue 12 Feb 2013 12:01:33 PM BRST
+# modified: Fri 15 Feb 2013 03:16:43 PM BRST
 #
 # obs: Instead of sub-classing I opted for a "Monkey Patch" approach
 #      (Wes suggestion).
@@ -95,7 +95,7 @@ def get_maxdepth(self):
 
 def plot_section(self, filled=False, **kw):
     # Contour key words.
-    fmt = kw.pop('fnt', '%1.0f')
+    fmt = kw.pop('fmt', '%1.0f')
     extend = kw.pop('extend', 'both')
     fontsize = kw.pop('fontsize', 12)
     labelsize = kw.pop('labelsize', 11)
