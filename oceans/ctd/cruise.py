@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  05-Sep-2012
-# modified: Fri 15 Feb 2013 06:33:35 PM BRST
+# modified: Fri 15 Feb 2013 07:13:38 PM BRST
 #
 # obs:
 #
@@ -15,6 +15,7 @@
 from __future__ import division
 
 import gsw
+import warnings
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -22,11 +23,13 @@ from pandas import DataFrame, Series
 from oceans.datasets import get_depth
 from oceans.ff_tools import cart2pol, pol2cart
 
+
 __all__ = [
            'DataFrame',  # A DataFrame "patched" for radials.
            'make_line',
            'make_transect',
            'filter_station',
+           'split_stations',
            'get_cruise_time',
            'transect2dataframe',
            ]
@@ -88,6 +91,37 @@ def navigation_time(self, vel=7):
     return np.sum(dist / vel)
 
 
+def mid_point(self):
+    r"""Returns the mid-point between an array of positions [lon, lat]."""
+    lonc = (self.lon[1:].values + self.lon[0:-1]).values / 2.
+    latc = (self.lat[1:].values + self.lat[0:-1]).values / 2.
+    return lonc, latc
+
+
+def deg2degmin(self):
+    df = self.copy()
+    r"""Convert Degrees to Degrees and minutes."""
+    conv = lambda x: '%i %.6f' % (np.fix(x), 60 * np.remainder(x, 1))
+    try:
+        df.lon = [conv(x) for x in df.lon]
+        df.lat = [conv(y) for y in df.lat]
+    except TypeError:
+        warnings.warn("Already in deg2degmin format.")
+    return df
+
+
+def degmin2deg(self):
+    r"""Convert Degrees and minutes to Degrees."""
+    df = self.copy()
+    conv = lambda x: float(x.split()[0]) + float(x.split()[1]) / 60
+    try:
+        df.lon = [conv(x) for x in df.lon]
+        df.lat = [conv(y) for y in df.lat]
+    except AttributeError:
+        warnings.warn("Already in degmin2deg format.")
+    return df
+
+
 # Utilities.
 def transect2dataframe(lon, lat, depth):
     transect = DataFrame(np.c_[lon, lat, depth],
@@ -119,13 +153,6 @@ def make_line(start, end, spacing=20):
         y.append(start[1] + dy)
     lon, lat = map(np.array, (x, y))
     return lon, lat
-
-
-def mid_point(self):
-    r"""Returns the mid-point between an array of positions [lon, lat]."""
-    lonc = (self.lon[1:].values + self.lon[0:-1]).values / 2.
-    latc = (self.lat[1:].values + self.lat[0:-1]).values / 2.
-    return lonc, latc
 
 
 def make_transect(start, end, tfile='dap', rossby=25.):
@@ -173,24 +200,25 @@ def make_transect(start, end, tfile='dap', rossby=25.):
     return transect2dataframe(lon[mask], lat[mask], depth[mask])
 
 
-def _split_stations(df):
+def split_stations(df):
     r"""Enter a transect DataFrame.  Return a transect with stations split
     between CTDs and XBTs."""
 
-    df['Type'] = ['CTD'] * len(df)  # Start type column with all as CTDs.
+    df_new = df.copy()
+    df_new['Type'] = ['CTD'] * len(df_new)  # Start type column as CTDs.
 
     # Water samples are collected at all CTD stations after 500 meters depth.
-    mask = np.logical_and(df.depth >= 500., df['Type'] == 'CTD')
-    df['Type'][mask] = 'CTD/Water'
+    mask = np.logical_and(df_new.depth >= 500., df_new['Type'] == 'CTD')
+    df_new['Type'][mask] = 'CTD/Water'
 
     # Add a XBT stations every other CTD station after 1000 meters depth.
-    mask = df.depth > 1000.
-    idx = df.index[mask][1::2]
-    df['Type'].ix[idx] = 'XBT'
+    mask = df_new.depth > 1000.
+    idx = df_new.index[mask][1::2]
+    df_new['Type'].ix[idx] = 'XBT'
 
     # Last point is always 'everything'.
-    df['Type'][df.irow(-1).name] = 'CTD/XBT/Water'
-    return df
+    df_new['Type'][df_new.irow(-1).name] = 'CTD/XBT/Water'
+    return df_new
 
 
 def filter_station(df, st_type='CTD'):
@@ -244,6 +272,8 @@ def get_cruise_time(fig, m, vel=7, times=1, **kw):
 
 DataFrame.distances = distances
 DataFrame.mid_point = mid_point
+DataFrame.deg2degmin = deg2degmin
+DataFrame.degmin2deg = degmin2deg
 DataFrame.ctd_cast_time = ctd_cast_time
 DataFrame.navigation_time = navigation_time
 
@@ -272,7 +302,8 @@ if __name__ == '__main__':
 
     # Test Transect.
     transect = make_transect(start, end, tfile='dap', rossby=25.)
-    radial = _split_stations(transect)
+    radial = split_stations(transect)
+    print(transect.deg2degmin().degmin2deg())
 
     secs2hours = 60. * 60.
     secs2days = 60. * 60. * 24.
