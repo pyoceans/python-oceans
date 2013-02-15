@@ -7,203 +7,223 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  05-Sep-2012
-# modified: Wed 30 Jan 2013 02:10:50 PM BRST
+# modified: Fri 15 Feb 2013 06:33:35 PM BRST
 #
 # obs:
 #
+
+from __future__ import division
 
 import gsw
 import numpy as np
 import matplotlib.pyplot as plt
 
-from matplotlib import rcParams
+from pandas import DataFrame, Series
 from oceans.datasets import get_depth
-from matplotlib.ticker import MultipleLocator
 from oceans.ff_tools import cart2pol, pol2cart
 
 __all__ = [
-           'Transect',
-           'Chart',
-           'draw_arrow',
+           'DataFrame',  # A DataFrame "patched" for radials.
+           'make_line',
+           'make_transect',
+           'filter_station',
            'get_cruise_time',
-           'make_radial',
-           'create_transect',
+           'transect2dataframe',
            ]
 
 
-#TODO: Monkey patch a DataFrame for this.
-class Transect(object):
-    r"""Container class to store oceanographic transect.
-    Info (`lon`, `lat`, `depth`)."""
+def ctd_cast_time(self, method="RuleOfThumb", ctdvel=1., preparation=1800.):
+    r"""Time it takes for each oceanographic station in the transect.
 
-    def __init__(self, lon=None, lat=None, depth=None):
-        lon, lat, depth = map(np.asanyarray, (lon, lat, depth))
+    method: RuleOfThumb, Simple rule based on the depth of the water column.
+            CTDTime, time it actually takes to lower and retrieve the CTD.
 
-        if not depth.all():
-            print("Depth not provided, getting depth from etopo2.")
-            depth = get_depth(lon, lat)
+    If one chooses RuleOfThumb the following times are used:
+        30 min before slope [< 100 m]
+        1 h at the slope [> 100 m and < 1000 m]
+        2 h ocean floor [> 1000 m and < 2000 m]
+        4 h for depths > 2000 m
 
-        # Sort by longitude
-        # FIXME: Maybe that is not the best option.
-        # The ideal should be sorted by distance from the coast.
-        sort = lon.argsort()
-        self.lon = lon[sort]
-        self.lat = lat[sort]
-        self.depth = depth[sort]
+    If one chooses the CTDTime you can tweak the following keywords:
+    `ctdvel`: The ctd velocity.
+    `preparation`: A "buffer" time.
+    Default velocity is 1 meters per second.
+    NOTE: Use 30 min preparations if using LADCP."""
 
-    #FIXME:
-    def station_time_ctd(self, ctdvel=1., prep=1800.):
-        r"""Time it takes for each oceanographic station in
-        the transect.  `ctdvel` is the ctd velocity.
-        Default velocity is 1 meters per second.
-        NOTE: 30 min preparations if using LADCP."""
-
+    depth = np.abs(self.depth)
+    if method == "depth":
         # Time in seconds times two (up-/downcast).
-        depth = np.abs(self.depth)
         depth[depth < 200.] = 200.  # Avoid etopo bogus depths.
-        buffer_ctd = len(depth) * prep
-        return np.sum((depth * 2) / ctdvel) + buffer_ctd
+        buffer_ctd = len(depth) * preparation
+        time = ((depth * 2.) / ctdvel) + buffer_ctd
+    elif method == "RuleOfThumb":
+        coast = depth < 100.
+        slope = np.logical_and(depth >= 100., depth < 1000.)
+        floor = np.logical_and(depth >= 1000., depth < 2000.)
+        deep = depth >= 2000.
 
-    def station_time(self):
-        r"""
-        30 min before slope.
-        1 h at the slope.
-        2 h ocean floor."""
+        coast = 1800. * coast
+        slope = 3600. * slope
+        floor = 7200. * floor
+        deep = 14400. * deep
+        time = coast + slope + floor + deep
+    else:
+        raise TypeError("Unrecognized method option %s" % method)
 
-        depth = np.abs(self.depth)
-
-        coast = depth < 100
-        slope = np.logical_and(depth >= 100, depth < 1000)
-        basin = np.logical_and(depth >= 1000, depth < 2000)
-        deep = depth >= 2000
-
-        coast = 1800 * len(coast.nonzero()[0])
-        slope = 3600 * len(slope.nonzero()[0])
-        basin = 7200 * len(basin.nonzero()[0])
-        deep = 14400 * len(deep.nonzero()[0])
-        return coast + slope + basin + deep
-
-    def cruise_stations_time(self, vel=7):
-        r"""Compute the time it takes to navigate all the stations.
-        Assumes cruise velocity even though it is a bad assumption!
-        Enter the velocity in nots."""
-        dist = self.distances()
-        vel *= 0.514444  # Convert to meters per seconds.
-        return np.sum(dist / vel)
-
-    def distances(self):
-        r"""Compute distances between stations."""
-        return gsw.distance(self.lon, self.lat, p=0)
-
-    def save_csv(self, fname):
-        r"""Save the radial as a Comma Separated Value file."""
-        np.savetxt(fname, np.c_[self.lon, self.lat, np.abs(self.depth)],
-                   header='longitude,latitude,depth', comments='',
-                   fmt='%3.8f,%3.8f,%i')
+    return time
 
 
-class Chart(object):
-    r"""Geo-reference a raster nautical chart."""
-    def __init__(self, image='cadeia_vitoria_trindade.png',
-                 window=[-47., -14., -24., -3.],  # Chart 20
-                 lon_tick_interval=2.0 / 60.0,
-                 lat_tick_interval=2.0 / 60.0,
-                 **kw):
-        r"""Enter a the window corners as:
-        window=[lower left lon, upper right lon,
-                lower left lat, upper right lat]
-        And the lon_tick_interval, lat_tick_interval tick intervals.
-
-        Example
-        -------
-        >>> chart = Chart(image='cadeia_vitoria_trindade.png')
-        >>> fig, ax = chart.plot()
-        >>> ax.axis([-43., -31., -22., -16.5])
-        >>> chart.update_ticks(ax)
-        """
-
-        self.kw = kw
-        self.image = image
-        self.window = window
-        self.lon_tick_interval = lon_tick_interval
-        self.lat_tick_interval = lat_tick_interval
-        if self.image is not None:
-            if isinstance(self.image, str):
-                self.image = plt.imread(self.image)
-
-    def deg2str(self, deg, ref='lon', fmt="%3.1f", usetex=True):
-        r"""Enter number in degree and decimal degree `deg, a `ref` either lat
-        or lon."""
-        min = 60 * (deg - np.floor(deg))
-        deg = np.floor(deg)
-        if min != 0.0:
-            deg += 1.0
-            min -= 60.0
-        if ref == 'lon':
-            if deg < 0.0:
-                dir = 'W'
-            elif deg > 0.0:
-                dir = 'E'
-            else:
-                dir = ''
-        elif ref == 'lat':
-            if deg < 0.0:
-                dir = 'S'
-            elif deg > 0.0:
-                dir = 'N'
-            else:
-                dir = ''
-        if rcParams['text.usetex'] and usetex:
-            return (r"%d$^\circ$" + fmt + "'%s ") % (abs(deg), abs(min), dir)
-        else:
-            return ((u"%d\N{DEGREE SIGN}" + fmt + "'%s ") %
-                    (abs(deg), abs(min), dir))
-
-    def update_ticks(self):
-        xlocator = MultipleLocator(self.lon_tick_interval)
-        ylocator = MultipleLocator(self.lat_tick_interval)
-        self.ax.xaxis.set_major_locator(xlocator)
-        self.ax.yaxis.set_major_locator(ylocator)
-        xlab = []
-        for xtick in self.ax.get_xticks():
-            xlab.append(self.deg2str(xtick, ref='lon'))
-        self.ax.set_xticklabels(xlab)
-        ylab = []
-        for ytick in self.ax.get_yticks():
-            ylab.append(self.deg2str(ytick, ref='lat'))
-        self.ax.set_yticklabels(ylab)
-        self.ax.fmt_xdata = lambda x: self.deg2str(x, ref='lon', fmt="%5.3f",
-                                                   usetex=False)
-        self.ax.fmt_ydata = lambda y: self.deg2str(y, ref='lat', fmt="%5.3f",
-                                                   usetex=False)
-        plt.draw()
-
-    def update_aspect(self):
-        aspect = 1.0 / np.cos(np.mean(self.ax.get_ylim()) * np.pi / 180.)
-        self.ax.set_aspect(aspect, adjustable='box', anchor='C')
-        plt.draw()
-
-    def plot(self):
-        self.fig, self.ax = plt.subplots(**self.kw)
-        self.ax.imshow(self.image, extent=self.window, origin='upper')
-        self.update_aspect()
-        self.update_ticks()
-
-        return self.fig, self.ax
+def distances(self):
+    r"""Compute distances between stations."""
+    dist = np.r_[0, gsw.distance(self.lon, self.lat, p=0).squeeze()]
+    return Series(np.fix(dist), index=self.index)
 
 
-def draw_arrow(m, points, **kwargs):
+def navigation_time(self, vel=7):
+    r"""Compute the time it takes to navigate all the stations.
+    Assumes cruise velocity even though it is a bad assumption!
+    Enter the velocity in knots."""
+    dist = self.distances()
+    vel *= 0.514444  # Convert knots to meters per seconds.
+    return np.sum(dist / vel)
+
+
+# Utilities.
+def transect2dataframe(lon, lat, depth):
+    transect = DataFrame(np.c_[lon, lat, depth],
+                         columns=['lon', 'lat', 'depth'])
+
+    # Sort by longitude first then by latitude.
+    transect.sort(columns=['lat', 'lon'], ascending=[False, True],
+                  inplace=True)
+    transect.index = np.arange(len(lon)) + 1
+    return transect
+
+
+def make_line(start, end, spacing=20):
+    r"""Create a stations line with stations separated by a
+    fixed `spacing` [km] from a `start` and `end` points.  Returns two
+    vectors (lon, lat).  The distance is usually a fraction of the Rossby
+    radius)."""
+    degree2km = 111.  # Degree to km.
+    spacing = spacing / degree2km
+
+    dx, dy = np.diff(np.c_[start, end]).squeeze()
+    th, dist = cart2pol(dx, dy, units='deg')
+
+    radii = np.arange(spacing, dist, spacing)
+    x, y = [], []
+    for r in radii:
+        dx, dy = pol2cart(th, r)
+        x.append(start[0] + dx)
+        y.append(start[1] + dy)
+    lon, lat = map(np.array, (x, y))
+    return lon, lat
+
+
+def mid_point(self):
+    r"""Returns the mid-point between an array of positions [lon, lat]."""
+    lonc = (self.lon[1:].values + self.lon[0:-1]).values / 2.
+    latc = (self.lat[1:].values + self.lat[0:-1]).values / 2.
+    return lonc, latc
+
+
+def make_transect(start, end, tfile='dap', rossby=25.):
+    r"""Enter first and last point of a radial and the Rossby Radius [km].
+    Returns a transect with stations space 0.5*rossby at the slope and rossby
+    at after.  NOTE: This is should not be used for coastal planning!"""
+
+    # First guess is every 1 (0.17) minute (degree) (etopo1 resolution).
+    x_len = len(np.arange(start[0], end[0], 0.017))
+    y_len = len(np.arange(start[1], end[1], 0.017))
+    length = x_len if x_len > y_len else y_len
+    if length <= 0:
+        raise ValueError("Could not get a valid length (lon = %s, lat = %s)" %
+                         (x_len, y_len))
+
+    lon = np.linspace(start[0], end[0], length)
+    lat = np.linspace(start[1], end[1], length)
+    depth = -np.fix(get_depth(lon, lat, tfile=tfile))
+
+    mask = depth > 0  # Eliminate land points.
+    lon, lat, depth = lon[mask], lat[mask], depth[mask]
+
+    mask = np.logical_and(depth > 100., depth <= 1000.)  # Slope.
+    first, last = np.where(mask)[0][0], np.where(mask)[0][-1]
+    start, end = (lon[first], lat[first]), (lon[last], lat[last])
+    # Half Rossby radius at the Slope.
+    lon_slope, lat_slope = make_line(start, end, spacing=rossby / 2.)
+
+    mask = depth > 1000.  # Deep ocean.
+    first, last = np.where(mask)[0][0], np.where(mask)[0][-1]
+    start, end = (lon[first], lat[first]), (lon[last], lat[last])
+    # One Rossby radius after Slope.
+    lon_deep, lat_deep = make_line(start, end, spacing=rossby)
+
+    lon = np.r_[lon_slope, lon_deep]
+    lat = np.r_[lat_slope, lat_deep]
+    depth = -np.fix(get_depth(lon, lat, tfile=tfile))
+    depth[depth < 0] = 0
+
+    # NOTE: Eliminate station that are closer than 0.5 * Rossby radius.
+    idx = lon.argsort()
+    lon, lat = lon[idx], lat[idx]
+    dist = gsw.distance(lon, lat, p=0).squeeze() / 1e3 >= rossby / 2.5
+    mask = np.r_[True, dist]
+    return transect2dataframe(lon[mask], lat[mask], depth[mask])
+
+
+def _split_stations(df):
+    r"""Enter a transect DataFrame.  Return a transect with stations split
+    between CTDs and XBTs."""
+
+    df['Type'] = ['CTD'] * len(df)  # Start type column with all as CTDs.
+
+    # Water samples are collected at all CTD stations after 500 meters depth.
+    mask = np.logical_and(df.depth >= 500., df['Type'] == 'CTD')
+    df['Type'][mask] = 'CTD/Water'
+
+    # Add a XBT stations every other CTD station after 1000 meters depth.
+    mask = df.depth > 1000.
+    idx = df.index[mask][1::2]
+    df['Type'].ix[idx] = 'XBT'
+
+    # Last point is always 'everything'.
+    df['Type'][df.irow(-1).name] = 'CTD/XBT/Water'
+    return df
+
+
+def filter_station(df, st_type='CTD'):
+    mask = [st_type in st for st in df['Type']]
+    return df[mask]
+
+
+# "Figure tools."
+def ginput(fig, m, **kw):
+    points = np.array(fig.ginput(**kw))
+    x, y = np.array(points)[:, 0], np.array(points)[:, 1]
+    return m(x, y, inverse=True)
+
+
+def _draw_arrow(m, points, **kw):
+    color = kw.pop('color', 'k')
+    zorder = kw.pop('zorder', 10)
+    alpha = kw.pop('alpha', 0.85)
+    shape = kw.pop('shape', 'full')
+    width = kw.pop('width', 2500.)
+    overhang = kw.pop('overhang', 0)
     x1, y1 = points[:, 0][0], points[:, 1][0]
     x2, y2 = points[:, 0][1], points[:, 1][1]
     dx, dy = x2 - x1, y2 - y1
-    arrow = m.ax.arrow(x1, y1, dx, dy, **kwargs)
+    arrow = m.ax.arrow(x1, y1, dx, dy, color=color, zorder=zorder, alpha=alpha,
+                       shape=shape, width=width, overhang=overhang)
     plt.draw()
     return arrow
 
 
-def get_cruise_time(fig, m, vel=7, times=1):
+def get_cruise_time(fig, m, vel=7, times=1, **kw):
     r"""Click on two points of the Basemap object `m` to compute the
-    cruise time at the velocity `vel` in nots (default=7 nots)."""
+    cruise time at the velocity `vel` in knots (default=7 knots)."""
 
     vel *= 0.514444  # Convert to meters per seconds.
     print("Click on the first and last point of navigation for %s sections." %
@@ -212,8 +232,7 @@ def get_cruise_time(fig, m, vel=7, times=1):
     total = []
     while times:
         points = np.array(fig.ginput(n=2))
-        draw_arrow(m, points, width=2500., color='k', shape='full', overhang=0,
-                   alpha=0.85, zorder=10)
+        _draw_arrow(m, points, **kw)
         lon, lat = m(points[:, 0], points[:, 1], inverse=True)
         dist = gsw.distance(lon, lat, p=0)
         time = np.sum(dist / vel)
@@ -223,131 +242,109 @@ def get_cruise_time(fig, m, vel=7, times=1):
     return np.sum(total)
 
 
-def _mid_point(lon, lat):
-    r"""Returns the mid-point between an array of positions [lon, lat]."""
-    lonc = (lon[1:] + lon[0:-1]) / 2.
-    latc = (lat[1:] + lat[0:-1]) / 2.
-    return lonc, latc
-
-
-def _make_line(lon, lat, rossby, tfile, fraction=0.5):
-    r"""Create a lon, lat station line with stations separated by a
-    `fraction` of the `rossby` radius."""
-    degree2km = 111.  # Degree to km.
-    rossby_rd = rossby / degree2km
-    rossby_rd *= fraction
-
-    dx, dy = lon[-1] - lon[0], lat[-1] - lat[0]
-    th, rd = cart2pol(dx, dy, units='deg')
-
-    radii = np.arange(rossby_rd, rd, rossby_rd)
-    lon_l, lat_l = [], []
-    for r in radii:
-        dx, dy = pol2cart(th, r)
-        lon_l.append(lon[0] + dx)
-        lat_l.append(lat[0] + dy)
-    lon, lat = map(np.array, (lon_l, lat_l))
-    depth = np.int_(-np.fix(get_depth(lon, lat, tfile=tfile)))
-    return lon, lat, depth
-
-
-def make_radial(lonStart, lonEnd, latStart, latEnd, tfile=None, rossby=25.):
-    r"""Enter first and last point of a radial and the Rossby Radius."""
-    # First guess is every 1 (0.17) minute (degree) (etopo1 resolution).
-    x_len = len(np.arange(lonStart, lonEnd, 0.017))
-    y_len = len(np.arange(latStart, latEnd, 0.017))
-    length = x_len if x_len > y_len else y_len
-    if length <= 0:
-        raise ValueError("Could not get a valid length (lon = %s, lat = %s)" %
-                         (x_len, y_len))
-
-    lon = np.linspace(lonStart, lonEnd, length)
-    lat = np.linspace(latStart, latEnd, length)
-    depth = -np.fix(get_depth(lon, lat, tfile=tfile))
-
-    # Eliminate spurious depths.
-    mask = depth > 0
-    lon, lat, depth = lon[mask], lat[mask], depth[mask]
-
-    # Shelf.
-    if 0:  # FIXME: etopo1 sucks at the continental shelf.
-        mask = depth <= 100.
-        lonc, latc, depthc = lon[mask], lat[mask], depth[mask]
-        coast = np.abs(np.diff(depthc)) >= 20.
-        indices = np.zeros_like(coast)
-        idx = np.where(coast)[0]
-        for k in idx:
-            indices[k] = True
-            indices[k + 1] = True
-        # Last one is always True.
-        indices[-1] = True
-        lon_c, lat_c, depth_c = lon[indices], lat[indices], depth[indices]
-
-    # Slope.
-    mask = np.logical_and(depth > 100., depth <= 1000.)
-    first = np.where(mask)[0][0]
-    last = np.where(mask)[0][-1]
-    lon_t, lat_t = (lon[first], lon[last]), (lat[first], lat[last])
-
-    # Half Rossby radius at the Slope.
-    lon_t, lat_t, depth_t = _make_line(lon_t, lat_t, tfile=tfile, rossby=25.,
-                                      fraction=0.5)
-
-    # Deep ocean.
-    mask = depth > 1000.
-    first = np.where(mask)[0][0]
-    last = np.where(mask)[0][-1]
-    lon_d, lat_d = (lon[first], lon[last]), (lat[first], lat[last])
-    # One Rossby radius after Slope.
-    lon_d, lat_d, depth_d = _make_line(lon_d, lat_d, tfile=tfile, rossby=25.,
-                                      fraction=1)
-
-    lon = np.r_[lon_t, lon_d]
-    lat = np.r_[lat_t, lat_d]
-    depth = np.r_[depth_t, depth_d]
-
-    return lon, lat, depth
-
-
-def create_transect(ax, points, tfile='dap'):
-    lonStart, lonEnd = points[0][0], points[1][0]
-    latStart, latEnd = points[0][1], points[1][1]
-    lon, lat, depth = make_radial(lonStart, lonEnd, latStart, latEnd,
-                                  tfile=tfile, rossby=25.)
-
-    # Split CTDs and XBTs.
-    mask = depth < 1000.
-    lon_ctd, lat_ctd, depth_ctd = lon[mask], lat[mask], depth[mask]
-
-    mask = depth >= 1000.
-    # Last point is always CTD+XBT.
-    if len(lon) % 2:
-        lon_xbt = np.r_[lon[mask][1::2], lon[-1]]
-        lat_xbt = np.r_[lat[mask][1::2], lat[-1]]
-        #depth_xbt = np.r_[depth[mask][1::2], depth[-1]]
-        lon_ctd = np.r_[lon_ctd, lon[mask][0::2]]
-        lat_ctd = np.r_[lat_ctd, lat[mask][0::2]]
-        depth_ctd = np.r_[depth_ctd, depth[mask][0::2]]
-    else:
-        lon_xbt = np.r_[lon[mask][1::2]]
-        lat_xbt = np.r_[lat[mask][1::2]]
-        #depth_xbt = np.r_[depth[mask][1::2]]
-        lon_ctd = np.r_[lon_ctd, lon[mask][0::2], lon[-1]]
-        lat_ctd = np.r_[lat_ctd, lat[mask][0::2], lat[-1]]
-        depth_ctd = np.r_[depth_ctd, depth[mask][0::2], depth[-1]]
-
-    ax.plot(lon_xbt, lat_xbt, 'rd', alpha=0.4)
-    ax.plot(lon_ctd, lat_ctd, 'k.')
-
-    dist = np.int_(gsw.distance(lon, lat))[0] / 1e3
-    lonc, latc = _mid_point(lon, lat)
-    for k, text in enumerate(dist):
-        ax.text(lonc[k], latc[k], str(np.int(text)))
-
-    plt.draw()
-    return Transect(lon, lat, depth)
-
+DataFrame.distances = distances
+DataFrame.mid_point = mid_point
+DataFrame.ctd_cast_time = ctd_cast_time
+DataFrame.navigation_time = navigation_time
 
 if __name__ == '__main__':
-    import doctest
-    doctest.testmod()
+    from mpl_toolkits.basemap import Basemap
+
+    start, end = (-40.84, -22.18), (-38.54, -22.20)  # "Normal."
+    #start, end = (-39., -19.), (-36., -20.5)  # Several bumps.
+    #start, end = (-37.467, -17.8819), (-35.9307, -17.9133)  # Hot spur.
+
+    if 1:
+        lon, lat = make_line(start, end, spacing=20)
+        depth = -np.fix(get_depth(lon, lat, tfile='dap'))
+        dist = gsw.distance(lon, lat, p=0).squeeze() / 1e3
+        transect = transect2dataframe(lon, lat, depth)
+
+        lonc, latc = transect.mid_point()
+        # NOTE: Figure with stations and depth profile.
+        fig, (ax0, ax1) = plt.subplots(nrows=2)
+        ax0.plot(lon, lat, 'ko', alpha=0.6)
+        # NOTE: Rounding distance just to get a cleaner graph.
+        [ax0.text(x, y, str(np.int_(text))) for
+         x, y, text in zip(lonc, latc, dist)]
+        ax1.plot(np.r_[0, dist].cumsum(), depth)
+        ax1.invert_yaxis()
+
+    # Test Transect.
+    transect = make_transect(start, end, tfile='dap', rossby=25.)
+    radial = _split_stations(transect)
+
+    secs2hours = 60. * 60.
+    secs2days = 60. * 60. * 24.
+    print("\nTrack distances:\n%s" % transect.distances())
+    print("\nCTD time (rule of thumb):\n%s" % transect.ctd_cast_time())
+    print("\nCTD time (depth):\n%s" % transect.ctd_cast_time(method="depth"))
+    print("\nTotal CTD time %s hours" %
+          (transect.ctd_cast_time().sum() / secs2hours))
+    print("\nNavigation time: %s days" %
+          (transect.navigation_time() / secs2days))
+    print("\nTotal transect time: %s days" %
+          ((transect.ctd_cast_time().sum() +
+            transect.navigation_time()) / secs2days))
+
+    # Test Figure tools.
+    def make_map(lonStart=-43., lonEnd=-34., latStart=-22.5, latEnd=-17.):
+        m = Basemap(projection='merc', llcrnrlon=-59.0, urcrnrlon=-25.0,
+                    llcrnrlat=-38.0, urcrnrlat=9.0, lat_ts=20, resolution='c')
+
+        # Create the figure and attach the axis.
+        fig, ax = plt.subplots(figsize=(20, 20), facecolor='w')
+        m.ax = ax
+
+        m.imshow(plt.imread('chart_brazil.png'), origin='upper', alpha=0.5)
+
+        lon_lim, lat_lim = m([lonStart, lonEnd], [latStart, latEnd])
+        m.ax.axis([lon_lim[0], lon_lim[1], lat_lim[0], lat_lim[1]])
+
+        parallels = np.arange(latStart,  latEnd, 2)
+        meridians = np.arange(lonStart, lonEnd, 2)
+        xoffset = -lon_lim[0] + lonStart + 1e4
+        yoffset = -lat_lim[0] + latStart + 1e4
+        kw = dict(linewidth=0, fontsize=14, fontweight='demibold')
+        m.drawparallels(parallels, xoffset=xoffset, labels=[1, 0, 0, 0], **kw)
+        m.drawmeridians(meridians, yoffset=yoffset, labels=[0, 0, 0, 1], **kw)
+        plt.draw()
+        return fig, ax, m
+
+    if 0:
+        fig, ax, m = make_map()
+        ctd = filter_station(radial, st_type='CTD')
+        xbt = filter_station(radial, st_type='XBT')
+        water = filter_station(radial, st_type='Water')
+        ctd_xbt = filter_station(radial, st_type='CTD/XBT')
+
+        kw = dict(linestyle='none', markersize=8, marker='d')
+        m.plot(*m(ctd.lon, ctd.lat), label='%2i CTD' % len(ctd),
+               markerfacecolor='r', markeredgecolor='w', zorder=2, **kw)
+
+        m.plot(*m(xbt.lon, xbt.lat), label='%2i XBT' % len(xbt),
+               markerfacecolor='g', markeredgecolor='w', zorder=2, **kw)
+
+        m.plot(*m(water.lon, water.lat), label='%2i Water' % len(water),
+               markerfacecolor='b', markeredgecolor='w', zorder=2, **kw)
+
+        m.ax.legend(numpoints=1, fancybox=True, shadow=True, loc='upper left')
+
+        m.plot(*m(ctd_xbt.lon, ctd_xbt.lat), markerfacecolor='g',
+               markerfacecoloralt='r', fillstyle='top', markeredgecolor='w',
+               zorder=3, **kw)
+
+        m.plot(*m(water.lon, water.lat), markerfacecolor='b',
+               markerfacecoloralt='r', fillstyle='top', markeredgecolor='w',
+               zorder=3, **kw)
+
+        raw_input("""\nClick at the first and the last station to compare with
+        the method transect.navigation_time().  Press Enter when ready.""")
+        cruise = get_cruise_time(fig, m, vel=7, times=1, alpha=0.5)
+        print("\nCruise time: %s days\nNavigation time: %s" %
+            (cruise / secs2days, transect.navigation_time() / secs2days))
+
+        raw_input("""\nNow do an actual cruise plan by clicking in a route
+        port-first station-last station-port.  Press Enter when ready.""")
+        cruise = get_cruise_time(fig, m, vel=7, times=2, color='r')
+        print("Cruise time: %s days" % (cruise / secs2days))
