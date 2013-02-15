@@ -1,17 +1,18 @@
 syntax: glob
 .hgignore
-*~
-_build
 .*swp
 *.nc
-.directory
 *.pyc
+*.m
+*.png
+*~
+.directory
+_build
 MANIFEST
 build/*
 dist/*
 oceans.egg-info/*
 TODO
-*.m
 oceans/RPStuff/RPSstuff/*
 code-todo/*
 oceans/ctd/data/*
