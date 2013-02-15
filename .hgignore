@@ -6,6 +6,8 @@ syntax: glob
 *.m
 *.png
 *~
+*.h5
+*.npz
 .directory
 _build
 MANIFEST
