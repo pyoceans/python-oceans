@@ -316,58 +316,24 @@ def seabird_filter(data, sample_rate=24.0, time_constat=0.15):
     return data
 
 
-def despike(self, std1=2, std2=20, window=100, keep=0):
-    r"""Wild Edit Seabird-like function.  NOTE: Must run before bindata!
-    Passes with Standard deviation `std1` and `std2` with window size `block`.
-    """
+def despike(self, n1=2, n2=20, block=100, keep=0):
+    r"""Wild Edit Seabird-like function.  Passes with Standard deviation
+    `n1` and `n2` with window size `block`."""
 
     # TODO: keep data within distance of the mean option.
     # TODO: Save mean and std Series.
-    res = self.copy()
-    # FIXME bfill might not be the best option here.
-    std = std1 * rolling_std(res, window=window).fillna(method='bfill')
-    mean = rolling_mean(res, window=window).fillna(method='bfill')
-    mask = (np.abs(res - mean) >= std)
-
-    res[mask.values] = np.NaN
-
-    std = std2 * rolling_std(res, window=window).fillna(method='bfill')
-    mean = rolling_mean(res, window=window).fillna(method='bfill')
-    mask = (np.abs(res - mean) >= std)
-    res[mask.values] = np.NaN
-    return res
-
-
-def despike_old(self, n1=2, n2=20, block=100, keep=0):
-    r"""Wild Edit Seabird-like function.  NOTE: Must run before bindata!
-    #Passes with Standard deviation `std1` and `std2` with window size `block`.
-    """
-
-    # TODO: keep data within distance of the mean option.
-    # TODO: Save mean and std Series.
-    def std_pass(data, n, block):
-        for k, point in enumerate(data):
-            if k <= block:
-                window = data[k:k + block]
-            elif k >= len(data) - block:
-                window = data[k - block:k]
-            else:
-                window = data[k - block:k + block]
-            window = window[~np.isnan(window)]
-            std = np.std(window, ddof=1)
-            mean = np.mean(window)
-            if False:
-                stds, means = [], []
-                stds.append(std)
-                means.append(mean)
-            if np.abs(point - mean) >= n * std:
-                data[k] = np.NaN
+    data = self.copy()
+    def mask_spikes(data, n):
+        std = n * rolling_std(data, window=block)
+        std[:block] = std[block]
+        mean = rolling_mean(data, window=block)
+        mean[:block] = mean[block]
+        mask = (np.abs(data - mean) >= std)
+        data[mask.values] = np.NaN
         return data
-
-    data = self.values.copy()
-    data = std_pass(data, n1, block=block)
-    data = std_pass(data, n2, block=block)
-    return Series(data, index=self.index, name=self.name)
+    data = mask_spikes(data, n1)
+    data = mask_spikes(data, n2)
+    return data
 
 
 def bindata(self, db=1.):
@@ -392,10 +358,10 @@ def bindata(self, db=1.):
 
     return newdf
 
-
 def smooth(self, window_len=11, window='hanning'):
     r"""Smooth the data using a window with requested size."""
     # TODO: variable window_len (5 <100, 11 100--500, 21 > 500)
+    # TODO: Compare with rolling_window.
 
     windows = dict(flat=np.ones, hanning=np.hanning, hamming=np.hamming,
                    bartlett=np.bartlett, blackman=np.blackman)
@@ -424,7 +390,14 @@ def get_maxdepth(self):
     return np.float_(self.index * valid_last_depth).max(axis=1)
 
 
-def plot_section(self, filled=False, **kw):
+def plot_section(self, inverse=False, filled=False, **kw):
+    if inverse:
+        # FIXME: If I can pass metadata this step is unnecessary.
+        lon = self.lon
+        lat = self.lat
+        self = self.T[::-1].T
+        self.lon = lon
+        self.lat = lat
     # Contour key words.
     fmt = kw.pop('fmt', '%1.0f')
     extend = kw.pop('extend', 'both')
@@ -568,7 +541,7 @@ def from_edf(cls, fname, compression=None):
 
 
 @classmethod
-def from_cnv(cls, fname, compression):
+def from_cnv(cls, fname, compression=None):
     r"""Read ASCII CTD file from Seabird model cnv file.
     Return two DataFrames with up/down casts."""
 
@@ -622,6 +595,10 @@ def from_cnv(cls, fname, compression):
     cast.name = basename(fname)[0]
     cast.lon = lon
     cast.lat = lat
+    if 'pumps' in cast.columns:
+        cast['pumps'] = np.bool_(cast['pumps'])
+    if 'flag' in cast.columns:
+        cast['flag'] = np.bool_(cast['flag'])
     return cast
 
 
