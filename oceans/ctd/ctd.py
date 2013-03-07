@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  22-Jun-2012
-# modified: Fri 01 Mar 2013 07:12:53 PM BRT
+# modified: Thu 07 Mar 2013 06:07:13 PM BRT
 #
 # obs: Instead of sub-classing I opted for a "Monkey Patch" approach
 #      (Wes suggestion).
@@ -323,6 +323,7 @@ def despike(self, n1=2, n2=20, block=100, keep=0):
     # TODO: keep data within distance of the mean option.
     # TODO: Save mean and std Series.
     data = self.copy()
+
     def mask_spikes(data, n):
         std = n * rolling_std(data, window=block)
         std[:block] = std[block]
@@ -357,6 +358,7 @@ def bindata(self, db=1.):
     newdf.index += shift  # Not shifted.
 
     return newdf
+
 
 def smooth(self, window_len=11, window='hanning'):
     r"""Smooth the data using a window with requested size."""
