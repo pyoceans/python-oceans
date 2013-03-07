@@ -14,6 +14,7 @@
 
 from __future__ import division
 
+import re
 import warnings
 
 import numpy as np
@@ -25,12 +26,19 @@ from scipy.ndimage import map_coordinates
 
 
 __all__ = [
+    'alphanum_key',
     'get_profile',
+    'strip_mask',
     'gen_dates',
     'princomp',
-    'strip_mask',
     'shiftdim'
-]
+    ]
+
+
+def alphanum_key(s):
+    key = re.split(r"(\d+)", s)
+    key[1::2] = map(int, key[1::2])
+    return key
 
 
 def get_profile(x, y, f, xi, yi, mode='nearest', order=3):
