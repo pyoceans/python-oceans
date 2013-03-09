@@ -5,22 +5,24 @@ ocean toolbox
 =============
 """
 
-__authors__ = ['Filipe Fernandes']
+__authors__ = 'Filipe Fernandes'
 __copyright__ = "left"
-__credits__ = ["Filipe Fernandes"]
+__credits__ = "Filipe Fernandes"
 __license__ = "BSD"
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __maintainer__ = "Filipe Fernandes"
 __email__ = "ocefpaf@gmail.com"
 __status__ = "Alpha"
 
-__all__ = ['RPStuff',
-           'colormaps',
-           'ctd',
-           'ff_tools',
-           'mlabwrap'
-           'plotting',
-           'sandbox']
+__all__ = [
+    'RPStuff',
+    'colormaps',
+    'ctd',
+    'dataset',
+    'ff_tools',
+    'mlabwrap',
+    'plotting'
+]
 
 
 import RPStuff
@@ -30,4 +32,3 @@ import datasets
 import ff_tools
 import mlabwrap
 import plotting
-#import sandbox
