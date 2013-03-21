@@ -15,20 +15,22 @@ __email__ = "ocefpaf@gmail.com"
 __status__ = "Alpha"
 
 __all__ = [
-    'RPStuff',
-    'colormaps',
     'ctd',
+    'RPStuff',
     'dataset',
     'ff_tools',
     'mlabwrap',
-    'plotting'
+    'plotting',
+    'seawater',
+    'colormaps'
 ]
 
 
-import RPStuff
-import colormaps
 import ctd
+import RPStuff
 import datasets
 import ff_tools
 import mlabwrap
 import plotting
+import seawater
+import colormaps
