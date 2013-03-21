@@ -21,57 +21,12 @@ import gsw
 
 __all__ = [
            'mld',
-           'apoxu',
            'pcaben',
            'spdir2uv',
            'uv2spdir',
            'interp_nan',
            'del_eta_del_x'
            ]
-
-
-def apoxu(s, pt, o2):
-    r"""Calculate oxygen concentration at saturation.  Molar volume of oxygen
-    at STP obtained from NIST website on the thermophysical properties of fluid
-    systems (http://webbook.nist.gov/chemistry/fluid/).
-
-    AOU [umol/kg] = sat O2 [umol/kg] - obs o2 [umol/kg]
-
-    Parameters
-    ----------
-    s : array_like
-        Salinity [pss-78]
-    pt : array_like
-         Potential Temperature [degC]
-    o2 : array_like
-         Measured Oxygen Concentration [umol/kg]
-
-    Returns
-    -------
-    aou : array_like
-          Apparent Oxygen Utilization [umol/kg]
-
-    Examples
-    --------
-    aou = apoxu(s, t, o2)
-
-    References
-    -----
-    .. [1] The solubility of nitrogen, oxygen and argon in water and seawater -
-    Weiss (1970) Deep Sea Research V17(4): 721-735.
-
-    Modified
-    --------
-    Edward T Peltzer, MBARI revised:  2007 Apr 26.
-    """
-
-    pt = (pt + 273.15) / 100.
-    # The constants are used for units of ml O2/kg.
-    osat = -177.7888 + 255.5907 / pt + 146.4813 * np.log(pt) - 22.2040 * pt
-    osat += s * (-0.037362 + pt * (0.016504 - 0.0020564 * pt))
-    osat = np.exp(osat)
-    osat *= 1000. / 22.392  # Convert from ml/kg to um/kg.
-    return osat - o2  # Calculate aou.
 
 
 def spdir2uv(spd, ang, deg=False):
