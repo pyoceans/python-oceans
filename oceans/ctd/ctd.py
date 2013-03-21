@@ -21,6 +21,8 @@ import gzip
 import zipfile
 import cStringIO
 
+from datetime import datetime
+
 import numpy as np
 import numpy.ma as ma
 import matplotlib.pyplot as plt
@@ -30,7 +32,7 @@ from scipy import signal
 from scipy.interpolate import interp1d
 from mpl_toolkits.axes_grid1 import host_subplot
 
-from pandas import Index, Series, DataFrame
+from pandas import Panel, DataFrame, Series, Index
 from pandas import rolling_std, rolling_mean, read_table
 
 import gsw
@@ -41,6 +43,19 @@ degree = u"\u00b0"
 
 
 # Utilities.
+def load_bl(blfile):
+    names = ['bottles', 'datetime', 'start', 'finish']
+    bl = read_table(blfile, skiprows=2, sep=',', parse_dates=False,
+                    index_col=1, names=names)
+
+    if (bl.index == bl['bottles']).all():
+        del bl['bottles']
+    else:
+        raise ValueError("First column is not identical to the second.")
+
+    return bl
+
+
 def extrap1d(interpolator):
     r"""http://stackoverflow.com/questions/2745329/"""
     xs = interpolator.x
@@ -88,6 +103,12 @@ def movingaverage(series, window_size=48):
     return Series(np.convolve(series, window, 'same'), index=series.index)
 
 
+def rolling_window(data, block):
+    shape = data.shape[:-1] + (data.shape[-1] - block + 1, block)
+    strides = data.strides + (data.strides[-1],)
+    return np.lib.stride_tricks.as_strided(data, shape=shape, strides=strides)
+
+
 # TEOS-10 and other functions.
 def check_index(ix0, ix1):
     if isinstance(ix0, Series) and isinstance(ix1, Series):
@@ -99,22 +120,6 @@ def check_index(ix0, ix1):
             return ix0, ix1
     else:
         raise ValueError("Series index must be the same.")
-
-
-def SP_from_C(C, t):
-    p = check_index(C, t)[0]
-    return Series(gsw.SP_from_C(C, t, p), index=p, name='Salinity')
-
-
-def CT_from_t(SA, t):
-    p = check_index(SA, t)[0]
-    return Series(gsw.CT_from_t(SA, t, p), index=p,
-                  name='Conservative_temperature')
-
-
-def sigma0_CT_exact(SA, CT):
-    return Series(gsw.sigma0_CT_exact(SA, CT), index=SA.index,
-                  name='Sigma_theta')
 
 
 def mixed_layer_depth(t, verbose=True):
@@ -255,6 +260,25 @@ def gen_topomask(h, lon, lat, dx=1., kind='linear', plot=False):
     return xm, hm
 
 
+def pmel_inversion_check():
+    r"""Additional clean-up and flagging of data after the SBE Processing.
+    Look for inversions in the processed, binned via computing the centered
+    square of the buoyancy frequency, N2, for each bin and linearly
+    interpolating temperature, conductivity, and oxygen over those records
+    where N2 ≤ -1 x 10-5 s-2, where there appear to be density inversions.
+
+    NOTE: While these could be actual inversions in the CTD records, it is much
+    more likely that shed wakes cause these anomalies.  Records that fail the
+    density inversion criteria in the top 20 meters are retained, but flagged
+    as questionable.
+
+    FIXME: The codes also manually remove spikes or glitches from profiles as
+    necessary, and linearly interpolate over them."""
+
+    # TODO
+    pass
+
+
 # Index methods.
 def asof(self, label):
     if label not in self:
@@ -274,12 +298,13 @@ def float_(self):
 def split(self):
     r"""Returns a tupple with down- and up-cast."""
     down = self.ix[:self.index.argmax()]
-    up = self.ix[self.index.argmax():]
+    up = self.ix[self.index.argmax():][::-1]  # Reverse up index.
     return down, up
 
 
 def press_check(self, column='index'):
-    r"""Remove pressure reversal. NOTE: Downcast only."""
+    r"""Remove pressure reversal.
+    NOTE: Must be applied after split."""
     data = self.copy()
     if column is not 'index':
         press = data[column]
@@ -296,6 +321,36 @@ def press_check(self, column='index'):
             mask[k + 1:][cut] = True
     data[mask] = np.NaN
     return data
+
+
+def rosette_summary(self, bl):
+    r"""Make a BTL (bottle) file from a BL (bottle log) file.
+
+    Seabird produce their own BTL file, but here we have more control for the
+    averaging process and on which step we want to perform this.  Therefore
+    eliminating the need to read the data into SB Software again after some
+    pre-processing.  NOTE: Run after LoopEdit.
+
+    FIXME: Write to a file like this:
+    AMB09_101_CTD_rad5.btl
+    Bottle        Date     Scan       PrDM      T090C     C0S/m
+  Position        Time
+      1    Oct 16 2012   109892   3729.447     1.2721  3.148013  (avg)
+              18:52:19       14      0.439     0.0038  0.000340  (sdev)
+                         109868   3728.720     1.2645  3.147310  (min)
+                         109916   3730.234     1.2772  3.148478  (max)
+      2    Oct 16 2012   117087   3825.047     1.1905  3.143622  (avg)
+              18:57:19       14      0.316     0.0068  0.000602  (sdev)
+                         117063   3824.464     1.1792  3.142608  (min)
+                         117111   3825.501     1.1985  3.144288  (max)
+    """
+
+    rossum = dict()
+    for bottle, k0, k1 in zip(bl.index, bl['start'], bl['finish']):
+        mask = np.logical_and(self['scan'] >= k0, self['scan'] <= k1).values
+        rossum[bottle] = swap_index(self, 'scan')[mask].describe()
+
+    return Panel.fromDict(rossum, orient='items')
 
 
 def seabird_filter(data, sample_rate=24.0, time_constat=0.15):
@@ -319,29 +374,52 @@ def seabird_filter(data, sample_rate=24.0, time_constat=0.15):
 def despike(self, n1=2, n2=20, block=100, keep=0):
     r"""Wild Edit Seabird-like function.  Passes with Standard deviation
     `n1` and `n2` with window size `block`."""
+    """ TODO: Keep data within this distance of mean: Do not flag data within
+    this distance of mean, even if it falls outside specified standard
+    deviation.  Set to a value where difference between data and mean would
+    indicate a wild point.  May need to use if data is very quiet (for example,
+    a single bit change in voltage may cause data to fall outside specified
+    standard deviation and be marked bad).  A typical sequence for using
+    parameter follows:
+        Run Wild Edit for all desired variables, with parameter set to 0.
+        Compare output to input data.  If a variable’s data points that are
+        very close to mean were set to badflag:
 
-    # TODO: keep data within distance of the mean option.
-    # TODO: Save mean and std Series.
-    data = self.copy()
+        Rerun Wild Edit for all other variables, leaving parameter at 0 and
+        overwriting output file from Step 1.  Rerun Wild Edit for quiet
+        variable only, setting parameter to desired value to prevent flagging
+        of data close to mean."""
 
-    def mask_spikes(data, n):
-        std = n * rolling_std(data, window=block)
-        std[:block] = std[block]
-        mean = rolling_mean(data, window=block)
-        mean[:block] = mean[block]
-        mask = (np.abs(data - mean) >= std)
-        data[mask.values] = np.NaN
-        return data
-    data = mask_spikes(data, n1)
-    data = mask_spikes(data, n2)
-    return data
+    data = self.values.copy()
+    roll = rolling_window(data, block)
+    roll = ma.masked_invalid(roll)
+    std = n1 * roll.std(axis=1)
+    mean = roll.mean(axis=1)
+    # Use the last value to fill-up.
+    std = np.r_[std, np.tile(std[-1], block -1)]
+    mean = np.r_[mean, np.tile(mean[-1], block -1)]
+    mask = (np.abs(data - mean.filled(fill_value=np.NaN)) >
+            std.filled(fill_value=np.NaN))
+    data[mask] = np.NaN
+
+    # Pass two recompute the mean and std without the flagged values from pass
+    # one and removed the flagged data.
+    roll = rolling_window(data, block)
+    roll = ma.masked_invalid(roll)
+    std = n2 * roll.std(axis=1)
+    mean = roll.mean(axis=1)
+    # Use the last value to fill-up.
+    std = np.r_[std, np.tile(std[-1], block -1)]
+    mean = np.r_[mean, np.tile(mean[-1], block -1)]
+    mask = (np.abs(self.values - mean.filled(fill_value=np.NaN)) >
+            std.filled(fill_value=np.NaN))
+    self[mask] = np.NaN
+    return self
 
 
-def bindata(self, db=1.):
-    r"""Bin average the index (pressure) to a given interval in decibars [db].
-    default db = 1.
-    This method assumes that the profile start at the surface (0) and "ceils"
-    the last depth.
+def bindata(self, delta=1.):
+    r"""Bin average the index (usually pressure) to a given interval (default
+    delta = 1).
 
     Note that this method does not drop NA automatically.  Therefore, one can
     check the quality of the binned data."""
@@ -350,8 +428,8 @@ def bindata(self, db=1.):
     # TODO: save number of points used in each the bin.
     start = np.floor(self.index[0])
     end = np.ceil(self.index[-1])
-    shift = db / 2.  # To get centered bins.
-    new_index = np.arange(start, end, db) - shift
+    shift = delta / 2.  # To get centered bins.
+    new_index = np.arange(start, end, delta) - shift
 
     new_index = Index(new_index)
     newdf = self.groupby(new_index.asof).mean()
@@ -394,20 +472,21 @@ def get_maxdepth(self):
 
 def plot_section(self, inverse=False, filled=False, **kw):
     if inverse:
-        # FIXME: If I can pass metadata this step is unnecessary.
-        lon = self.lon
-        lat = self.lat
-        self = self.T[::-1].T
-        self.lon = lon
-        self.lat = lat
+        lon = self.lon[::-1].copy()
+        lat = self.lat[::-1].copy()
+        data = self.T[::-1].T.copy()
+    else:
+        lon = self.lon.copy()
+        lat = self.lat.copy()
+        data = self.copy()
     # Contour key words.
     fmt = kw.pop('fmt', '%1.0f')
     extend = kw.pop('extend', 'both')
     fontsize = kw.pop('fontsize', 12)
     labelsize = kw.pop('labelsize', 11)
     cmap = kw.pop('cmap', plt.cm.rainbow)
-    levels = kw.pop('levels', np.arange(np.floor(self.min().min()),
-                    np.ceil(self.max().max()) + 0.5, 0.5))
+    levels = kw.pop('levels', np.arange(np.floor(data.min().min()),
+                    np.ceil(data.max().max()) + 0.5, 0.5))
 
     # Colorbar key words.
     pad = kw.pop('pad', 0.04)
@@ -424,17 +503,17 @@ def plot_section(self, inverse=False, filled=False, **kw):
     offset = kw.pop('offset', -5)
 
     # Get data for plotting.
-    x = np.append(0, np.cumsum(gsw.distance(self.lon, self.lat)[0] / 1e3))
-    z = np.float_(self.index.values)
-    h = self.get_maxdepth()
-    data = ma.masked_invalid(self.values)
+    x = np.append(0, np.cumsum(gsw.distance(lon, lat)[0] / 1e3))
+    z = np.float_(data.index.values)
+    h = data.get_maxdepth()
+    data = ma.masked_invalid(data.values)
     if filled:
         # FIXME: There is a discontinuity when using extrap_sec because we
         # user only horizontal data for this.
         data = data.filled(fill_value=np.nan)
         data = extrap_sec(data, x, z, w1=0.97, w2=0.03)
 
-    xm, hm = gen_topomask(h, self.lon, self.lat, dx=dx, kind=kind)
+    xm, hm = gen_topomask(h, lon, lat, dx=dx, kind=kind)
 
     # Figure.
     fig, ax = plt.subplots()
@@ -543,7 +622,7 @@ def from_edf(cls, fname, compression=None):
 
 
 @classmethod
-def from_cnv(cls, fname, compression=None):
+def from_cnv(cls, fname, compression=None, blfile=None):
     r"""Read ASCII CTD file from Seabird model cnv file.
     Return two DataFrames with up/down casts."""
 
@@ -591,12 +670,19 @@ def from_cnv(cls, fname, compression=None):
 
     cast.set_index('prdm', drop=True, inplace=True)
     cast.index.name = 'Pressure [dbar]'
-    # FIXME: Try metadata class.
+
+    # FIXME: Use metadata class here!
+    if blfile:
+        bl = load_bl(blfile)
+    else:
+        bl = None
+
+    cast.bl = bl
+    cast.lon = lon
+    cast.lat = lat
     cast.header = header
     cast.config = config
     cast.name = basename(fname)[0]
-    cast.lon = lon
-    cast.lat = lat
     if 'pumps' in cast.columns:
         cast['pumps'] = np.bool_(cast['pumps'])
     if 'flag' in cast.columns:
@@ -623,7 +709,7 @@ def swap_index(self, keys):
     data = self.copy()
     if not data.index.name:
         data.index.name = "index"
-    data[data.index.name] = data.index.values
+    data[data.index.name] = data.index.float_()
     return data.set_index(keys, drop=True, append=False, verify_integrity=True)
 
 

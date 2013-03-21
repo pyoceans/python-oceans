@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  13-Sep-2012
-# modified: Sat 13 Oct 2012 01:53:58 AM BRT
+# modified: Sat 09 Mar 2013 03:37:13 PM BRT
 #
 # obs:  Mostly backwards compatible functions.  There are newer and better ways
 # to do all this!!!
@@ -17,7 +17,7 @@ import numpy as np
 
 
 # Objective analysis in the same fashion as `scaloa.m`.
-def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None):
+def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None, zc=None):
     r"""Scalar objective analysis.  Interpolates t(x, y) into tp(xc, yc)
     Assumes spatial correlation function to be isotropic and Gaussian in the
     form of: C = (1 - err) * np.exp(-d**2 / corrlen**2) where:
