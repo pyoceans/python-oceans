@@ -1,45 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
-import oceans
+from oceans import __version__
 
-try:
-    from setuptools import setup
-    from setuptools.command.sdist import sdist
-except ImportError:
-    from distutils.core import setup
-    from distutils.command.sdist import sdist
+from distutils.core import setup
 
-# TODO: find setuptools equivalent.
 try:  # Python 3
     from distutils.command.build_py import build_py_2to3 as build_py
 except ImportError:  # Python 2
     from distutils.command.build_py import build_py
 
-
-class sdist_hg(sdist):
-    r"""Automatically generate the latest development version when creating a
-    source distribution."""
-    user_options = sdist.user_options + [('dev', None, "Add a dev marker")]
-
-    def initialize_options(self):
-        sdist.initialize_options(self)
-        self.dev = 0
-
-    def run(self):
-        if self.dev:
-            suffix = '.dev%d' % self.get_tip_revision()
-            self.distribution.metadata.version += suffix
-        sdist.run(self)
-
-    def get_tip_revision(self, path=os.getcwd()):
-        from mercurial.ui import ui
-        from mercurial.hg import repository
-        #from mercurial import node  # Imported but unused.
-        repo = repository(ui(), path)
-        tip = repo.changelog.tip()
-        return repo.changelog.rev(tip)
 
 classifiers = """\
 Development Status :: 2 - Pre-Alpha
@@ -56,14 +26,17 @@ Topic :: Software Development :: Libraries :: Python Modules
 """
 
 config = dict(name='oceans',
-              version=oceans.__version__,
-              packages=['oceans', 'oceans/colormaps',
-                                  'oceans/ctd',
-                                  'oceans/ff_tools',
-                                  'oceans/mlabwrap',
-                                  'oceans/plotting',
-                                  'oceans/RPStuff',
-                                  'oceans/sandbox'],
+              version=__version__,
+              packages=[
+                        'oceans',
+                        'oceans/RPStuff',
+                        'oceans/colormaps',
+                        'oceans/ctd',
+                        'oceans/datasets',
+                        'oceans/ff_tools',
+                        'oceans/mlabwrap',
+                        'oceans/plotting',
+                        'oceans/test'],
               package_data={'': ['colormaps/cmap_data/*.pkl']},
               license=open('LICENSE.txt').read(),
               description='Module for oceanographic data analysis',
@@ -77,8 +50,6 @@ config = dict(name='oceans',
               classifiers=filter(None, classifiers.split("\n")),
               platforms='any',
               cmdclass={'build_py': build_py},
-              # NOTE: python setup.py sdist --dev
-              #cmdclass={'sdist': sdist_hg},
               keywords=['oceanography', 'data analysis'],
               install_requires=['numpy', 'scipy', 'nose'])
 
