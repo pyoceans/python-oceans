@@ -1,13 +1,15 @@
+OUTPUT FROM THIS TEST WILL ALSO BE SAVED IN FILE test.txt
 **********************************************
     TEST REPORT    
 
- SEA WATER LIBRARY  3.3
+ SEA WATER LIBRARY 
 
 
-python version: 2.7.3 (default, Apr 14 2012, 08:58:41) [GCC]
- on  Linux x86_64  computer
+version: 2.6.2 (r262:71600, Oct 24 2009, 03:16:31) 
+[GCC 4.4.1 [gcc-4_4-branch revision 150839]]
+ on  Linux i686  computer
 
-Mon Oct  1 17:44:33 2012
+Sat Jan 30 17:09:21 2010
 **********************************************
 
 *************************************
@@ -320,11 +322,11 @@ Comparison of accepted values from MCDOUGALL 1987
 **  TESTING MODULE:  satO2 satN2 satAr
 ********************************************************
 
-************************************************************
+********************************************************
 Comparison of accepted values from Weiss, R.F. 1979 
-"The solubility of nitrogen, oxygen and argon in water
- and seawater." Deep-Sea Research., 1970, Vol 17, pp721-735.
-************************************************************
+"The solubility of nitrogen, oxygen and argon in water and seawater."
+ Deap-Sea Research., 1970, Vol 17, pp721-735.
+********************************************************
 
    Sal  Temp      O2         satO2
   (psu)  (C)      (ml/l)     (ml/l)
