@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  11-Oct-2010
-# modified: Sat 09 Mar 2013 03:36:05 PM BRT
+# modified: Sat 23 Mar 2013 03:37:46 PM BRT
 #
 # obs:
 #
@@ -59,6 +59,7 @@ def phasemap_cm(m=256):
 
     return cmap.T / 255.
 
+
 def zebra_cm(a=4, n=1, m=0.5):
     r"""Zebra palette colormap with NBANDS broad bands and NENTRIES rows in
     the color map.
@@ -85,7 +86,8 @@ def zebra_cm(a=4, n=1, m=0.5):
     cmap = [hsv_to_rgb(h, s, v) for h, s, v in zip(hue, sat, val)]
     cmap = np.asarray(cmap)
 
-    return cmap.T  / 255.
+    return cmap.T / 255.
+
 
 def ctopo_pos_neg_cm(m=256):
     r"""Colormap for positive/negative data with gray scale only
@@ -95,6 +97,7 @@ def ctopo_pos_neg_cm(m=256):
     cmap = np.r_[values, values, values]
 
     return cmap.T
+
 
 def avhrr_cm(m=256):
     r"""AHVRR colormap used by NOAA Coastwatch."""
@@ -566,28 +569,26 @@ odv = np.array([0.9360, 0.7790, 0.9390,
                 1.0000, 0.7840, 0.5680]).reshape((-1, 3))
 
 
-phasemap_r, zebra_r, avhrr_r, cbathy_r, coolavhrrmap_r, rscolmap_r, redgreen_r, redblue_light_r, redblue_dark_r, ctopo_r, odv_r = map(_reverse_cm, (phasemap, zebra, avhrr, cbathy, coolavhrrmap, rscolmap, redgreen, redblue_light, redblue_dark, ctopo, odv))
-
 cm = Bunch()
 cm['phasemap'] = cmat2cmpl(phasemap)
-cm['phasemap_r'] = cmat2cmpl(phasemap_r)
+cm['phasemap_r'] = cmat2cmpl(_reverse_cm(phasemap))
 cm['zebra'] = cmat2cmpl(zebra)
-cm['zebra_r'] = cmat2cmpl(zebra_r)
+cm['zebra_r'] = cmat2cmpl(_reverse_cm(zebra))
 cm['avhrr'] = cmat2cmpl(avhrr)
-cm['avhrr_r'] = cmat2cmpl(avhrr_r)
+cm['avhrr_r'] = cmat2cmpl(_reverse_cm(avhrr))
 cm['cbathy'] = cmat2cmpl(cbathy)
-cm['cbathy_r'] = cmat2cmpl(cbathy_r)
+cm['cbathy_r'] = cmat2cmpl(_reverse_cm(cbathy))
 cm['coolavhrrmap'] = cmat2cmpl(coolavhrrmap)
-cm['coolavhrrmap_r'] = cmat2cmpl(coolavhrrmap_r)
+cm['coolavhrrmap_r'] = cmat2cmpl(_reverse_cm(coolavhrrmap))
 cm['rscolmap'] = cmat2cmpl(rscolmap)
-cm['rscolmap_r'] = cmat2cmpl(rscolmap_r)
+cm['rscolmap_r'] = cmat2cmpl(_reverse_cm(rscolmap))
 cm['redgreen'] = cmat2cmpl(redgreen)
-cm['redgreen_r'] = cmat2cmpl(redgreen_r)
+cm['redgreen_r'] = cmat2cmpl(_reverse_cm(redgreen))
 cm['redblue_light'] = cmat2cmpl(redblue_light)
-cm['redblue_light_r'] = cmat2cmpl(redblue_light_r)
+cm['redblue_light_r'] = cmat2cmpl(_reverse_cm(redblue_light))
 cm['redblue_dark'] = cmat2cmpl(redblue_dark)
-cm['redblue_dark_r'] = cmat2cmpl(redblue_dark_r)
+cm['redblue_dark_r'] = cmat2cmpl(_reverse_cm(redblue_dark))
 cm['ctopo'] = cmat2cmpl(ctopo)
-cm['ctopo_r'] = cmat2cmpl(ctopo_r)
+cm['ctopo_r'] = cmat2cmpl(_reverse_cm(ctopo))
 cm['odv'] = cmat2cmpl(odv)
-cm['odv_r'] = cmat2cmpl(odv_r)
+cm['odv_r'] = cmat2cmpl(_reverse_cm(odv))

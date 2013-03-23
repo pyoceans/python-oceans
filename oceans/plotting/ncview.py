@@ -1,5 +1,4 @@
 import sys
-import warnings
 import argparse
 
 import numpy as np
@@ -46,7 +45,6 @@ def parse_args(arglist):
 
 def ncview(args):
     colors = ('blue', 'cyan', 'orange', 'lightgreen', 'gray', 'yellow', 'red')
-
     # TODO: Improve to accept a list and make multiple figures
     level = args.levs
     ncfile = args.ncfile

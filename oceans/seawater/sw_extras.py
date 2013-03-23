@@ -2,18 +2,18 @@
 
 """
 Extra seawater functions
-===========================
+========================
 """
 
 from __future__ import division
 
 import numpy as np
 from oceans.seawater import csiro as sw
-from oceans.seawater.constants import OMEGA, earth_radius, SSO
+from oceans.seawater.constants import OMEGA, SSO, Kelvin, earth_radius
 
 
 __all__ = [
-           'apoxu',
+           'o2sat',
            'SRConv',
            'sigma_t',
            'sigmatheta',
@@ -31,48 +31,54 @@ __all__ = [
           ]
 
 
-def apoxu(s, pt, o2):
+def o2sat(s, pt):
     r"""Calculate oxygen concentration at saturation.  Molar volume of oxygen
     at STP obtained from NIST website on the thermophysical properties of fluid
     systems (http://webbook.nist.gov/chemistry/fluid/).
-
-    AOU [umol/kg] = sat O2 [umol/kg] - obs o2 [umol/kg]
 
     Parameters
     ----------
     s : array_like
         Salinity [pss-78]
     pt : array_like
-         Potential Temperature [degC]
-    o2 : array_like
-         Measured Oxygen Concentration [umol/kg]
+         Potential Temperature [degC ITS-90]
 
     Returns
     -------
-    aou : array_like
-          Apparent Oxygen Utilization [umol/kg]
+    osat : array_like
+          Oxygen concentration at saturation [umol/kg]
 
     Examples
     --------
-    aou = apoxu(s, t, o2)
+    >>> from pandas import read_csv
+    >>> import oceans.seawater.sw_extras as swe
+    >>> path = os.path.split(os.path.realpath(swe.__file__))[0]
+    # Table 9 pg. 732. Values in ml / kg
+    >>> pt = np.array([-1, 0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 14, 16, 18, 20, 22,
+                       24, 26, 28, 30, 32, 34, 36, 38, 40]) / 1.00024
+    >>> s = np.array([0, 10, 20, 30, 34, 35, 36, 38, 40])
+    >>> s, pt = np.meshgrid(s, pt)
+    >>> osat = swe.o2sat(s, pt) * 22.392 / 1000  # um/kg to ml/kg.
+    >>> weiss_1979 = read_csv('%s/test/o2.csv' % path, index_col=0).values
+    >>> np.testing.assert_almost_equal(osat.ravel()[2:],
+    ...                                weiss_1979.ravel()[2:], decimal=3)
+
 
     References
     -----
     .. [1] The solubility of nitrogen, oxygen and argon in water and seawater -
     Weiss (1970) Deep Sea Research V17(4): 721-735.
-
-    Modified
-    --------
-    Edward T Peltzer, MBARI revised:  2007 Apr 26.
     """
 
-    pt = (pt + 273.15) / 100.
-    # The constants are used for units of ml O2/kg.
-    osat = -177.7888 + 255.5907 / pt + 146.4813 * np.log(pt) - 22.2040 * pt
-    osat += s * (-0.037362 + pt * (0.016504 - 0.0020564 * pt))
-    osat = np.exp(osat)
-    osat *= 1000. / 22.392  # Convert from ml/kg to um/kg.
-    return osat - o2  # Calculate AOU.
+    t = sw.T68conv(pt) + Kelvin
+    # Eqn (4) of Weiss 1970 (the constants are used for units of ml O2/kg).
+    a = (-177.7888, 255.5907, 146.4813, -22.2040)
+    b = (-0.037362, 0.016504, -0.0020564)
+    lnC = (a[0] + a[1] * (100. / t) + a[2] * np.log(t / 100.) + a[3] *
+           (t / 100.) +
+           s * (b[0] + b[1] * (t / 100.) + b[2] * (t / 100.) ** 2))
+    osat = np.exp(lnC) * 1000. / 22.392  # Convert from ml/kg to um/kg.
+    return osat
 
 
 def SRConv(SP):

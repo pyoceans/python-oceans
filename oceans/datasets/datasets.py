@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Tue 29 Jan 2013 03:42:22 PM BRST
+# modified: Sat 09 Mar 2013 03:37:45 PM BRT
 #
 # obs: some Functions were based on:
 # http://www.trondkristiansen.com/?page_id=1071
@@ -90,8 +90,8 @@ def woa_subset(min_lat, max_lat, min_lon, max_lon, woa_file=None):
 
     lon, lat = np.meshgrid(lons[res[0]:res[1]], lats[res[2]:res[3]])
 
-    bathy = woa.variables["temperature"][int(res[2]):int(res[3]),
-                                         int(res[0]):int(res[1])]
+    temperature = woa.variables["temperature"][int(res[2]):int(res[3]),
+                                               int(res[0]):int(res[1])]
 
     return lon, lat, temperature
 

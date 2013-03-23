@@ -7,14 +7,13 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  01-Mar-2013
-# modified: Thu 07 Mar 2013 06:09:29 PM BRT
+# modified: Sat 23 Mar 2013 03:40:56 PM BRT
 #
 # obs:
 #
 
 
 import os
-import unittest
 
 from glob import glob
 from collections import OrderedDict
@@ -22,7 +21,7 @@ from collections import OrderedDict
 import matplotlib.pyplot as plt
 
 from pandas import HDFStore
-from oceans.ff_tools import apoxu, alphanum_key
+from oceans.ff_tools import alphanum_key
 
 from oceans.ctd import DataFrame, Series
 from oceans.ctd import SP_from_C, seabird_filter, movingaverage
@@ -30,9 +29,7 @@ from oceans.ctd import SP_from_C, seabird_filter, movingaverage
 
 # Load tests.
 def test_fsi(fname='data/d3_7165.txt.gz'):
-    kw = dict(names=('SCANS', 'PRES', 'TEMP', 'COND', 'OXCU', 'OXTM', 'FLUO',
-                     'OBS', 'SAL', 'DEN', 'SV', 'DEPTH'), compression='gzip',
-              skiprows=10)
+    kw = dict(compression='gzip', skiprows=9)
     return DataFrame.from_fsi(fname, **kw)
 
 
@@ -64,10 +61,12 @@ def proc_ctd(fname, plot=True):
     cast = DataFrame.from_cnv(fname, compression='gzip').split()[0]
     cols = ('v0', 'v1', 'v2', 'v3', 'v4', 'v5', 'v6', 'v7', 'pla',
             'sbeox0mg/l', 'spar', 'par', 'flsp', 'xmiss', 'sbeox0v')
-    _ = map(cast.pop, cols)
+    null = map(cast.pop, cols)
+    del null
     cast = cast[cast['pumps']]
     cast = cast[~cast['flag']]  # True for bad values.
-    _ = map(cast.pop, ('pumps', 'flag'))
+    null = map(cast.pop, ('pumps', 'flag'))
+    del null
     # Smooth velocity.
     cast['dz/dtm'] = movingaverage(cast['dz/dtm'], window_size=48)
 
@@ -138,8 +137,6 @@ def proc_ctd(fname, plot=True):
 
     # 08-Derive.
     cast['sal0'] = SP_from_C(cast['c0s/m'] * 10., cast['t090c'])
-    cast['aou'] = apoxu(cast['t090c'], cast['sal0'],
-                        cast['sbeox0mm/kg'])
     cast.name = fname
     return cast
 

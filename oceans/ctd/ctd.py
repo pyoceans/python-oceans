@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  22-Jun-2012
-# modified: Thu 07 Mar 2013 06:07:13 PM BRT
+# modified: Sat 23 Mar 2013 03:39:32 PM BRT
 #
 # obs: Instead of sub-classing I opted for a "Monkey Patch" approach
 #      (Wes suggestion).
@@ -21,8 +21,6 @@ import gzip
 import zipfile
 import cStringIO
 
-from datetime import datetime
-
 import numpy as np
 import numpy.ma as ma
 import matplotlib.pyplot as plt
@@ -32,8 +30,7 @@ from scipy import signal
 from scipy.interpolate import interp1d
 from mpl_toolkits.axes_grid1 import host_subplot
 
-from pandas import Panel, DataFrame, Series, Index
-from pandas import rolling_std, rolling_mean, read_table
+from pandas import Panel, DataFrame, Series, Index, read_table
 
 import gsw
 from oceans.utilities import basename
@@ -130,9 +127,9 @@ def mixed_layer_depth(t, verbose=True):
 
 
 def barrier_layer_depth(SA, CT, verbose=True):
-    sigma_theta = sigma0_CT_exact(SA, CT)
+    sigma_theta = gsw.sigma0_CT_exact(SA, CT)
     # Density difference from the surface to the "expected" using the
-    #temperature at the base of the mixed layer.
+    # temperature at the base of the mixed layer.
     mask = mixed_layer_depth(CT)
     mld = np.where(mask)[0][-1]
     sig_surface = sigma_theta[0]
@@ -396,8 +393,8 @@ def despike(self, n1=2, n2=20, block=100, keep=0):
     std = n1 * roll.std(axis=1)
     mean = roll.mean(axis=1)
     # Use the last value to fill-up.
-    std = np.r_[std, np.tile(std[-1], block -1)]
-    mean = np.r_[mean, np.tile(mean[-1], block -1)]
+    std = np.r_[std, np.tile(std[-1], block - 1)]
+    mean = np.r_[mean, np.tile(mean[-1], block - 1)]
     mask = (np.abs(data - mean.filled(fill_value=np.NaN)) >
             std.filled(fill_value=np.NaN))
     data[mask] = np.NaN
@@ -409,8 +406,8 @@ def despike(self, n1=2, n2=20, block=100, keep=0):
     std = n2 * roll.std(axis=1)
     mean = roll.mean(axis=1)
     # Use the last value to fill-up.
-    std = np.r_[std, np.tile(std[-1], block -1)]
-    mean = np.r_[mean, np.tile(mean[-1], block -1)]
+    std = np.r_[std, np.tile(std[-1], block - 1)]
+    mean = np.r_[mean, np.tile(mean[-1], block - 1)]
     mask = (np.abs(self.values - mean.filled(fill_value=np.NaN)) >
             std.filled(fill_value=np.NaN))
     self[mask] = np.NaN
@@ -551,13 +548,11 @@ def plot_section(self, inverse=False, filled=False, **kw):
 
 # DataFrame classmethods.
 @classmethod
-def from_fsi(cls, fname, compression=None, skiprows=10,
-            names=('SCANS', 'PRES', 'TEMP', 'COND', 'OXCU', 'OXTM', 'FLUO',
-                     'OBS', 'SAL', 'DEN', 'SV', 'DEPTH')):
+def from_fsi(cls, fname, compression=None, skiprows=9):
     r"""Read FSI CTD ASCII columns."""
-    cast = read_table(fname, header=None, index_col=None, names=names,
+    cast = read_table(fname, header='infer', index_col=None, dtype=np.float_,
                       compression=compression, skiprows=skiprows,
-                      dtype=np.float_, delim_whitespace=True)
+                      delim_whitespace=True)
 
     cast.set_index('PRES', drop=True, inplace=True)
     cast.index.name = 'Pressure [dbar]'

@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  16-Mar-2013
-# modified: Sat 16 Mar 2013 10:09:58 PM BRT
+# modified: Sat 23 Mar 2013 02:24:01 PM BRT
 #
 # obs:  http://www.teos-10.org/preteos10_software/gamma_GP.html
 #
@@ -264,7 +264,7 @@ def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
     gamma_Pac = gamma_G_pacific(SP, pt)
     gamma_Ind = gamma_G_indian(SP, pt)
     gamma_SOce = gamma_G_southern_ocean(SP, pt, p)
-    gamma_Arc = np.zeros_like(SP) * np.NaN
+    #gamma_Arc = np.zeros_like(SP) * np.NaN
 
     # Definition of the Indian part.
     io_lon = np.array([100, 100, 55, 22, 22, 146, 146, 133.9, 126.94, 123.62,

@@ -9,6 +9,8 @@ from oceans.seawater.constants import gdef, earth_radius, OMEGA, DEG2NM, NM2KM
 rad = np.pi / 180.0
 deg = 180.0 / np.pi
 
+__version__ = '3.3'
+
 
 def T68conv(T90):
     r"""
@@ -687,7 +689,7 @@ def grav(lat, z=0):
     sin2 = X * X
     grav = 9.780318 * (1.0 + (5.2788E-3 + 2.36E-5 * sin2) * sin2)
     grav = grav / ((1 + z / earth_radius) ** 2)  # From A.E.Gill p.597.
-    return  grav
+    return grav
 
 
 def cor(lat):
@@ -1717,8 +1719,7 @@ def satN2(s, t):
 
 
 def satO2(s, t):
-    r"""
-    Solubility (saturation) of Oxygen (O2) in sea water.
+    r"""Solubility (saturation) of Oxygen (O2) in sea water.
 
     Parameters
     ----------
@@ -1768,25 +1769,18 @@ def satO2(s, t):
     t = Kelvin + T68conv(t)
 
     # Constants for Eqn (4) of Weiss 1970.
-    a1 = -173.4292
-    a2 = 249.6339
-    a3 = 143.3483
-    a4 = -21.8492
-    b1 = -0.033096
-    b2 = 0.014259
-    b3 = -0.0017000
+    a = (-173.4292, 249.6339, 143.3483, -21.8492)
+    b = (-0.033096, 0.014259, -0.0017000)
 
     # Eqn (4) of Weiss 1970.
-    lnC = (a1 + a2 * (100 / t) + a3 * np.log(t / 100) + a4 * (t / 100) +
-           s * (b1 + b2 * (t / 100) + b3 * ((t / 100) ** 2)))
-
-    c = np.exp(lnC)
-    return c
+    lnC = (a[0] + a[1] * (100. / t) + a[2] * np.log(t / 100.) + a[3] *
+          (t / 100.) + s * (b[0] + b[1] * (t / 100.) + b[2] *
+          ((t / 100.) ** 2)))
+    return np.exp(lnC)
 
 
 def dens0(s, t):
-    r"""
-    Density of Sea Water at atmospheric pressure.
+    r"""Density of Sea Water at atmospheric pressure.
 
     Parameters
     ----------
