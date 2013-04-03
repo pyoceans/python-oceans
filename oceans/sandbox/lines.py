@@ -33,9 +33,8 @@ def LineNormals2D(Vertices, Lines):
     Examples
     --------
     >>> import numpy as np
-    >>> import scipy.io as sio
     >>> import matplotlib.pyplot as plt
-    >>> data = sio.loadmat('testdata.mat', squeeze_me=True)
+    >>> data = np.load('testdata.npz')
     >>> Lines, Vertices = data['Lines'], data['Vertices']
     >>> N = LineNormals2D(Vertices, Lines)
     >>> fig, ax = plt.subplots(nrows=1, ncols=1)
@@ -100,9 +99,8 @@ def LineCurvature2D(Vertices, Lines=None):
     Examples
     --------
     >>> import numpy as np
-    >>> import scipy.io as sio
     >>> import matplotlib.pyplot as plt
-    >>> data = sio.loadmat('testdata.mat', squeeze_me=True)
+    >>> data = np.load('testdata.npz', squeeze_me=True)
     >>> Lines, Vertices = data['Lines'], data['Vertices']
     >>> k = LineCurvature2D(Vertices, Lines)
     >>> N = LineNormals2D(Vertices, Lines)
