@@ -7,9 +7,10 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Sat 13 Oct 2012 10:50:03 PM BRT
+# modified: Wed 03 Apr 2013 09:01:17 AM BRT
 #
-# obs:
+# obs:  rstyle, rhist and rbox are from:
+# http://messymind.net/2012/07/making-matplotlib-look-like-ggplot/
 #
 
 
@@ -22,13 +23,174 @@ import matplotlib.pyplot as plt
 
 from matplotlib.lines import Line2D
 from matplotlib.artist import Artist
+from matplotlib.pyplot import MultipleLocator, rcParams, Polygon
+
+__all__ = [
+           'rstyle',
+           'rhist',
+           'rbox',
+           'landmask',
+           'LevelColormap',
+           'get_pointsxy',
+           'EditPoints'
+          ]
+
+
+def rstyle(ax):
+    """Styles an axes to appear like ggplot2.  Must be called after all plot
+    and axis manipulation operations have been carried out (needs to know final
+    tick spacing).
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import scipy.stats
+    >>> import matplotlib.pyplot as plt
+    >>> t = np.arange(0.0, 100.0, 0.1)
+    >>> s = np.sin(0.1 * np.pi * t) * np.exp(-t * 0.01)
+    >>> fig, ax = plt.subplots()
+    >>> _ = ax.plot(t, s, label="Original")
+    >>> _ = ax.plot(t, s * 2, label="Doubled")
+    >>> _ = ax.legend()
+    >>> rstyle(ax)
+    >>> plt.show()
+    """
+
+    # Set the style of the major and minor grid lines, filled blocks.
+    ax.grid(True, 'major', color='w', linestyle='-', linewidth=1.4)
+    ax.grid(True, 'minor', color='0.92', linestyle='-', linewidth=0.7)
+    ax.patch.set_facecolor('0.85')
+    ax.set_axisbelow(True)
+
+    # Set minor tick spacing to 1/2 of the major ticks.
+    ax.xaxis.set_minor_locator(MultipleLocator((plt.xticks()[0][1] -
+                                                plt.xticks()[0][0]) / 2.0))
+    ax.yaxis.set_minor_locator(MultipleLocator((plt.yticks()[0][1] -
+                                                plt.yticks()[0][0]) / 2.0))
+
+    # Remove axis border.
+    for child in ax.get_children():
+        if isinstance(child, matplotlib.spines.Spine):
+            child.set_alpha(0)
+
+    # Restyle the tick lines.
+    for line in ax.get_xticklines() + ax.get_yticklines():
+        line.set_markersize(5)
+        line.set_color("gray")
+        line.set_markeredgewidth(1.4)
+
+    # Remove the minor tick lines.
+    for line in (ax.xaxis.get_ticklines(minor=True) +
+                 ax.yaxis.get_ticklines(minor=True)):
+        line.set_markersize(0)
+
+    # Only show bottom left ticks, pointing out of axis.
+    rcParams['xtick.direction'] = 'out'
+    rcParams['ytick.direction'] = 'out'
+    ax.xaxis.set_ticks_position('bottom')
+    ax.yaxis.set_ticks_position('left')
+
+    if ax.legend_:
+        lg = ax.legend_
+        lg.get_frame().set_linewidth(0)
+        lg.get_frame().set_alpha(0.5)
+
+
+def rhist(ax, data, **keywords):
+    """Creates a histogram with default style parameters to look like ggplot2
+    Is equivalent to calling ax.hist and accepts the same keyword parameters.
+    If style parameters are explicitly defined, they will not be overwritten.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import scipy.stats
+    >>> import matplotlib.pyplot as plt
+    >>> t = np.arange(0.0, 100.0, 0.1)
+    >>> s = np.sin(0.1 * np.pi * t) * np.exp(-t * 0.01)
+    >>> fig, ax = plt.subplots()
+    >>> data = scipy.stats.norm.rvs(size=1000)
+    >>> _ = rhist(ax, data, label="Histogram")
+    >>> _ = ax.legend()
+    >>> rstyle(ax)
+    >>> plt.show()
+    """
+
+    defaults = {
+                'facecolor': '0.3',
+                'edgecolor': '0.28',
+                'linewidth': '1',
+                'bins': 100
+                }
+
+    for k, v in defaults.items():
+        if k not in keywords:
+            keywords[k] = v
+
+    return ax.hist(data, **keywords)
+
+
+def rbox(ax, data, **keywords):
+    """Creates a ggplot2 style boxplot, is eqivalent to calling ax.boxplot with
+    the following additions:
+        Keyword arguments:
+        colors -- array-like collection of colors for box fills.
+        names -- array-like collection of box names which are passed on as tick
+        labels.
+
+    Examples
+    --------
+    >>> import scipy.stats
+    >>> import matplotlib.pyplot as plt
+    >>> fig, ax = plt.subplots()
+    >>> data = [scipy.stats.norm.rvs(size=100), scipy.stats.norm.rvs(size=100),
+    ...         scipy.stats.norm.rvs(size=100)]
+    >>> _ = ax.legend()
+    >>> _ = rbox(ax, data, names=("One", "Two", "Three"),
+    ...          colors=('white', 'cyan'))
+    >>> rstyle(ax)
+    >>> plt.show()
+    """
+
+    hasColors = 'colors' in keywords
+    if hasColors:
+        colors = keywords['colors']
+        keywords.pop('colors')
+
+    if 'names' in keywords:
+        ax.tickNames = plt.setp(ax, xticklabels=keywords['names'])
+        keywords.pop('names')
+
+    bp = ax.boxplot(data, **keywords)
+    plt.setp(bp['boxes'], color='black')
+    plt.setp(bp['whiskers'], color='black', linestyle='solid')
+    plt.setp(bp['fliers'], color='black', alpha=0.9, marker='o',
+               markersize=3)
+    plt.setp(bp['medians'], color='black')
+
+    numBoxes = len(data)
+    for i in range(numBoxes):
+        box = bp['boxes'][i]
+        boxX = []
+        boxY = []
+        for j in range(5):
+            boxX.append(box.get_xdata()[j])
+            boxY.append(box.get_ydata()[j])
+        boxCoords = zip(boxX, boxY)
+
+        if hasColors:
+            boxPolygon = Polygon(boxCoords, facecolor=colors[i % len(colors)])
+        else:
+            boxPolygon = Polygon(boxCoords, facecolor='0.95')
+
+        ax.add_patch(boxPolygon)
+    return bp
 
 
 def landmask(M, color='0.8'):
     r"""Plot land mask.
     http://www.trondkristiansen.com/wp-content/uploads/downloads/
-    2011/07/mpl_util.py
-    """
+    2011/07/mpl_util.py."""
     # Make a constant colormap, default = grey
     constmap = np.matplotlib.colors.ListedColormap([color])
 
@@ -47,8 +209,7 @@ def landmask(M, color='0.8'):
 def LevelColormap(levels, cmap=None):
     r"""Make a colormap based on an increasing sequence of levels.
     http://www.trondkristiansen.com/wp-content/uploads/downloads/
-    2011/07/mpl_util.py
-    """
+    2011/07/mpl_util.py."""
 
     # Start with an existing colormap.
     if not cmap:
