@@ -350,9 +350,9 @@ def rosette_summary(self, bl):
     return Panel.fromDict(rossum, orient='items')
 
 
-def seabird_filter(data, sample_rate=24.0, time_constat=0.15):
-    r"""Filter a series with `time_constat` (use 0.15 s for pressure), and
-    for a signal of `sample_rate` in Hertz (24 Hz for 911+).
+def seabird_filter(data, sample_rate=24.0, time_constant=0.15):
+    r"""Filter a series with `time_constant` (use 0.15 s for pressure), and for
+    a signal of `sample_rate` in Hertz (24 Hz for 911+).
     NOTE: Seabird actually uses a cosine filter.  I use a kaiser filter
           instead.
     NOTE: 911+ does note require filter for temperature nor salinity."""
@@ -362,7 +362,7 @@ def seabird_filter(data, sample_rate=24.0, time_constat=0.15):
     ripple_db = 60.0  # Attenuation at the stop band.
     N, beta = signal.kaiserord(ripple_db, width)
 
-    cutoff_hz = (1. / time_constat)  # Cutoff frequency at 0.15 s.
+    cutoff_hz = (1. / time_constant)  # Cutoff frequency at 0.15 s.
     taps = signal.firwin(N, cutoff_hz / nyq_rate, window=('kaiser', beta))
     data = signal.filtfilt(taps, [1.0], data)
     return data
@@ -505,8 +505,7 @@ def plot_section(self, inverse=False, filled=False, **kw):
     h = data.get_maxdepth()
     data = ma.masked_invalid(data.values)
     if filled:
-        # FIXME: There is a discontinuity when using extrap_sec because we
-        # user only horizontal data for this.
+        # FIXME:  This cause discontinuities.
         data = data.filled(fill_value=np.nan)
         data = extrap_sec(data, x, z, w1=0.97, w2=0.03)
 
