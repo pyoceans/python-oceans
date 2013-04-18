@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  05-Sep-2012
-# modified: Fri 15 Feb 2013 07:13:38 PM BRST
+# modified: Thu 18 Apr 2013 12:22:21 PM BRT
 #
 # obs:
 #
@@ -35,100 +35,25 @@ __all__ = [
            ]
 
 
-def ctd_cast_time(self, method="RuleOfThumb", ctdvel=1., preparation=1800.):
-    r"""Time it takes for each oceanographic station in the transect.
-
-    method: RuleOfThumb, Simple rule based on the depth of the water column.
-            CTDTime, time it actually takes to lower and retrieve the CTD.
-
-    If one chooses RuleOfThumb the following times are used:
-        30 min before slope [< 100 m]
-        1 h at the slope [> 100 m and < 1000 m]
-        2 h ocean floor [> 1000 m and < 2000 m]
-        4 h for depths > 2000 m
-
-    If one chooses the CTDTime you can tweak the following keywords:
-    `ctdvel`: The ctd velocity.
-    `preparation`: A "buffer" time.
-    Default velocity is 1 meters per second.
-    NOTE: Use 30 min preparations if using LADCP."""
-
-    depth = np.abs(self.depth)
-    if method == "depth":
-        # Time in seconds times two (up-/downcast).
-        depth[depth < 200.] = 200.  # Avoid etopo bogus depths.
-        buffer_ctd = len(depth) * preparation
-        time = ((depth * 2.) / ctdvel) + buffer_ctd
-    elif method == "RuleOfThumb":
-        coast = depth < 100.
-        slope = np.logical_and(depth >= 100., depth < 1000.)
-        floor = np.logical_and(depth >= 1000., depth < 2000.)
-        deep = depth >= 2000.
-
-        coast = 1800. * coast
-        slope = 3600. * slope
-        floor = 7200. * floor
-        deep = 14400. * deep
-        time = coast + slope + floor + deep
-    else:
-        raise TypeError("Unrecognized method option %s" % method)
-
-    return time
+"""Utilities."""
 
 
-def distances(self):
-    r"""Compute distances between stations."""
-    dist = np.r_[0, gsw.distance(self.lon, self.lat, p=0).squeeze()]
-    return Series(np.fix(dist), index=self.index)
+def transect2dataframe(lon, lat, depth, sort='lat'):
+    """Creates a sorted Transect-DataFrame from lon, lat and depth columns of
+    data.
 
-
-def navigation_time(self, vel=7):
-    r"""Compute the time it takes to navigate all the stations.
-    Assumes cruise velocity even though it is a bad assumption!
-    Enter the velocity in knots."""
-    dist = self.distances()
-    vel *= 0.514444  # Convert knots to meters per seconds.
-    return np.sum(dist / vel)
-
-
-def mid_point(self):
-    r"""Returns the mid-point between an array of positions [lon, lat]."""
-    lonc = (self.lon[1:].values + self.lon[0:-1]).values / 2.
-    latc = (self.lat[1:].values + self.lat[0:-1]).values / 2.
-    return lonc, latc
-
-
-def deg2degmin(self):
-    df = self.copy()
-    r"""Convert Degrees to Degrees and minutes."""
-    conv = lambda x: '%i %.6f' % (np.fix(x), 60 * np.remainder(x, 1))
-    try:
-        df.lon = [conv(x) for x in df.lon]
-        df.lat = [conv(y) for y in df.lat]
-    except TypeError:
-        warnings.warn("Already in deg2degmin format.")
-    return df
-
-
-def degmin2deg(self):
-    r"""Convert Degrees and minutes to Degrees."""
-    df = self.copy()
-    conv = lambda x: float(x.split()[0]) + float(x.split()[1]) / 60
-    try:
-        df.lon = [conv(x) for x in df.lon]
-        df.lat = [conv(y) for y in df.lat]
-    except AttributeError:
-        warnings.warn("Already in degmin2deg format.")
-    return df
-
-
-# Utilities.
-def transect2dataframe(lon, lat, depth):
+    Example
+    -------
+    >>> lon = [-40.223, -40.267, -40.304, -40.538, -40.787]
+    >>> lat = [-21.499, -21.484, -21.471, -21.397, -21.318]
+    >>> depth = [135, 61, 50, 25, 20]
+    >>> transect2dataframe(lon, lat, depth)
+    """
     transect = DataFrame(np.c_[lon, lat, depth],
                          columns=['lon', 'lat', 'depth'])
 
     # Sort by longitude first then by latitude.
-    transect.sort(columns=['lat', 'lon'], ascending=[False, True],
+    transect.sort(columns=['lon', 'lat'], ascending=[False, True],
                   inplace=True)
     transect.index = np.arange(len(lon)) + 1
     return transect
@@ -226,7 +151,99 @@ def filter_station(df, st_type='CTD'):
     return df[mask]
 
 
-# "Figure tools."
+"""Transect DataFrame."""
+
+
+def ctd_cast_time(self, method="RuleOfThumb", ctdvel=1., preparation=1800.):
+    r"""Time it takes for each oceanographic station in the transect.
+
+    method: RuleOfThumb, Simple rule based on the depth of the water column.
+            CTDTime, time it actually takes to lower and retrieve the CTD.
+
+    If one chooses RuleOfThumb the following times are used:
+        30 min before slope [< 100 m]
+        1 h at the slope [> 100 m and < 1000 m]
+        2 h ocean floor [> 1000 m and < 2000 m]
+        4 h for depths > 2000 m
+
+    If one chooses the CTDTime you can tweak the following keywords:
+    `ctdvel`: The ctd velocity.
+    `preparation`: A "buffer" time.
+    Default velocity is 1 meters per second.
+    NOTE: Use 30 min preparations if using LADCP."""
+
+    depth = np.abs(self.depth)
+    if method == "depth":
+        # Time in seconds times two (up-/downcast).
+        depth[depth < 200] = 200  # Avoid etopo bogus depths.
+        buffer_ctd = len(depth) * preparation
+        time = ((depth * 2) / ctdvel) + buffer_ctd
+    elif method == "RuleOfThumb":
+        coast = depth < 100
+        slope = np.logical_and(depth >= 100, depth < 1000)
+        floor = np.logical_and(depth >= 1000, depth < 2000)
+        deep = depth >= 2000
+
+        coast = 1800 * coast
+        slope = 3600 * slope
+        floor = 7200 * floor
+        deep = 14400 * deep
+        time = coast + slope + floor + deep
+    else:
+        raise TypeError("Unrecognized method option %s" % method)
+
+    return time
+
+
+def distances(self):
+    r"""Compute distances between stations."""
+    dist = np.r_[0, gsw.distance(self.lon, self.lat, p=0).squeeze()]
+    return Series(np.fix(dist), index=self.index)
+
+
+def navigation_time(self, vel=7):
+    r"""Compute the time it takes to navigate all the stations.
+    Assumes cruise velocity even though it is a bad assumption!
+    Enter the velocity in knots."""
+    dist = self.distances()
+    vel *= 1852 / (60 * 60)  # Convert knots to meters per seconds.
+    return np.sum(dist / vel)
+
+
+def mid_point(self):
+    r"""Returns the mid-point between an array of positions [lon, lat]."""
+    lonc = (self.lon[1:].values + self.lon[0:-1]).values / 2.
+    latc = (self.lat[1:].values + self.lat[0:-1]).values / 2.
+    return lonc, latc
+
+
+def deg2degmin(self):
+    r"""Convert Degrees to Degrees and minutes."""
+    df = self.copy()
+    conv = lambda x: '%i %.6f' % (np.fix(x), 60 * np.remainder(x, 1))
+    try:
+        df.lon = [conv(x) for x in df.lon]
+        df.lat = [conv(y) for y in df.lat]
+    except TypeError:
+        warnings.warn("Already in deg2degmin format.")
+    return df
+
+
+def degmin2deg(self):
+    r"""Convert Degrees and minutes to Degrees."""
+    df = self.copy()
+    conv = lambda x: float(x.split()[0]) + float(x.split()[1]) / 60
+    try:
+        df.lon = [conv(x) for x in df.lon]
+        df.lat = [conv(y) for y in df.lat]
+    except AttributeError:
+        warnings.warn("Already in degmin2deg format.")
+    return df
+
+
+"""Figure tools."""
+
+
 def ginput(fig, m, **kw):
     points = np.array(fig.ginput(**kw))
     x, y = np.array(points)[:, 0], np.array(points)[:, 1]
