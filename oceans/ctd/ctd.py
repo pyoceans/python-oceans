@@ -7,10 +7,9 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  22-Jun-2012
-# modified: Sat 23 Mar 2013 03:39:32 PM BRT
+# modified: Thu 18 Apr 2013 12:23:17 PM BRT
 #
-# obs: Instead of sub-classing I opted for a "Monkey Patch" approach
-#      (Wes suggestion).
+# obs: Should I sub-classing instead of a "Monkey Patching"?
 #
 
 
@@ -498,6 +497,7 @@ def plot_section(self, inverse=False, filled=False, **kw):
     # Station symbols key words.
     color = kw.pop('color', 'k')
     offset = kw.pop('offset', -5)
+    linewidth = kw.pop('linewidth', 1.5)
 
     # Get data for plotting.
     x = np.append(0, np.cumsum(gsw.distance(lon, lat)[0] / 1e3))
@@ -513,7 +513,7 @@ def plot_section(self, inverse=False, filled=False, **kw):
 
     # Figure.
     fig, ax = plt.subplots()
-    ax.plot(xm, hm, color='black', linewidth=1.5, zorder=3)
+    ax.plot(xm, hm, color='black', linewidth=linewidth, zorder=3)
     ax.fill_between(xm, hm, y2=hm.max(), color='0.9', zorder=3)
 
     ax.plot(x, [offset] * len(h), color=color, marker='v',
@@ -530,7 +530,7 @@ def plot_section(self, inverse=False, filled=False, **kw):
     ax.xaxis.set_tick_params(tickdir='out', labelsize=labelsize, pad=1)
     ax.yaxis.set_tick_params(tickdir='out', labelsize=labelsize, pad=1)
 
-    if 0:  # TODO: +/- Black-and-White version.
+    if False:  # TODO: +/- Black-and-White version.
         cs = ax.contour(x, z, data, colors='grey', levels=levels,
                         extend=extend, linewidths=1., alpha=1., zorder=2)
         ax.clabel(cs, fontsize=8, colors='grey', fmt=fmt, zorder=1)
