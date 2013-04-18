@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Wed 03 Apr 2013 09:01:17 AM BRT
+# modified: Thu 18 Apr 2013 12:25:08 PM BRT
 #
 # obs:  rstyle, rhist and rbox are from:
 # http://messymind.net/2012/07/making-matplotlib-look-like-ggplot/
@@ -26,6 +26,7 @@ from matplotlib.artist import Artist
 from matplotlib.pyplot import MultipleLocator, rcParams, Polygon
 
 __all__ = [
+           'simpleaxis',
            'rstyle',
            'rhist',
            'rbox',
@@ -34,6 +35,13 @@ __all__ = [
            'get_pointsxy',
            'EditPoints'
           ]
+
+
+def simpleaxis(ax):
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.get_xaxis().tick_bottom()
+    ax.get_yaxis().tick_left()
 
 
 def rstyle(ax):
