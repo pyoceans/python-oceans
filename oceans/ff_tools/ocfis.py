@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Thu 07 Mar 2013 06:08:21 PM BRT
+# modified: Thu 18 Apr 2013 12:24:30 PM BRT
 #
 # obs:
 #
@@ -94,7 +94,7 @@ def uv2spdir(u, v, mag=0, rot=0):
     >>> import numpy as np
     >>> import matplotlib.pyplot as plt
     >>> import oceans.ff_tools as ff
-    >>> from oceans.ff_tools.windrose import WindroseAxes
+    >>> from windrose import WindroseAxes
     >>> def new_axes():
     >>>     fig = plt.figure(figsize=(8, 8), facecolor='w', edgecolor='w')
     >>>     rect = [0.1, 0.1, 0.8, 0.8]
