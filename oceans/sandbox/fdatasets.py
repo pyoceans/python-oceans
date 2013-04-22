@@ -1,16 +1,10 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-from scipy.io import loadmat
 from netCDF4 import Dataset
-from seawater.csiro import dist
-
-
-def near(x, x0):
-    r"""Function near(x, x0) Given an 1D array x and a scalar x0,
-    returns the index of the element of x closest to x0."""
-    nearest_value_idx = (abs(x - x0)).argmin()
-    return nearest_value_idx
+from scipy.io import loadmat
+from oceans.RPStuff import near
+from oceans.seawater.csiro import dist
 
 
 def ftopo(x, y, topofile='gebco15-40s_30-52w_30seg.nc'):
