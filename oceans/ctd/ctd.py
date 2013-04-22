@@ -766,3 +766,7 @@ DataFrame.swap_index = swap_index
 DataFrame.press_check = press_check
 DataFrame.get_maxdepth = get_maxdepth
 DataFrame.plot_section = plot_section
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
