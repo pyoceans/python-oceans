@@ -16,6 +16,8 @@
 
 from __future__ import division
 
+from textwrap import dedent
+
 import matplotlib
 import numpy as np
 import numpy.ma as ma
@@ -248,15 +250,11 @@ def get_pointsxy(points):
 
 
 class EditPoints(object):
-    r"""Edit points on a graph with the mouse.
-    Handles only one set of points.
+    r"""Edit points on a graph with the mouse.  Handles only one set of points.
 
-    Key-bindings
-
-      't' toggle on and off.  When on, you can move, delete, or add points.
-
+    Key-bindings:
+      't' toggle on and off.  (When on, you can move, delete, or add points.)
       'd' delete the point.
-
       'i' insert a point.
 
     Examples
@@ -267,36 +265,34 @@ class EditPoints(object):
     >>> r = 1.5
     >>> xs = r * np.cos(theta)
     >>> ys = r * np.sin(theta)
-    >>> points = ax.plot(xs, ys, 'ko')[0]
-    >>> p = EditPoints(fig, ax, points, verbose=False)
+    >>> points = ax.plot(xs, ys, 'ko')
+    >>> p = EditPoints(fig, ax, points[0], verbose=True)
     >>> _ = ax.set_title('Click and drag a point to move it')
-    >>> _ = ax.set_xlim((-2, 2))
-    >>> _ = ax.set_ylim((-2, 2))
+    >>> _ = ax.axis([-2, 2, -2, 2])
     >>> plt.show()
 
     Based on http://matplotlib.org/examples/event_handling/poly_editor.html
     """
 
+    epsilon = 5  # Maximum pixel distance to count as a point hit.
     showpoint = True
-    epsilon = 5  # max pixel distance to count as a point hit.
 
-    def __init__(self, fig, ax, points, verbose=True):
-        if matplotlib.is_interactive():
-                matplotlib.interactive(False)
+    def __init__(self, fig, ax, points, verbose=False):
+        matplotlib.interactive(True)
         if points is None:
-            raise RuntimeError("""You must first add the points to a figure or
-            canvas before defining the interactor""")
+            raise RuntimeError("""First add points to a figure or canvas.""")
         canvas = fig.canvas
-        self.dragged = None
         self.ax = ax
-        self.verbose = verbose
+        self.dragged = None
         self.points = points
+        self.verbose = verbose
         x, y = get_pointsxy(points)
         self.line = Line2D(x, y, marker='o', markerfacecolor='r',
                            linestyle='none', animated=True)
         self.ax.add_line(self.line)
 
-        #cid = self.points.add_callback(self.points_changed)
+        if False:  # FIXME:  Not really sure how to use this.
+            cid = self.points.add_callback(self.points_changed)
         self._ind = None  # The active point.
 
         canvas.mpl_connect('draw_event', self.draw_callback)
@@ -404,13 +400,12 @@ class EditPoints(object):
             for i in range(len(xs) - 1):
                 d = np.sqrt((xs[i] - event.xdata) ** 2 +
                             (ys[i] - event.ydata) ** 2)
-                if d <= self.epsilon:
-                    self.points.set_xdata(np.r_[self.points.get_xdata(), ex])
-                    self.points.set_ydata(np.r_[self.points.get_ydata(), ey])
-                    self.line.set_data(self.points.get_data())
-                    break
-            if self.verbose:
-                print("\nInserting: (%s, %s)" % (event.xdata, event.ydata))
+                self.points.set_xdata(np.r_[self.points.get_xdata(), ex])
+                self.points.set_ydata(np.r_[self.points.get_ydata(), ey])
+                self.line.set_data(self.points.get_data())
+                if self.verbose:
+                    print("\nInserting: (%s, %s)" % (ex, ey))
+                break
 
         self.canvas.draw()
 
@@ -418,8 +413,7 @@ class EditPoints(object):
         r"""On mouse movement."""
         if not self.showpoint:
             return
-        # NOTE: 0 index trigger this if I choose a "pythonic" way here.
-        if self._ind is None:
+        if not self._ind:
             return
         if not event.inaxes:
             return
