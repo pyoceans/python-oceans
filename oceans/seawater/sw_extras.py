@@ -78,6 +78,16 @@ def o2sat(s, pt):
            (t / 100.) +
            s * (b[0] + b[1] * (t / 100.) + b[2] * (t / 100.) ** 2))
     osat = np.exp(lnC) * 1000. / 22.392  # Convert from ml/kg to um/kg.
+
+    """The Apparent Oxygen Utilization (AOU) value was obtained by subtracting
+    the measured value from the saturation value computed at the potential
+    temperature of water and 1 atm total pressure using the following
+    expression based on the data of Murray and Riley (1969):
+
+    ln(O2 in µmol/kg) = - 173.9894 + 255.5907(100/TK) + 146.4813 ln(TK/100) -
+    22.2040(TK/100) + Sal [-0.037362 + 0.016504(TK/100) - 0.0020564(TK/100)2],
+    where TK is temperature in °K and Sal in the Practical Salinity (SP) scale.
+    """
     return osat
 
 
