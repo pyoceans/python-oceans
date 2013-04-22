@@ -97,7 +97,8 @@ def woa_subset(min_lat, max_lat, min_lon, max_lon, woa_file=None):
 
 
 # TODO: download ETOPO2v2c_f4.nc
-def etopo_subset(min_lat, max_lat, min_lon, max_lon, tfile=None, smoo=False):
+def etopo_subset(min_lat, max_lat, min_lon, max_lon, tfile=None, smoo=False,
+                 verbose=False):
     r"""Get a etopo subset.
     Should work on any netCDF with x, y, data
     http://www.trondkristiansen.com/wp-content/uploads/downloads/
@@ -137,6 +138,8 @@ def etopo_subset(min_lat, max_lat, min_lon, max_lon, tfile=None, smoo=False):
         print("Specify a topography file.")
     elif tfile == 'dap':
         tfile = 'http://opendap.ccst.inpe.br/Misc/etopo2/ETOPO2v2c_f4.nc'
+
+    if verbose:
         print("Using %s" % tfile)
 
     etopo = Dataset(tfile, 'r')
@@ -216,7 +219,7 @@ def laplace_filter(F, M=None):
 
 def get_depth(lon, lat, tfile='dap'):
     r"""Find the depths for each station on the etopo2 database."""
-    lon, lat = map(np.asanyarray, (lon, lat))
+    lon, lat = map(np.atleast_1d, (lon, lat))
 
     lons, lats, bathy = etopo_subset(lat.min() - 5, lat.max() + 5,
                                      lon.min() - 5, lon.max() + 5,
