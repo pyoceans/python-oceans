@@ -11,21 +11,25 @@
 # modified: Tue 12 Feb 2013 11:53:11 AM BRST
 #
 # obs: This "legacy" package is intended for compatibility only.
-#      Most of function should be re-written in a more pythonic way.
 #
 
 from __future__ import division
+
 from datetime import datetime
 
 import numpy as np
 import numpy.ma as ma
 
-from oceans.utilities import match_args_return
 
-__all__ = ['hms2h',
+__all__ = ['h2hms',
+           'hms2h',
+           'ms2hms',
            'julian',
+           'jdrps2jdmat',
+           'jdmat2jdrps',
            'gregorian',
            's2hms',
+           #FIXME: STOPPED HERE
            'angled',
            'coast2bln',
            'fixcoast']
@@ -33,12 +37,15 @@ __all__ = ['hms2h',
 
 earth_radius = 6371.e3
 
-# TODO: at_leats_1D, float decorator
 
-
-@match_args_return
 def h2hms(hours):
-    """Converts hours to hours, minutes, and seconds."""
+    """Converts hours to hours, minutes, and seconds.
+
+    Example
+    -------
+    >>> h2hms(12.51)
+    (12.0, 30.0, 36.0)
+    """
     hour = np.floor(hours)
     mins = np.remainder(hours, 1.) * 60.
     mn = np.floor(mins)
@@ -46,30 +53,37 @@ def h2hms(hours):
     return hour, mn, secs
 
 
-@match_args_return
 def hms2h(h, m=None, s=None):
     """Converts hours, minutes, and seconds to hours.
 
-    Usage:
-        hours = hms2h(h,m,s
-        hours = hms2h(hhmmss)
+    Example
+    -------
+    >>> hms2h(12., 30., 36.)
+    12.51
+    >>> # Or,
+    >>> hms2h(123036)
+    12.51
     """
     if not m and not s:
         hms = h
-        h = np.floor(hms / 10000.)
-        ms = hms - h * 10000.
-        m = np.floor(ms / 100.)
+        h = np.floor(hms / 10000)
+        ms = hms - h * 10000
+        m = np.floor(ms / 100)
         s = ms - m * 100
-        hours = h + m / 60. + s / 3600.
+        hours = h + m / 60 + s / 3600
     else:
-        hours = h + (m + s / 60.) / 60.
-
+        hours = h + (m + s / 60) / 60
     return hours
 
 
-@match_args_return
 def ms2hms(millisecs):
-    """Converts milliseconds to integer hour,minute,seconds."""
+    """Converts milliseconds to integer hour, minute, seconds.
+
+    Example
+    -------
+    >>> ms2hms(1e3 * 60)
+    (0.0, 1.0, 0.0)
+    """
     sec = np.round(millisecs / 1000)
     hour = np.floor(sec / 3600)
     mn = np.floor(np.remainder(sec, 3600) / 60)
@@ -77,11 +91,8 @@ def ms2hms(millisecs):
     return hour, mn, sec
 
 
-@match_args_return
-def julian(y, m=0, d=0, h=0, mi=0, s=0):
-    """
-    RPStuff compat version
-    Converts Gregorian calendar dates to Julian dates
+def julian(y, m=0, d=0, h=0, mi=0, s=0, noon=False):
+    """Converts Gregorian calendar dates to Julian dates
 
     USAGE: [j]=julian(y,m,d,h)
 
@@ -89,8 +100,10 @@ def julian(y, m=0, d=0, h=0, mi=0, s=0):
                   astronomical convension, but with time zero starting at
                   midnight instead of noon.  In this convention, Julian day
                   2440000 begins at 0000 hours, May 23, 1968. The decimal
-                  Julian day, with Matlab's double precision, yeilds an
-                  accuracy of decimal days of about 0.1 milliseconds.
+                  Julian day, with double precision, yeilds an accuracy of
+                  decimal days of about 0.1 milliseconds.
+
+    If you want julian days to start and end at noon set `noon` to True.
 
     INPUT:
         y =  year (e.g., 1979) component
@@ -105,9 +118,14 @@ def julian(y, m=0, d=0, h=0, mi=0, s=0):
 
     OUTPUT:
         j =  decimal Julian day number
-
     last revised 1/3/96 by Rich Signell (rsignell@usgs.gov)
+
+    Example
+    -------
+    >>>> julian(1968, 5, 23, 0)
+    2440000
     """
+    y, m, d, h, mi, s = map(np.atleast_1d, (y, m, d, h, mi, s))
     h = hms2h(h, mi, s)
 
     mo = m + 9
@@ -120,51 +138,44 @@ def julian(y, m=0, d=0, h=0, mi=0, s=0):
     j = (np.floor((146097 * c) / 4.) + np.floor((1461 * yr) / 4.) +
          np.floor((153 * mo + 2) / 5.) + d + 1721119)
 
-    """
-    If you want julian days to start and end at noon,
-    replace the following line with:
-    j=j+(h-12)/24
-    """
-    j = j + h / 24.
+    if noon:
+        j = j + (h - 12) / 24
+    else:
+        j = j + h / 24
 
     return j
 
 
-@match_args_return
 def jdrps2jdmat(jd):
     """Convert Signell's Julian days to Matlab's Serial day
-    matlab's serial date = 1 at 0000 UTC, 1-Jan-0000
+    matlab's serial date = 1 at 0000 UTC, 1-Jan-0000.
+
+    Example
+    -------
+    >>>> jdrps2jdmat(2440000)
+    array([ 718941.])
     """
-    jdmat = jd - julian(0000, 1, 1, 0, 0, 0) + 1
-    return jdmat
+    return jd - julian(0000, 1, 1, 0, 0, 0) + 1
 
 
-@match_args_return
 def jdmat2jdrps(jdmat):
     """Convert Matlab's Serial Day to Signell's Julian days
-    matlab's serial date = 1 at 0000 UTC, 1-Jan-0000
+    matlab's serial date = 1 at 0000 UTC, 1-Jan-0000.
+
+    Example
+    -------
+    >>> jdmat2jdrps(718941)
+    array([ 2440000.])
     """
-
-    jd = jdmat + julian(0000, 1, 1, 0, 0, 0) - 1
-
-    return jd
+    return jdmat + julian(0000, 1, 1, 0, 0, 0) - 1
 
 
-@match_args_return
-def gregorian(jd):
-    """
-    GREGORIAN:  Converts Julian day numbers to Gregorian calendar.
-
-    USAGE:      [gtime]=gregorian(jd)
-
-    DESCRIPTION:  Converts decimal Julian days to Gregorian dates using the
-                  astronomical convension, but with time zero starting
-                  at midnight instead of noon.  In this convention,
-                  Julian day 2440000 begins at 0000 hours, May 23, 1968.
-                  The Julian day does not have to be an integer, and with
-                  Matlab's double precision, the accuracy of decimal days
-                  is about 0.1 milliseconds.
-
+def gregorian(jd, noon=False):
+    """Converts decimal Julian days to Gregorian dates using the astronomical
+    conversion, but with time zero starting at midnight instead of noon.  In
+    this convention, Julian day 2440000 begins at 0000 hours, May 23, 1968.
+    The Julian day does not have to be an integer, and with Matlab's double
+    precision, the accuracy of decimal days is about 0.1 milliseconds.
 
     INPUT:   jd  = decimal Julian days
 
@@ -178,9 +189,15 @@ def gregorian(jd):
                        sec = decimal seconds
                    example: [1990 12 12 0 0 0] is midnight on Dec 12, 1990.
 
+    Example
+    -------
+    >>> gregorian(2440000)
+    array([[ 1968.,     5.,    23.,     0.,     0.,     0.]])
+
     AUTHOR: Rich Signell  (rsignell@usgs.gov)
+    """
 
-
+    """
     Add 0.2 milliseconds before Gregorian calculation to prevent
     roundoff error resulting from math operations on time
     from occasionally representing midnight as
@@ -189,13 +206,14 @@ def gregorian(jd):
     Julian and Gregorian) bothers you more than the inconvenient representation
     of Gregorian time at midnight you can comment this line out...
     """
+    jd = np.atleast_1d(jd)
     jd = jd + 2.e-9
 
-    #if you want Julian Days to start at noon...
-    #h = np.remainder(jd,1) * 24 + 12
-    #i = (h >= 24)
-    #jd[i] = jd[i] + 1
-    #h[i] = h[i] - 24
+    if noon:
+        h = np.remainder(jd,1) * 24 + 12
+        i = (h >= 24)
+        jd[i] = jd[i] + 1
+        h[i] = h[i] - 24
 
     secs = np.remainder(jd, 1) * 24 * 3600
 
@@ -219,15 +237,18 @@ def gregorian(jd):
     yr[i] = y[i]
 
     hr, mi, sc = s2hms(secs)
-    gtime = np.c_[yr, mo, d, hr, mi, sc]
-
-    return gtime
+    return np.c_[yr, mo, d, hr, mi, sc]
 
 
-@match_args_return
 def s2hms(secs):
     """Converts seconds to integer hour,minute,seconds
-    Usage: hour, min, sec = s2hms(secs)"""
+    Usage: hour, min, sec = s2hms(secs)
+
+    Example
+    -------
+    >>> s2hms(3600 + 60 + 1)
+    (1.0, 1.0, 1)
+    """
 
     hr = np.floor(secs / 3600)
     mi = np.floor(np.remainder(secs, 3600) / 60)
@@ -235,8 +256,7 @@ def s2hms(secs):
 
     return hr, mi, sc
 
-
-@match_args_return
+#FIXME: STOPPED HERE
 def ss2(jd):
     """Return Gregorian start and stop dates of Julian day variable
     Usage:  start, stop =ss2(jd)"""
@@ -247,7 +267,6 @@ def ss2(jd):
     return start, stop
 
 
-@match_args_return
 def angled(h):
     r"""
     ANGLED: Returns the phase angles in degrees of a matrix with complex
@@ -264,13 +283,11 @@ def angled(h):
     return pd
 
 
-@match_args_return
 def ij2ind(a, i, j):
     m, n = a.shape
     return m * i - j + 1  # TODO: Check this +1
 
 
-@match_args_return
 def ind2ij(a, ind):
     """ind2ij returns i, j indices of array."""
 
@@ -282,7 +299,6 @@ def ind2ij(a, ind):
     return i, j
 
 
-@match_args_return
 def rms(u):
     """Compute root mean square for each column of matrix u."""
     # TODO: use an axis arg.
@@ -294,7 +310,6 @@ def rms(u):
     return np.sqrt(np.sum(u ** 2) / m)
 
 
-@match_args_return
 def z0toCn(z0, H):
     r"""
     Convert roughness height z0 to Chezy "C" and Manning's "n" which is a
@@ -320,7 +335,6 @@ def z0toCn(z0, H):
     return C, n
 
 
-@match_args_return
 def z0tocd(z0, zr):
     """Calculates CD at a given ZR corresponding to Z0."""
 
@@ -329,7 +343,6 @@ def z0tocd(z0, zr):
     return cd
 
 
-@match_args_return
 def short_calc(amin, amax):
     rang = 32767 - (-32767)
     add_offset = (amax + amin) * 0.5
@@ -338,62 +351,48 @@ def short_calc(amin, amax):
     return add_offset, scale_factor
 
 
-@match_args_return
 def gsum(x, **kw):
     r"""Just like sum, except that it skips over bad points."""
     xnew = ma.masked_invalid(x)
     return np.sum(xnew, **kw)
 
 
-@match_args_return
 def gmean(x, **kw):
     r"""Just like mean, except that it skips over bad points."""
     xnew = ma.masked_invalid(x)
     return np.mean(xnew, **kw)
 
 
-@match_args_return
 def gmedian(x, **kw):
     r"""Just like median, except that it skips over bad points."""
     xnew = ma.masked_invalid(x)
     return np.median(xnew, **kw)
 
 
-@match_args_return
 def gmin(x, **kw):
     r"""Just like min, except that it skips over bad points."""
     xnew = ma.masked_invalid(x)
     return np.min(xnew, **kw)
 
 
-@match_args_return
 def gmax(x, **kw):
     r"""Just like max, except that it skips over bad points."""
     xnew = ma.masked_invalid(x)
     return np.max(xnew, **kw)
 
 
-@match_args_return
 def gstd(x, **kw):
     r"""Just like std, except that it skips over bad points."""
     xnew = ma.masked_invalid(x)
     return np.std(xnew, **kw)
 
-# TODO
-#/home/filipe/00-NOBKP/matlab_2010b/toolbox/map/map/distance.m
-#def near(x, x0, n=1):
-    #r"""Finds the indices of x that are closest to the point x0.  x is an
-    #array, x0 is a point, n is the number of closest points to get (in order
-    #of increasing distance).  Distance is the abs(x-x0).
-    #"""
+def near(x, x0, n=1):
+    r"""Given an 1D array `x` and a scalar `x0`, returns the `n` indices of the
+    element of `x` closest to `x0`."""
+    distance = np.abs(x - x0)
+    index = np.argsort(distance)
+    return index[:n], distance[index[:n]]
 
-    #distance, index = sort(abs(x-x0))
-    #distance = distance(0:n)
-    #index = index(0:n)
-
-    #return index, distance
-
-#@match_args_return
 #def nearxy(x, y, x0, y0, dist=None):
     #r"""Finds the indices of (x,y) that are closest to the point (x0,y0).
 
@@ -436,12 +435,10 @@ def swantime(a):
     return datetime(year, mon, day, hour, mn, sec)
 
 
-@match_args_return
 def shift(a, b, n):
     r"""a and b are vectors
     n is number of points of a to cut off
-    anew and bnew will be the same length.
-    """
+    anew and bnew will be the same length."""
 
     #la, lb = a.size, lb = b.size
 
@@ -456,13 +453,11 @@ def shift(a, b, n):
     return anew, bnew
 
 
-@match_args_return
 def lagcor(a, b, n):
     r"""Finds lagged correlations between two series.
     a and b are two column vectors
     n is range of lags
-    cor is correlation as fn of lag
-    """
+    cor is correlation as fn of lag."""
     cor = []
     for i in range(0, n + 1):
         d1, d2 = shift(a, b, i)
@@ -550,3 +545,8 @@ def fixcoast(coast):
         coast = np.append(coast, np.c_[np.NaN, np.NaN], axis=0)
 
     return coast
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
