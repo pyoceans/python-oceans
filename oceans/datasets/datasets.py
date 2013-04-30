@@ -18,7 +18,8 @@ from __future__ import division
 import numpy as np
 import matplotlib.pyplot as plt
 
-from netCDF4 import Dataset
+from pandas import Panel
+from netCDF4 import Dataset, num2date
 
 from oceans.utilities import basename
 from oceans.ff_tools import get_profile
@@ -30,6 +31,79 @@ __all__ = ['woa_subset',
            'laplace_filter',
            'get_depth',
            'get_isobath']
+
+
+def woa_subset(bbox=[-43, -29.5, -22.5, -17], var='temperature',
+               time='monthly', resolution='1deg'):
+    r"""Get World Ocean Atlas variables online at a given lon, lat bounding box.
+    Choose variable from:
+        `dissolved_oxygen`, `salinity`, `temperature`, `oxygen_saturation`,
+        `apparent_oxygen_utilization`, `phosphate`, `silicate`, or `nitrate`.
+    Choose time averages from:
+        `monthly`, `seasonal`, or `annual`.
+    Choose resolution from:
+        `1deg` or `5deg`
+
+    Example
+    -------
+    >>> import matplotlib.pyplot as plt
+    >>> bbox = [-59, -25, -38, 9]
+    >>> lon, lat, temp = woa_subset(bbox=bbox, var='temperature',
+    ...                             time='annual', resolution='5deg')
+    >>> fig, ax = plt.subplots()
+    >>> ax.pcolormesh(lon, lat, temp[0, ...])
+    """
+
+    uri = "http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA09/NetCDFdata/"
+    dataset = "%s_%s_%s.nc" % (var, time, resolution)
+
+    nc = Dataset(uri + dataset)
+    latStart, latEnd = bbox[2], bbox[3]
+    lonStart, lonEnd = bbox[0] % 360, bbox[1] % 360
+
+    v = dict(temperature='t', dissolved_oxygen='o', salinity='s',
+             oxygen_saturation='O', apparent_oxygen_utilization='A',
+             phosphate='p', silicate='p', nitrate='n')
+
+    d = dict({'%s_an' % v[var]: 'OA Climatology',
+              '%s_mn' % v[var]: 'Statistical Mean',
+              '%s_dd' % v[var]: 'N. of Observations',
+              '%s_se' % v[var]: 'Std Error of the Statistical Mean',
+              '%s_sd' % v[var]: 'Std Deviation from Statistical Mean',
+              '%s_oa' % v[var]: 'Statistical Mean minus OA Climatology',
+              '%s_ma' % v[var]: 'Seasonal/Monthly minus Annual Climatology',
+              '%s_gp' % v[var]: 'N. of Mean Values within Influence Radius'})
+
+    lon = nc.variables.pop('lon')[:]
+    lat = nc.variables.pop('lat')[:]
+    depth = nc.variables.pop('depth')[:]
+    time = nc.variables.pop('time')
+    time = num2date(time[:], time.units, calendar='365_day')
+
+    # Select data subset.
+    maskx = np.logical_and(lon >= lonStart, lon <= lonEnd)
+    masky = np.logical_and(lat >= latStart, lat <= latEnd)
+    lon, lat = lon[maskx], lat[masky]
+
+    dataset = dict()
+    start = '%s_' % v[var]
+    for data in nc.variables.keys():
+        if data.startswith(start):
+            subset = nc.variables[data][..., masky, maskx].squeeze()
+            if subset.ndim == 3:
+                dataset = Panel(subset, items=depth, major_axis=lat,
+                                minor_axis=lon)
+            elif subset.ndim == 4:
+                months = [t.strftime('%b') for t in time]
+                for month in months:
+                    panel = Panel(subset[0, ...], items=depth, major_axis=lat,
+                                  minor_axis=lon)
+                    dataset.update({month: {d[data]: panel}})
+            else:
+                raise ValueError("Cannot handle subset with %s dimensions" %
+                                 subset.ndim)
+
+    return dataset
 
 
 def get_indices(min_lat, max_lat, min_lon, max_lon, lons, lats):
@@ -70,30 +144,6 @@ def get_indices(min_lat, max_lat, min_lon, max_lon, lons, lats):
     res[2] = indices[1][2]
     res[3] = indices[0][2]
     return res
-
-
-def woa_subset(min_lat, max_lat, min_lon, max_lon, woa_file=None):
-    r"""Get a World Ocean Atlas subset.
-    Should work on any netCDF with x, y, data.
-    `woa_file` can be an OpenDap url."""
-
-    if not woa_file:
-        # TODO: Check for a online dap version of this file.
-        woa_file = None
-
-    woa = Dataset(woa_file, 'r')
-
-    lons = woa.variables["x"][:]
-    lats = woa.variables["y"][:]
-
-    res = get_indices(min_lat, max_lat, min_lon, max_lon, lons, lats)
-
-    lon, lat = np.meshgrid(lons[res[0]:res[1]], lats[res[2]:res[3]])
-
-    temperature = woa.variables["temperature"][int(res[2]):int(res[3]),
-                                               int(res[0]):int(res[1])]
-
-    return lon, lat, temperature
 
 
 # TODO: download ETOPO2v2c_f4.nc
