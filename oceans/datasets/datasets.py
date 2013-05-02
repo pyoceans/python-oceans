@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Sat 09 Mar 2013 03:37:45 PM BRT
+# modified: Thu 02 May 2013 10:50:49 AM BRT
 #
 # obs: some Functions were based on:
 # http://www.trondkristiansen.com/?page_id=1071
@@ -34,12 +34,12 @@ __all__ = ['woa_subset',
 
 
 def woa_subset(bbox=[-43, -29.5, -22.5, -17], var='temperature',
-               time='monthly', resolution='1deg'):
-    r"""Get World Ocean Atlas variables online at a given lon, lat bounding box.
+               clim_type='monthly', resolution='1deg'):
+    r"""Get World Ocean Atlas variables at a given lon, lat bounding box.
     Choose variable from:
         `dissolved_oxygen`, `salinity`, `temperature`, `oxygen_saturation`,
         `apparent_oxygen_utilization`, `phosphate`, `silicate`, or `nitrate`.
-    Choose time averages from:
+    Choose clim_type averages from:
         `monthly`, `seasonal`, or `annual`.
     Choose resolution from:
         `1deg` or `5deg`
@@ -48,18 +48,22 @@ def woa_subset(bbox=[-43, -29.5, -22.5, -17], var='temperature',
     -------
     >>> import matplotlib.pyplot as plt
     >>> bbox = [-59, -25, -38, 9]
-    >>> lon, lat, temp = woa_subset(bbox=bbox, var='temperature',
-    ...                             time='annual', resolution='5deg')
+    >>> dataset = woa_subset(bbox=bbox, var='temperature', clim_type='annual',
+    ...                      resolution='5deg')
+    >>> dataset = dataset['annual']['Statistical Mean']
+    >>> lon, lat = dataset.minor_axis, dataset.major_axis
+    >>> surface_temp = dataset.ix[0]
     >>> fig, ax = plt.subplots()
-    >>> ax.pcolormesh(lon, lat, temp[0, ...])
+    >>> cs = ax.pcolormesh(lon, lat, ma.masked_invalid(surface_temp.values))
+    >>> fig.colorbar(cs)
     """
 
     uri = "http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA09/NetCDFdata/"
-    dataset = "%s_%s_%s.nc" % (var, time, resolution)
+    dataset = "%s_%s_%s.nc" % (var, clim_type, resolution)
 
     nc = Dataset(uri + dataset)
     latStart, latEnd = bbox[2], bbox[3]
-    lonStart, lonEnd = bbox[0] % 360, bbox[1] % 360
+    lonStart, lonEnd = bbox[0], bbox[1]
 
     v = dict(temperature='t', dissolved_oxygen='o', salinity='s',
              oxygen_saturation='O', apparent_oxygen_utilization='A',
@@ -74,35 +78,33 @@ def woa_subset(bbox=[-43, -29.5, -22.5, -17], var='temperature',
               '%s_ma' % v[var]: 'Seasonal/Monthly minus Annual Climatology',
               '%s_gp' % v[var]: 'N. of Mean Values within Influence Radius'})
 
-    lon = nc.variables.pop('lon')[:]
+    lon = nc.variables.pop('lon')[:] - 360
     lat = nc.variables.pop('lat')[:]
     depth = nc.variables.pop('depth')[:]
     time = nc.variables.pop('time')
     time = num2date(time[:], time.units, calendar='365_day')
+    months = [t.strftime('%b') for t in time]
 
     # Select data subset.
     maskx = np.logical_and(lon >= lonStart, lon <= lonEnd)
     masky = np.logical_and(lat >= latStart, lat <= latEnd)
     lon, lat = lon[maskx], lat[masky]
 
-    dataset = dict()
     start = '%s_' % v[var]
-    for data in nc.variables.keys():
-        if data.startswith(start):
-            subset = nc.variables[data][..., masky, maskx].squeeze()
-            if subset.ndim == 3:
-                dataset = Panel(subset, items=depth, major_axis=lat,
-                                minor_axis=lon)
-            elif subset.ndim == 4:
-                months = [t.strftime('%b') for t in time]
-                for month in months:
-                    panel = Panel(subset[0, ...], items=depth, major_axis=lat,
+    dataset, clim = dict(), dict()
+    for k, month in enumerate(months):
+        for data in nc.variables.keys():
+            if data.startswith(start):
+                subset = nc.variables[data][..., masky, maskx].squeeze()
+                if clim_type == 'annual':
+                    panel = Panel(subset[...], items=depth, major_axis=lat,
                                   minor_axis=lon)
-                    dataset.update({month: {d[data]: panel}})
-            else:
-                raise ValueError("Cannot handle subset with %s dimensions" %
-                                 subset.ndim)
-
+                    month = clim_type
+                else:
+                    panel = Panel(subset[k, ...], items=depth, major_axis=lat,
+                                  minor_axis=lon)
+                clim.update({d[data]: panel})
+        dataset.update({month: clim})
     return dataset
 
 
