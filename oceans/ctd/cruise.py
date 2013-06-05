@@ -7,13 +7,12 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  05-Sep-2012
-# modified: Sat 20 Apr 2013 06:35:10 PM BRT
+# modified: Wed 05 Jun 2013 02:14:30 PM BRT
 #
 # obs:
 #
 
 from __future__ import division
-from textwrap import dedent
 
 import gsw
 import warnings
@@ -57,6 +56,7 @@ def assign_type(df):
     # Last point is always 'everything'.
     df['type'][df.irow(-1).name] = 'CTD/XBT/Niskin'
     return df
+
 
 def transect2dataframe(lon, lat, depth, sort='lat'):
     r"""Creates a sorted Transect-DataFrame from lon, lat and depth columns of
@@ -138,7 +138,8 @@ def make_transect(start, end, tfile='dap', rossby=25.):
     >>> print(transect.deg2degmin())
     >>> secs2hours, secs2days = 60 * 60, 60 * 60 * 24
     >>> print("\nCTD time (rule of thumb):\n%s" % transect.ctd_cast_time())
-    >>> print("\nCTD time (depth):\n%s" % transect.ctd_cast_time(method="depth"))
+    >>> print("\nCTD time (depth):\n%s" %
+    ...       transect.ctd_cast_time(method="depth"))
     >>> print("\nTotal CTD time %s hours" %
     ...       (transect.ctd_cast_time().sum() / secs2hours))
     >>> print("\nNavigation time: %s days" %
@@ -203,7 +204,7 @@ def _draw_arrow(m, points, **kw):
     x2, y2 = points[:, 0][1], points[:, 1][1]
     dx, dy = x2 - x1, y2 - y1
     arrow = m.ax.arrow(x1, y1, dx, dy, color=color, zorder=zorder, alpha=alpha,
-                       shape=shape, width=width, overhang=overhang)
+                       shape=shape, width=width, overhang=overhang, **kw)
     plt.draw()
     return arrow
 
