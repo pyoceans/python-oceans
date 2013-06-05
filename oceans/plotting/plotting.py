@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Thu 18 Apr 2013 12:25:08 PM BRT
+# modified: Wed 05 Jun 2013 02:16:58 PM BRT
 #
 # obs:  rstyle, rhist and rbox are from:
 # http://messymind.net/2012/07/making-matplotlib-look-like-ggplot/
@@ -15,8 +15,6 @@
 
 
 from __future__ import division
-
-from textwrap import dedent
 
 import matplotlib
 import numpy as np
@@ -28,7 +26,6 @@ from matplotlib.artist import Artist
 from matplotlib.pyplot import MultipleLocator, rcParams, Polygon
 
 __all__ = [
-           'simpleaxis',
            'rstyle',
            'rhist',
            'rbox',
@@ -37,13 +34,6 @@ __all__ = [
            'get_pointsxy',
            'EditPoints'
           ]
-
-
-def simpleaxis(ax):
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.get_xaxis().tick_bottom()
-    ax.get_yaxis().tick_left()
 
 
 def rstyle(ax):
@@ -398,8 +388,6 @@ class EditPoints(object):
             xs, ys = self.points.get_xdata(), self.points.get_ydata()
             ex, ey = event.xdata, event.ydata
             for i in range(len(xs) - 1):
-                d = np.sqrt((xs[i] - event.xdata) ** 2 +
-                            (ys[i] - event.ydata) ** 2)
                 self.points.set_xdata(np.r_[self.points.get_xdata(), ex])
                 self.points.set_ydata(np.r_[self.points.get_ydata(), ey])
                 self.line.set_data(self.points.get_data())
