@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  11-Oct-2010
-# modified: Sat 23 Mar 2013 03:37:46 PM BRT
+# modified: Thu 02 May 2013 10:52:04 AM BRT
 #
 # obs:
 #
@@ -20,6 +20,62 @@ from colorsys import hsv_to_rgb
 import numpy as np
 import matplotlib as mpl
 from scipy.signal import sawtooth
+
+
+def cpt2seg(file_name, sym=False, discrete=False):
+    r"""Reads a .cpt palette and returns a segmented colormap.
+
+    sym : If True, the returned colormap contains the palette and a mirrored
+    copy.  For example, a blue-red-green palette would return a
+    blue-red-green-green-red-blue colormap.
+
+    discrete : If true, the returned colormap has a fixed number of uniform
+    colors.  That is, colors are not interpolated to form a continuous range.
+
+    Example
+    -------
+    >>> import matplotlib.pyplot as plt
+    >>> from matplotlib.colors import LinearSegmentedColormap
+    >>> data = cpt2seg('palette.cpt')
+    >>> palette = LinearSegmentedColormap('palette', data, 100)
+    >>> plt.imshow(X, cmap=palette)
+
+    http://matplotlib.1069221.n5.nabble.com/
+    function-to-create-a-colormap-from-cpt-palette-td2165.html
+    """
+
+    dic = {}
+    rgb = np.loadtxt(file_name)
+    rgb = rgb / 255.
+    s = rgb.shape
+    colors = ['red', 'green', 'blue']
+    for c in colors:
+        i = colors.index(c)
+        x = rgb[:, i + 1]
+        if discrete:
+            if sym:
+                dic[c] = np.zeros((2 * s[0] + 1, 3), dtype=np.float_)
+                dic[c][:, 0] = np.linspace(0, 1, 2 * s[0] + 1)
+                vec = np.concatenate((x, x[::-1]))
+            else:
+                dic[c] = np.zeros((s[0] + 1, 3), dtype=np.float_)
+                dic[c][:, 0] = np.linspace(0, 1, s[0] + 1)
+                vec = x
+            dic[c][1:, 1] = vec
+            dic[c][:-1, 2] = vec
+
+        else:
+            if sym:
+                dic[c] = np.zeros((2 * s[0], 3), dtype=np.float_)
+                dic[c][:, 0] = np.linspace(0, 1, 2 * s[0])
+                vec = np.concatenate((x, x[::-1]))
+            else:
+                dic[c] = np.zeros((s[0], 3), dtype=np.float_)
+                dic[c][:, 0] = np.linspace(0, 1, s[0])
+                vec = x
+            dic[c][:, 1] = vec
+            dic[c][:, 2] = vec
+    return dic
 
 
 class Bunch(dict):
