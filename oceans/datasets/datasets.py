@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Thu 02 May 2013 10:50:49 AM BRT
+# modified: Wed 05 Jun 2013 02:16:08 PM BRT
 #
 # obs: some Functions were based on:
 # http://www.trondkristiansen.com/?page_id=1071
@@ -283,7 +283,7 @@ def get_depth(lon, lat, tfile='dap'):
 def get_isobath(lon, lat, iso=-200., tfile='dap'):
     r"""Find isobath."""
     plt.ioff()
-    topo = get_depth(lon, lat, tfile='dap')
+    topo = get_depth(lon, lat, tfile=tfile)
 
     fig, ax = plt.subplots()
     cs = ax.contour(lon, lat, topo, [iso])
