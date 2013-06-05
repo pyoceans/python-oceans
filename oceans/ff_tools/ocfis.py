@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Thu 18 Apr 2013 12:24:30 PM BRT
+# modified: Wed 05 Jun 2013 02:16:15 PM BRT
 #
 # obs:
 #
@@ -21,12 +21,61 @@ import gsw
 
 __all__ = [
            'mld',
+           'lanc',
            'pcaben',
            'spdir2uv',
            'uv2spdir',
            'interp_nan',
            'del_eta_del_x'
            ]
+
+
+def lanc(numwt, haf):
+    r"""Generates a numwt + 1 + numwt lanczos cosine low pass filter with -6dB
+    (1/4 power, 1/2 amplitude) point at haf
+
+    Parameters
+    ----------
+    numwt : int
+            number of points
+    haf : float
+          frequency (in 'cpi' of -6dB point, 'cpi' is cycles per interval.
+          For hourly data cpi is cph,
+
+    Examples
+    --------
+    >>> from datetime import datetime
+    >>> import matplotlib.pyplot as plt
+    >>> cols = ['j', 'u', 'v', 'temp', 'sal', 'y', 'mn', 'd', 'h', 'mi']
+    >>> fname = '../test/15t30717.3f1'
+    >>> df = read_table(fname , delim_whitespace=True, names=cols)
+    >>> dates = [datetime(*x) for x in
+    ...          zip(df['y'], df['mn'], df['d'], df['h'], df['mi'])]
+    >>> df.index = dates
+    _ = map(df.pop, ['y', 'mn', 'd', 'h', 'mi'])
+    >>> wt = lanc(96+1+96, 1./40)
+    >>> df['low'] = np.convolve(wt, df['v'], mode='same')
+    >>> df['high'] = df['v'] - df['low']
+    >>> fig, (ax0, ax1) = plt.subplots(nrows=2)
+    >>> _ = ax0.plot(df['j'], df['high'], label='high')
+    >>> _ = ax1.plot(df['j'], df['low'], label='low')
+    >>> _ = ax0.legend(numpoints=1)
+    >>> _ = ax1.legend(numpoints=1)
+    """
+    summ = 0
+    numwt += 1
+    wt = np.zeros(numwt)
+
+    # Filter weights.
+    ii = np.arange(numwt)
+    wt = 0.5 * (1.0 + np.cos(np.pi * ii * 1. / numwt))
+    ii = np.arange(1, numwt)
+    xx = np.pi * 2 * haf * ii
+    wt[1:numwt + 1] = wt[1:numwt + 1] * np.sin(xx) / xx
+    summ = wt[1:numwt + 1].sum()
+    xx = wt.sum() + summ
+    wt /= xx
+    return np.r_[wt[::-1], wt[1:numwt + 1]]
 
 
 def spdir2uv(spd, ang, deg=False):
@@ -119,13 +168,6 @@ def uv2spdir(u, v, mag=0, rot=0):
     ang = np.angle(vec, deg=True)
     ang = ang - mag + rot
     ang = np.mod(90 - ang, 360)  # Zero is North.
-
-    #spd = np.zeros_like(u) + np.NaN
-    #ang = np.zeros_like(u) + np.NaN
-    #for k in range(0:n):
-        #for kk in range(0:m):
-            #spd[kk, k] = np.sqrt(u[kk, i]**2 + v[kk, k]**2)
-            #ang[kk, k] = np.atan2(v[kk, i], u[kk, k]) * (180. / np.pi)
 
     return ang, spd
 
@@ -312,21 +354,27 @@ def pcaben(u, v):
     --------
     >>> import matplotlib.pyplot as plt
     >>> import oceans.ff_tools as ff
-    >>> u, v = [0., 1., -2., -1., 1.], [3., 1., 0., -1., -1.]
-    >>> majrax, majaz, minrax, minaz, elptcty = ff.pcaben(u, v)
+    >>> u = np.r_[(0., 1., -2., -1., 1.), np.random.randn(10)]
+    >>> v = np.r_[(3., 1., 0., -1., -1.), np.random.randn(10)]
+    >>> (mjrax, mjaz, mirax, miaz, el), (x1, x2, y1, y2) = ff.pcaben(u, v)
     >>> fig, ax = plt.subplots()
-    >>> _ = ax.plot(x1, y1,'-r', x2, y2, 'r-')
+    >>> _ = ax.plot(x1, y1,'r-', x2, y2, 'r-')
     >>> ax.set_aspect('equal')
     >>> _ = ax.set_xlabel('U component')
     >>> _ = ax.set_ylabel('V component')
-    >>> _ = ax.plot(u, v, 'r.')
-    >>> mdir, mspd = ff.uv2spdir(mu, mv)
-    >>> _ = ax.plot([0, mu],[0, mv], '-b')
+    >>> _ = ax.plot(u, v, 'bo')
+    >>> _ = ax.axis([-3.2, 3.2, -3.2, 3.2])
+    >>> mdir, mspd = ff.uv2spdir(u.mean(), v.mean())
+    >>> _ = ax.plot([0, u.mean()],[0, v.mean()], 'k-')
     >>> plt.show()
-    >>> print('Mean u = %f\nMean v = %f\n' % (mu, mv))
+    >>> print('Mean u = %f\nMean v = %f\n' % (u.mean(), v.mean()))
     >>> print('Mean magnitude: %f\nDirection: %f\n' % (mspd, mdir))
-    >>> print('Axis 1 Length: %f\nAzimuth: %f\n' % (majrax, majaz))
-    >>> print('Axis 2 Length: %f\nAzimuth: %f\n' % (minrax, minaz))
+    >>> print('Axis 1 Length: %f\nAzimuth: %f\n' % (mjrax, mjaz))
+    >>> print('Axis 2 Length: %f\nAzimuth: %f\n' % (mirax, miaz))
+    >>> print("elipticity is : %s" % el)
+    >>> print("Negative (positive) means clockwise (anti-clockwise)")
+    >>> flatness = 1 - mirax / mjrax
+    >>> print("Flatness: %s" % flatness)
 
     Notes:
     http://pubs.usgs.gov/of/2002/of02-217/m-files/pcaben.m
@@ -337,16 +385,10 @@ def pcaben(u, v):
     C = np.cov(u, v)
     D, V = np.linalg.eig(C)
 
-    x1 = np.r_[0.5 * np.sqrt(D[0]) * V[0, 0],
-               -0.5 * np.sqrt(D[0]) * V[0, 0]]
-    y1 = np.r_[0.5 * np.sqrt(D[0]) * V[1, 0],
-               -0.5 * np.sqrt(D[0]) * V[1, 0]]
-    x2 = np.r_[0.5 * np.sqrt(D[1]) * V[0, 1],
-               -0.5 * np.sqrt(D[1]) * V[0, 1]]
-    y2 = np.r_[0.5 * np.sqrt(D[1]) * V[1, 1],
-               -0.5 * np.sqrt(D[1]) * V[1, 1]]
-
-    mdir, mspd = uv2spdir(u.mean(), v.mean())
+    x1 = np.r_[0.5 * np.sqrt(D[0]) * V[0, 0], -0.5 * np.sqrt(D[0]) * V[0, 0]]
+    y1 = np.r_[0.5 * np.sqrt(D[0]) * V[1, 0], -0.5 * np.sqrt(D[0]) * V[1, 0]]
+    x2 = np.r_[0.5 * np.sqrt(D[1]) * V[0, 1], -0.5 * np.sqrt(D[1]) * V[0, 1]]
+    y2 = np.r_[0.5 * np.sqrt(D[1]) * V[1, 1], -0.5 * np.sqrt(D[1]) * V[1, 1]]
 
     # Length and direction.
     az, leng = np.c_[uv2spdir(x1[0], y1[0]), uv2spdir(x2[1], y2[1])]
@@ -358,16 +400,13 @@ def pcaben(u, v):
         majrax, majaz = leng[1], az[1]
         minrax, minaz = leng[0], az[0]
 
-    # NOTE: 1 - minrax / majrax is flatness
-    #elptcty = 1 - minrax / majrax
-    # NOTE: Negative (positive) means clockwise (anti-clockwise).
     elptcty = minrax / majrax
 
     # Radius to diameter.
     majrax *= 2
     minrax *= 2
 
-    return majrax, majaz, minrax, minaz, elptcty
+    return (majrax, majaz, minrax, minaz, elptcty), (x1, x2, y1, y2)
 
 if __name__ == '__main__':
     import doctest
