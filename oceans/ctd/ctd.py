@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  22-Jun-2012
-# modified: Thu 18 Apr 2013 12:23:17 PM BRT
+# modified: Wed 05 Jun 2013 02:16:03 PM BRT
 #
 # obs: Should I sub-classing instead of a "Monkey Patching"?
 #
@@ -29,7 +29,7 @@ from scipy import signal
 from scipy.interpolate import interp1d
 from mpl_toolkits.axes_grid1 import host_subplot
 
-from pandas import Panel, DataFrame, Series, Index, read_table
+from pandas import DataFrame, Series, Index, read_table
 
 import gsw
 from oceans.utilities import basename
@@ -39,19 +39,6 @@ degree = u"\u00b0"
 
 
 # Utilities.
-def load_bl(blfile):
-    names = ['bottles', 'datetime', 'start', 'finish']
-    bl = read_table(blfile, skiprows=2, sep=',', parse_dates=False,
-                    index_col=1, names=names)
-
-    if (bl.index == bl['bottles']).all():
-        del bl['bottles']
-    else:
-        raise ValueError("First column is not identical to the second.")
-
-    return bl
-
-
 def extrap1d(interpolator):
     r"""http://stackoverflow.com/questions/2745329/"""
     xs = interpolator.x
@@ -105,19 +92,7 @@ def rolling_window(data, block):
     return np.lib.stride_tricks.as_strided(data, shape=shape, strides=strides)
 
 
-# TEOS-10 and other functions.
-def check_index(ix0, ix1):
-    if isinstance(ix0, Series) and isinstance(ix1, Series):
-        ix0, ix1 = ix0.index.float_(), ix1.index.float_()
-        if (ix0 == ix1).all():
-            return ix0, ix1
-    elif isinstance(ix0, float) and isinstance(ix1, float):
-        if ix0 == ix1:
-            return ix0, ix1
-    else:
-        raise ValueError("Series index must be the same.")
-
-
+# Misc.
 def mixed_layer_depth(t, verbose=True):
     mask = t[0] - t < 0.5
     if verbose:
@@ -257,7 +232,8 @@ def gen_topomask(h, lon, lat, dx=1., kind='linear', plot=False):
 
 
 def pmel_inversion_check():
-    r"""Additional clean-up and flagging of data after the SBE Processing.
+    r""" FIXME: UNFINISHED!.
+    Additional clean-up and flagging of data after the SBE Processing.
     Look for inversions in the processed, binned via computing the centered
     square of the buoyancy frequency, N2, for each bin and linearly
     interpolating temperature, conductivity, and oxygen over those records
@@ -275,6 +251,24 @@ def pmel_inversion_check():
     pass
 
 
+def cell_theramll_mass(temperature, conductivity):
+    r""" FIXME: UNFINISHED!
+    Sample interval is measured in seconds.
+    Temperature in °C
+    CTM is calculated in S/m."""
+
+    alpha = 0.03  # Thermal anomaly amplitude.
+    beta = 1. / 7  # Thermal anomaly time constant (1/beta).
+
+    sample_interval = 1 / 15.
+    a = 2 * alpha / (sample_interval * beta + 2)
+    b = 1 - (2 * a / alpha)
+    dCodT = 0.1 * (1 + 0.006 * [temperature - 20])
+    dT = np.diff(temperature)
+    ctm = -1.0 * b * conductivity + a * (dCodT) * dT  # [S/m]
+    return ctm
+
+
 # Index methods.
 def asof(self, label):
     if label not in self:
@@ -286,13 +280,9 @@ def asof(self, label):
     return label
 
 
-def float_(self):
-    return np.float_(self.values)
-
-
 # Series methods.
 def split(self):
-    r"""Returns a tupple with down- and up-cast."""
+    r"""Returns a tuple with down- and up-cast."""
     down = self.ix[:self.index.argmax()]
     up = self.ix[self.index.argmax():][::-1]  # Reverse up index.
     return down, up
@@ -300,12 +290,12 @@ def split(self):
 
 def press_check(self, column='index'):
     r"""Remove pressure reversal.
-    NOTE: Must be applied after split."""
+    FIXME: Works only after split."""
     data = self.copy()
     if column is not 'index':
         press = data[column]
     else:
-        press = data.index.float_()
+        press = data.index.astype(float)
 
     ref = press[0]
     inversions = np.diff(np.r_[press, press[-1]]) < 0
@@ -319,13 +309,13 @@ def press_check(self, column='index'):
     return data
 
 
-def rosette_summary(self, bl):
-    r"""Make a BTL (bottle) file from a BL (bottle log) file.
+def rosette_summary(rosfile):
+    r"""Make a BTL (bottle) file from a ROS (bottle log) file.
 
     Seabird produce their own BTL file, but here we have more control for the
     averaging process and on which step we want to perform this.  Therefore
     eliminating the need to read the data into SB Software again after some
-    pre-processing.  NOTE: Run after LoopEdit.
+    pre-processing.  NOTE: Do not run LoopEdit on the upcast!
 
     FIXME: Write to a file like this:
     AMB09_101_CTD_rad5.btl
@@ -340,13 +330,11 @@ def rosette_summary(self, bl):
                          117063   3824.464     1.1792  3.142608  (min)
                          117111   3825.501     1.1985  3.144288  (max)
     """
-
-    rossum = dict()
-    for bottle, k0, k1 in zip(bl.index, bl['start'], bl['finish']):
-        mask = np.logical_and(self['scan'] >= k0, self['scan'] <= k1).values
-        rossum[bottle] = swap_index(self, 'scan')[mask].describe()
-
-    return Panel.fromDict(rossum, orient='items')
+    ros = DataFrame.from_cnv(rosfile)
+    ros['pressure'] = ros.index.values.astype(float)
+    ros['nbf'] = ros['nbf'].astype(int)  # Make bottle number as string.
+    ros.set_index('nbf', drop=True, inplace=True, verify_integrity=False)
+    return ros
 
 
 def seabird_filter(data, sample_rate=24.0, time_constant=0.15):
@@ -354,6 +342,7 @@ def seabird_filter(data, sample_rate=24.0, time_constant=0.15):
     a signal of `sample_rate` in Hertz (24 Hz for 911+).
     NOTE: Seabird actually uses a cosine filter.  I use a kaiser filter
           instead.
+    TODO: return float.
     NOTE: 911+ does note require filter for temperature nor salinity."""
 
     nyq_rate = sample_rate / 2.0
@@ -549,9 +538,9 @@ def plot_section(self, inverse=False, filled=False, **kw):
 @classmethod
 def from_fsi(cls, fname, compression=None, skiprows=9):
     r"""Read FSI CTD ASCII columns."""
-    cast = read_table(fname, header='infer', index_col=None, dtype=np.float_,
-                      compression=compression, skiprows=skiprows,
-                      delim_whitespace=True)
+    f = read_file(fname, compression=compression)
+    cast = read_table(f, header='infer', index_col=None, dtype=np.float_,
+                         skiprows=skiprows, delim_whitespace=True)
 
     cast.set_index('PRES', drop=True, inplace=True)
     cast.index.name = 'Pressure [dbar]'
@@ -665,13 +654,6 @@ def from_cnv(cls, fname, compression=None, blfile=None):
     cast.set_index('prdm', drop=True, inplace=True)
     cast.index.name = 'Pressure [dbar]'
 
-    # FIXME: Use metadata class here!
-    if blfile:
-        bl = load_bl(blfile)
-    else:
-        bl = None
-
-    cast.bl = bl
     cast.lon = lon
     cast.lat = lat
     cast.header = header
@@ -703,7 +685,7 @@ def swap_index(self, keys):
     data = self.copy()
     if not data.index.name:
         data.index.name = "index"
-    data[data.index.name] = data.index.float_()
+    data[data.index.name] = data.index.values.astype(float)
     return data.set_index(keys, drop=True, append=False, verify_integrity=True)
 
 
@@ -748,7 +730,6 @@ def plot_vars(self, variables=None, **kwds):
     return fig, (ax0, ax1)
 
 Index.asof = asof
-Index.float_ = float_
 
 Series.plot = plot
 Series.split = split
