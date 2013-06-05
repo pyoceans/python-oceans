@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  12-Feb-2012
-# modified: Sat 13 Oct 2012 10:41:33 PM BRT
+# modified: Wed 05 Jun 2013 02:16:47 PM BRT
 #
 # obs:
 #
@@ -35,7 +35,6 @@ __all__ = [
     'plot_spectrum',
     'medfilt1',
     'fft_lowpass',
-    'despike_slope',
     'binave',
     'binavg',
     'bin_dates',
@@ -604,105 +603,6 @@ def fft_lowpass(signal, low, high):
     result = result * factor
 
     return np.fft.irfft(result, len(signal))
-
-
-def despike_slope(datain, slope):
-    r"""De-spikes a time-series by calculating point-to-point slopes and
-    determining whether a maximum allowable slope is exceeded.
-
-    Parameters
-    ----------
-    datain : array_like
-             any time series
-    slope : float
-            diff slope threshold [in data units]
-
-    Returns
-    -------
-    cdata : array_like
-            clean time series
-
-    See Also
-    --------
-    TODO
-
-    Notes
-    -----
-    Dangerous de-spiking technique, use with caution!
-    Recommend only for highly noisy (lousy?) series.
-
-    Examples
-    --------
-    >>> import matplotlib.pyplot as plt
-    >>> import numpy as np
-    >>> import ff_tools as ff
-    >>> time = np.linspace(-4, 4, 100)
-    >>> series = np.sin(time)
-    >>> spiked = series + np.random.randn( len(time) ) * 0.3
-    >>> cdata = ff.despike(spiked, 0.15 )
-    >>> plt.plot(time, series, 'k')
-    >>> plt.plot(time, spiked, 'r.')
-    >>> plt.plot(time, cdata, 'bo')
-    >>> plt.show()
-
-    References
-    ----------
-    TODO
-
-    author:   Filipe P. A. Fernandes
-    date:     23-Nov-2010
-    modified: 23-Nov-2010
-    """
-
-    datain, slope = map(np.asanyarray, (datain, slope))
-
-    cdata = np.zeros_like(datain) + np.NaN
-
-    offset = datain.min()
-    if offset < 0:
-        datain = datain - offset
-    else:
-        offset = 0
-
-    cdata[0] = datain[0]  # FIXME: Assume that the first point is not a spike.
-    kk, npts = 0, len(datain)
-
-    for k in range(1, npts, 1):
-        try:
-            nslope = datain[k] - cdata[kk]
-            # if the slope is okay, let the data through
-            if abs(nslope) <= abs(slope):
-                kk = kk + 1
-                cdata[kk] = datain[k]
-            # if slope is not okay, look for the next data point
-            else:
-                n = 0
-                # TODO: add a limit option for npts.
-                while (abs(nslope) > abs(slope)) and (k + n < npts):
-                    n = n + 1  # Keep index for the offset from the test point.
-                    num = datain[k + n] - cdata[kk]
-                    dem = k + n - kk
-                    nslope = num / dem
-                    # If we have a "good" slope, calculate new point using
-                    # linear interpolation:
-                    # point = {[(ngp - lgp)/(deltax)]*(actual distance)} + lgp
-                    # ngp = next good point
-                    # lgp = last good point
-                    # actual distance = 1, the distance between the last lgp
-                    # and the point we want to interpolate.
-                    # Otherwise, let the value through
-                    # (i.e. we've run out of good data)
-                    if (k + n) < npts:
-                        pts = nslope + cdata[kk]
-                        kk = kk + 1
-                        cdata[kk] = pts
-                    else:
-                        kk = kk + 1
-                        cdata[kk] = datain[k]
-        except IndexError:
-            print("Index out of bounds at %s" % k)
-            continue
-    return cdata + offset
 
 
 def binave(datain, r):
