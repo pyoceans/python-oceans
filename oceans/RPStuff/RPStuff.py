@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  22-Jun-2011
-# modified: Tue 12 Feb 2013 11:53:11 AM BRST
+# modified: Wed 05 Jun 2013 02:10:55 PM BRT
 #
 # obs: This "legacy" package is intended for compatibility only.
 #
@@ -29,7 +29,9 @@ __all__ = ['h2hms',
            'jdmat2jdrps',
            'gregorian',
            's2hms',
+           'ss2',
            #FIXME: STOPPED HERE
+           'near',
            'angled',
            'coast2bln',
            'fixcoast']
@@ -210,7 +212,7 @@ def gregorian(jd, noon=False):
     jd = jd + 2.e-9
 
     if noon:
-        h = np.remainder(jd,1) * 24 + 12
+        h = np.remainder(jd, 1) * 24 + 12
         i = (h >= 24)
         jd[i] = jd[i] + 1
         h[i] = h[i] - 24
@@ -255,6 +257,7 @@ def s2hms(secs):
     sc = np.round(np.remainder(secs, 60))
 
     return hr, mi, sc
+
 
 #FIXME: STOPPED HERE
 def ss2(jd):
@@ -385,6 +388,7 @@ def gstd(x, **kw):
     r"""Just like std, except that it skips over bad points."""
     xnew = ma.masked_invalid(x)
     return np.std(xnew, **kw)
+
 
 def near(x, x0, n=1):
     r"""Given an 1D array `x` and a scalar `x0`, returns the `n` indices of the
