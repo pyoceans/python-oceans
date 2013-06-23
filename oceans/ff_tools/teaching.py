@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Tue 12 Feb 2013 11:54:03 AM BRST
+# modified: Sun 23 Jun 2013 04:30:45 PM BRT
 #
 # obs: Just some basic example function.
 #
@@ -16,24 +16,78 @@
 from __future__ import division
 
 import numpy as np
+import matplotlib.pyplot as plt
 from scipy import stats
 
-__all__ = ['cov',
-           'rms',
-           'rmsd',
-           'allstats',
-           'lsqfity',
-           'lsqfitx',
-           'lsqfitgm',
-           'lsqfitma',
-           'lsqbisec',
-           'lsqcubic',
-           'lsqfityw',
-           'lsqfityz',
-           'gmregress',
-           'r_earth',
-           'cart2pol',
-           'pol2cart']
+__all__ = [
+    'TimeSeries',
+    'cov',
+    'rms',
+    'rmsd',
+    'allstats',
+    'lsqfity',
+    'lsqfitx',
+    'lsqfitgm',
+    'lsqfitma',
+    'lsqbisec',
+    'lsqcubic',
+    'lsqfityw',
+    'lsqfityz',
+    'gmregress',
+    'r_earth',
+    'cart2pol',
+    'pol2cart'
+]
+
+
+class TimeSeries(object):
+    r"""Time-series object to store data and time information.
+    Contains some handy methods... Still a work in progress.
+    """
+    def __init__(self, data, time):
+        r"""data : array_like
+            Just a data container
+        time : datetime object
+            The series time information.
+            TODO: Must be regularly spaced.
+            Changed this to a more robust method, maybe interpolate?
+        """
+        data, time = map(np.asanyarray, (data, time))
+
+        # Derived information.
+        time_in_seconds = [(t - time[0]).total_seconds() for t in time]
+        dt = np.unique(np.diff(time_in_seconds))
+
+        # TODO raise something if assertion does not pass.
+        assert len(dt) == 1
+
+        fs = 1.0 / dt  # Sampling frequency.
+        Nyq = fs / 2.0
+
+        self.data = data
+        self.time = time
+        self.fs = fs
+        self.Nyq = Nyq
+        self.dt = dt
+        self.time_in_seconds = np.asanyarray(time_in_seconds)
+
+    def plot_spectrum(self):
+        r"""Plots a Single-Sided Amplitude Spectrum of y(t)."""
+        n = len(self.data)  # Length of the signal.
+        k = np.arange(n)
+        T = n / self.fs
+        frq = k / T  # Two sides frequency range.
+        frq = frq[range(n // 2)]  # One side frequency range
+
+        # fft computing and normalization
+        Y = np.fft.fft(self.data) / n
+        Y = Y[range(n // 2)]
+
+        # Plotting the spectrum.
+        plt.semilogx(frq, np.abs(Y), 'r')
+        plt.xlabel('Freq (Hz)')
+        plt.ylabel('|Y(freq)|')
+        plt.show()
 
 
 def cov(x, y):
