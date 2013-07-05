@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Wed 05 Jun 2013 02:16:08 PM BRT
+# modified: Fri 05 Jul 2013 02:26:49 PM BRT
 #
 # obs: some Functions were based on:
 # http://www.trondkristiansen.com/?page_id=1071
@@ -20,8 +20,6 @@ import matplotlib.pyplot as plt
 
 from pandas import Panel
 from netCDF4 import Dataset, num2date
-
-from oceans.utilities import basename
 from oceans.ff_tools import get_profile
 
 __all__ = ['woa_subset',
@@ -148,9 +146,8 @@ def get_indices(min_lat, max_lat, min_lon, max_lon, lons, lats):
     return res
 
 
-# TODO: download ETOPO2v2c_f4.nc
-def etopo_subset(min_lat, max_lat, min_lon, max_lon, tfile=None, smoo=False,
-                 verbose=False):
+def etopo_subset(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
+                 urcrnrlat=None, tfile='dap', smoo=False):
     r"""Get a etopo subset.
     Should work on any netCDF with x, y, data
     http://www.trondkristiansen.com/wp-content/uploads/downloads/
@@ -160,25 +157,14 @@ def etopo_subset(min_lat, max_lat, min_lon, max_lon, tfile=None, smoo=False,
     -------
     >>> import matplotlib.pyplot as plt
     >>> offset = 5
-    >>> tfile = '/home/filipe/00-NOBKP/OcFisData/ETOPO1_Ice_g_gmt4.grd'
+    >>> tfile = '/home/filipe/00-NOBKP/OcFisData/ETOPO1_Bed_g_gmt4.grd'
     >>> toponame = basename(tfile)[0]
-    >>> lonStart, lonEnd, latStart, latEnd = -43, -30.0, -22.0, -17.0
-    >>> lons, lats, bathy = etopo_subset(latStart - offset, latEnd + offset,
-    ...                                  lonStart - offset, lonEnd + offset,
+    >>> llcrnrlon, urcrnrlon, llcrnrlat, urcrnrlat = -43, -30, -22, -17
+    >>> lons, lats, bathy = etopo_subset(llcrnrlon - offset,
+    ...                                  urcrnrlon + offset,
+    ...                                  llcrnrlat - offset,
+    ...                                  urcrnrlat + offset,
     ...                                  smoo=True, tfile=tfile)
-    >>> fig, ax = plt.subplots()
-    >>> ax.pcolormesh(lons, lats, bathy)
-    >>> ax.axis([-42, -28, -23, -15])
-    >>> ax.set_title(toponame)
-    >>> plt.show()
-    >>> offset = 0
-    >>> lonStart, lonEnd, latStart, latEnd = -43, -30.0, -22.0, -17.0
-    >>> tfile = '/home/filipe/00-NOBKP/OcFisData/ETOPO1_Bed_c_gmt4.grd'
-    >>> toponame = basename(tfile)[0]
-    >>> lons, lats, bathy = etopo_subset(latStart - offset, latEnd + offset,
-    ...                                  lonStart - offset, lonEnd + offset,
-    ...                                  smoo=True, tfile=tfile)
-
     >>> fig, ax = plt.subplots()
     >>> ax.pcolormesh(lons, lats, bathy)
     >>> ax.axis([-42, -28, -23, -15])
@@ -186,33 +172,22 @@ def etopo_subset(min_lat, max_lat, min_lon, max_lon, tfile=None, smoo=False,
     >>> plt.show()
     """
 
-    if not tfile:
-        print("Specify a topography file.")
-    elif tfile == 'dap':
+    if tfile == 'dap':
         tfile = 'http://opendap.ccst.inpe.br/Misc/etopo2/ETOPO2v2c_f4.nc'
-
-    if verbose:
-        print("Using %s" % tfile)
 
     etopo = Dataset(tfile, 'r')
 
-    toponame = basename(tfile)[0]
+    lons = etopo.variables["x"][:]
+    lats = etopo.variables["y"][:]
 
-    if 'ETOPO2v2c_f4' == toponame or 'ETOPO2v2g_f4' == toponame:
-        lons = etopo.variables["x"][:]
-        lats = etopo.variables["y"][:]
-    if 'ETOPO1_Ice_g_gmt4' == toponame or 'ETOPO1_Bed_c_gmt4' == toponame:
-        lons = etopo.variables["lon"][:]
-        lats = etopo.variables["lat"][:]
-
-    res = get_indices(min_lat, max_lat, min_lon, max_lon, lons, lats)
+    res = get_indices(llcrnrlat, urcrnrlat, llcrnrlon, urcrnrlon, lons, lats)
 
     lon, lat = np.meshgrid(lons[res[0]:res[1]], lats[res[2]:res[3]])
 
     bathy = etopo.variables["z"][int(res[2]):int(res[3]),
                                  int(res[0]):int(res[1])]
 
-    if smoo == 'True':
+    if smoo:
         bathy = laplace_filter(bathy, M=None)
 
     return lon, lat, bathy
