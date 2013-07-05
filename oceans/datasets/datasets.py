@@ -147,7 +147,7 @@ def get_indices(min_lat, max_lat, min_lon, max_lon, lons, lats):
 
 
 def etopo_subset(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
-                 urcrnrlat=None, tfile='dap', smoo=False):
+                 urcrnrlat=None, tfile='dap', smoo=False, subsample=False):
     r"""Get a etopo subset.
     Should work on any netCDF with x, y, data
     http://www.trondkristiansen.com/wp-content/uploads/downloads/
@@ -190,6 +190,8 @@ def etopo_subset(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
     if smoo:
         bathy = laplace_filter(bathy, M=None)
 
+    if subsample:
+        lon, lat, bathy = lon[::subsample], lat[::subsample], bathy[::subsample]
     return lon, lat, bathy
 
 
