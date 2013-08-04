@@ -15,9 +15,8 @@ __email__ = "ocefpaf@gmail.com"
 __status__ = "Alpha"
 
 __all__ = [
-    'ctd',
     'RPStuff',
-    'dataset',
+    'datasets',
     'ff_tools',
     'mlabwrap',
     'plotting',
@@ -26,7 +25,6 @@ __all__ = [
 ]
 
 
-import ctd
 import RPStuff
 import datasets
 import ff_tools
