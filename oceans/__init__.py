@@ -18,7 +18,6 @@ __all__ = [
     'RPStuff',
     'datasets',
     'ff_tools',
-    'mlabwrap',
     'plotting',
     'seawater',
     'colormaps'
