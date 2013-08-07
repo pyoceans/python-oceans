@@ -1,15 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from oceans import __version__
+from setuptools import setup
 
-from distutils.core import setup
+from ocean import __version__ as version
 
-try:  # Python 3
-    from distutils.command.build_py import build_py_2to3 as build_py
-except ImportError:  # Python 2
-    from distutils.command.build_py import build_py
-
+source = 'http://pypi.python.org/packages/source'
+install_requires = ['numpy', 'scipy', 'matplotlib', 'pandas', 'gsw']
 
 classifiers = """\
 Development Status :: 2 - Pre-Alpha
@@ -25,32 +22,30 @@ Topic :: Education
 Topic :: Software Development :: Libraries :: Python Modules
 """
 
+README = open('README.md').read()
+CHANGES = open('CHANGES.txt').read()
+LICENSE = open('LICENSE.txt').read()
+
 config = dict(name='oceans',
-              version=__version__,
-              packages=[
-                        'oceans',
-                        'oceans/RPStuff',
-                        'oceans/colormaps',
-                        'oceans/ctd',
-                        'oceans/datasets',
-                        'oceans/ff_tools',
-                        'oceans/mlabwrap',
-                        'oceans/plotting',
-                        'oceans/test'],
+              version=version,
+              packages=['oceans', 'oceans/RPStuff', 'oceans/colormaps',
+                        'oceans/datasets', 'oceans/ff_tools',
+                        'oceans/plotting', 'oceans/test'],
+              test_suite='test',
+              use_2to3=True,
               package_data={'': ['colormaps/cmap_data/*.pkl']},
-              license=open('LICENSE.txt').read(),
-              description='Module for oceanographic data analysis',
-              long_description=open('README.rst').read(),
+              license=LICENSE,
+              long_description='%s\n\n%s' % (README, CHANGES),
+              classifiers=filter(None, classifiers.split("\n")),
+              description='Misc functions for oceanographic data analysis',
               author='Filipe Fernandes',
               author_email='ocefpaf@gmail.com',
               maintainer='Filipe Fernandes',
               maintainer_email='ocefpaf@gmail.com',
               url='http://pypi.python.org/pypi/oceans/',
-              download_url='http://pypi.python.org/packages/source/s/oceans/',
-              classifiers=filter(None, classifiers.split("\n")),
+              download_url='%s/s/oceans/oceans-%s.tar.gz' (source, version),
               platforms='any',
-              cmdclass={'build_py': build_py},
               keywords=['oceanography', 'data analysis'],
-              install_requires=['numpy', 'scipy', 'nose'])
+              install_requires=install_requires)
 
 setup(**config)
