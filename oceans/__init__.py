@@ -12,7 +12,7 @@ __all__ = ['RPStuff',
            'colormaps']
 
 
-import RPStuff
+import RPSstuff
 import datasets
 import ff_tools
 import plotting
