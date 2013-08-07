@@ -19,33 +19,31 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
 
-__all__ = [
-    'TimeSeries',
-    'cov',
-    'rms',
-    'rmsd',
-    'allstats',
-    'lsqfity',
-    'lsqfitx',
-    'lsqfitgm',
-    'lsqfitma',
-    'lsqbisec',
-    'lsqcubic',
-    'lsqfityw',
-    'lsqfityz',
-    'gmregress',
-    'r_earth',
-    'cart2pol',
-    'pol2cart'
-]
+__all__ = ['TimeSeries',
+           'cov',
+           'rms',
+           'rmsd',
+           'allstats',
+           'lsqfity',
+           'lsqfitx',
+           'lsqfitgm',
+           'lsqfitma',
+           'lsqbisec',
+           'lsqcubic',
+           'lsqfityw',
+           'lsqfityz',
+           'gmregress',
+           'r_earth',
+           'cart2pol',
+           'pol2cart']
 
 
 class TimeSeries(object):
-    r"""Time-series object to store data and time information.
+    """Time-series object to store data and time information.
     Contains some handy methods... Still a work in progress.
     """
     def __init__(self, data, time):
-        r"""data : array_like
+        """data : array_like
             Just a data container
         time : datetime object
             The series time information.
@@ -72,7 +70,7 @@ class TimeSeries(object):
         self.time_in_seconds = np.asanyarray(time_in_seconds)
 
     def plot_spectrum(self):
-        r"""Plots a Single-Sided Amplitude Spectrum of y(t)."""
+        """Plots a Single-Sided Amplitude Spectrum of y(t)."""
         n = len(self.data)  # Length of the signal.
         k = np.arange(n)
         T = n / self.fs
@@ -91,7 +89,7 @@ class TimeSeries(object):
 
 
 def cov(x, y):
-    r"""Compute covariance for `x`, `y`
+    """Compute covariance for `x`, `y`
 
     input:  `x`, `y` -> data sets `x` and `y`
     `c` -> covariance of `x` and `y`
@@ -109,7 +107,7 @@ def cov(x, y):
 
 
 def rms(x):
-    r"""Compute root mean square."""
+    """Compute root mean square."""
 
     x = np.asanyarray(x)
     rms = np.sqrt(np.sum(x ** 2) / x.size)
@@ -118,7 +116,7 @@ def rms(x):
 
 
 def rmsd(x, y, normalize=False):
-    r"""Compute root mean square difference (or distance).
+    """Compute root mean square difference (or distance).
 
     The normalized root-mean-square deviation or error (NRMSD or NRMSE) is the
     RMSD divided by the range of observed values.  The value is often expressed
@@ -136,7 +134,7 @@ def rmsd(x, y, normalize=False):
 
 
 def allstats(Cr, Cf):
-    r"""Compute statistics from 2 series.
+    """Compute statistics from 2 series.
 
     statm = allstats(Cr, Cf)
 
@@ -298,7 +296,7 @@ def lsqfity(X, Y):
 
 
 def lsqfitx(X, Y):
-    r"""Calculate a "MODEL-1" least squares fit.
+    """Calculate a "MODEL-1" least squares fit.
 
     The line is fit by MINIMIZING the residuals in X only.
 
@@ -359,7 +357,7 @@ def lsqfitx(X, Y):
 
 
 def lsqfitgm(X, Y):
-    r"""Calculate a "MODEL-2" least squares fit.
+    """Calculate a "MODEL-2" least squares fit.
 
     The SLOPE of the line is determined by calculating the GEOMETRIC MEAN
     of the slopes from the regression of Y-on-X and X-on-Y.
@@ -447,7 +445,7 @@ def lsqfitgm(X, Y):
 
 
 def lsqfitma(X, Y):
-    r"""
+    """
     Calculate a "MODEL-2" least squares fit.
 
     The line is fit by MINIMIZING the NORMAL deviates.
@@ -509,7 +507,7 @@ def lsqfitma(X, Y):
 
 
 def lsqbisec(X, Y):
-    r"""
+    """
     Calculate a "MODEL-2" least squares fit.
 
     The SLOPE of the line is determined by calculating the slope of the line
@@ -596,7 +594,7 @@ def lsqbisec(X, Y):
 
 
 def lsqcubic(X, Y, sX, sY, tl=1e-6):
-    r"""
+    """
     Calculate a MODEL-2 least squares fit from weighted data.
 
     The line is fit by MINIMIZING the weighted residuals in both x & y.
@@ -699,7 +697,7 @@ def lsqcubic(X, Y, sX, sY, tl=1e-6):
 
 
 def lsqfityw(X, Y, sY):
-    r"""
+    """
     Calculate a "MODEL-1" least squares fit to WEIGHTED x,y-data pairs:
 
     The line is fit by MINIMIZING the WEIGHTED residuals in Y only.
@@ -768,7 +766,7 @@ def lsqfityw(X, Y, sY):
 
 
 def lsqfityz(X, Y, sY):
-    r"""
+    """
     Calculate a "MODEL-1" least squares fit to WEIGHTED x,y-data pairs:
     The line is fit by MINIMIZING the WEIGHTED residuals in Y only.
 
@@ -846,7 +844,7 @@ def lsqfityz(X, Y, sY):
 
 
 def gmregress(X, Y, alpha=0.05):
-    r"""
+    """
     GMREGRESS Geometric Mean Regression (Reduced Major Axis Regression).
     Model II regression should be used when the two variables in the
     regression equation are random and subject to error, i.e. not
@@ -946,7 +944,7 @@ def gmregress(X, Y, alpha=0.05):
 
 
 def r_earth(lon=None, lat=None):
-    r"""Radius of the earth as a function of latitude and longitude using the
+    """Radius of the earth as a function of latitude and longitude using the
     WGS-84 earth ellipsoid.
 
     Parameters
@@ -1035,7 +1033,7 @@ def r_earth(lon=None, lat=None):
 
 
 def cart2pol(x, y, units='deg'):
-    r"""Convert from Cartesian to polar coordinates
+    """Convert from Cartesian to polar coordinates
 
     **usage**:
         theta, radius = pol2cart(x, y, units='deg')
@@ -1049,7 +1047,7 @@ def cart2pol(x, y, units='deg'):
 
 
 def pol2cart(theta, radius, units='deg'):
-    r"""Convert from polar to Cartesian coordinates
+    """Convert from polar to Cartesian coordinates
 
     **usage**:
         x, y = pol2cart(theta, radius, units='deg')."""
