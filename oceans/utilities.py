@@ -22,7 +22,7 @@ def basename(fname):
 
 
 class match_args_return(object):
-    r"""Function decorator to homogenize input arguments and to make the output
+    """Function decorator to homogenize input arguments and to make the output
     match the original input with respect to scalar versus array, and masked
     versus ndarray."""
 
