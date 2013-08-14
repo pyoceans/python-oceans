@@ -33,7 +33,7 @@ __all__ = ['woa_subset',
 
 def woa_subset(bbox=[-43, -29.5, -22.5, -17], var='temperature',
                clim_type='monthly', resolution='1deg'):
-    r"""Get World Ocean Atlas variables at a given lon, lat bounding box.
+    """Get World Ocean Atlas variables at a given lon, lat bounding box.
     Choose variable from:
         `dissolved_oxygen`, `salinity`, `temperature`, `oxygen_saturation`,
         `apparent_oxygen_utilization`, `phosphate`, `silicate`, or `nitrate`.
@@ -44,6 +44,7 @@ def woa_subset(bbox=[-43, -29.5, -22.5, -17], var='temperature',
 
     Example
     -------
+    >>> import numpy.ma as ma
     >>> import matplotlib.pyplot as plt
     >>> bbox = [-59, -25, -38, 9]
     >>> dataset = woa_subset(bbox=bbox, var='temperature', clim_type='annual',
@@ -53,7 +54,7 @@ def woa_subset(bbox=[-43, -29.5, -22.5, -17], var='temperature',
     >>> surface_temp = dataset.ix[0]
     >>> fig, ax = plt.subplots()
     >>> cs = ax.pcolormesh(lon, lat, ma.masked_invalid(surface_temp.values))
-    >>> fig.colorbar(cs)
+    >>> _ = fig.colorbar(cs)
     """
 
     uri = "http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA09/NetCDFdata/"
@@ -107,7 +108,7 @@ def woa_subset(bbox=[-43, -29.5, -22.5, -17], var='temperature',
 
 
 def get_indices(min_lat, max_lat, min_lon, max_lon, lons, lats):
-    r"""Return the data indices for a lon, lat square."""
+    """Return the data indices for a lon, lat square."""
 
     distances1, distances2, indices = [], [], []
     index = 1
@@ -148,7 +149,7 @@ def get_indices(min_lat, max_lat, min_lon, max_lon, lons, lats):
 
 def etopo_subset(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
                  urcrnrlat=None, tfile='dap', smoo=False, subsample=False):
-    r"""Get a etopo subset.
+    """Get a etopo subset.
     Should work on any netCDF with x, y, data
     http://www.trondkristiansen.com/wp-content/uploads/downloads/
     2011/07/contourICEMaps.py
@@ -158,7 +159,6 @@ def etopo_subset(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
     >>> import matplotlib.pyplot as plt
     >>> offset = 5
     >>> tfile = '/home/filipe/00-NOBKP/OcFisData/ETOPO1_Bed_g_gmt4.grd'
-    >>> toponame = basename(tfile)[0]
     >>> llcrnrlon, urcrnrlon, llcrnrlat, urcrnrlat = -43, -30, -22, -17
     >>> lons, lats, bathy = etopo_subset(llcrnrlon - offset,
     ...                                  urcrnrlon + offset,
@@ -166,9 +166,9 @@ def etopo_subset(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
     ...                                  urcrnrlat + offset,
     ...                                  smoo=True, tfile=tfile)
     >>> fig, ax = plt.subplots()
-    >>> ax.pcolormesh(lons, lats, bathy)
-    >>> ax.axis([-42, -28, -23, -15])
-    >>> ax.set_title(toponame)
+    >>> cs = ax.pcolormesh(lons, lats, bathy)
+    >>> _ = ax.axis([-42, -28, -23, -15])
+    >>> _ = ax.set_title(tfile)
     >>> plt.show()
     """
 
@@ -195,14 +195,38 @@ def etopo_subset(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
     return lon, lat, bathy
 
 
+def get_depth(lon, lat, tfile='dap'):
+    """Find the depths for each station on the etopo2 database."""
+    lon, lat = map(np.atleast_1d, (lon, lat))
+
+    lons, lats, bathy = etopo_subset(lat.min() - 5, lat.max() + 5,
+                                     lon.min() - 5, lon.max() + 5,
+                                     tfile=tfile, smoo=False)
+
+    return get_profile(lons, lats, bathy, lon, lat, mode='nearest', order=3)
+
+
+def get_isobath(lon, lat, iso=-200., tfile='dap'):
+    """Find isobath."""
+    plt.ioff()
+    topo = get_depth(lon, lat, tfile=tfile)
+
+    fig, ax = plt.subplots()
+    cs = ax.contour(lon, lat, topo, [iso])
+    path = cs.collections[0].get_paths()[0]
+    del(fig, ax, cs)
+    plt.ion()
+    return path.vertices[:, 0], path.vertices[:, 1]
+
+
 def laplace_X(F, M):
-    r"""1D Laplace Filter in X-direction (axis=1)
+    """1D Laplace Filter in X-direction.
     http://www.trondkristiansen.com/wp-content/uploads/downloads/
     2010/09/laplaceFilter.py"""
 
     jmax, imax = F.shape
 
-    # Add strips of land
+    # Add strips of land.
     F2 = np.zeros((jmax, imax + 2), dtype=F.dtype)
     F2[:, 1:-1] = F
     M2 = np.zeros((jmax, imax + 2), dtype=M.dtype)
@@ -215,13 +239,13 @@ def laplace_X(F, M):
 
 
 def laplace_Y(F, M):
-    r"""1D Laplace Filter in Y-direction (axis=1)
+    """1D Laplace Filter in Y-direction.
     http://www.trondkristiansen.com/wp-content/uploads/downloads/
     2010/09/laplaceFilter.py"""
 
     jmax, imax = F.shape
 
-    # Add strips of land
+    # Add strips of land.
     F2 = np.zeros((jmax + 2, imax), dtype=F.dtype)
     F2[1:-1, :] = F
     M2 = np.zeros((jmax + 2, imax), dtype=M.dtype)
@@ -234,8 +258,8 @@ def laplace_Y(F, M):
 
 
 def laplace_filter(F, M=None):
-    r"""Laplace filter a 2D field with mask.  The mask may cause laplace_X and
-    laplace_Y to not commute. Take average of both directions.
+    """Laplace filter a 2D field with mask.  The mask may cause laplace_X and
+    laplace_Y to not commute.  Take average of both directions.
     http://www.trondkristiansen.com/wp-content/uploads/downloads/
     2010/09/laplaceFilter.py"""
 
@@ -246,27 +270,6 @@ def laplace_filter(F, M=None):
                   laplace_Y(laplace_X(F, M), M))
 
 
-def get_depth(lon, lat, tfile='dap'):
-    r"""Find the depths for each station on the etopo2 database."""
-    lon, lat = map(np.atleast_1d, (lon, lat))
-
-    lons, lats, bathy = etopo_subset(lat.min() - 5, lat.max() + 5,
-                                     lon.min() - 5, lon.max() + 5,
-                                     tfile=tfile, smoo=False)
-
-    return get_profile(lons, lats, bathy, lon, lat, mode='nearest', order=3)
-
-
-def get_isobath(lon, lat, iso=-200., tfile='dap'):
-    r"""Find isobath."""
-    plt.ioff()
-    topo = get_depth(lon, lat, tfile=tfile)
-
-    fig, ax = plt.subplots()
-    cs = ax.contour(lon, lat, topo, [iso])
-    path = cs.collections[0].get_paths()[0]
-    del fig
-    del ax
-    del cs
-    plt.ion()
-    return path.vertices[:, 0], path.vertices[:, 1]
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
