@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
 
-"""
-ocean toolbox
-=============
-"""
-
 __all__ = ['RPStuff',
            'datasets',
            'ff_tools',
