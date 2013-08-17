@@ -18,9 +18,11 @@ from __future__ import division
 import numpy as np
 import matplotlib.pyplot as plt
 
-from pandas import Panel
+from pandas import Panel4D, Panel
 from netCDF4 import Dataset, num2date
 from oceans.ff_tools import get_profile
+
+# TODO get_woa profile.
 
 __all__ = ['woa_subset',
            'etopo_subset',
@@ -31,38 +33,104 @@ __all__ = ['woa_subset',
            'get_isobath']
 
 
-def woa_subset(bbox=[-43, -29.5, -22.5, -17], var='temperature',
-               clim_type='monthly', resolution='1deg'):
+def wrap_lon180(lon):
+    lon = np.atleast_1d(lon)
+    angles = np.logical_or((lon < -180), (180 < lon))
+    lon[angles] = wrap_lon360(lon[angles] + 180) - 180
+    return lon
+
+
+def wrap_lon360(lon):
+    lon = np.atleast_1d(lon)
+    positive = lon > 0
+    lon = lon % 360
+    lon[np.logical_and(lon == 0, positive)] = 360
+    return lon
+
+
+def map_limits(m):
+    lons, lats = wrap_lon360(m.boundarylons), m.boundarylats
+    boundary = dict(llcrnrlon=min(lons),
+                    urcrnrlon=max(lons),
+                    llcrnrlat=min(lats),
+                    urcrnrlat=max(lats))
+    return boundary
+
+
+def woa_subset(llcrnrlon=2.5, urcrnrlon=357.5, llcrnrlat=-87.5, urcrnrlat=87.5,
+               var='temperature', clim_type='monthly', resolution='1deg',
+               levels=slice(0, 40)):
     """Get World Ocean Atlas variables at a given lon, lat bounding box.
-    Choose variable from:
+    Choose data `var` from:
         `dissolved_oxygen`, `salinity`, `temperature`, `oxygen_saturation`,
         `apparent_oxygen_utilization`, `phosphate`, `silicate`, or `nitrate`.
-    Choose clim_type averages from:
+    Choose `clim_type` averages from:
         `monthly`, `seasonal`, or `annual`.
-    Choose resolution from:
+    Choose `resolution` from:
         `1deg` or `5deg`
+    Choose `levels` slice:
+        all slice(0, 40, 1) , surface slice(0, 1)
+
+    Returns
+    -------
+    Nested dictionary with with climatology (first level), variables
+    (second level) and the data as a pandas 3D Panel.
 
     Example
     -------
+    Extract a 2D surface -- Annual temperature climatology:
+    >>> import numpy as np
     >>> import numpy.ma as ma
     >>> import matplotlib.pyplot as plt
-    >>> bbox = [-59, -25, -38, 9]
-    >>> dataset = woa_subset(bbox=bbox, var='temperature', clim_type='annual',
-    ...                      resolution='5deg')
-    >>> dataset = dataset['annual']['Statistical Mean']
-    >>> lon, lat = dataset.minor_axis, dataset.major_axis
-    >>> surface_temp = dataset.ix[0]
-    >>> fig, ax = plt.subplots()
-    >>> cs = ax.pcolormesh(lon, lat, ma.masked_invalid(surface_temp.values))
+    >>> from oceans.colormaps import cm
+    >>> from mpl_toolkits.basemap import Basemap
+    >>> fig, ax = plt.subplots(figsize=(12, 6))
+    >>> def make_map(llcrnrlon=2.5, urcrnrlon=360, llcrnrlat=-80, urcrnrlat=80,
+    ...              projection='robin', lon_0=-55, lat_0=-10, resolution='c'):
+    ...    m = Basemap(llcrnrlon=llcrnrlon, urcrnrlon=urcrnrlon,
+    ...                llcrnrlat=llcrnrlat, urcrnrlat=urcrnrlat,
+    ...                projection=projection, resolution=resolution,
+    ...                lon_0=lon_0, ax=ax)
+    ...    m.drawcoastlines()
+    ...    m.fillcontinents(color='0.85')
+    ...    dx, dy = 60, 20
+    ...    meridians = np.arange(llcrnrlon, urcrnrlon + dx, dx)
+    ...    parallels = np.arange(llcrnrlat, urcrnrlat + dy, dy)
+    ...    m.drawparallels(parallels, linewidth=0, labels=[1, 0, 0, 0])
+    ...    m.drawmeridians(meridians, linewidth=0, labels=[0, 0, 0, 1])
+    ...    return m
+    >>> m = make_map()
+    >>> boundary = map_limits(m)
+    >>> dataset = woa_subset(var='temperature', clim_type='annual',
+    ...                      resolution='1deg', levels=slice(0, 1), **boundary)
+    >>> dataset = dataset['OA Climatology']
+    >>> lon, lat = dataset.minor_axis.values, dataset.major_axis.values
+    >>> lon, lat = np.meshgrid(lon,lat)
+    >>> surface_temp = ma.masked_invalid(dataset['annual'].ix[0].values)
+    >>> cs = m.pcolormesh(lon, lat, surface_temp, latlon=True, cmap=cm.avhrr)
     >>> _ = fig.colorbar(cs)
+    Extract a square around (averaged into a profile) the Mariana Trench:
+    >>> dataset = woa_subset(var='temperature', clim_type='monthly',
+    ...                      resolution='1deg', levels=slice(0, 40),
+    ...                      llcrnrlon=-143, urcrnrlon=-141, llcrnrlat=10,
+    ...                      urcrnrlat=12)
+    >>> dataset = dataset['OA Climatology']
+    >>> fig, ax = plt.subplots()
+    >>> z = dataset['Jan'].items.values.astype(float)
+    >>> colors = get_color(12)
+    >>> for month in dataset:
+    ...     profile = dataset[month].mean().mean()
+    ...     ax.plot(profile, z, label=month, color=next(colors))
+    >>> ax.grid(True)
+    >>> ax.invert_yaxis()
+    >>> ax.legend(loc='lower right')
+    >>> plt.show()
     """
 
-    uri = "http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA09/NetCDFdata/"
-    dataset = "%s_%s_%s.nc" % (var, clim_type, resolution)
-
-    nc = Dataset(uri + dataset)
-    latStart, latEnd = bbox[2], bbox[3]
-    lonStart, lonEnd = bbox[0], bbox[1]
+    uri = "http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA09/NetCDFdata"
+    fname = "%s_%s_%s.nc" % (var, clim_type, resolution)
+    url = '%s/%s' % (uri, fname)
+    nc = Dataset(url)
 
     v = dict(temperature='t', dissolved_oxygen='o', salinity='s',
              oxygen_saturation='O', apparent_oxygen_utilization='A',
@@ -77,74 +145,40 @@ def woa_subset(bbox=[-43, -29.5, -22.5, -17], var='temperature',
               '%s_ma' % v[var]: 'Seasonal/Monthly minus Annual Climatology',
               '%s_gp' % v[var]: 'N. of Mean Values within Influence Radius'})
 
-    lon = nc.variables.pop('lon')[:] - 360
+    depths = [0, 10, 20, 30, 50, 75, 100, 125, 150, 200, 250, 300, 400, 500,
+              600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1750,
+              2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000,
+              7500, 8000, 8500, 9000][levels]
+
+    llcrnrlon, urcrnrlon = map(wrap_lon360, (llcrnrlon, urcrnrlon))
+    lon = wrap_lon360(nc.variables.pop('lon')[:])
     lat = nc.variables.pop('lat')[:]
     depth = nc.variables.pop('depth')[:]
-    time = nc.variables.pop('time')
-    time = num2date(time[:], time.units, calendar='365_day')
-    months = [t.strftime('%b') for t in time]
+    times = nc.variables.pop('time')
+    times = num2date(times[:], times.units, calendar='365_day')
+    times = [time.strftime('%b') for time in times]
+
+    if clim_type == 'annual':
+        times = clim_type
 
     # Select data subset.
-    maskx = np.logical_and(lon >= lonStart, lon <= lonEnd)
-    masky = np.logical_and(lat >= latStart, lat <= latEnd)
-    lon, lat = lon[maskx], lat[masky]
+    maskx = np.logical_and(lon >= llcrnrlon, lon <= urcrnrlon)
+    masky = np.logical_and(lat >= llcrnrlat, lat <= urcrnrlat)
+    maskz = np.array([z in depths for z in depth])
+
+    lon, lat, depth = lon[maskx], lat[masky], depth[maskz]
 
     start = '%s_' % v[var]
-    dataset, clim = dict(), dict()
-    for k, month in enumerate(months):
-        for data in nc.variables.keys():
-            if data.startswith(start):
-                subset = nc.variables[data][..., masky, maskx].squeeze()
-                if clim_type == 'annual':
-                    panel = Panel(subset[...], items=depth, major_axis=lat,
-                                  minor_axis=lon)
-                    month = clim_type
-                else:
-                    panel = Panel(subset[k, ...], items=depth, major_axis=lat,
-                                  minor_axis=lon)
-                clim.update({d[data]: panel})
-        dataset.update({month: clim})
-    return dataset
+    variables = dict()
+    for variable in nc.variables.keys():
+        if variable.startswith(start):
+            subset = nc.variables[variable][..., maskz, masky, maskx]
+            data = Panel4D(subset, major_axis=lat, minor_axis=lon,
+                           labels=np.atleast_1d(times),
+                           items=np.atleast_1d(depth))
+            variables.update({d[variable]: data})
+    return variables
 
-
-def get_indices(min_lat, max_lat, min_lon, max_lon, lons, lats):
-    """Return the data indices for a lon, lat square."""
-
-    distances1, distances2, indices = [], [], []
-    index = 1
-    for point in lats:
-        s1 = max_lat - point
-        s2 = min_lat - point
-        distances1.append((np.dot(s1, s1), point, index))
-        distances2.append((np.dot(s2, s2), point, index - 1))
-        index = index + 1
-
-    distances1.sort()
-    distances2.sort()
-    indices.append(distances1[0])
-    indices.append(distances2[0])
-
-    distances1, distances2 = [], []
-    index = 1
-    for point in lons:
-        s1 = max_lon - point
-        s2 = min_lon - point
-        distances1.append((np.dot(s1, s1), point, index))
-        distances2.append((np.dot(s2, s2), point, index - 1))
-        index = index + 1
-
-    distances1.sort()
-    distances2.sort()
-    indices.append(distances1[0])
-    indices.append(distances2[0])
-
-    # max_lat_indices, min_lat_indices, max_lon_indices, min_lon_indices.
-    res = np.zeros((4), dtype=np.float64)
-    res[0] = indices[3][2]
-    res[1] = indices[2][2]
-    res[2] = indices[1][2]
-    res[3] = indices[0][2]
-    return res
 
 
 def etopo_subset(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
@@ -217,6 +251,46 @@ def get_isobath(lon, lat, iso=-200., tfile='dap'):
     del(fig, ax, cs)
     plt.ion()
     return path.vertices[:, 0], path.vertices[:, 1]
+
+
+def get_indices(min_lat, max_lat, min_lon, max_lon, lons, lats):
+    """Return the data indices for a lon, lat square."""
+
+    distances1, distances2, indices = [], [], []
+    index = 1
+    for point in lats:
+        s1 = max_lat - point
+        s2 = min_lat - point
+        distances1.append((np.dot(s1, s1), point, index))
+        distances2.append((np.dot(s2, s2), point, index - 1))
+        index = index + 1
+
+    distances1.sort()
+    distances2.sort()
+    indices.append(distances1[0])
+    indices.append(distances2[0])
+
+    distances1, distances2 = [], []
+    index = 1
+    for point in lons:
+        s1 = max_lon - point
+        s2 = min_lon - point
+        distances1.append((np.dot(s1, s1), point, index))
+        distances2.append((np.dot(s2, s2), point, index - 1))
+        index = index + 1
+
+    distances1.sort()
+    distances2.sort()
+    indices.append(distances1[0])
+    indices.append(distances2[0])
+
+    # max_lat_indices, min_lat_indices, max_lon_indices, min_lon_indices.
+    res = np.zeros((4), dtype=np.float64)
+    res[0] = indices[3][2]
+    res[1] = indices[2][2]
+    res[2] = indices[1][2]
+    res[3] = indices[0][2]
+    return res
 
 
 def laplace_X(F, M):
