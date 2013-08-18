@@ -25,15 +25,29 @@ from dateutil import rrule, parser
 from scipy.ndimage import map_coordinates
 
 
-__all__ = [
-    'alphanum_key',
-    'get_profile',
-    'strip_mask',
-    'gen_dates',
-    'princomp',
-    'shiftdim'
-    ]
+__all__ = ['wrap_lon180',
+           'wrap_lon360'
+           'alphanum_key',
+           'get_profile',
+           'strip_mask',
+           'gen_dates',
+           'princomp',
+           'shiftdim']
 
+
+def wrap_lon180(lon):
+    lon = np.atleast_1d(lon)
+    angles = np.logical_or((lon < -180), (180 < lon))
+    lon[angles] = wrap_lon360(lon[angles] + 180) - 180
+    return lon
+
+
+def wrap_lon360(lon):
+    lon = np.atleast_1d(lon)
+    positive = lon > 0
+    lon = lon % 360
+    lon[np.logical_and(lon == 0, positive)] = 360
+    return lon
 
 def alphanum_key(s):
     key = re.split(r"(\d+)", s)
