@@ -26,7 +26,7 @@ from scipy.ndimage import map_coordinates
 
 
 __all__ = ['wrap_lon180',
-           'wrap_lon360'
+           'wrap_lon360',
            'alphanum_key',
            'get_profile',
            'strip_mask',
