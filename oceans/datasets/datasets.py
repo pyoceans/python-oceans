@@ -24,13 +24,12 @@ from oceans.ff_tools import get_profile, wrap_lon180, wrap_lon360
 
 # TODO get_woa profile.
 
-__all__ = ['woa_subset',
+__all__ = ['map_limits',
+           'woa_subset',
            'etopo_subset',
            'map_limits',
            'get_depth',
            'get_isobath']
-
-
 
 def map_limits(m):
     lons, lats = wrap_lon360(m.boundarylons), m.boundarylats
@@ -39,7 +38,6 @@ def map_limits(m):
                     llcrnrlat=min(lats),
                     urcrnrlat=max(lats))
     return boundary
-
 
 def woa_subset(llcrnrlon=2.5, urcrnrlon=357.5, llcrnrlat=-87.5, urcrnrlat=87.5,
                var='temperature', clim_type='monthly', resolution='1deg',
