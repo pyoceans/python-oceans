@@ -222,10 +222,14 @@ def get_depth(lon, lat, tfile='dap'):
     return get_profile(lons, lats, bathy, lon, lat, mode='nearest', order=3)
 
 
-def get_isobath(lon, lat, iso=-200., tfile='dap'):
-    """Find isobath."""
+def get_isobath(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
+                urcrnrlat=None, iso=-200., tfile='dap'):
+    """Finds an isobath on the etopo2 database and returns
+    its lon,lat coordinates for plotting."""
     plt.ioff()
-    topo = get_depth(lon, lat, tfile=tfile)
+    lon,lat,topo = etopo_subset(llcrnrlon=llcrnrlon, urcrnrlon=urcrnrlon,
+                                llcrnrlat=llcrnrlat, urcrnrlat=urcrnrlat,
+                                tfile=tfile)
 
     fig, ax = plt.subplots()
     cs = ax.contour(lon, lat, topo, [iso])
