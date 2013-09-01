@@ -139,7 +139,7 @@ arrays = dict(zebra=zebra_cm(),
               ctopo_pos_neg=ctopo_pos_neg_cm())
 
 # Data colormaps.
-for fname in glob('cmap_data/*.dat'):
+for fname in glob('%s/*.dat' % cmap_path):
     cmap = os.path.basename(fname).split('.')[0]
     data = load_cmap(fname)
     arrays.update({cmap: data})
