@@ -91,7 +91,7 @@ def get_profile(x, y, f, xi, yi, mode='nearest', order=3):
     Examples
     --------
     >>> import numpy as np
-    >>> import oceans.ff_tools as ff
+    >>> from oceans.ff_tools import get_profile
     >>> x, y = np.meshgrid(range(360), range(91))
     >>> f = np.array(range(91 * 360)).reshape((91, 360))
     >>> Paris = [2.4, 48.9]
@@ -99,7 +99,7 @@ def get_profile(x, y, f, xi, yi, mode='nearest', order=3):
     >>> Greenwich = [0, 51.5]
     >>> xi = Paris[0], Rome[0], Greenwich[0]
     >>> yi = Paris[1], Rome[1], Greenwich[1]
-    >>> ff.get_profile(x, y, f, xi, yi, order=3)
+    >>> get_profile(x, y, f, xi, yi, order=3)
 
     Notes
     -----
