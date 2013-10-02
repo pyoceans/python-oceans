@@ -3,7 +3,7 @@
 
 from setuptools import setup
 
-from ocean import __version__ as version
+from oceans import __version__
 
 source = 'http://pypi.python.org/packages/source'
 install_requires = ['numpy', 'scipy', 'matplotlib', 'pandas', 'gsw']
@@ -27,10 +27,10 @@ CHANGES = open('CHANGES.txt').read()
 LICENSE = open('LICENSE.txt').read()
 
 config = dict(name='oceans',
-              version=version,
+              version=__version__,
               packages=['oceans', 'oceans/RPStuff', 'oceans/colormaps',
                         'oceans/datasets', 'oceans/ff_tools',
-                        'oceans/plotting', 'oceans/test'],
+                        'oceans/plotting', 'oceans/sw_extras', 'oceans/test'],
               test_suite='test',
               use_2to3=True,
               package_data={'': ['colormaps/cmap_data/*.pkl']},
@@ -43,7 +43,7 @@ config = dict(name='oceans',
               maintainer='Filipe Fernandes',
               maintainer_email='ocefpaf@gmail.com',
               url='http://pypi.python.org/pypi/oceans/',
-              download_url='%s/s/oceans/oceans-%s.tar.gz' (source, version),
+              download_url='%s/s/oceans/oceans-%s.tar.gz' (source, __version__),
               platforms='any',
               keywords=['oceanography', 'data analysis'],
               install_requires=install_requires)
