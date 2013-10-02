@@ -4,11 +4,12 @@ __all__ = ['RPStuff',
            'datasets',
            'ff_tools',
            'plotting',
-           'colormaps']
-
+           'colormaps',
+           'sw_extras']
 
 import RPSstuff
 import datasets
 import ff_tools
 import plotting
 import colormaps
+import sw_extras
