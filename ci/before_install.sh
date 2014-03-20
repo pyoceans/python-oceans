@@ -9,16 +9,16 @@ echo "Using SITE_PKG_DIR: $SITE_PKG_DIR"
 rm -f $VIRTUAL_ENV/lib/python$TRAVIS_PYTHON_VERSION/no-global-site-packages.txt
 
 sudo apt-get update -qq
+sudo apt-get install -qq build-essential
+sudo apt-get install -qq build-dep python-scipy
+sudo apt-get install -qq build-dep python-numpy
+sudo apt-get install python-matplotlib
 
-# sudo apt-get install -qq build-dep python-scipy
-# sudo apt-get install -qq build-dep python-numpy
-# sudo apt-get install -qq build-dep python-pandas
-# sudo apt-get install -qq build-essential
-# sudo apt-get install -qq libhdf5-serial-dev hdf5-tools
-# sudo apt-get install -qq libatlas-base-dev liblapack-dev
+sudo apt-get install -qq cython
+sudo apt-get install -qq python-pip
+sudo apt-get install libudunits2-dev libhdf5-serial-dev libnetcdf-dev netcdf-bin
+sudo /usr/bin/pip install netCDF4
 
-sudo apt-get install -qq python-numpy
-sudo apt-get install -qq python-scipy
-
-sudo apt-get install -qq python3-numpy
-sudo apt-get install -qq python3-scipy
+# python 3
+# sudo apt-get install -qq python3-numpy
+# sudo apt-get install -qq python3-scipy
