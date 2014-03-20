@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
-__all__ = ['RPStuff',
+__all__ = ['RPSstuff',
            'datasets',
            'ff_tools',
            'plotting',
            'colormaps',
            'sw_extras']
 
-import RPSstuff
-import datasets
-import ff_tools
-import plotting
-import colormaps
-import sw_extras
+from .RPSstuff import *
+from .datasets import *
+from .ff_tools import *
+from .plotting import *
+from .colormaps import *
+from .sw_extras import *

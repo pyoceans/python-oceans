@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-from plotting import *
+from .plotting import *

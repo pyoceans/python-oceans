@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from sw_extras import *
-from waves import Waves
-from gamma_GP_from_SP_pt import gamma_GP_from_SP_pt
+from .sw_extras import *
+from .waves import Waves
+from .gamma_GP_from_SP_pt import gamma_GP_from_SP_pt

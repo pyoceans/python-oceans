@@ -3,8 +3,9 @@ import numpy as np
 
 from netCDF4 import Dataset
 from scipy.io import loadmat
-from oceans.RPStuff import near
-from oceans.seawater.csiro import dist
+
+from .RPStuff import near
+from .seawater.csiro import dist
 
 
 def ftopo(x, y, topofile='gebco15-40s_30-52w_30seg.nc'):

@@ -145,7 +145,7 @@ for fname in glob('%s/*.dat' % cmap_path):
     arrays.update({cmap: data})
 
 cm = Bunch()
-for key, value in arrays.iteritems():
+for key, value in arrays.items():
     cm.update({key: cmat2cmpl(value)})
     cm.update({'%s_r' % key: cmat2cmpl(value, reverse=True)})
 

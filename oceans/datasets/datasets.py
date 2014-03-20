@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 
 from pandas import Panel4D, Panel
 from netCDF4 import Dataset, num2date
-from oceans.ff_tools import get_profile, wrap_lon180, wrap_lon360
+from ..ff_tools import get_profile, wrap_lon180, wrap_lon360
 
 # TODO get_woa profile.
 
@@ -29,7 +29,8 @@ __all__ = ['map_limits',
            'etopo_subset',
            'map_limits',
            'get_depth',
-           'get_isobath']
+           'get_isobath',
+           'laplace_filter']
 
 def map_limits(m):
     lons, lats = wrap_lon360(m.boundarylons), m.boundarylats
