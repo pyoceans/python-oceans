@@ -9,6 +9,7 @@ from __future__ import division
 
 import numpy as np
 import seawater as sw
+from seawater.eos80 import T68conv
 from seawater.constants import OMEGA, Kelvin, earth_radius
 
 
@@ -68,7 +69,7 @@ def o2sat(s, pt):
     Weiss (1970) Deep Sea Research V17(4): 721-735.
     """
 
-    t = sw.T68conv(pt) + Kelvin
+    t = T68conv(pt) + Kelvin
     # Eqn (4) of Weiss 1970 (the constants are used for units of ml O2/kg).
     a = (-177.7888, 255.5907, 146.4813, -22.2040)
     b = (-0.037362, 0.016504, -0.0020564)
@@ -115,10 +116,10 @@ def sigma_t(s, t, p):
     --------
     Data from Unesco Tech. Paper in Marine Sci. No. 44, p22
 
-    >>> import seawater.csiro as sw
-    >>> import seawater.extras as swe
+    >>> import seawater as sw
+    >>> from oceans import sw_extras as swe
     >>> s = [0, 0, 0, 0, 35, 35, 35, 35]
-    >>> t = sw.T90conv([0, 0, 30, 30, 0, 0, 30, 30])
+    >>> t = T90conv([0, 0, 30, 30, 0, 0, 30, 30])
     >>> p = [0, 10000, 0, 10000, 0, 10000, 0, 10000]
     >>> swe.sigma_t(s, t, p)
     array([ -0.157406  ,  45.33710972,  -4.34886626,  36.03148891,
@@ -169,10 +170,10 @@ def sigmatheta(s, t, p, pr=0):
     --------
     Data from Unesco Tech. Paper in Marine Sci. No. 44, p22
 
-    >>> import seawater.csiro as sw
-    >>> import seawater.extras as swe
+    >>> import seawater as sw
+    >>> from oceans import sw_extras as swe
     >>> s = [0, 0, 0, 0, 35, 35, 35, 35]
-    >>> t = sw.T90conv([0, 0, 30, 30, 0, 0, 30, 30])
+    >>> t = T90conv([0, 0, 30, 30, 0, 0, 30, 30])
     >>> p = [0, 10000, 0, 10000, 0, 10000, 0, 10000]
     >>> swe.sigmatheta(s, t, p)
     array([ -0.157406  ,  -0.20476006,  -4.34886626,  -3.63884068,
@@ -215,7 +216,7 @@ def N(bvfr2):
     Examples
     --------
     >>> import numpy as np
-    >>> import seawater.extras as swe
+    >>> from oceans import sw_extras as swe
     >>> s = np.array([[0, 0, 0], [15, 15, 15], [30, 30, 30],[35,35,35]])
     >>> t = np.repeat(15, s.size).reshape(s.shape)
     >>> p = [[0], [250], [500], [1000]]
@@ -255,7 +256,7 @@ def cph(bvfr2):
     Examples
     --------
     >>> import numpy as np
-    >>> import seawater.extras as swe
+    >>> from oceans import sw_extras as swe
     >>> s = np.array([[0, 0, 0], [15, 15, 15], [30, 30, 30],[35,35,35]])
     >>> t = np.repeat(15, s.size).reshape(s.shape)
     >>> p = [[0], [250], [500], [1000]]
@@ -301,7 +302,7 @@ def shear(z, u, v=0):
 
     Examples
     --------
-    >>> import seawater.extras as swe
+    >>> from oceans import sw_extras as swe
     >>> z = [[0], [250], [500], [1000]]
     >>> u = [[0.5, 0.5, 0.5], [0.15, 0.15, 0.15],
     ...      [0.03, 0.03, .03], [0.,0.,0.]]
@@ -352,8 +353,8 @@ def richnumb(bvfr2, S2):
     --------
     TODO: check the example and add real values
     >>> import numpy as np
-    >>> import seawater.csiro as sw
-    >>> import seawater.extras as swe
+    >>> import seawater as sw
+    >>> from oceans import sw_extras as swe
     >>> s = np.array([[0, 0, 0], [15, 15, 15], [30, 30, 30],[ 35, 35, 35]])
     >>> t = np.repeat(15, s.size).reshape(s.shape)
     >>> p = [[0], [250], [500], [1000]]
@@ -396,7 +397,7 @@ def cor_beta(lat):
 
     Examples
     --------
-    >>> import seawater.extras as swe
+    >>> from oceans import sw_extras as swe
     >>> swe.cor_beta(0)
     2.2891586878041123e-11
 
@@ -430,13 +431,13 @@ def inertial_period(lat):
 
     Examples
     --------
-    >>> import seawater.extras as swe
+    >>> from oceans import sw_extras as swe
     >>> lat = 30.
     >>> swe.inertial_period(lat)/3600
     23.934472399219292
     """
     lat = np.asanyarray(lat)
-    return 2 * np.pi / sw.cor(lat)
+    return 2 * np.pi / sw.f(lat)
 
 
 def strat_period(N):
@@ -458,8 +459,8 @@ def strat_period(N):
     Examples
     --------
     >>> import numpy as np
-    >>> import seawater.csiro as sw
-    >>> import seawater.extras as swe
+    >>> import seawater as sw
+    >>> from oceans import sw_extras as swe
     >>> s = np.array([[0, 0, 0], [15, 15, 15], [30, 30, 30],[35,35,35]])
     >>> t = np.repeat(15, s.size).reshape(s.shape)
     >>> p = [[0], [250], [500], [1000]]
@@ -504,7 +505,7 @@ def visc(s, t, p):
 
     Examples
     --------
-    >>> import seawater.extras as swe
+    >>> from oceans import sw_extras as swe
     >>> swe.visc(40, 40, 1000)
     8.2001924966338036e-07
 
@@ -543,7 +544,7 @@ def tcond(s, t, p):
 
     Examples
     --------
-    >>> import seawater.extras as swe
+    >>> from oceans import sw_extras as swe
     >>> swe.tcond(35, 20, 0)
     0.5972445569999999
 
@@ -602,7 +603,7 @@ def spice(s, t, p):
 
     Examples
     --------
-    >>> import seawater.extras as swe
+    >>> from oceans import sw_extras as swe
     >>> swe.spice(33, 15, 0)
     array(0.5445864137500002)
 
