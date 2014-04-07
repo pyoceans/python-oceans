@@ -8,7 +8,7 @@ virtualenv:
 
 before_install:
   - ci/before_install.sh
-  - pip install --use-mirrors matplotlib pandas gsw netCDF4
+  - pip install --use-mirrors numpy matplotlib pandas netCDF4 gsw
 install:
   - python setup.py install
 
