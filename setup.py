@@ -5,10 +5,23 @@ from __future__ import absolute_import
 
 from setuptools import setup
 
-from oceans import __version__
+import re
+VERSIONFILE="oceans/__init__.py"
+verstrline = open(VERSIONFILE, "rt").read()
+VSRE = r"^__version__ = ['\"]([^'\"]*)['\"]"
+mo = re.search(VSRE, verstrline, re.M)
+if mo:
+    verstr = mo.group(1)
+else:
+    raise RuntimeError("Unable to find version string in %s." % (VERSIONFILE,))
+
 
 source = 'http://pypi.python.org/packages/source'
-install_requires = ['numpy', 'scipy', 'matplotlib', 'pandas', 'gsw']
+install_requires = ['numpy >= 1.8',
+                    'scipy >= 0.13',
+                    'matplotlib >=1.2',
+                    'pandas >= 0.13',
+                    'gsw == 3.0.2']
 
 classifiers = """\
 Development Status :: 2 - Pre-Alpha
@@ -24,12 +37,12 @@ Topic :: Education
 Topic :: Software Development :: Libraries :: Python Modules
 """
 
-README = open('README.md').read()
+README = open('README.txt').read()
 CHANGES = open('CHANGES.txt').read()
 LICENSE = open('LICENSE.txt').read()
 
 config = dict(name='oceans',
-              version=__version__,
+              version=verstr,
               packages=['oceans', 'oceans/RPSstuff', 'oceans/colormaps',
                         'oceans/datasets', 'oceans/ff_tools',
                         'oceans/plotting', 'oceans/sw_extras', 'oceans/tests'],
@@ -45,7 +58,7 @@ config = dict(name='oceans',
               maintainer='Filipe Fernandes',
               maintainer_email='ocefpaf@gmail.com',
               url='http://pypi.python.org/pypi/oceans/',
-              download_url='%s/s/oceans/oceans-%s.tar.gz' % (source, __version__),
+              download_url='%s/s/oceans/oceans-%s.tar.gz' % (source, verstr),
               platforms='any',
               keywords=['oceanography', 'data analysis'],
               install_requires=install_requires)
