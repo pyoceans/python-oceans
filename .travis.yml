@@ -11,7 +11,7 @@ before_install:
 
 install:
   - pip install --use-mirrors numpy
-  - pip install --use-mirrors scipy
+#   - pip install --use-mirrors scipy
   - pip install --use-mirrors matplotlib
   - pip install --use-mirrors netCDF4
   - pip install --use-mirrors gsw
