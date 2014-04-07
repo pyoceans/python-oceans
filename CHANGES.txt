@@ -1,3 +1,5 @@
+0.2.1, 07-Apr-2014 -- Python3 support.
+
 0.2.0, 06-Aug-2013 -- Moved CTDProfile to a separated module.
                       special remarks to:
                           * CTDProfile class (pandas DataFrame for CTDs).
@@ -7,4 +9,5 @@
                       special remarks to:
                           * CTDProfile class (pandas DataFrame for CTDs).
                           * time_series methods to extend pandas Series.
+
 0.0.1, 13-Oct-2011 -- Initial release.
