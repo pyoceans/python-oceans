@@ -1,7 +1,9 @@
 Python Oceans
 =============
 
-|Build| |Downloads|
+| |Build|
+|
+| |Downloads|
 
 colormaps
 ---------
@@ -32,18 +34,6 @@ sandbox
 -------
 
 TODO
-
-.. raw:: html
-
-   <!--
-   pandoc --from markdown README.md \
-          --mathjax \
-          --smart \
-          --normalize \
-          --standalone \
-          --highlight-style=pygments \
-          --to rst --output README.txt
-   -->
 
 .. |Build| image:: https://badge.fury.io/py/oceans.png
    :target: http://badge.fury.io/py/oceans
