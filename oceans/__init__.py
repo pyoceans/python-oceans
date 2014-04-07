@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+__version__ = '0.2.1'
+
 __all__ = ['RPSstuff',
            'datasets',
            'ff_tools',
