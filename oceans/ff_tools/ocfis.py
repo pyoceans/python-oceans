@@ -162,15 +162,16 @@ def uv2spdir(u, v, mag=0, rot=0):
     --------
     >>> import matplotlib.pyplot as plt
     >>> from windrose import WindroseAxes
+    >>> from oceans.ff_tools import uv2spdir
     >>> def new_axes():
-    >>>     fig = plt.figure(figsize=(8, 8), facecolor='w', edgecolor='w')
-    >>>     rect = [0.1, 0.1, 0.8, 0.8]
-    >>>     ax = WindroseAxes(fig, rect, axisbg='w')
-    >>>     fig.add_axes(ax)
-    >>>     return ax
+    ...     fig = plt.figure(figsize=(8, 8), facecolor='w', edgecolor='w')
+    ...     rect = [0.1, 0.1, 0.8, 0.8]
+    ...     ax = WindroseAxes(fig, rect, axisbg='w')
+    ...     fig.add_axes(ax)
+    ...     return ax
     >>> def set_legend(ax):
-    >>>     l = ax.legend(axespad=-0.10)
-    >>>     plt.setp(l.get_texts(), fontsize=8)
+    ...     l = ax.legend(axespad=-0.10)
+    ...     plt.setp(l.get_texts(), fontsize=8)
     >>> u, v = [0., 1., -2., -1., 1.], [3., 1., 0., -1., -1.]
     >>> wd, ws = uv2spdir(u,v)
     >>> ax = new_axes()

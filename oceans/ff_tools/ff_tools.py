@@ -165,7 +165,7 @@ def princomp(A, numpc=None):
     >>> import oceans.ff_tools as ff
     >>> # 2D dataset.
     >>> A = np.array([ [2.4,0.7,2.9,2.2,3.0,2.7,1.6,1.1,1.6,0.9],
-                     [2.5,0.5,2.2,1.9,3.1,2.3,2,1,1.5,1.1] ])
+    ...              [2.5,0.5,2.2,1.9,3.1,2.3,2,1,1.5,1.1] ])
     >>> coeff, score, latent = ff.princomp(A.T)
     >>> fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2)
     >>> # Every eigenvector describe the direction
@@ -202,21 +202,21 @@ def princomp(A, numpc=None):
     >>> full_pc = np.size(A, axis=1)  # numbers of all the principal components
     >>> i, dist = 1, []
     >>> for numpc in range(0, full_pc+20, 20):
-    >>>     coeff, score, latent = ff.princomp(A, numpc)
-    >>>     # Reconstruction.difference in Frobenius norm
-    >>>     Ar = np.dot(coeff, score).T + np.mean(A, axis=0)
-    >>>     dist.append(np.linalg.norm(A - Ar, 'fro'))
-    >>>     # Showing the pics reconstructed with less than 50 PCs
-    >>>     if numpc <= 50:
-    >>>         i += 1
-    >>>         print(i)
-    >>>         ax = plt.subplot(2, 4, i, frame_on=False)
-    >>>         ax.xaxis.set_major_locator(NullLocator())  # remove ticks
-    >>>         ax.yaxis.set_major_locator(NullLocator())
-    >>>         i += 1
-    >>>         plt.imshow(np.flipud(Ar))
-    >>>         plt.title('PCs # ' + str(numpc))
-    >>>         plt.gray()
+    ...     coeff, score, latent = ff.princomp(A, numpc)
+    ...     # Reconstruction.difference in Frobenius norm
+    ...     Ar = np.dot(coeff, score).T + np.mean(A, axis=0)
+    ...     dist.append(np.linalg.norm(A - Ar, 'fro'))
+    ...     # Showing the pics reconstructed with less than 50 PCs
+    ...     if numpc <= 50:
+    ...         i += 1
+    ...         print(i)
+    ...         ax = plt.subplot(2, 4, i, frame_on=False)
+    ...         ax.xaxis.set_major_locator(NullLocator())  # remove ticks
+    ...         ax.yaxis.set_major_locator(NullLocator())
+    ...         i += 1
+    ...         plt.imshow(np.flipud(Ar))
+    ...         plt.title('PCs # ' + str(numpc))
+    ...         plt.gray()
     >>> plt.figure()
     >>> plt.imshow(flipud(A))
     >>> plt.title('numpc FULL')
@@ -232,7 +232,7 @@ def princomp(A, numpc=None):
     >>> perc = np.cumsum(latent) / np.sum(latent)
     >>> dist = dist / np.max(dist)
     >>> plt.plot(range(len(perc)), perc, 'b',
-    >>>          range(0, full_pc + 10, 10), dist, 'r')
+    ...          range(0, full_pc + 10, 10), dist, 'r')
     >>> plt.axis([0, full_pc, 0, 1.1])
     >>> plt.show()
 
