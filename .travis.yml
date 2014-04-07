@@ -8,13 +8,18 @@ virtualenv:
 
 before_install:
   - ci/before_install.sh
-  - pip install --use-mirrors numpy matplotlib pandas netCDF4 gsw
+
 install:
+  - pip install --use-mirrors numpy
+  - pip install --use-mirrors scipy
+  - pip install --use-mirrors matplotlib
+  - pip install --use-mirrors netCDF4
+  - pip install --use-mirrors gsw
   - python setup.py install
 
 script:
-  - cd tests
-#  - nosetests --verbose --nocapture
+  - cd oceans/tests
+  - nosetests --verbose --nocapture
 
 branches:
   only:
