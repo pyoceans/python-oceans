@@ -1,13 +1,12 @@
 include README.txt
 include LICENSE.txt
 include CHANGES.txt
-include docs/
 include oceans/*.py
 include oceans/colormaps/cmap_data/*.dat
 include oceans/colormaps/*.py
 include oceans/datasets/*.py
 include oceans/ff_tools/*.py
-include oceans/plotting/*,py
+include oceans/plotting/*.py
 include oceans/RPSstuff/*.py
 include oceans/sandbox/*.py
 include oceans/sw_extras/*.py
