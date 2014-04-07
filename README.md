@@ -1,3 +1,4 @@
+<!-- pandoc --from markdown_github README.md --to rst --output README.txt -->
 Python Oceans
 =============
 
@@ -28,13 +29,3 @@ TODO
 sandbox
 -------
 TODO
-
-<!--
-pandoc --from markdown README.md \
-       --mathjax \
-       --smart \
-       --normalize \
-       --standalone \
-       --highlight-style=pygments \
-       --to rst --output README.txt
--->
