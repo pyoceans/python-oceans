@@ -12,12 +12,8 @@ sudo apt-get update -qq
 sudo apt-get install -qq build-essential
 sudo apt-get install -qq build-dep python-scipy
 sudo apt-get install -qq build-dep python-numpy
-sudo apt-get install -qq python-matplotlib
+sudo apt-get install -qq build-dep python-matplotlib
 sudo apt-get install -qq build-dep python-pandas
-
-# netCDF4
 sudo apt-get install -qq cython
-sudo apt-get install -qq python-pip
 sudo apt-get install -qq libudunits2-dev libhdf5-serial-dev libnetcdf-dev
 sudo apt-get install -qq netcdf-bin
-sudo /usr/bin/pip install netCDF4
