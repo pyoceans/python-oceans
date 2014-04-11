@@ -8,14 +8,13 @@ python-oceans
 .. |Gittip| image:: http://bottlepy.org/docs/dev/_static/Gittip.png
    :target: https://www.gittip.com/ocefpaf/
 
-
 colormaps
 ~~~~~~~~~
 
 TODO
 
-### datasets
-------------
+datasets
+~~~~~~~~
 
 ff\_tools
 ~~~~~~~~~
