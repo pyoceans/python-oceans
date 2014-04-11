@@ -1,31 +1,23 @@
-<!-- pandoc --from markdown_github README.md --to rst --output README.txt -->
-Python Oceans
-=============
+# python-oceans
 
-[![Build](https://badge.fury.io/py/oceans.png)](http://badge.fury.io/py/oceans)
- [![Build](https://api.travis-ci.org/ocefpaf/python-oceans.png?branch=master)](https://travis-ci.org/ocefpaf/python-oceans)
-[![Downloads](https://pypip.in/d/oceans/badge.png)](https://crate.io/packages/oceans/)
+[![PyPI](https://badge.fury.io/py/oceans.png)](http://badge.fury.io/py/oceans)
+[![Build](https://api.travis-ci.org/ocefpaf/python-oceans.png?branch=master)](https://travis-ci.org/ocefpaf/python-oceans)
+[![Gittip](http://bottlepy.org/docs/dev/_static/Gittip.png)](https://www.gittip.com/ocefpaf/)
 
-colormaps
----------
+### colormaps
 TODO
 
-datasets
+### datasets
 --------
+
+### ff_tools
 TODO
 
-ff_tools
---------
+### plotting
 TODO
 
-plotting
---------
+### RPSstuff
 TODO
 
-RPSstuff
---------
-TODO
-
-sandbox
--------
+### sandbox
 TODO
