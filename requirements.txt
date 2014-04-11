@@ -1,7 +1,0 @@
-numpy
-scipy
-matplotlib
-Shapely
-netCDF4
-pandas
-gsw
