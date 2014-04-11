@@ -18,7 +18,7 @@ else:
 
 source = 'http://pypi.python.org/packages/source'
 install_requires = ['numpy', 'scipy', 'matplotlib',
-                    'Shapely', 'pandas', 'gsw']
+                    'Shapely', 'netCDF4', 'pandas', 'gsw']
 
 classifiers = """\
 Development Status :: 2 - Pre-Alpha
