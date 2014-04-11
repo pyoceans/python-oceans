@@ -16,7 +16,9 @@ before_install:
 install:
   - conda create --yes -n env_name python=$TRAVIS_PYTHON_VERSION pip numpy scipy matplotlib pandas netCDF4 Shapely nose
   - source activate env_name
-  - pip install gsw # Not in anaconda.
+  # Not in anaconda.
+  - pip install gsw
+  - pip install seawater
   - python setup.py install
 script:
   - cd oceans/tests && nosetests --verbose --nocapture
