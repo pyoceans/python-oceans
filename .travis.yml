@@ -14,11 +14,12 @@ before_install:
   - sudo rm -rf /dev/shm
   - sudo ln -s /run/shm /dev/shm
 install:
-  - conda create --yes -n env_name python=$TRAVIS_PYTHON_VERSION pip numpy scipy matplotlib pandas netCDF4 Shapely nose
+  - conda create --yes -n env_name python=$TRAVIS_PYTHON_VERSION pip numpy scipy matplotlib pandas netCDF4 nose
   - source activate env_name
   # Not in anaconda.
   - pip install gsw
   - pip install seawater
+  - pip install Shapely
   - python setup.py install
 script:
   - cd oceans/tests && nosetests --verbose --nocapture
