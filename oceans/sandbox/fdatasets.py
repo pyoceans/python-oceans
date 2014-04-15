@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
+from seawater import dist
 from netCDF4 import Dataset
 from scipy.io import loadmat
 
-from .RPStuff import near
-from .seawater.csiro import dist
+from .RPSstuff import near
 
 
 def ftopo(x, y, topofile='gebco15-40s_30-52w_30seg.nc'):
