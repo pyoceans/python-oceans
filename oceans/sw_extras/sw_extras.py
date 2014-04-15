@@ -116,7 +116,6 @@ def sigma_t(s, t, p):
     --------
     Data from Unesco Tech. Paper in Marine Sci. No. 44, p22
 
-    >>> import seawater as sw
     >>> from oceans import sw_extras as swe
     >>> s = [0, 0, 0, 0, 35, 35, 35, 35]
     >>> t = T90conv([0, 0, 30, 30, 0, 0, 30, 30])
@@ -170,7 +169,6 @@ def sigmatheta(s, t, p, pr=0):
     --------
     Data from Unesco Tech. Paper in Marine Sci. No. 44, p22
 
-    >>> import seawater as sw
     >>> from oceans import sw_extras as swe
     >>> s = [0, 0, 0, 0, 35, 35, 35, 35]
     >>> t = T90conv([0, 0, 30, 30, 0, 0, 30, 30])
@@ -465,7 +463,7 @@ def strat_period(N):
     >>> t = np.repeat(15, s.size).reshape(s.shape)
     >>> p = [[0], [250], [500], [1000]]
     >>> lat = [30,32,35]
-    >>> swe.strat_period( swe.N( sw.bfrq(s, t, p, lat)[0] ) )
+    >>> swe.strat_period(swe.N( sw.bfrq(s, t, p, lat)[0]))
     array([[ 295.68548089,  295.63734267,  295.56208791],
            [ 297.6515901 ,  297.60313502,  297.52738493],
            [ 729.91402019,  729.79520847,  729.60946944]])
