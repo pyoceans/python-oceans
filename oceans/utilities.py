@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # utilities.py
@@ -8,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  22-Jun-2011
-# modified: Tue 26 Jun 2012 04:44:08 PM BRT
+# modified: Sun 04 May 2014 10:50:43 PM BRT
 #
 # obs:
 #

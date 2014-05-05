@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # RPStuff.py
@@ -8,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  22-Jun-2011
-# modified: Wed 05 Jun 2013 02:10:55 PM BRT
+# modified: Sun 04 May 2014 10:50:50 PM BRT
 #
 # obs: This "legacy" package is intended for compatibility only.
 #

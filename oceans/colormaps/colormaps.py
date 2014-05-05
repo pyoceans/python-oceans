@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # colormaps.py
@@ -8,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  11-Oct-2010
-# modified: Fri 16 Aug 2013 11:47:32 PM BRT
+# modified: Sun 04 May 2014 10:50:57 PM BRT
 #
 # obs:
 #
