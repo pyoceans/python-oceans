@@ -542,7 +542,7 @@ def spec_rot(u, v):
 
     Notes
     -----
-    The spectral energy at some frequency can be decomposed into two circulaly
+    The spectral energy at some frequency can be decomposed into two circularly
     polarized constituents, one rotating clockwise and other anti-clockwise.
 
     Examples
@@ -569,10 +569,10 @@ def spec_rot(u, v):
 
     # Rotatory components
     # TODO: Check the division, 4 or 8?
-    cw = (pu + pv - 2 * quv) / 8.
-    ccw = (pu + pv + 2 * quv) / 8.
-
-    return puv, quv, cw, ccw
+    cw = (pu + pv - 2 * quv) / 4.
+    ccw = (pu + pv + 2 * quv) / 4.
+    F = np.arange(0, N) / N
+    return puv, quv, cw, ccw, F
 
 
 def lagcorr(x, y, M=None):
