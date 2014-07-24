@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  16-Mar-2013
-# modified: Wed 02 Oct 2013 01:38:56 PM BRT
+# modified: Thu 24 Jul 2014 05:58:34 PM BRT
 #
 # obs:  http://www.teos-10.org/preteos10_software/gamma_GP.html
 #
@@ -17,7 +17,7 @@ from shapely.geometry import Point, Polygon
 
 
 def inpolygon(xp, yp, x_poly, y_poly):
-    poly = Polygon(zip(x_poly, y_poly))
+    poly = Polygon(list(zip(x_poly, y_poly)))
     return np.array([Point(x, y).intersects(poly) for x, y in zip(xp, yp)],
                     dtype=np.int)
 
@@ -245,7 +245,7 @@ def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
 
     VERSION NUMBER: 1.0 (27th October, 2011)
     """
-    SP, pt, p, lon, lat = map(np.asanyarray, (SP, pt, p, lon, lat))
+    SP, pt, p, lon, lat = list(map(np.asanyarray, (SP, pt, p, lon, lat)))
     SP, pt, p, lon, lat = np.broadcast_arrays(SP, pt, p, lon, lat)
 
     # Normalization of the variables.
@@ -258,7 +258,7 @@ def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
     gamma_Pac = gamma_G_pacific(SP, pt)
     gamma_Ind = gamma_G_indian(SP, pt)
     gamma_SOce = gamma_G_southern_ocean(SP, pt, p)
-    #gamma_Arc = np.zeros_like(SP) * np.NaN
+    # gamma_Arc = np.zeros_like(SP) * np.NaN
 
     # Definition of the Indian part.
     io_lon = np.array([100, 100, 55, 22, 22, 146, 146, 133.9, 126.94, 123.62,
