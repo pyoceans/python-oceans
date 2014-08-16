@@ -887,7 +887,7 @@ def kdpar(z, par, boundary):
     return kd, par_surface
 
 
-def zuml(s, t, p, smooth=none):
+def zmld(s, t, p, smooth=none):
     """
     Parameters
     ----------
@@ -911,16 +911,20 @@ def zuml(s, t, p, smooth=none):
 
     Codes based on : http://mixedlayer.ucsd.edu/
     """
-    sigma_t = sw.dens(s, t) - 1000.
-    depth = sw.dpth(p)
+    sigma_t = sw.dens0(s, t) - 1000.
+    depth = p
     if smooth is not None:
         sigma_t = rolling_mean(sigma_t, smooth, min_periods=1)
 
-    sublayer = depth[(depth>= 5) & (depth <= 10)]
+    sublayer = np.where(depth[(depth>= 5) & (depth <= 10)])[0]
     sigma_x = np.nanmean(sigma_t[sublayer])
-    nan_sigma = sigma_t[sigma_t > sigma_x + 0.02]
+    nan_sigma = np.where(sigma_t > sigma_x + 0.02)[0]
+    sigma_t[nan_sigma] = np.nan
+    der = np.divide(np.diff(sigma_t), np.diff(depth))
+    mld = np.where(der == np.nanmax(der))[0]
+    zmld = depth[mld]
 
-    return zuml, sigma_t
+    return zmld
 
 
 if __name__ == '__main__':
