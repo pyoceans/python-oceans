@@ -927,6 +927,62 @@ def zmld(s, t, p, smooth=none):
     return zmld
 
 
+def zmld_boyer(s, t, p, threshold=0.03):
+    """
+    % The algorithm's parameters:
+    errortol = 1*10^-10; % Error tolerance for fitting a straight line to the mixed layer -- unitless
+    range = 25;          % Maximum separation for searching for clusters of possible MLDs -- dbar
+    deltad = 100;        % Maximum separation of temperature and temperature gradient maxima for identifying
+                        % intrusions at the base of the mixed layer -- dbar
+    tcutoffu = .5;       % Upper temperature cutoff, used to initially classify profiles as winter or summer profiles -- degrees C
+    tcutoffl = -.25;     % Lower temperature cutoff, used to initially classify profiles as winter or summer profiles -- degrees C
+    dcutoff = -.06;      % Density cutoff, used to initially classify profiles as winter or summer profiles -- kg/m^3
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    % Calculate the MLD using a threshold method with de Boyer Montegut et al's
+    % criteria; a density difference of .03 kg/m^3 or a temperature difference
+    % of .2 degrees C.  The measurement closest to 10 dbar is used as the
+    % reference value.  The threshold MLDs are interpolated to exactly match
+    % the threshold criteria.
+
+    % Calculate the index of the reference value
+    m = length(sal);
+    starti = min(find((pres-10).^2==min((pres-10).^2)));
+    pres = pres(starti:m);
+    sal = sal(starti:m);
+    temp = temp(starti:m);
+    starti = 1;
+    m = length(sal);
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Calculate the potential density anomaly, with a reference pressure of 0
+    pden = sw_pden(sal,temp,pres,0)-1000;
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    % Search for the first level that exceeds the potential density threshold
+    mldepthdens_mldindex = m;
+    for j = starti:m
+        if abs(pden(starti)-pden(j))>.03
+            mldepthdens_mldindex = j;
+            break;
+        end
+    end
+
+    % Interpolate to exactly match the potential density threshold
+    clear pdenseg presseg presinterp pdenthreshold
+    presseg = [pres(mldepthdens_mldindex-1) pres(mldepthdens_mldindex)];
+    pdenseg = [pden(starti)-pden(mldepthdens_mldindex-1) pden(starti) - pden(mldepthdens_mldindex)];
+    P = polyfit(presseg,pdenseg,1);
+    presinterp = presseg(1):.5:presseg(2);
+    pdenthreshold = polyval(P,presinterp);
+
+    % The potential density threshold MLD value:
+    mldepthdens_mldindex = presinterp(max(find(abs(pdenthreshold)<.03)));
+    """
+
+
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
