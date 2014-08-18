@@ -8,6 +8,7 @@ Extra seawater functions
 from __future__ import division
 
 import numpy as np
+from pandas import rolling_mean
 import seawater as sw
 from seawater.eos80 import T68conv
 from seawater.constants import OMEGA, Kelvin, earth_radius
@@ -28,7 +29,12 @@ __all__ = ['o2sat',
            'spice',
            'psu2ppt',
            'visc',
-           'soundspeed']
+           'soundspeed',
+           'photic_depth',
+           'cr_depth',
+           'kdpar',
+           'zmld_so',
+           'zmld_boyer']
 
 
 def o2sat(s, pt):
@@ -787,6 +793,216 @@ def soundspeed(S, T, D, equation='mackenzie'):
     else:
         raise TypeError('Unrecognizable equation specified: %s' % equation)
     return ssp
+
+
+def photic_depth(z, par):
+    """
+    Computes photic depth, based on 1% of surface PAR (Photosynthetically
+    Available Radiation).
+
+    Parameters
+    ----------
+    z : array_like
+        depth in meters.
+    par : array_like
+        float values of PAR
+
+    Returns
+    -------
+    photic_depth : array_like
+        Array of depth in which light is available.
+    photic_ix : array_like
+        Index of available `par` data from surface to critical depth
+    """
+    photic_ix = np.where(par >= par[0] / 100.)[0]
+    photic_depth = z[photic_ix]
+
+    return photic_depth, photic_ix
+
+
+def cr_depth(z, par):
+    """
+    Computes Critical depth. Depth where 1% of surface PAR (Photosynthetically
+    Available Radiation).
+
+    Parameters
+    ----------
+    z : array_like
+        depth in meters.
+    par : array_like
+        float values of PAR
+
+    Returns
+    -------
+    crdepth : int
+        Critical depth. Depth where 1% of surface PAR is available.
+    """
+    ix = photic_depth(z, par)[1]
+    crdepth = z[ix][-1]
+
+    return crdepth
+
+
+def kdpar(z, par, boundary):
+    """
+    Compute Kd value, since light extiontion coefficient can be computed
+    from depth and Photossintentecally Available Radiation (PAR).
+    It will compute a linear regression through out following depths from
+    boundary and them will be regressed to the upper depth to boundary
+    limits.
+
+    Parameters
+    ----------
+    z : array_like
+        depth in meters of respective PAR values
+    par : array_like
+        PAR values
+    boundary : np.float
+        First good upper limit of downcast, when PAR data has stabilized
+
+    Return
+    ------
+    kd : float
+        Light extintion coefficient.
+    cr_depth : int
+        Critical depth. Depth where 1% of surface PAR is available.
+    par_surface : float
+        Surface PAR, modeled from first meters data.
+    """
+    # First linear regression. Returns fit parameters to be used on
+    # reconstruction of surface PAR.
+    b = np.int32(boundary)
+    i_b = np.where(z >= b)[0]
+    par_b = par[i_b]
+    z_b = z[i_b]
+    z_light = photic_depth(z_b, par_b)[1]
+    par_z = par_b[z_light]
+    z_z = z_b[z_light]
+    xp = np.polyfit(z_z, np.log(par_z), 1)
+
+    # Linear regression based on surface PAR, obtained from linear fitting.
+    # z = 0
+    # PAR_surface = a(z) + b
+    par_surface = np.exp(xp[1])
+    par = np.r_[par_surface, par]
+    z = np.r_[0, z]
+    z_par = photic_depth(z, par)[1]
+    kd, linear = np.polyfit(z[z_par], np.log(par[z_par]), 1)
+
+    return kd, par_surface
+
+
+def zmld_so(s, t, p, threshold=0.05, smooth=None):
+    """
+    Computes mixed layer depth of Southern Ocean waters.
+
+    Parameters
+    ----------
+    s : array_like
+        salinity [psu (PSS-78)]
+    t : array_like
+        temperature [℃ (ITS-90)]
+    p : array_like
+        pressure [db].
+    smooth : int
+        size of running mean window, to smooth data.
+
+    References
+    ----------
+    Mitchell B. G., Holm-Hansen, O., 1991. Observations of modeling of the
+        Antartic phytoplankton crop in relation to mixing depth. Deep Sea
+        Research, 38(89):981-1007. doi:10.1016/0198-0149(91)90093-U
+    """
+    sigma_t = sw.dens0(s, t) - 1000.
+    depth = p
+    if smooth is not None:
+        sigma_t = rolling_mean(sigma_t, smooth, min_periods=1)
+
+    sublayer = np.where(depth[(depth >= 5) & (depth <= 10)])[0]
+    sigma_x = np.nanmean(sigma_t[sublayer])
+    nan_sigma = np.where(sigma_t > sigma_x + threshold)[0]
+    sigma_t[nan_sigma] = np.nan
+    der = np.divide(np.diff(sigma_t), np.diff(depth))
+    mld = np.where(der == np.nanmax(der))[0]
+    zmld = depth[mld]
+
+    return zmld
+
+
+def zmld_boyer(s, t, p):
+    """
+    Computes mixed layer depth, based on de Boyer Montégut et al., 2004.
+
+    Parameters
+    ----------
+    s : array_like
+        salinity [psu (PSS-78)]
+    t : array_like
+        temperature [℃ (ITS-90)]
+    p : array_like
+        pressure [db].
+
+    Notes
+    -----
+    Based on density with fixed threshold criteria
+    de Boyer Montégut et al., 2004. Mixed layer depth over the global ocean:
+        An examination of profile data and a profile-based climatology.
+        doi:10.1029/2004JC002378
+
+    dataset for test and more explanation can be found at:
+    http://www.ifremer.fr/cerweb/deboyer/mld/Surface_Mixed_Layer_Depth.php
+
+    Codes based on : http://mixedlayer.ucsd.edu/
+
+    """
+    m = len(s)
+    # starti = min(find((pres-10).^2==min((pres-10).^2)));
+    starti = np.min(np.where(((p - 10.)**2 == np.min((p - 10.)**2)))[0])
+    pres = p[starti:m]
+    sal = s[starti:m]
+    temp = t[starti:m]
+    starti = 0
+    m = len(sal)
+    pden = sw.dens0(sal, temp)-1000
+
+    mldepthdens_mldindex = m
+    for i, pp in enumerate(pden):
+        if np.abs(pden[starti] - pp) > .03:
+            mldepthdens_mldindex = i
+            break
+
+    # Interpolate to exactly match the potential density threshold
+    presseg = [pres[mldepthdens_mldindex-1], pres[mldepthdens_mldindex]]
+    pdenseg = [pden[starti] - pden[mldepthdens_mldindex-1], pden[starti]
+               - pden[mldepthdens_mldindex]]
+    P = np.polyfit(presseg, pdenseg, 1)
+    presinterp = np.linspace(presseg[0], presseg[1], 3)
+    pdenthreshold = np.polyval(P, presinterp)
+
+    # The potential density threshold MLD value:
+    ix = np.max(np.where(np.abs(pdenthreshold) < 0.03)[0])
+    mldepthdens_mldindex = presinterp[ix]
+
+    # Search for the first level that exceeds the temperature threshold
+    mldepthptmp_mldindex = m
+    for i, tt in enumerate(temp):
+        if np.abs(temp[starti] - tt) > 0.2:
+            mldepthptmp_mldindex = i
+            break
+
+    # Interpolate to exactly match the temperature threshold
+    presseg = [pres[mldepthptmp_mldindex-1], pres[mldepthptmp_mldindex]]
+    tempseg = [temp[starti] - temp[mldepthptmp_mldindex-1],
+               temp[starti] - temp[mldepthptmp_mldindex]]
+    P = np.polyfit(presseg, tempseg, 1)
+    presinterp = np.linspace(presseg[0], presseg[1], 3)
+    tempthreshold = np.polyval(P, presinterp)
+
+    # The temperature threshold MLD value:
+    ix = np.max(np.where(np.abs(tempthreshold) < 0.2)[0])
+    mldepthptemp_mldindex = presinterp[ix]
+
+    return mldepthdens_mldindex, mldepthptemp_mldindex
 
 
 if __name__ == '__main__':

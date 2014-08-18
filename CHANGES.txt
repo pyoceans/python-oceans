@@ -1,6 +1,12 @@
 Changelog
 ---------
 
+Version 0.2.2, 18-Aug-2014.
+
+* Mixed Layer Depth functions.
+* Critical depth and Light extintion coefficient.
+* Contributor: arnaldorusso@gmail.com | github.com/arnaldorusso
+
 Version 0.2.1, 07-Apr-2014.
 
 * Python3 support.
