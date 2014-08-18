@@ -29,7 +29,12 @@ __all__ = ['o2sat',
            'spice',
            'psu2ppt',
            'visc',
-           'soundspeed']
+           'soundspeed',
+           'photic_depth',
+           'cr_depth',
+           'kdpar',
+           'zmld_so',
+           'zmld_boyer']
 
 
 def o2sat(s, pt):
@@ -887,38 +892,35 @@ def kdpar(z, par, boundary):
     return kd, par_surface
 
 
-def zmld(s, t, p, smooth=none):
+def zmld_so(s, t, p, threshold=0.05, smooth=None):
     """
+    Computes mixed layer depth of Southern Ocean waters.
+
     Parameters
     ----------
-    s(p) : array_like
-           salinity [psu (PSS-78)]
-    t(p) : array_like
-           temperature [℃ (ITS-90)]
+    s : array_like
+        salinity [psu (PSS-78)]
+    t : array_like
+        temperature [℃ (ITS-90)]
     p : array_like
         pressure [db].
     smooth : int
-        size of running mean to smooth data
+        size of running mean window, to smooth data.
 
-    Notes
-    -----
-    Based on density with fixed threshold criteria
-    de Boyer Montégut et al., 2004. Mixed layer depth over the global ocean:
-        An examination of profile data and a profile-based climatology. doi:10.1029/2004JC002378
-
-    dataset for test and more explanation can be found at:
-    http://www.ifremer.fr/cerweb/deboyer/mld/Surface_Mixed_Layer_Depth.php
-
-    Codes based on : http://mixedlayer.ucsd.edu/
+    References
+    ----------
+    Mitchell B. G., Holm-Hansen, O., 1991. Observations of modeling of the
+        Antartic phytoplankton crop in relation to mixing depth. Deep Sea
+        Research, 38(89):981-1007. doi:10.1016/0198-0149(91)90093-U
     """
     sigma_t = sw.dens0(s, t) - 1000.
     depth = p
     if smooth is not None:
         sigma_t = rolling_mean(sigma_t, smooth, min_periods=1)
 
-    sublayer = np.where(depth[(depth>= 5) & (depth <= 10)])[0]
+    sublayer = np.where(depth[(depth >= 5) & (depth <= 10)])[0]
     sigma_x = np.nanmean(sigma_t[sublayer])
-    nan_sigma = np.where(sigma_t > sigma_x + 0.02)[0]
+    nan_sigma = np.where(sigma_t > sigma_x + threshold)[0]
     sigma_t[nan_sigma] = np.nan
     der = np.divide(np.diff(sigma_t), np.diff(depth))
     mld = np.where(der == np.nanmax(der))[0]
@@ -927,60 +929,80 @@ def zmld(s, t, p, smooth=none):
     return zmld
 
 
-def zmld_boyer(s, t, p, threshold=0.03):
+def zmld_boyer(s, t, p):
     """
-    % The algorithm's parameters:
-    errortol = 1*10^-10; % Error tolerance for fitting a straight line to the mixed layer -- unitless
-    range = 25;          % Maximum separation for searching for clusters of possible MLDs -- dbar
-    deltad = 100;        % Maximum separation of temperature and temperature gradient maxima for identifying
-                        % intrusions at the base of the mixed layer -- dbar
-    tcutoffu = .5;       % Upper temperature cutoff, used to initially classify profiles as winter or summer profiles -- degrees C
-    tcutoffl = -.25;     % Lower temperature cutoff, used to initially classify profiles as winter or summer profiles -- degrees C
-    dcutoff = -.06;      % Density cutoff, used to initially classify profiles as winter or summer profiles -- kg/m^3
+    Computes mixed layer depth, based on de Boyer Montégut et al., 2004.
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    Parameters
+    ----------
+    s : array_like
+        salinity [psu (PSS-78)]
+    t : array_like
+        temperature [℃ (ITS-90)]
+    p : array_like
+        pressure [db].
 
-    % Calculate the MLD using a threshold method with de Boyer Montegut et al's
-    % criteria; a density difference of .03 kg/m^3 or a temperature difference
-    % of .2 degrees C.  The measurement closest to 10 dbar is used as the
-    % reference value.  The threshold MLDs are interpolated to exactly match
-    % the threshold criteria.
+    Notes
+    -----
+    Based on density with fixed threshold criteria
+    de Boyer Montégut et al., 2004. Mixed layer depth over the global ocean:
+        An examination of profile data and a profile-based climatology.
+        doi:10.1029/2004JC002378
 
-    % Calculate the index of the reference value
-    m = length(sal);
-    starti = min(find((pres-10).^2==min((pres-10).^2)));
-    pres = pres(starti:m);
-    sal = sal(starti:m);
-    temp = temp(starti:m);
-    starti = 1;
-    m = length(sal);
+    dataset for test and more explanation can be found at:
+    http://www.ifremer.fr/cerweb/deboyer/mld/Surface_Mixed_Layer_Depth.php
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % Calculate the potential density anomaly, with a reference pressure of 0
-    pden = sw_pden(sal,temp,pres,0)-1000;
+    Codes based on : http://mixedlayer.ucsd.edu/
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-    % Search for the first level that exceeds the potential density threshold
-    mldepthdens_mldindex = m;
-    for j = starti:m
-        if abs(pden(starti)-pden(j))>.03
-            mldepthdens_mldindex = j;
-            break;
-        end
-    end
-
-    % Interpolate to exactly match the potential density threshold
-    clear pdenseg presseg presinterp pdenthreshold
-    presseg = [pres(mldepthdens_mldindex-1) pres(mldepthdens_mldindex)];
-    pdenseg = [pden(starti)-pden(mldepthdens_mldindex-1) pden(starti) - pden(mldepthdens_mldindex)];
-    P = polyfit(presseg,pdenseg,1);
-    presinterp = presseg(1):.5:presseg(2);
-    pdenthreshold = polyval(P,presinterp);
-
-    % The potential density threshold MLD value:
-    mldepthdens_mldindex = presinterp(max(find(abs(pdenthreshold)<.03)));
     """
+    m = len(s)
+    # starti = min(find((pres-10).^2==min((pres-10).^2)));
+    starti = np.min(np.where(((p - 10.)**2 == np.min((p - 10.)**2)))[0])
+    pres = p[starti:m]
+    sal = s[starti:m]
+    temp = t[starti:m]
+    starti = 0
+    m = len(sal)
+    pden = sw.dens0(sal, temp)-1000
+
+    mldepthdens_mldindex = m
+    for i, pp in enumerate(pden):
+        if np.abs(pden[starti] - pp) > .03:
+            mldepthdens_mldindex = i
+            break
+
+    # Interpolate to exactly match the potential density threshold
+    presseg = [pres[mldepthdens_mldindex-1], pres[mldepthdens_mldindex]]
+    pdenseg = [pden[starti] - pden[mldepthdens_mldindex-1], pden[starti]
+               - pden[mldepthdens_mldindex]]
+    P = np.polyfit(presseg, pdenseg, 1)
+    presinterp = np.linspace(presseg[0], presseg[1], 3)
+    pdenthreshold = np.polyval(P, presinterp)
+
+    # The potential density threshold MLD value:
+    ix = np.max(np.where(np.abs(pdenthreshold) < 0.03)[0])
+    mldepthdens_mldindex = presinterp[ix]
+
+    # Search for the first level that exceeds the temperature threshold
+    mldepthptmp_mldindex = m
+    for i, tt in enumerate(temp):
+        if np.abs(temp[starti] - tt) > 0.2:
+            mldepthptmp_mldindex = i
+            break
+
+    # Interpolate to exactly match the temperature threshold
+    presseg = [pres[mldepthptmp_mldindex-1], pres[mldepthptmp_mldindex]]
+    tempseg = [temp[starti] - temp[mldepthptmp_mldindex-1],
+               temp[starti] - temp[mldepthptmp_mldindex]]
+    P = np.polyfit(presseg, tempseg, 1)
+    presinterp = np.linspace(presseg[0], presseg[1], 3)
+    tempthreshold = np.polyval(P, presinterp)
+
+    # The temperature threshold MLD value:
+    ix = np.max(np.where(np.abs(tempthreshold) < 0.2)[0])
+    mldepthptemp_mldindex = presinterp[ix]
+
+    return mldepthdens_mldindex, mldepthptemp_mldindex
 
 
 if __name__ == '__main__':
