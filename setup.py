@@ -6,7 +6,7 @@ from __future__ import absolute_import
 from setuptools import setup
 
 import re
-VERSIONFILE="oceans/__init__.py"
+VERSIONFILE = "oceans/__init__.py"
 verstrline = open(VERSIONFILE, "rt").read()
 VSRE = r"^__version__ = ['\"]([^'\"]*)['\"]"
 mo = re.search(VSRE, verstrline, re.M)
@@ -50,8 +50,8 @@ config = dict(name='oceans',
               long_description='%s\n\n%s' % (README, CHANGES),
               classifiers=filter(None, classifiers.split("\n")),
               description='Misc functions for oceanographic data analysis',
-              author='Filipe Fernandes',
-              author_email='ocefpaf@gmail.com',
+              author='Filipe Fernandes, Arnaldo Russo',
+              author_email='ocefpaf@gmail.com, arnaldorusso@gmail.com',
               maintainer='Filipe Fernandes',
               maintainer_email='ocefpaf@gmail.com',
               url='http://pypi.python.org/pypi/oceans/',
