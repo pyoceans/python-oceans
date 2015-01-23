@@ -55,7 +55,6 @@ config = dict(name='oceans',
               maintainer='Filipe Fernandes',
               maintainer_email='ocefpaf@gmail.com',
               url='http://pypi.python.org/pypi/oceans/',
-              download_url='%s/s/oceans/oceans-%s.tar.gz' % (source, verstr),
               platforms='any',
               keywords=['oceanography', 'data analysis'],
               install_requires=install_requires)
