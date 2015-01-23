@@ -30,7 +30,7 @@ __all__ = [
            'rhist',
            'rbox',
            'landmask',
-           'LevelColormap',
+           'level_colormap',
            'get_pointsxy',
            'EditPoints'
           ]
@@ -131,7 +131,7 @@ def rhist(ax, data, **keywords):
 
 
 def rbox(ax, data, **keywords):
-    """Creates a ggplot2 style boxplot, is eqivalent to calling ax.boxplot with
+    """Creates a ggplot2 style boxplot, is equivalent to calling ax.boxplot with
     the following additions:
         Keyword arguments:
         colors -- array-like collection of colors for box fills.
@@ -206,7 +206,7 @@ def landmask(M, color='0.8'):
     plt.pcolor(X, Y, M, shading='flat', cmap=constmap)
 
 
-def LevelColormap(levels, cmap=None):
+def level_colormap(levels, cmap=None):
     r"""Make a colormap based on an increasing sequence of levels.
     http://www.trondkristiansen.com/wp-content/uploads/downloads/
     2011/07/mpl_util.py."""
