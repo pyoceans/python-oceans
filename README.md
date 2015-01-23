@@ -2,8 +2,7 @@
 
 [![PyPI](https://badge.fury.io/py/oceans.png)](http://badge.fury.io/py/oceans)
 [![Build](https://api.travis-ci.org/ocefpaf/python-oceans.png?branch=master)](https://travis-ci.org/ocefpaf/python-oceans)
-[![DOI](https://zenodo.org/badge/5715/ocefpaf/python-oceans.png)](http://dx.doi.org/10.5281/zenodo.14298)
-
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.14289.svg)](http://dx.doi.org/10.5281/zenodo.14289)
 [![Gittip](http://bottlepy.org/docs/dev/_static/Gittip.png)](https://www.gittip.com/ocefpaf/)
 
 ### colormaps
