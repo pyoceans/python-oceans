@@ -1,10 +1,15 @@
 Changelog
 ---------
 
+Version 0.2.3, 23-Jan-2015.
+
+* Unpinned version in setup.py.
+* Several small bugs and typos fixes.
+
 Version 0.2.2, 18-Aug-2014.
 
 * Mixed Layer Depth functions.
-* Critical depth and Light extintion coefficient.
+* Critical depth and Light extinction coefficient.
 * Contributor: arnaldorusso@gmail.com | github.com/arnaldorusso
 
 Version 0.2.1, 07-Apr-2014.
