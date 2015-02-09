@@ -13,10 +13,10 @@
 #
 
 import numpy as np
-from shapely.geometry import Point, Polygon
 
 
 def inpolygon(xp, yp, x_poly, y_poly):
+    from shapely.geometry import Point, Polygon
     poly = Polygon(list(zip(x_poly, y_poly)))
     return np.array([Point(x, y).intersects(poly) for x, y in zip(xp, yp)],
                     dtype=np.int)
