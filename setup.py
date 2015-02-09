@@ -17,8 +17,12 @@ else:
 
 
 source = 'http://pypi.python.org/packages/source'
-install_requires = ['numpy', 'scipy', 'matplotlib', 'Shapely',
-                    'netCDF4', 'pandas', 'gsw', 'seawater']
+
+# Hard library dependencies:
+requires = ['numpy', 'matplotlib', 'gsw', 'seawater']
+# Soft library dependencies:
+recommended = dict(full=["scipy", "Shapely", "netCDF4", "pandas"])
+# pip install 'oceans[full]'
 
 classifiers = """\
 Development Status :: 2 - Pre-Alpha
@@ -57,6 +61,7 @@ config = dict(name='oceans',
               url='http://pypi.python.org/pypi/oceans/',
               platforms='any',
               keywords=['oceanography', 'data analysis'],
-              install_requires=install_requires)
+              install_requires=requires,
+              extras_require=recommended)
 
 setup(**config)
