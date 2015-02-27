@@ -864,15 +864,18 @@ def kdpar(z, par, boundary):
     ------
     kd : float
         Light extintion coefficient.
-    cr_depth : int
-        Critical depth. Depth where 1% of surface PAR is available.
     par_surface : float
         Surface PAR, modeled from first meters data.
+
+    References
+    ----------
+    Smith RC, Baker KS (1978) Optical classification of natural waters.
+        Limnol Ocenogr 23:260-267.
     """
     # First linear regression. Returns fit parameters to be used on
     # reconstruction of surface PAR.
     b = np.int32(boundary)
-    i_b = np.where(z >= b)[0]
+    i_b = np.where(z <= b)[0]
     par_b = par[i_b]
     z_b = z[i_b]
     z_light = photic_depth(z_b, par_b)[1]
@@ -887,7 +890,7 @@ def kdpar(z, par, boundary):
     par = np.r_[par_surface, par]
     z = np.r_[0, z]
     z_par = photic_depth(z, par)[1]
-    kd, linear = np.polyfit(z[z_par], np.log(par[z_par]), 1)
+    kd = (np.log(par[0]) - np.log(par[b])) / z_par[b]
 
     return kd, par_surface
 
