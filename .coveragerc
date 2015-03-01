@@ -1,0 +1,11 @@
+[run]
+branch = True
+source = oceans
+include = */oceans/*
+omit =
+    */setup.py
+
+[report]
+exclude_lines =
+    def __repr__
+    if __name__ == .__main__.:
