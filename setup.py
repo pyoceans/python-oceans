@@ -3,65 +3,84 @@
 
 from __future__ import absolute_import
 
+import os
+import sys
 from setuptools import setup
+from setuptools.command.test import test as TestCommand
 
-import re
-VERSIONFILE = "oceans/__init__.py"
-verstrline = open(VERSIONFILE, "rt").read()
-VSRE = r"^__version__ = ['\"]([^'\"]*)['\"]"
-mo = re.search(VSRE, verstrline, re.M)
-if mo:
-    verstr = mo.group(1)
-else:
-    raise RuntimeError("Unable to find version string in %s." % (VERSIONFILE,))
+rootpath = os.path.abspath(os.path.dirname(__file__))
 
 
-source = 'http://pypi.python.org/packages/source'
+class PyTest(TestCommand):
+    """python setup.py test"""
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        self.test_args = ['--strict', '--verbose', '--tb=long', 'tests']
+        self.test_suite = True
 
-# Hard library dependencies:
-requires = ['numpy', 'matplotlib', 'gsw', 'seawater']
-# Soft library dependencies:
-recommended = dict(full=["scipy", "Shapely", "netCDF4", "pandas"])
-# pip install 'oceans[full]'
+    def run_tests(self):
+        import pytest
+        errno = pytest.main(self.test_args)
+        sys.exit(errno)
 
-classifiers = """\
-Development Status :: 2 - Pre-Alpha
-Environment :: Console
-Intended Audience :: Science/Research
-Intended Audience :: Developers
-Intended Audience :: Education
-License :: OSI Approved :: MIT License
-Operating System :: OS Independent
-Programming Language :: Python
-Topic :: Scientific/Engineering
-Topic :: Education
-Topic :: Software Development :: Libraries :: Python Modules
-"""
 
-README = open('README.txt').read()
-CHANGES = open('CHANGES.txt').read()
-LICENSE = open('LICENSE.txt').read()
+def read(*parts):
+    return open(os.path.join(rootpath, *parts), 'r').read()
+
+
+def extract_version():
+    version = None
+    fname = os.path.join(rootpath, 'gsw', '__init__.py')
+    with open(fname) as f:
+        for line in f:
+            if (line.startswith('__version__')):
+                _, version = line.split('=')
+                version = version.strip()[1:-1]  # Remove quotation characters
+                break
+    return version
+
+email = "ocefpaf@gmail.com"
+maintainer = "Filipe Fernandes"
+authors = [u'André Palóczy', 'Arnaldo Russo', 'Filipe Fernandes']
+
+LICENSE = read('LICENSE.txt')
+long_description = '{}\n{}'.format(read('README.txt'), read('CHANGES.txt'))
+
+# Dependencies.
+hard = ['numpy', 'matplotlib', 'gsw', 'seawater']
+soft = dict(full=["scipy", "Shapely", "netCDF4", "pandas"])
+tests_require = ['pytest', 'pytest-cov']
 
 config = dict(name='oceans',
-              version=verstr,
+              version=extract_version(),
               packages=['oceans', 'oceans/RPSstuff', 'oceans/colormaps',
                         'oceans/datasets', 'oceans/ff_tools',
                         'oceans/plotting', 'oceans/sw_extras', 'oceans/tests'],
-              test_suite='test',
-              use_2to3=True,
               package_data={'': ['colormaps/cmap_data/*.dat']},
+              cmdclass=dict(test=PyTest),
               license=LICENSE,
-              long_description='%s\n\n%s' % (README, CHANGES),
-              classifiers=filter(None, classifiers.split("\n")),
+              long_description=long_description,
+              classifiers=['Development Status :: 4 - Neta',
+                           'Environment :: Console',
+                           'Intended Audience :: Science/Research',
+                           'Intended Audience :: Developers',
+                           'Intended Audience :: Education'
+                           'License :: OSI Approved :: MIT License',
+                           'Operating System :: OS Independent',
+                           'Programming Language :: Python',
+                           'Topic :: Education',
+                           'Topic :: Scientific/Engineering'],
               description='Misc functions for oceanographic data analysis',
-              author=['Filipe Fernandes', 'Arnaldo Russo'],
-              author_email=['ocefpaf@gmail.com', 'arnaldorusso@gmail.com'],
+              author=authors,
+              author_email=email,
               maintainer='Filipe Fernandes',
-              maintainer_email='ocefpaf@gmail.com',
-              url='http://pypi.python.org/pypi/oceans/',
+              maintainer_email=email,
+              url='https://pypi.python.org/pypi/oceans/',
               platforms='any',
               keywords=['oceanography', 'data analysis'],
-              install_requires=requires,
-              extras_require=recommended)
+              extras_require=soft,
+              install_requires=hard,
+              tests_require=tests_require,
+              use_2to3=True)  # FIXME: Remove 2to3.
 
 setup(**config)

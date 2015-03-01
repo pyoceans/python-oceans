@@ -8,7 +8,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Sun 23 Jun 2013 04:30:45 PM BRT
+# modified: Fri 27 Feb 2015 05:45:06 PM BRT
 #
 # obs: Just some basic example function.
 #
@@ -33,9 +33,7 @@ __all__ = ['TimeSeries',
            'lsqfityw',
            'lsqfityz',
            'gmregress',
-           'r_earth',
-           'cart2pol',
-           'pol2cart']
+           'r_earth']
 
 
 class TimeSeries(object):
@@ -180,12 +178,12 @@ def allstats(Cr, Cf):
     """
     Cr, Cf = map(np.asanyarray, (Cr, Cf))
 
-    # Check NaNs
-    #iok = find(isnan(Cr)==0 & isnan(Cf)==0);
-    #if length(iok) ~= length(Cr)
-        #warning('Found NaNs in inputs, removed them to compute statistics');
-        #Cr  = Cr(iok);
-        #Cf  = Cf(iok);
+    # Check NaNs.
+    # iok = find(isnan(Cr)==0 & isnan(Cf)==0);
+    # if length(iok) ~= length(Cr)
+    #    warning('Found NaNs in inputs, removed them to compute statistics');
+    #    Cr  = Cr(iok);
+    #    Cf  = Cf(iok);
 
     N = len(Cr)
 
@@ -420,12 +418,12 @@ def lsqfitgm(X, Y):
     b = ybar - m * xbar
 
     # Calculate more sums.
-    #Sxy = np.sum(X * Y)  # FIXME: Assigned but never used.
+    # Sxy = np.sum(X * Y)  # FIXME: Assigned but never used.
     Sx2 = np.sum(X ** 2)
-    #Sy2 = np.sum(Y ** 2)  # FIXME: Assigned but never used.
+    # Sy2 = np.sum(Y ** 2)  # FIXME: Assigned but never used.
 
     # Calculate re-used expressions.
-    #num = n * Sxy - Sx * Sy  # FIXME: Assigned but never used.
+    # num = n * Sxy - Sx * Sy  # FIXME: Assigned but never used.
     den = n * Sx2 - Sx ** 2
 
     # Calculate r, sm, sb and s2.
@@ -570,12 +568,12 @@ def lsqbisec(X, Y):
     b = ybar - m * xbar
 
     # Calculate more sums.
-    #Sxy = np.sum(X * Y)  # FIXME: Assigned but never used.
+    # Sxy = np.sum(X * Y)  # FIXME: Assigned but never used.
     Sx2 = np.sum(X ** 2)
-    #Sy2 = np.sum(Y ** 2)  # FIXME: Assigned but never used.
+    # Sy2 = np.sum(Y ** 2)  # FIXME: Assigned but never used.
 
     # Calculate re-used expressions.
-    #num = n * Sxy - Sx * Sy  # FIXME: Assigned but never used.
+    # num = n * Sxy - Sx * Sy  # FIXME: Assigned but never used.
     den = n * Sx2 - Sx ** 2
 
     # Calculate r, sm, sb and s2.
@@ -678,7 +676,7 @@ def lsqcubic(X, Y, sX, sY, tl=1e-6):
 
         # Find the root closest to the slope:
         DIF = np.abs(MR - MC)
-        MinDif, Index = DIF.min(), DIF.argmin()
+        Index = DIF.argmin()
 
         ML = MC
         MC = MR[Index]
@@ -732,7 +730,7 @@ def lsqfityw(X, Y, sY):
     X, Y = map(np.asanyarray, (X, Y))
 
     # Determine the size of the vector.
-    #n = len(X)  # FIXME: Assigned but never used.
+    # n = len(X)  # FIXME: Assigned but never used.
 
     # Calculate the weighting factors.
     W = 1 / (sY ** 2)
@@ -828,7 +826,7 @@ def lsqfityz(X, Y, sY):
     U = X - xz
     V = Y - yz
     U2 = U ** 2
-    #V2 = V ** 2  # FIXME: Assigned but never used.
+    # V2 = V ** 2  # FIXME: Assigned but never used.
 
     # Calculate mw, bw, rw, smw, and sbw.
     mz = num / del1
@@ -963,36 +961,22 @@ def r_earth(lon=None, lat=None):
     Examples
     --------
     >>> import numpy as np
-    >>> import oceans.ff_tools as ff
+    >>> from oceans import r_earth
     >>> a, b = 6378137.0, 6356752.314245  # In meters.
-    >>> print('''WGS-84 semi-major and semi-minor axes a = %s and b = %s''' %
-    ...       (a,b))
-    >>> radius = ff.r_earth()
-    >>> print("R3 %s m" % radians)  # Default
-
-    >>> north_r = ff.r_earth(lat=90,lon=0)
-    >>> print("North %s m" % north_r)
+    >>> r_earth()
+    6371000.7900090935
+    >>> north_r = r_earth(lat=90,lon=0)
     >>> assert np.allclose(b, north_r)
-
-    >>> south_r = ff.r_earth(lat=-90, lon=0)
-    >>> print("South %s m" % south_r)
+    >>> south_r = r_earth(lat=-90, lon=0)
     >>> assert np.allclose(b, south_r)
-
-    >>> east_r = ff.r_earth(lat=0,lon=90)
-    >>> print("East %s m" % east_r)
+    >>> east_r = r_earth(lat=0,lon=90)
     >>> assert np.allclose(a, east_r)
-
-    >>> west_r = ff.r_earth(lat=0,lon=-90)
-    >>> print("West %s m " % west_r)
+    >>> west_r = r_earth(lat=0,lon=-90)
     >>> assert np.allclose(a, west_r)
-
-    >>> dateline_r = ff.r_earth(lat=0,lon=180)
-    >>> print("Dateline %s m" % dateline_r)
+    >>> dateline_r = r_earth(lat=0,lon=180)
     >>> assert np.allclose(a, dateline_r)
-
     >>> # Original definition of meter occurs at this latitude (48.276841).
-    >>> original_m = 2.0 * np.pi * ff.r_earth(lat=48.276841, lon=0) / 4.0
-    >>> print("10 million? %s m" % original_m)
+    >>> original_m = 2.0 * np.pi * r_earth(lat=48.276841, lon=0) / 4.0
     >>> assert np.allclose(1e7, original_m)
 
     Notes
@@ -1030,32 +1014,6 @@ def r_earth(lon=None, lat=None):
                      (np.cos(theta) / b) ** 2)
 
     return 1.0 / np.sqrt(inv_r_squared)
-
-
-def cart2pol(x, y, units='deg'):
-    """Convert from Cartesian to polar coordinates
-
-    **usage**:
-        theta, radius = pol2cart(x, y, units='deg')
-
-    units refers to the rad or deg for theta that should be returned."""
-    radius = np.hypot(x, y)
-    theta = np.arctan2(y, x)
-    if units in ['deg', 'degs']:
-        theta = theta * 180 / np.pi
-    return theta, radius
-
-
-def pol2cart(theta, radius, units='deg'):
-    """Convert from polar to Cartesian coordinates
-
-    **usage**:
-        x, y = pol2cart(theta, radius, units='deg')."""
-    if units in ['deg', 'degs']:
-        theta = theta * np.pi / 180.0
-    x = radius * np.cos(theta)
-    y = radius * np.sin(theta)
-    return x, y
 
 if __name__ == '__main__':
     import doctest

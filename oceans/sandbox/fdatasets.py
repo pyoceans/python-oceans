@@ -5,7 +5,7 @@ from seawater import dist
 from netCDF4 import Dataset
 from scipy.io import loadmat
 
-from .RPSstuff import near
+from ..RPSstuff import near
 
 
 def ftopo(x, y, topofile='gebco15-40s_30-52w_30seg.nc'):
@@ -97,7 +97,7 @@ def ftopo(x, y, topofile='gebco15-40s_30-52w_30seg.nc'):
     Yo = A.copy()
     H = A.copy()
     D = A.copy()
-    for I in xrange(x.size):
+    for I in range(x.size):
         ix = near(xx[0, :], x[I])
         iy = near(yy[:, 0], y[I])
         H = np.append(H, h[iy, ix])
@@ -187,7 +187,7 @@ def fwoa(x, y, woafile='woa2009_annual.mat'):
     T = B.copy()
     S = B.copy()
 
-    for I in xrange(x.size):
+    for I in range(x.size):
         ix = near(xx[0, :], x[I])
         iy = near(yy[:, 0], y[I])
         T[:, I] = TT[iy, ix, :]
@@ -293,7 +293,7 @@ def weim(x, N, kind='hann', badflag=-9999, beta=14):
     fbad = x == badflag
     x[fbad] = np.nan
 
-    for i in xrange(lx):
+    for i in range(lx):
         if i <= ln:
             xx = x[:ln + i + 1]
             ww = w[ln - i:]
@@ -414,8 +414,8 @@ def smoo2(A, hei, wid, kind='hann', badflag=-9999, beta=14):
     imax, jmax = A.shape
     As = np.NaN * np.ones((imax, jmax))
 
-    for i in xrange(imax):
-        for j in xrange(jmax):
+    for i in range(imax):
+        for j in range(jmax):
             # Default window parameters.
             wupp = 0
             wlow = hei

@@ -13,10 +13,13 @@
 # to do all this!!!
 #
 
+from __future__ import division
+
 import numpy as np
 
+__all__ = ['scaloa']
 
-# Objective analysis in the same fashion as `scaloa.m`.
+
 def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None, zc=None):
     r"""Scalar objective analysis.  Interpolates t(x, y) into tp(xc, yc)
     Assumes spatial correlation function to be isotropic and Gaussian in the
@@ -39,32 +42,7 @@ def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None, zc=None):
 
     Examples
     --------
-    >>> import matplotlib.pyplot as plt
-    >>> # OA parameters.
-    >>> err = 0.09  # Sampling error.
-    >>> err = err ** 2  # Variance.
-    >>> corrlen = 1.5  # Correlation length scale.
-    >>> # Grid
-    >>> IM, JM, xg, yg = np.loadtxt('grade_abro2_50x50curv.dat', comments='%',
-    ...                              usecols=(0, 1, 8, 9), unpack=True)
-    >>> IM = IM.max()
-    >>> JM = JM.max()
-    >>> xgg = np.reshape(xg, (JM, IM))
-    >>> ygg = np.reshape(yg, (JM, IM))
-    >>> xc = np.reshape(xgg, (JM * IM, 1))
-    >>> yc = np.reshape(ygg, (JM * IM, 1))
-    >>> # Data.
-    >>> x, y = np.loadtxt('grade_ambes.dat', usecols=(0, 1), comments='%',
-    ...                   unpack=True)
-    >>> aotemp, aoer = scaloa(xc, yc, x, y, t=None, corrlen=corrlen, err=err)
-    Computing just the interpolation errors.
-    >>> xgg = np.reshape(xgg, (JM, IM))
-    >>> ygg = np.reshape(ygg, (JM, IM))
-    >>> aoer = np.reshape(aoer, (JM, IM))
-    >>> aoer = np.sqrt(aoer) * 100
-    >>> fig, ax = plt.subplots(figsize=(6, 6))
-    >>> cs = ax.contourf(xgg, ygg, aoer)
-    >>> _ =fig.colorbar(cs)
+    See https://ocefpaf.github.io/python4oceanographers/blog/2014/10/27/OI/
 
     Notes
     -----
@@ -73,11 +51,6 @@ def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None, zc=None):
     first baroclinic Rossby radius for `corrlen` and 0.1 e 0.2 to the sampling
     error.
     """
-
-    # TODO: Enter 2D matrix and output 2D matrix transforming
-    # everything inside the function.
-    #
-    # Create an example with real data.
 
     n = len(x)
     x, y = np.reshape(x, (1, n)), np.reshape(y, (1, n))

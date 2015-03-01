@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  03-Nov-2012
-# modified: Fri 01 Feb 2013 09:40:47 AM BRST
+# modified: Fri 27 Feb 2015 06:20:06 PM BRT
 #
 # obs:
 #
@@ -55,10 +55,10 @@ def savitzky_golay(y, window_size, order, deriv=0):
     >>> y = np.exp( -t**2 ) + np.random.normal(0, 0.05, t.shape)
     >>> ysg = savitzky_golay(y, window_size=31, order=4)
     >>> fig, ax = plt.subplots()
-    >>> ax.plot(t, y, label='Noisy signal')
-    >>> ax.plot(t, np.exp(-t**2), 'k', lw=1.5, label='Original signal')
-    >>> ax.plot(t, ysg, 'r', label='Filtered signal')
-    >>> ax.legend()
+    >>> l0 = ax.plot(t, y, label='Noisy signal')
+    >>> l1 = ax.plot(t, np.exp(-t**2), 'k', lw=1.5, label='Original signal')
+    >>> l2 = ax.plot(t, ysg, 'r', label='Filtered signal')
+    >>> leg = ax.legend()
     >>> plt.show()
 
     References
@@ -114,7 +114,7 @@ def savitzky_golay_piecewise(xvals, data, kernel=11, order=4):
     else:
         # Smooth the first piece.
         firstpart = savitzky_golay(data[0:turnpoint], kernel, order)
-        #recursively smooth the rest
+        # Recursively smooth the rest.
         rest = savitzky_golay_piecewise(xvals[turnpoint:], data[turnpoint:],
                                         kernel, order)
         return np.concatenate((firstpart, rest))
@@ -137,9 +137,9 @@ def sgolay2d(z, window_size, order, derivative=None):
     >>> Zf = sgolay2d(Zn, window_size=29, order=4)
     >>> # Do some plotting.
     >>> fig, (ax0, ax1, ax2) = plt.subplots(ncols=3)
-    >>> ax0.matshow(Z)
-    >>> ax1.matshow(Zn)
-    >>> ax2.matshow(Zf)
+    >>> img0 = ax0.matshow(Z)
+    >>> img1 = ax1.matshow(Zn)
+    >>> img2 = ax2.matshow(Zf)
     """
 
     # Number of terms in the polynomial expression.

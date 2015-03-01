@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Fri 05 Jul 2013 02:26:49 PM BRT
+# modified: Fri 27 Feb 2015 05:37:54 PM BRT
 #
 # obs: some Functions were based on:
 # http://www.trondkristiansen.com/?page_id=1071
@@ -18,11 +18,10 @@ from __future__ import division
 import numpy as np
 import matplotlib.pyplot as plt
 
-from pandas import Panel4D, Panel
+from pandas import Panel4D
 from netCDF4 import Dataset, num2date
-from ..ff_tools import get_profile, wrap_lon180, wrap_lon360
+from ..ff_tools import get_profile, wrap_lon360
 
-# TODO get_woa profile.
 
 __all__ = ['map_limits',
            'woa_subset',
@@ -32,6 +31,7 @@ __all__ = ['map_limits',
            'get_isobath',
            'laplace_filter']
 
+
 def map_limits(m):
     lons, lats = wrap_lon360(m.boundarylons), m.boundarylats
     boundary = dict(llcrnrlon=min(lons),
@@ -39,6 +39,7 @@ def map_limits(m):
                     llcrnrlat=min(lats),
                     urcrnrlat=max(lats))
     return boundary
+
 
 def woa_subset(llcrnrlon=2.5, urcrnrlon=357.5, llcrnrlat=-87.5, urcrnrlat=87.5,
                var='temperature', clim_type='monthly', resolution='1deg',
@@ -61,11 +62,11 @@ def woa_subset(llcrnrlon=2.5, urcrnrlon=357.5, llcrnrlat=-87.5, urcrnrlat=87.5,
 
     Example
     -------
-    Extract a 2D surface -- Annual temperature climatology:
+    >>> # Extract a 2D surface -- Annual temperature climatology:
     >>> import numpy as np
     >>> import numpy.ma as ma
     >>> import matplotlib.pyplot as plt
-    >>> from oceans.colormaps import cm
+    >>> from oceans.colormaps import cm, get_color
     >>> from mpl_toolkits.basemap import Basemap
     >>> fig, ax = plt.subplots(figsize=(12, 6))
     >>> def make_map(llcrnrlon=2.5, urcrnrlon=360, llcrnrlat=-80, urcrnrlat=80,
@@ -92,7 +93,7 @@ def woa_subset(llcrnrlon=2.5, urcrnrlon=357.5, llcrnrlat=-87.5, urcrnrlat=87.5,
     >>> surface_temp = ma.masked_invalid(dataset['annual'].ix[0].values)
     >>> cs = m.pcolormesh(lon, lat, surface_temp, latlon=True, cmap=cm.avhrr)
     >>> _ = fig.colorbar(cs)
-    Extract a square around (averaged into a profile) the Mariana Trench:
+    >>> # Extract a square around (averaged into a profile) the Mariana Trench:
     >>> dataset = woa_subset(var='temperature', clim_type='monthly',
     ...                      resolution='1deg', levels=slice(0, 40),
     ...                      llcrnrlon=-143, urcrnrlon=-141, llcrnrlat=10,
@@ -103,10 +104,10 @@ def woa_subset(llcrnrlon=2.5, urcrnrlon=357.5, llcrnrlat=-87.5, urcrnrlat=87.5,
     >>> colors = get_color(12)
     >>> for month in dataset:
     ...     profile = dataset[month].mean().mean()
-    ...     ax.plot(profile, z, label=month, color=next(colors))
+    ...     _ = ax.plot(profile, z, label=month, color=next(colors))
     >>> ax.grid(True)
     >>> ax.invert_yaxis()
-    >>> ax.legend(loc='lower right')
+    >>> leg = ax.legend(loc='lower right')
     >>> plt.show()
     """
 
@@ -163,7 +164,6 @@ def woa_subset(llcrnrlon=2.5, urcrnrlon=357.5, llcrnrlat=-87.5, urcrnrlat=87.5,
     return variables
 
 
-
 def etopo_subset(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
                  urcrnrlat=None, tfile='dap', smoo=False, subsample=False):
     """Get a etopo subset.
@@ -175,7 +175,8 @@ def etopo_subset(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
     -------
     >>> import matplotlib.pyplot as plt
     >>> offset = 5
-    >>> tfile = '/home/filipe/00-NOBKP/OcFisData/ETOPO1_Bed_g_gmt4.grd'
+    >>> #tfile = './ETOPO1_Bed_g_gmt4.grd'
+    >>> tfile = 'dap'
     >>> llcrnrlon, urcrnrlon, llcrnrlat, urcrnrlat = -43, -30, -22, -17
     >>> lons, lats, bathy = etopo_subset(llcrnrlon - offset,
     ...                                  urcrnrlon + offset,
@@ -208,7 +209,8 @@ def etopo_subset(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
         bathy = laplace_filter(bathy, M=None)
 
     if subsample:
-        lon, lat, bathy = lon[::subsample], lat[::subsample], bathy[::subsample]
+        bathy = bathy[::subsample]
+        lon, lat = lon[::subsample], lat[::subsample]
     return lon, lat, bathy
 
 
@@ -228,9 +230,9 @@ def get_isobath(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
     """Finds an isobath on the etopo2 database and returns
     its lon,lat coordinates for plotting."""
     plt.ioff()
-    lon,lat,topo = etopo_subset(llcrnrlon=llcrnrlon, urcrnrlon=urcrnrlon,
-                                llcrnrlat=llcrnrlat, urcrnrlat=urcrnrlat,
-                                tfile=tfile)
+    lon, lat, topo = etopo_subset(llcrnrlon=llcrnrlon, urcrnrlon=urcrnrlon,
+                                  llcrnrlat=llcrnrlat, urcrnrlat=urcrnrlat,
+                                  tfile=tfile)
 
     fig, ax = plt.subplots()
     cs = ax.contour(lon, lat, topo, [iso])

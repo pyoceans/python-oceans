@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  12-Feb-2012
-# modified: Thu 07 Mar 2013 06:07:30 PM BRT
+# modified: Fri 27 Feb 2015 05:38:16 PM BRT
 #
 # obs:
 #
@@ -21,7 +21,6 @@ import numpy as np
 import numpy.ma as ma
 
 from netCDF4 import num2date
-from dateutil import rrule, parser
 from scipy.ndimage import map_coordinates
 
 
@@ -30,7 +29,6 @@ __all__ = ['wrap_lon180',
            'alphanum_key',
            'get_profile',
            'strip_mask',
-           'gen_dates',
            'princomp',
            'shiftdim']
 
@@ -48,6 +46,7 @@ def wrap_lon360(lon):
     lon = lon % 360
     lon[np.logical_and(lon == 0, positive)] = 360
     return lon
+
 
 def alphanum_key(s):
     key = re.split(r"(\d+)", s)
@@ -100,6 +99,7 @@ def get_profile(x, y, f, xi, yi, mode='nearest', order=3):
     >>> xi = Paris[0], Rome[0], Greenwich[0]
     >>> yi = Paris[1], Rome[1], Greenwich[1]
     >>> get_profile(x, y, f, xi, yi, order=3)
+    array([17606, 15096, 18540])
 
     Notes
     -----
@@ -124,22 +124,6 @@ def get_profile(x, y, f, xi, yi, mode='nearest', order=3):
     coords = np.array([ivals, jvals])
 
     return map_coordinates(f, coords, mode=mode, order=order)
-
-
-def gen_dates(start, end, dt=None):
-    r"""Date range from `start` to `end` at `dt` intervals.
-
-    Examples
-    --------
-    >>> import datetime
-    >>> from dateutil import rrule
-    >>> start = '1980-01-19'
-    >>> end = datetime.datetime.utcnow().strftime("%Y-%m-%d")
-    list(gen_dates(start, end, dt=rrule.YEARLY))
-    """
-    dates = (rrule.rrule(dt, dtstart=parser.parse(start),
-                         until=parser.parse(end)))
-    return dates
 
 
 def princomp(A, numpc=None):
@@ -171,15 +155,15 @@ def princomp(A, numpc=None):
     >>> # Every eigenvector describe the direction
     >>> # of a principal component.
     >>> m = np.mean(A, axis=1)
-    >>> ax1.plot([0, -coeff[0,0] * 2] + m[0], [0, -coeff[0,1] * 2] +
+    >>> l0 = ax1.plot([0, -coeff[0,0] * 2] + m[0], [0, -coeff[0,1] * 2] +
     ...                                                           m[1], '--k')
-    >>> ax1.plot([0, coeff[1,0] * 2] + m[0], [0, coeff[1,1] * 2] +
+    >>> l1 = ax1.plot([0, coeff[1,0] * 2] + m[0], [0, coeff[1,1] * 2] +
     ...                                                           m[1], '--k')
-    >>> ax1.plot(A[0,:], A[1,:], 'ob')  # The data.
-    >>> ax1.axis('equal')
+    >>> _ = ax1.plot(A[0,:], A[1,:], 'ob')  # The data.
+    >>> _ = ax1.axis('equal')
     >>> # New data.
-    >>> ax2.plot(score[0,:], score[1,:], '*g')
-    >>> ax2.axis('equal')
+    >>> _ = ax2.plot(score[0,:], score[1,:], '*g')
+    >>> _ = ax2.axis('equal')
     >>> plt.show()
     >>> # 4D dataset.
     >>> A = np.array([[-1, 1, 2, 2],
@@ -190,50 +174,8 @@ def princomp(A, numpc=None):
     >>> fig, ax = plt.subplots()
     >>> # The following plot show that first two components account for
     >>> # 100% of the variance.
-    >>> ax.stem(range(len(perc)), perc, '--b')
-    >>> ax.axis([-0.3, 4.3, 0, 1.3])
-    >>> plt.show()
-    >>> # Image example:
-    >>> import matplotlib.cbook as cbook
-    >>> from matplotlib.ticker import NullLocator
-    >>> img = cbook.get_sample_data('lena.jpg', asfileobj=False)
-    >>> A = plt.imread(img) # load an image
-    >>> A = np.mean(A, 2)  # to get a 2-D array
-    >>> full_pc = np.size(A, axis=1)  # numbers of all the principal components
-    >>> i, dist = 1, []
-    >>> for numpc in range(0, full_pc+20, 20):
-    ...     coeff, score, latent = ff.princomp(A, numpc)
-    ...     # Reconstruction.difference in Frobenius norm
-    ...     Ar = np.dot(coeff, score).T + np.mean(A, axis=0)
-    ...     dist.append(np.linalg.norm(A - Ar, 'fro'))
-    ...     # Showing the pics reconstructed with less than 50 PCs
-    ...     if numpc <= 50:
-    ...         i += 1
-    ...         print(i)
-    ...         ax = plt.subplot(2, 4, i, frame_on=False)
-    ...         ax.xaxis.set_major_locator(NullLocator())  # remove ticks
-    ...         ax.yaxis.set_major_locator(NullLocator())
-    ...         i += 1
-    ...         plt.imshow(np.flipud(Ar))
-    ...         plt.title('PCs # ' + str(numpc))
-    ...         plt.gray()
-    >>> plt.figure()
-    >>> plt.imshow(flipud(A))
-    >>> plt.title('numpc FULL')
-    >>> plt.gray()
-    >>> plt.show()
-    # At the end of this experiment, we can plot the distance of the
-    # reconstructed images from the original image in Frobenius norm
-    # (red curve) and the cumulative sum of the eigenvalues (blue curve).
-    # Recall that the cumulative sum of the eigenvalues shows the level of
-    # variance accounted by each of the corresponding eigenvectors. On the x
-    # axis there is the number of eigenvalues/eigenvectors used.
-    >>> plt.figure()
-    >>> perc = np.cumsum(latent) / np.sum(latent)
-    >>> dist = dist / np.max(dist)
-    >>> plt.plot(range(len(perc)), perc, 'b',
-    ...          range(0, full_pc + 10, 10), dist, 'r')
-    >>> plt.axis([0, full_pc, 0, 1.1])
+    >>> _ = ax.stem(range(len(perc)), perc, '--b')
+    >>> _ = ax.axis([-0.3, 4.3, 0, 1.3])
     >>> plt.show()
 
     Notes
