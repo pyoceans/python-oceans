@@ -25,170 +25,15 @@ from matplotlib.lines import Line2D
 from matplotlib.artist import Artist
 from matplotlib.pyplot import MultipleLocator, rcParams, Polygon
 
-__all__ = [
-           'rstyle',
-           'rhist',
-           'rbox',
-           'landmask',
+__all__ = ['landmask',
            'level_colormap',
            'get_pointsxy',
            'EditPoints'
           ]
 
 
-def rstyle(ax):
-    """Styles an axes to appear like ggplot2.  Must be called after all plot
-    and axis manipulation operations have been carried out (needs to know final
-    tick spacing).
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> import scipy.stats
-    >>> import matplotlib.pyplot as plt
-    >>> t = np.arange(0.0, 100.0, 0.1)
-    >>> s = np.sin(0.1 * np.pi * t) * np.exp(-t * 0.01)
-    >>> fig, ax = plt.subplots()
-    >>> _ = ax.plot(t, s, label="Original")
-    >>> _ = ax.plot(t, s * 2, label="Doubled")
-    >>> _ = ax.legend()
-    >>> rstyle(ax)
-    >>> plt.show()
-    """
-
-    # Set the style of the major and minor grid lines, filled blocks.
-    ax.grid(True, 'major', color='w', linestyle='-', linewidth=1.4)
-    ax.grid(True, 'minor', color='0.92', linestyle='-', linewidth=0.7)
-    ax.patch.set_facecolor('0.85')
-    ax.set_axisbelow(True)
-
-    # Set minor tick spacing to 1/2 of the major ticks.
-    ax.xaxis.set_minor_locator(MultipleLocator((plt.xticks()[0][1] -
-                                                plt.xticks()[0][0]) / 2.0))
-    ax.yaxis.set_minor_locator(MultipleLocator((plt.yticks()[0][1] -
-                                                plt.yticks()[0][0]) / 2.0))
-
-    # Remove axis border.
-    for child in ax.get_children():
-        if isinstance(child, matplotlib.spines.Spine):
-            child.set_alpha(0)
-
-    # Restyle the tick lines.
-    for line in ax.get_xticklines() + ax.get_yticklines():
-        line.set_markersize(5)
-        line.set_color("gray")
-        line.set_markeredgewidth(1.4)
-
-    # Remove the minor tick lines.
-    for line in (ax.xaxis.get_ticklines(minor=True) +
-                 ax.yaxis.get_ticklines(minor=True)):
-        line.set_markersize(0)
-
-    # Only show bottom left ticks, pointing out of axis.
-    rcParams['xtick.direction'] = 'out'
-    rcParams['ytick.direction'] = 'out'
-    ax.xaxis.set_ticks_position('bottom')
-    ax.yaxis.set_ticks_position('left')
-
-    if ax.legend_:
-        lg = ax.legend_
-        lg.get_frame().set_linewidth(0)
-        lg.get_frame().set_alpha(0.5)
-
-
-def rhist(ax, data, **keywords):
-    """Creates a histogram with default style parameters to look like ggplot2
-    Is equivalent to calling ax.hist and accepts the same keyword parameters.
-    If style parameters are explicitly defined, they will not be overwritten.
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> import scipy.stats
-    >>> import matplotlib.pyplot as plt
-    >>> t = np.arange(0.0, 100.0, 0.1)
-    >>> s = np.sin(0.1 * np.pi * t) * np.exp(-t * 0.01)
-    >>> fig, ax = plt.subplots()
-    >>> data = scipy.stats.norm.rvs(size=1000)
-    >>> _ = rhist(ax, data, label="Histogram")
-    >>> _ = ax.legend()
-    >>> rstyle(ax)
-    >>> plt.show()
-    """
-
-    defaults = {
-                'facecolor': '0.3',
-                'edgecolor': '0.28',
-                'linewidth': '1',
-                'bins': 100
-                }
-
-    for k, v in defaults.items():
-        if k not in keywords:
-            keywords[k] = v
-
-    return ax.hist(data, **keywords)
-
-
-def rbox(ax, data, **keywords):
-    """Creates a ggplot2 style boxplot, is equivalent to calling ax.boxplot with
-    the following additions:
-        Keyword arguments:
-        colors -- array-like collection of colors for box fills.
-        names -- array-like collection of box names which are passed on as tick
-        labels.
-
-    Examples
-    --------
-    >>> import scipy.stats
-    >>> import matplotlib.pyplot as plt
-    >>> fig, ax = plt.subplots()
-    >>> data = [scipy.stats.norm.rvs(size=100), scipy.stats.norm.rvs(size=100),
-    ...         scipy.stats.norm.rvs(size=100)]
-    >>> _ = ax.legend()
-    >>> _ = rbox(ax, data, names=("One", "Two", "Three"),
-    ...          colors=('white', 'cyan'))
-    >>> rstyle(ax)
-    >>> plt.show()
-    """
-
-    hasColors = 'colors' in keywords
-    if hasColors:
-        colors = keywords['colors']
-        keywords.pop('colors')
-
-    if 'names' in keywords:
-        ax.tickNames = plt.setp(ax, xticklabels=keywords['names'])
-        keywords.pop('names')
-
-    bp = ax.boxplot(data, **keywords)
-    plt.setp(bp['boxes'], color='black')
-    plt.setp(bp['whiskers'], color='black', linestyle='solid')
-    plt.setp(bp['fliers'], color='black', alpha=0.9, marker='o',
-               markersize=3)
-    plt.setp(bp['medians'], color='black')
-
-    numBoxes = len(data)
-    for i in range(numBoxes):
-        box = bp['boxes'][i]
-        boxX = []
-        boxY = []
-        for j in range(5):
-            boxX.append(box.get_xdata()[j])
-            boxY.append(box.get_ydata()[j])
-        boxCoords = zip(boxX, boxY)
-
-        if hasColors:
-            boxPolygon = Polygon(boxCoords, facecolor=colors[i % len(colors)])
-        else:
-            boxPolygon = Polygon(boxCoords, facecolor='0.95')
-
-        ax.add_patch(boxPolygon)
-    return bp
-
-
 def landmask(M, color='0.8'):
-    r"""Plot land mask.
+    """Plot land mask.
     http://www.trondkristiansen.com/wp-content/uploads/downloads/
     2011/07/mpl_util.py."""
     # Make a constant colormap, default = grey
@@ -207,7 +52,7 @@ def landmask(M, color='0.8'):
 
 
 def level_colormap(levels, cmap=None):
-    r"""Make a colormap based on an increasing sequence of levels.
+    """Make a colormap based on an increasing sequence of levels.
     http://www.trondkristiansen.com/wp-content/uploads/downloads/
     2011/07/mpl_util.py."""
 
@@ -220,11 +65,11 @@ def level_colormap(levels, cmap=None):
     S = np.arange(nlev, dtype='float') / (nlev - 1)
     A = cmap(S)
 
-    # Normalize the levels to interval [0, 1]
+    # Normalize the levels to interval [0, 1].
     levels = np.array(levels, dtype='float')
     L = (levels - levels[0]) / (levels[-1] - levels[0])
 
-    # Make the colour dictionary
+    # Make the color dictionary.
     R = [(L[i], A[i, 0], A[i, 0]) for i in xrange(nlev)]
     G = [(L[i], A[i, 1], A[i, 1]) for i in xrange(nlev)]
     B = [(L[i], A[i, 2], A[i, 2]) for i in xrange(nlev)]
@@ -235,12 +80,12 @@ def level_colormap(levels, cmap=None):
 
 
 def get_pointsxy(points):
-    r"""Return x, y of the given point object."""
+    """Return x, y of the given point object."""
     return points.get_xdata(), points.get_ydata()
 
 
 class EditPoints(object):
-    r"""Edit points on a graph with the mouse.  Handles only one set of points.
+    """Edit points on a graph with the mouse.  Handles only one set of points.
 
     Key-bindings:
       't' toggle on and off.  (When on, you can move, delete, or add points.)
@@ -260,6 +105,8 @@ class EditPoints(object):
     >>> _ = ax.set_title('Click and drag a point to move it')
     >>> _ = ax.axis([-2, 2, -2, 2])
     >>> plt.show()
+    <BLANKLINE>
+    Drawing...
 
     Based on http://matplotlib.org/examples/event_handling/poly_editor.html
     """
@@ -302,7 +149,7 @@ class EditPoints(object):
             print("\nDrawing...")
 
     def points_changed(self, points):
-        r"""This method is called whenever the points object is called."""
+        """This method is called whenever the points object is called."""
         # Only copy the artist props to the line (except visibility).
         vis = self.line.get_visible()
         Artist.update_from(self.line, points)
@@ -313,7 +160,7 @@ class EditPoints(object):
             print("\nPoints modified.")
 
     def get_ind_under_point(self, event):
-        r"""Get the index of the point under mouse if within epsilon
+        """Get the index of the point under mouse if within epsilon
             tolerance."""
 
         # Display coordinates.
@@ -332,7 +179,7 @@ class EditPoints(object):
         return ind
 
     def button_press_callback(self, event):
-        r"""Whenever a mouse button is pressed."""
+        """Whenever a mouse button is pressed."""
         if not self.showpoint:
             return
         if not event.inaxes:
@@ -349,7 +196,7 @@ class EditPoints(object):
             print("\nGot point: (%s), ind: %s" % (self.pick_pos, self._ind))
 
     def button_release_callback(self, event):
-        r"""Whenever a mouse button is released."""
+        """Whenever a mouse button is released."""
         if not self.showpoint:
             return
         if not event.button:
@@ -359,7 +206,7 @@ class EditPoints(object):
             print("\nButton released.")
 
     def key_press_callback(self, event):
-        r"""Whenever a key is pressed."""
+        """Whenever a key is pressed."""
         if not event.inaxes:
             return
         if event.key == 't':
@@ -398,7 +245,7 @@ class EditPoints(object):
         self.canvas.draw()
 
     def motion_notify_callback(self, event):
-        r"""On mouse movement."""
+        """On mouse movement."""
         if not self.showpoint:
             return
         if not self._ind:
