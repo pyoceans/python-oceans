@@ -108,7 +108,6 @@ def woa_subset(llcrnrlon=2.5, urcrnrlon=357.5, llcrnrlat=-87.5, urcrnrlat=87.5,
     >>> ax.grid(True)
     >>> ax.invert_yaxis()
     >>> leg = ax.legend(loc='lower right')
-    >>> plt.show()
     """
 
     uri = "http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA09/NetCDFdata"
@@ -187,7 +186,6 @@ def etopo_subset(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
     >>> cs = ax.pcolormesh(lons, lats, bathy)
     >>> _ = ax.axis([-42, -28, -23, -15])
     >>> _ = ax.set_title(tfile)
-    >>> plt.show()
     """
 
     if tfile == 'dap':

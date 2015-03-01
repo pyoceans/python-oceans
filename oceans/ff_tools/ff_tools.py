@@ -164,7 +164,6 @@ def princomp(A, numpc=None):
     >>> # New data.
     >>> _ = ax2.plot(score[0,:], score[1,:], '*g')
     >>> _ = ax2.axis('equal')
-    >>> plt.show()
     >>> # 4D dataset.
     >>> A = np.array([[-1, 1, 2, 2],
     ...               [-2, 3, 1, 0],
@@ -176,7 +175,6 @@ def princomp(A, numpc=None):
     >>> # 100% of the variance.
     >>> _ = ax.stem(range(len(perc)), perc, '--b')
     >>> _ = ax.axis([-0.3, 4.3, 0, 1.3])
-    >>> plt.show()
 
     Notes
     -----

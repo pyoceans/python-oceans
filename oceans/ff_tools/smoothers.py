@@ -59,7 +59,6 @@ def savitzky_golay(y, window_size, order, deriv=0):
     >>> l1 = ax.plot(t, np.exp(-t**2), 'k', lw=1.5, label='Original signal')
     >>> l2 = ax.plot(t, ysg, 'r', label='Filtered signal')
     >>> leg = ax.legend()
-    >>> plt.show()
 
     References
     ----------

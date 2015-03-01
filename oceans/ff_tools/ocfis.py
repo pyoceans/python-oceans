@@ -159,7 +159,6 @@ def uv2spdir(u, v, mag=0, rot=0):
     >>> lines = [ax.annotate("", xy=(d, s), xytext=(0, 0), arrowprops=kw)
     ...  for d, s in zip(wd, ws)]
     >>> _ = ax.set_ylim(0, np.max(ws))
-    >>> plt.show()
     """
 
     u, v, mag, rot = map(np.asarray, (u, v, mag, rot))
@@ -261,7 +260,6 @@ def mld(SA, CT, p, criterion='pdvar'):
     >>> MDL, idx = mld(SA, CT, p, criterion='pdvar')
     >>> l5 = ax2.plot(CT[idx], -p[idx], 'ro')
     >>> _ = ax2.set_ylim(-500, 0)
-    >>> plt.show()
 
     References
     ----------
@@ -336,7 +334,6 @@ def pcaben(u, v):
     >>> _ = ax.axis([-3.2, 3.2, -3.2, 3.2])
     >>> mdir, mspd = uv2spdir(u.mean(), v.mean())
     >>> _ = ax.plot([0, u.mean()],[0, v.mean()], 'k-')
-    >>> plt.show()
     >>> flatness = 1 - mirax / mjrax
     >>> if False:
     ...     print('Mean u = {}'.format(u.mean()))
@@ -441,7 +438,6 @@ def smoo1(datain, window_len=11, window='hanning'):
     >>> l.extend(windows)
     >>> leg = ax.legend(l)
     >>> _ = plt.title("Smoothing a noisy signal")
-    >>> plt.show()
 
     TODO: window parameter can be the window itself (i.e. an array)
     instead of a string.
@@ -624,7 +620,7 @@ def plot_spectrum(data, fs):
     frq = k / T  # Two sides frequency range.
     frq = frq[range(n // 2)]  # One side frequency range
 
-    # fft computing and normalization
+    # FFT computing and normalization.
     Y = np.fft.fft(data) / n
     Y = Y[range(n // 2)]
 
@@ -687,7 +683,6 @@ def medfilt1(x, L=3):
     >>> _ = ax.set_ylim([min(y1min, y2min), max(y1max, y2max)])
     >>> ax = plt.subplot(212)
     >>> _ = ax.set_ylim([min(y1min, y2min), max(y1max, y2max)])
-    >>> plt.show()
 
     Notes
     -----
