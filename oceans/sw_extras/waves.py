@@ -37,7 +37,56 @@ class Waves(object):
     Examples
     --------
     >>> from oceans.sw_extras import Waves
-    >>> Waves(h=10, T=5, L=None)
+    >>> wav = Waves(h=10, T=5, L=None)
+    >>> print("ho/Lo = %s" % wav.hoLo)
+    ho/Lo = 0.256195119559
+    >>> print("ho/L  = %s" % wav.hoL)
+    ho/L  = 0.273273564378
+    >>> print("Lo    = %s" % wav.Lo)
+    Lo    = 39.0327497933
+    >>> print("L     = %s" % wav.L)
+    L     = 36.5933676122
+    >>> print("k     = %s" % wav.k)
+    k     = 0.171702844454
+    >>> print("omega = %s" % wav.omega)
+    omega = 1.25663706144
+    >>> print("T     = %s" % wav.T)
+    T     = 5.0
+    >>> print("C     = %s" % wav.C)
+    C     = 7.31867352244
+    >>> print("Cg    = %s" % wav.Cg)
+    Cg    = 4.47085819307
+    >>> print("G     = %s" % wav.G)
+    G     = 0.22176735425
+    >>> wav = Waves(h=10, T=None, L=100)
+    >>> print("ho/Lo = %s" % wav.hoLo)
+    ho/Lo = 0.05568933069
+    >>> print("ho/L  = %s" % wav.hoL)
+    ho/L  = 0.1
+    >>> print("Lo    = %s" % wav.Lo)
+    Lo    = 179.56760974
+    >>> print("L     = %s" % wav.L)
+    L     = 100.0
+    >>> print("k     = %s" % wav.k)
+    k     = 0.0628318530718
+    >>> print("omega = %s" % wav.omega)
+    omega = 0.585882379881
+    >>> print("T     = %s" % wav.T)
+    T     = 10.7243117782
+    >>> print("C     = %s" % wav.C)
+    C     = 9.32460768286
+    >>> print("Cg    = %s" % wav.Cg)
+    Cg    = 8.29120888868
+    >>> print("G     = %s" % wav.G)
+    G     = 0.778350182802
+    >>> # print("  = %s" % wav.Ks)
+    >>> # print("  = %s" % wav.Kr)
+    >>> # print("  = %s" % wav.theta)
+    >>> # print("  = %s" % wav.H)
+    >>> # print("  = %s" % wav.Ks)
+    >>> # print("  = %s" % wav.Kr)
+    >>> # print("  = %s" % wav.theta)
+    >>> # print("  = %s" % wav.H)
 
     References
     ----------
@@ -121,33 +170,5 @@ class Waves(object):
             self.H = self.Ho * self.Ks * self.Kr
 
 if __name__ == '__main__':
-    wav = Waves(h=10, T=5, L=None)
-    print("ho/Lo = %s" % wav.hoLo)
-    print("ho/L  = %s" % wav.hoL)
-    print("Lo    = %s" % wav.Lo)
-    print("L     = %s" % wav.L)
-    print("k     = %s" % wav.k)
-    print("omega = %s" % wav.omega)
-    print("T     = %s" % wav.T)
-    print("C     = %s" % wav.C)
-    print("Cg    = %s" % wav.Cg)
-    print("G     = %s" % wav.G)
-    # print("  = %s" % wav.Ks)
-    # print("  = %s" % wav.Kr)
-    # print("  = %s" % wav.theta)
-    # print("  = %s" % wav.H)
-    wav = Waves(h=10, T=None, L=100)
-    print("ho/Lo = %s" % wav.hoLo)
-    print("ho/L  = %s" % wav.hoL)
-    print("Lo    = %s" % wav.Lo)
-    print("L     = %s" % wav.L)
-    print("k     = %s" % wav.k)
-    print("omega = %s" % wav.omega)
-    print("T     = %s" % wav.T)
-    print("C     = %s" % wav.C)
-    print("Cg    = %s" % wav.Cg)
-    print("G     = %s" % wav.G)
-    # print("  = %s" % wav.Ks)
-    # print("  = %s" % wav.Kr)
-    # print("  = %s" % wav.theta)
-    # print("  = %s" % wav.H)
+    import doctest
+    doctest.testmod()

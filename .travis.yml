@@ -1,25 +1,38 @@
 language: python
-python:
-  - "2.7"
-  - "3.3"
-# Setup Anaconda.
+
+env:
+    - CONDA="python=2.7"
+    - CONDA="python=3.4"
+
 before_install:
-  - wget http://repo.continuum.io/miniconda/Miniconda-2.2.2-Linux-x86_64.sh -O miniconda.sh
-  - chmod +x miniconda.sh
-  - ./miniconda.sh -b
-  - export PATH=/home/travis/anaconda/bin:$PATH
-  # Update conda itself.
-  - conda update --yes conda
-  # The next couple lines fix a crash with multiprocessing on Travis and are not specific to using Miniconda.
-  - sudo rm -rf /dev/shm
-  - sudo ln -s /run/shm /dev/shm
+    - URL=http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh
+    - wget $URL -O miniconda.sh
+    - bash miniconda.sh -b -p $HOME/miniconda
+    - export PATH="$HOME/miniconda/bin:$PATH"
+    - hash -r
+    - conda config --set always_yes yes
+    - conda update conda
+    - conda info -a
+    - travis_retry conda create -n test $CONDA numpy matplotlib, scipy, Shapely, netCDF4, pandas
+    - source activate test
+    - travis_retry pip install gsw
+    - travis_retry pip install seawater
+    - travis_retry pip install pytest
+    - travis_retry pip install coveralls
+    - travis_retry pip install pytest-cov
+    # GUI
+    - "export DISPLAY=:99.0"
+    - "sh -e /etc/init.d/xvfb start"
 install:
-  - conda create --yes -n env_name python=$TRAVIS_PYTHON_VERSION pip numpy scipy matplotlib pandas netCDF4 nose
-  - source activate env_name
-  # Not in anaconda.
-  - pip install gsw
-  - pip install Shapely
-  - pip install seawater
-  - python setup.py install
+    - export PYTHONWARNINGS=all
+    #- python setup.py install
+
 script:
-  - cd oceans/tests && nosetests --verbose --nocapture
+    - if [[ $CONDA == python=2.7* ]]; then
+        py.test ;
+      else
+        py.test ;
+      fi
+
+after_success:
+    - coveralls

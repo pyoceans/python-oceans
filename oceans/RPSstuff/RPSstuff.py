@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  22-Jun-2011
-# modified: Sun 04 May 2014 10:50:50 PM BRT
+# modified: Fri 27 Feb 2015 05:36:39 PM BRT
 #
 # obs: This "legacy" package is intended for compatibility only.
 #
@@ -29,7 +29,7 @@ __all__ = ['h2hms',
            'gregorian',
            's2hms',
            'ss2',
-           #FIXME: STOPPED HERE
+           # FIXME: STOPPED HERE
            'near',
            'angled',
            'coast2bln',
@@ -98,13 +98,13 @@ def julian(y, m=0, d=0, h=0, mi=0, s=0, noon=False):
     USAGE: [j]=julian(y,m,d,h)
 
     DESCRIPTION:  Converts Gregorian dates to decimal Julian days using the
-                  astronomical convension, but with time zero starting at
+                  astronomical conversion, but with time zero starting at
                   midnight instead of noon.  In this convention, Julian day
                   2440000 begins at 0000 hours, May 23, 1968. The decimal
-                  Julian day, with double precision, yeilds an accuracy of
+                  Julian day, with double precision, yields an accuracy of
                   decimal days of about 0.1 milliseconds.
 
-    If you want julian days to start and end at noon set `noon` to True.
+    If you want Julian days to start and end at noon set `noon` to True.
 
     INPUT:
         y =  year (e.g., 1979) component
@@ -123,8 +123,8 @@ def julian(y, m=0, d=0, h=0, mi=0, s=0, noon=False):
 
     Example
     -------
-    >>>> julian(1968, 5, 23, 0)
-    2440000
+    >>> julian(1968, 5, 23, 0)
+    array([ 2440000.])
     """
     y, m, d, h, mi, s = map(np.atleast_1d, (y, m, d, h, mi, s))
     h = hms2h(h, mi, s)
@@ -153,7 +153,7 @@ def jdrps2jdmat(jd):
 
     Example
     -------
-    >>>> jdrps2jdmat(2440000)
+    >>> jdrps2jdmat(2440000)
     array([ 718941.])
     """
     return jd - julian(0000, 1, 1, 0, 0, 0) + 1
@@ -258,7 +258,7 @@ def s2hms(secs):
     return hr, mi, sc
 
 
-#FIXME: STOPPED HERE
+# FIXME: STOPPED HERE
 def ss2(jd):
     """Return Gregorian start and stop dates of Julian day variable
     Usage:  start, stop =ss2(jd)"""
@@ -270,7 +270,7 @@ def ss2(jd):
 
 
 def angled(h):
-    r"""
+    """
     ANGLED: Returns the phase angles in degrees of a matrix with complex
             elements.
 
@@ -313,7 +313,7 @@ def rms(u):
 
 
 def z0toCn(z0, H):
-    r"""
+    """
     Convert roughness height z0 to Chezy "C" and Manning's "n" which is a
     function of the water depth
 
@@ -354,71 +354,51 @@ def short_calc(amin, amax):
 
 
 def gsum(x, **kw):
-    r"""Just like sum, except that it skips over bad points."""
+    """Just like sum, except that it skips over bad points."""
     xnew = ma.masked_invalid(x)
     return np.sum(xnew, **kw)
 
 
 def gmean(x, **kw):
-    r"""Just like mean, except that it skips over bad points."""
+    """Just like mean, except that it skips over bad points."""
     xnew = ma.masked_invalid(x)
     return np.mean(xnew, **kw)
 
 
 def gmedian(x, **kw):
-    r"""Just like median, except that it skips over bad points."""
+    """Just like median, except that it skips over bad points."""
     xnew = ma.masked_invalid(x)
     return np.median(xnew, **kw)
 
 
 def gmin(x, **kw):
-    r"""Just like min, except that it skips over bad points."""
+    """Just like min, except that it skips over bad points."""
     xnew = ma.masked_invalid(x)
     return np.min(xnew, **kw)
 
 
 def gmax(x, **kw):
-    r"""Just like max, except that it skips over bad points."""
+    """Just like max, except that it skips over bad points."""
     xnew = ma.masked_invalid(x)
     return np.max(xnew, **kw)
 
 
 def gstd(x, **kw):
-    r"""Just like std, except that it skips over bad points."""
+    """Just like std, except that it skips over bad points."""
     xnew = ma.masked_invalid(x)
     return np.std(xnew, **kw)
 
 
 def near(x, x0, n=1):
-    r"""Given an 1D array `x` and a scalar `x0`, returns the `n` indices of the
+    """Given an 1D array `x` and a scalar `x0`, returns the `n` indices of the
     element of `x` closest to `x0`."""
     distance = np.abs(x - x0)
     index = np.argsort(distance)
     return index[:n], distance[index[:n]]
 
-#def nearxy(x, y, x0, y0, dist=None):
-    #r"""Finds the indices of (x,y) that are closest to the point (x0,y0).
-
-    #Finds the closest point and the distance:
-        #index, distance = nearxy(x, y, x0, y0)
-
-    #Finds all points closer than the value of dist:
-        #index, distance = nearxy(x, y, x0, y0, dist)
-    #"""
-
-    #distance = np.sqrt((x - x0) ** 2 + (y - y0) ** 2)
-    #if not dist:
-        #index = np.where(distance <= dist)  # Finds points closer than dist.
-    #else:
-        #index = np.where(distance == distance.min())  # Finds closest point.
-        #index = index[0]
-
-    #distance = distance[index]
-    #return index, distance
-
 
 def swantime(a):
-    r"""Converts SWAN default time format to datetime object."""
+    """Converts SWAN default time format to datetime object."""
     if isinstance(a, str):
         a = float(a)
         a = np.asanyarray(a)
@@ -439,11 +419,11 @@ def swantime(a):
 
 
 def shift(a, b, n):
-    r"""a and b are vectors
+    """a and b are vectors
     n is number of points of a to cut off
     anew and bnew will be the same length."""
 
-    #la, lb = a.size, lb = b.size
+    # la, lb = a.size, lb = b.size
 
     anew = a[range(0 + n, len(a)), :]
 
@@ -452,12 +432,11 @@ def shift(a, b, n):
         bnew = b
     else:
         bnew = b[range(0, len(anew)), :]
-
     return anew, bnew
 
 
 def lagcor(a, b, n):
-    r"""Finds lagged correlations between two series.
+    """Finds lagged correlations between two series.
     a and b are two column vectors
     n is range of lags
     cor is correlation as fn of lag."""
@@ -471,37 +450,9 @@ def lagcor(a, b, n):
 
     return cor
 
-# TODO: Check basemap
-#def ll2utm(lon, lat, zone):
-    """LL2UTM convert lat,lon to UTM."""
-    # m_proj('UTM','ellipsoid','wgs84','zone',zone)
-    # x, y = m_ll2xy(lon,lat,'clip','off')
-    #return x, y
-
-#def ll2merc(lon, lat):
-    #m_proj('mercator')
-    #x, y = m_ll2xy(lon, lat)
-
-    ## Convert mercator to meters
-    #x = x * earth_radius
-    #y = y * earth_radius
-    #return x, y
-
-#def merc2ll(x, y):
-    #"""LL2MERC Converts lon,lat to Mercator."""
-    #m_proj('mercator')
-    #lon, lat = m_xy2ll(x / earth_radius, y / earth_radius)
-    #return lon, lat
-
-#def utm2ll(x, y, zone):
-    #"""Convert UTM to lat, lon."""
-    #m_proj('UTM','ellipsoid','wgs84','zone',zone)
-    #lon, lat = m_xy2ll(x,y)
-    #return lon,lat
-
 
 def coast2bln(coast, bln_file):
-    r"""Converts a matlab coast (two column array w/ nan for line breaks) into
+    """Converts a matlab coast (two column array w/ nan for line breaks) into
     a Surfer blanking file.
 
     Where coast is a two column vector and bln_file is the output file name.
@@ -524,7 +475,7 @@ def coast2bln(coast, bln_file):
 
 
 def fixcoast(coast):
-    r"""FIXCOAST  Makes sure coastlines meet Signell's conventions.
+    """FIXCOAST  Makes sure coastlines meet Signell's conventions.
 
     Fixes coastline is in the format we want.  Assumes that lon/lat are in the
     first two columns of the matrix coast, and that coastline segments are
