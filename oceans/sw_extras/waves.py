@@ -128,8 +128,9 @@ class Waves(object):
             f = g * self.k * np.tanh(self.k * self.h) - self.omega ** 2
 
             while np.abs(f.max()) > 1e-10:
-                dfdk = (g * self.k * self.h * (1 / (np.cosh(self.k * self.h)))
-                        ** 2 + g * np.tanh(self.k * self.h))
+                dfdk = (g * self.k * self.h *
+                        (1 / (np.cosh(self.k * self.h))) ** 2 +
+                        g * np.tanh(self.k * self.h))
                 self.k = self.k - f / dfdk
                 # FIXME:
                 f = g * self.k * np.tanh(self.k * self.h) - self.omega ** 2
