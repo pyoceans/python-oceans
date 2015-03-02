@@ -30,7 +30,7 @@ def read(*parts):
 
 def extract_version():
     version = None
-    fname = os.path.join(rootpath, 'gsw', '__init__.py')
+    fname = os.path.join(rootpath, 'oceans', '__init__.py')
     with open(fname) as f:
         for line in f:
             if (line.startswith('__version__')):

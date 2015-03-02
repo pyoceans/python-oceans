@@ -8,10 +8,9 @@ Extra seawater functions
 from __future__ import division
 
 import numpy as np
-from pandas import rolling_mean
 import seawater as sw
-from seawater.eos80 import T68conv
-from seawater.constants import OMEGA, Kelvin, earth_radius
+from pandas import rolling_mean
+from seawater.constants import OMEGA, earth_radius
 
 
 __all__ = ['sigma_t',
@@ -621,6 +620,14 @@ def psu2ppt(psu):
             psu ** 2 + a[6] * psu ** 2.5)
 
 
+def swstate():
+    pass
+
+
+def adiabattempgrad():
+    pass
+
+
 def soundspeed(S, T, D, equation='mackenzie'):
     """Various sound-speed equations.
     1)  soundspeed(s, t, d) returns the sound speed (m/sec) given vectors
@@ -911,8 +918,8 @@ def zmld_boyer(s, t, p):
 
     # Interpolate to exactly match the potential density threshold
     presseg = [pres[mldepthdens_mldindex-1], pres[mldepthdens_mldindex]]
-    pdenseg = [pden[starti] - pden[mldepthdens_mldindex-1], pden[starti]
-               - pden[mldepthdens_mldindex]]
+    pdenseg = [pden[starti] - pden[mldepthdens_mldindex-1], pden[starti] -
+               pden[mldepthdens_mldindex]]
     P = np.polyfit(presseg, pdenseg, 1)
     presinterp = np.linspace(presseg[0], presseg[1], 3)
     pdenthreshold = np.polyval(P, presinterp)

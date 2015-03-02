@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Wed 05 Jun 2013 02:16:58 PM BRT
+# modified: Mon 02 Mar 2015 10:09:02 AM BRT
 #
 # obs:  rstyle, rhist and rbox are from:
 # http://messymind.net/2012/07/making-matplotlib-look-like-ggplot/
@@ -23,13 +23,11 @@ import matplotlib.pyplot as plt
 
 from matplotlib.lines import Line2D
 from matplotlib.artist import Artist
-from matplotlib.pyplot import MultipleLocator, rcParams, Polygon
 
 __all__ = ['landmask',
            'level_colormap',
            'get_pointsxy',
-           'EditPoints'
-          ]
+           'EditPoints']
 
 
 def landmask(M, color='0.8'):
@@ -70,9 +68,9 @@ def level_colormap(levels, cmap=None):
     L = (levels - levels[0]) / (levels[-1] - levels[0])
 
     # Make the color dictionary.
-    R = [(L[i], A[i, 0], A[i, 0]) for i in xrange(nlev)]
-    G = [(L[i], A[i, 1], A[i, 1]) for i in xrange(nlev)]
-    B = [(L[i], A[i, 2], A[i, 2]) for i in xrange(nlev)]
+    R = [(L[i], A[i, 0], A[i, 0]) for i in range(nlev)]
+    G = [(L[i], A[i, 1], A[i, 1]) for i in range(nlev)]
+    B = [(L[i], A[i, 2], A[i, 2]) for i in range(nlev)]
     cdict = dict(red=tuple(R), green=tuple(G), blue=tuple(B))
 
     return matplotlib.colors.LinearSegmentedColormap('%s_levels' %
@@ -128,8 +126,6 @@ class EditPoints(object):
                            linestyle='none', animated=True)
         self.ax.add_line(self.line)
 
-        if False:  # FIXME:  Not really sure how to use this.
-            cid = self.points.add_callback(self.points_changed)
         self._ind = None  # The active point.
 
         canvas.mpl_connect('draw_event', self.draw_callback)
@@ -232,7 +228,7 @@ class EditPoints(object):
         elif event.key == 'i':
             if self.verbose:
                 print("Insert point")
-            xs, ys = self.points.get_xdata(), self.points.get_ydata()
+            xs = self.points.get_xdata()
             ex, ey = event.xdata, event.ydata
             for i in range(len(xs) - 1):
                 self.points.set_xdata(np.r_[self.points.get_xdata(), ex])

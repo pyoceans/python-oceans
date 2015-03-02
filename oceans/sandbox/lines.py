@@ -6,7 +6,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  17-Jul-2012
-# modified: Tue 12 Feb 2013 12:00:45 PM BRST
+# modified: Mon 02 Mar 2015 10:07:06 AM BRT
 #
 # obs:
 #
@@ -148,7 +148,7 @@ def LineCurvature2D(Vertices, Lines=None):
     Na[checkNa] = Nbb[Nbb[checkNa]]
     Nb[checkNb] = Naa[Naa[checkNb]]
 
-    #... Also, I remove `1` to get python indexing correctly.
+    # ... Also, I remove `1` to get python indexing correctly.
     Na -= 1
     Nb -= 1
 
