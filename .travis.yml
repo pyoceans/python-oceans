@@ -13,7 +13,7 @@ before_install:
     - conda config --set always_yes yes
     - conda update conda
     - conda info -a
-    - travis_retry conda create -n test $CONDA numpy matplotlib scipy Shapely netCDF4 pandas
+    - travis_retry conda create -n test $CONDA numpy matplotlib scipy Shapely netCDF4 pandas basemap
     - source activate test
     - travis_retry pip install gsw
     - travis_retry pip install seawater
