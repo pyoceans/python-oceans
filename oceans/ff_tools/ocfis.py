@@ -863,7 +863,8 @@ def bin_dates(self, freq, tz=None):
                            freq=freq, tz=tz)
     new_series = self.groupby(new_index.asof).mean()
     # Averages at the center.
-    new_series.index = new_series.index + new_index.freq.delta / 2
+    secs = new_index.freq.delta.total_seconds()
+    new_series.index = new_series.index.values + int(secs // 2)
     return new_series
 
 
