@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Mon 02 Mar 2015 10:09:02 AM BRT
+# modified: Mon 02 Mar 2015 04:17:22 PM BRT
 #
 # obs:  rstyle, rhist and rbox are from:
 # http://messymind.net/2012/07/making-matplotlib-look-like-ggplot/
@@ -23,11 +23,67 @@ import matplotlib.pyplot as plt
 
 from matplotlib.lines import Line2D
 from matplotlib.artist import Artist
+from matplotlib.dates import date2num
 
-__all__ = ['landmask',
+__all__ = ['stick_plot',
+           'landmask',
            'level_colormap',
            'get_pointsxy',
            'EditPoints']
+
+
+def stick_plot(time, u, v, **kw):
+    """
+    Parameters
+    ----------
+    time: list/arrays of datetime objects
+    u, v: list/arrays of 2D vector components.
+
+    Returns
+    -------
+    q: matplotlib's quiver handle for quiverkey.
+
+    Examples
+    --------
+    >>> from pandas import date_range
+    >>> time = date_range(start='1990-11-01 00:00', end='1991-2-1 00:00')
+    >>> u = np.sin(0.1 * time.to_julian_date().values) ** 2 -0.5
+    >>> v = np.cos(0.1 * time.to_julian_date().values)
+    >>> fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, figsize=(10, 6),
+    ...                                     sharex=True)
+    >>> q = stick_plot(time.to_pydatetime(), u, v, ax=ax0)
+    >>> qk = ax0.quiverkey(q, 0.2, 0.65, 1, "1 m s$^{-1}$",
+    ...                    labelpos='N', coordinates='axes')
+    >>> l = ax1.plot(time.to_pydatetime(), np.sqrt(u**2 + v**2), label='speed')
+    >>> l0 = ax2.plot(time.to_pydatetime(), u, label='u')
+    >>> l1 = ax2.plot(time.to_pydatetime(), v, label='v')
+
+    Based on Stephane Raynaud's example from:
+    https://www.mail-archive.com/matplotlib-users@lists.sourceforge.net/msg18051.html"""
+    width = kw.pop('width', 0.002)
+    headwidth = kw.pop('headwidth', 0)
+    headlength = kw.pop('headlength', 0)
+    headaxislength = kw.pop('headaxislength', 0)
+    angles = kw.pop('angles', 'uv')
+    ax = kw.pop('ax', None)
+
+    if angles != 'uv':
+        raise AssertionError("Stickplot angles must be 'uv' so that"
+                             "if *U*==*V* the angle of the arrow on"
+                             "the plot is 45 degrees CCW from the *x*-axis.")
+
+    time, u, v = map(np.asanyarray, (time, u, v))
+    if not ax:
+        fig, ax = plt.subplots()
+
+    q = ax.quiver(date2num(time), [[0]*len(time)], u, v,
+                  angles='uv', width=width, headwidth=headwidth,
+                  headlength=headlength, headaxislength=headaxislength,
+                  **kw)
+
+    ax.axes.get_yaxis().set_visible(False)
+    ax.xaxis_date()
+    return q
 
 
 def landmask(M, color='0.8'):
