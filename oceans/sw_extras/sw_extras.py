@@ -916,14 +916,14 @@ def zmld_so(s, t, p, threshold=0.05, smooth=None):
         Antartic phytoplankton crop in relation to mixing depth. Deep Sea
         Research, 38(89):981-1007. doi:10.1016/0198-0149(91)90093-U
     """
-    sigma_t = sw.dens0(s, t) - 1000.
+    sigma_t = sigmatheta(s, t, p)
     depth = p
     if smooth is not None:
         sigma_t = rolling_mean(sigma_t, smooth, min_periods=1)
 
     sublayer = np.where(depth[(depth >= 5) & (depth <= 10)])[0]
     sigma_x = np.nanmean(sigma_t[sublayer])
-    nan_sigma = np.where(sigma_t > sigma_x + threshold)[0]
+    nan_sigma = np.where(sigma_t < sigma_x + threshold)[0]
     sigma_t[nan_sigma] = np.nan
     der = np.divide(np.diff(sigma_t), np.diff(depth))
     mld = np.where(der == np.nanmax(der))[0]
