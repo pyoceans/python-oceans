@@ -809,15 +809,18 @@ def kdpar(z, par, boundary):
     ------
     kd : float
         Light extintion coefficient.
-    cr_depth : int
-        Critical depth. Depth where 1% of surface PAR is available.
     par_surface : float
         Surface PAR, modeled from first meters data.
+
+    References
+    ----------
+    Smith RC, Baker KS (1978) Optical classification of natural waters.
+        Limnol Ocenogr 23:260-267.
     """
     # First linear regression. Returns fit parameters to be used on
     # reconstruction of surface PAR.
     b = np.int32(boundary)
-    i_b = np.where(z >= b)[0]
+    i_b = np.where(z <= b)[0]
     par_b = par[i_b]
     z_b = z[i_b]
     z_light = photic_depth(z_b, par_b)[1]
@@ -832,7 +835,7 @@ def kdpar(z, par, boundary):
     par = np.r_[par_surface, par]
     z = np.r_[0, z]
     z_par = photic_depth(z, par)[1]
-    kd, linear = np.polyfit(z[z_par], np.log(par[z_par]), 1)
+    kd = (np.log(par[0]) - np.log(par[b])) / z_par[b]
 
     return kd, par_surface
 
@@ -858,14 +861,14 @@ def zmld_so(s, t, p, threshold=0.05, smooth=None):
         Antartic phytoplankton crop in relation to mixing depth. Deep Sea
         Research, 38(89):981-1007. doi:10.1016/0198-0149(91)90093-U
     """
-    sigma_t = sw.dens0(s, t) - 1000.
+    sigma_t = sigmatheta(s, t, p)
     depth = p
     if smooth is not None:
         sigma_t = rolling_mean(sigma_t, smooth, min_periods=1)
 
     sublayer = np.where(depth[(depth >= 5) & (depth <= 10)])[0]
     sigma_x = np.nanmean(sigma_t[sublayer])
-    nan_sigma = np.where(sigma_t > sigma_x + threshold)[0]
+    nan_sigma = np.where(sigma_t < sigma_x + threshold)[0]
     sigma_t[nan_sigma] = np.nan
     der = np.divide(np.diff(sigma_t), np.diff(depth))
     mld = np.where(der == np.nanmax(der))[0]
