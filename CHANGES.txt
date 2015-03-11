@@ -1,11 +1,6 @@
 Changelog
 ---------
 
-Version 0.2.4, 11-Mar-2015.
-
-* Updating Mixed Layer Depth functions
-* Examples included
-
 Version 0.2.3, 23-Jan-2015.
 
 * Unpinned version in setup.py.
