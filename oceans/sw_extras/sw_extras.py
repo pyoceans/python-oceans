@@ -31,8 +31,8 @@ __all__ = ['sigma_t',
            'photic_depth',
            'cr_depth',
            'kdpar',
-           'zmld_so',
-           'zmld_boyer']
+           'zuml_so',
+           'zuml_boyer']
 
 
 def sigma_t(s, t, p):
@@ -840,7 +840,7 @@ def kdpar(z, par, boundary):
     return kd, par_surface
 
 
-def zmld_so(s, t, p, threshold=0.05, smooth=None):
+def zuml_so(s, t, p, threshold=0.05, smooth=None):
     """
     Computes mixed layer depth of Southern Ocean waters.
 
@@ -854,6 +854,11 @@ def zmld_so(s, t, p, threshold=0.05, smooth=None):
         pressure [db].
     smooth : int
         size of running mean window, to smooth data.
+
+    Return
+    ------
+    zuml : int
+        Depth of the upper mixed layer
 
     References
     ----------
@@ -869,15 +874,12 @@ def zmld_so(s, t, p, threshold=0.05, smooth=None):
     sublayer = np.where(depth[(depth >= 5) & (depth <= 10)])[0]
     sigma_x = np.nanmean(sigma_t[sublayer])
     nan_sigma = np.where(sigma_t < sigma_x + threshold)[0]
-    sigma_t[nan_sigma] = np.nan
-    der = np.divide(np.diff(sigma_t), np.diff(depth))
-    mld = np.where(der == np.nanmax(der))[0]
-    zmld = depth[mld]
+    zuml = np.max(depth[nan_sigma])
 
-    return zmld
+    return zuml
 
 
-def zmld_boyer(s, t, p):
+def zuml_boyer(s, t, p):
     """
     Computes mixed layer depth, based on de Boyer Montégut et al., 2004.
 
@@ -889,6 +891,14 @@ def zmld_boyer(s, t, p):
         temperature [℃ (ITS-90)]
     p : array_like
         pressure [db].
+
+    Return
+    ------
+    mldepthdens_mldindex : float
+        Depth of mixed layer based on density
+
+    mldepthptemp_mldindex : float
+        Depth of mixed layer based on temperature
 
     Notes
     -----
