@@ -860,11 +860,34 @@ def zuml_so(s, t, p, threshold=0.05, smooth=None):
     zuml : int
         Depth of the upper mixed layer
 
+    Examples
+    --------
+    >>> from oceans import sw_extras as swe
+    >>> import numpy as np
+    >>> s = np.array([
+        33.7795,  33.7797,  33.7793,  33.7774,  33.7779,  33.7778,
+        33.778 ,  33.779 ,  33.7784,  33.778 ,  33.7779,  33.7814,
+        33.7854,  33.7814,  33.778 ,  33.7834,  33.8652,  33.9251,
+        33.9821,  34.0166,  34.0288,  34.0335,  34.0457,  34.0539,
+        34.0565,  34.0604,  34.0738,  34.0778,  34.076 ,  34.0789])
+    >>> t = np.array([
+        2.1403,  2.1403,  2.1415,  2.1449,  2.1434,  2.1434,  2.142 ,
+        2.1395,  2.1407,  2.143 ,  2.1416,  2.1166,  2.0937,  2.1195,
+        2.1355,  2.0627,  1.6204,  1.3384,  1.1135,  0.9938,  0.9379,
+        0.9064,  0.8811,  0.8548,  0.8407,  0.8235,  0.7893,  0.779 ,
+        0.782 ,  0.7765])
+    >>> p = np.array([
+        5.,   6.,   7.,   8.,   9.,  10.,  11.,  12.,  13.,  14.,  15.,
+        16.,  17.,  18.,  19.,  20.,  21.,  22.,  23.,  24.,  25.,  26.,
+        27.,  28.,  29.,  30.,  31.,  32.,  33.,  34.])
+    >>> swe.zuml_so(s, t, p)
+    20.0
+
     References
     ----------
-    Mitchell B. G., Holm-Hansen, O., 1991. Observations of modeling of the
-        Antartic phytoplankton crop in relation to mixing depth. Deep Sea
-        Research, 38(89):981-1007. doi:10.1016/0198-0149(91)90093-U
+    .. [1] Mitchell B. G., Holm-Hansen, O., 1991. Observations of modeling of the
+    Antartic phytoplankton crop in relation to mixing depth. Deep Sea Research,
+    38(89):981-1007. doi:10.1016/0198-0149(91)90093-U
     """
     sigma_t = sigmatheta(s, t, p)
     depth = p
@@ -881,7 +904,11 @@ def zuml_so(s, t, p, threshold=0.05, smooth=None):
 
 def zuml_boyer(s, t, p):
     """
-    Computes mixed layer depth, based on de Boyer Montégut et al., 2004.
+    Calculate the MLD using a threshold method with de Boyer Montegut et al's
+    criteria; a density difference of .03 :math:`kg m^3` or a temperature
+    difference of .2 degrees C.  The measurement closest to 10 dbar is used as
+    the reference value.  The threshold MLDs are interpolated to exactly match
+    the threshold criteria.
 
     Parameters
     ----------
@@ -899,6 +926,29 @@ def zuml_boyer(s, t, p):
 
     mldepthptemp_mldindex : float
         Depth of mixed layer based on temperature
+
+    Examples
+    --------
+    >>> from oceans import sw_extras as swe
+    >>> import numpy as np
+    >>> s = np.array([
+        33.7795,  33.7797,  33.7793,  33.7774,  33.7779,  33.7778,
+        33.778 ,  33.779 ,  33.7784,  33.778 ,  33.7779,  33.7814,
+        33.7854,  33.7814,  33.778 ,  33.7834,  33.8652,  33.9251,
+        33.9821,  34.0166,  34.0288,  34.0335,  34.0457,  34.0539,
+        34.0565,  34.0604,  34.0738,  34.0778,  34.076 ,  34.0789])
+    >>> t = np.array([
+        2.1403,  2.1403,  2.1415,  2.1449,  2.1434,  2.1434,  2.142 ,
+        2.1395,  2.1407,  2.143 ,  2.1416,  2.1166,  2.0937,  2.1195,
+        2.1355,  2.0627,  1.6204,  1.3384,  1.1135,  0.9938,  0.9379,
+        0.9064,  0.8811,  0.8548,  0.8407,  0.8235,  0.7893,  0.779 ,
+        0.782 ,  0.7765])
+    >>> p = np.array([
+        5.,   6.,   7.,   8.,   9.,  10.,  11.,  12.,  13.,  14.,  15.,
+        16.,  17.,  18.,  19.,  20.,  21.,  22.,  23.,  24.,  25.,  26.,
+        27.,  28.,  29.,  30.,  31.,  32.,  33.,  34.])
+    >>> swe.zuml_boyer(s, t, p)
+    (20.0, 20.0)
 
     Notes
     -----
