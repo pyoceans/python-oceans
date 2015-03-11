@@ -31,8 +31,8 @@ __all__ = ['sigma_t',
            'photic_depth',
            'cr_depth',
            'kdpar',
-           'zmld_so',
-           'zmld_boyer']
+           'zuml_so',
+           'zuml_boyer']
 
 
 def sigma_t(s, t, p):
@@ -840,7 +840,7 @@ def kdpar(z, par, boundary):
     return kd, par_surface
 
 
-def zmld_so(s, t, p, threshold=0.05, smooth=None):
+def zuml_so(s, t, p, threshold=0.05, smooth=None):
     """
     Computes mixed layer depth of Southern Ocean waters.
 
@@ -855,11 +855,43 @@ def zmld_so(s, t, p, threshold=0.05, smooth=None):
     smooth : int
         size of running mean window, to smooth data.
 
+    Return
+    ------
+    zuml : int
+        Depth of the upper mixed layer
+
+    Examples
+    --------
+    >>> from oceans import sw_extras as swe
+    >>> import numpy as np
+    >>> s = np.array([
+    ...    34.0991,  34.0978,  34.0978,  34.1006,  34.1023,  34.1041,
+    ...    34.1136,  34.1171,  34.1112,  34.1069,  34.1198,  34.1269,
+    ...    34.1267,  34.1332,  34.1391,  34.1391,  34.1382,  34.1368,
+    ...    34.1379,  34.1442,  34.1528,  34.1603,  34.1653,  34.168 ,
+    ...    34.1679,  34.1683,  34.1618,  34.166 ,  34.1752,  34.1796,
+    ...    34.199 ,  34.2086,  34.2574,  34.2643,  34.2668,  34.2665,
+    ...    34.2684,  34.2695,  34.2734,  34.2732])
+    >>> t = np.array([
+    ...    1.5636,  1.5645,  1.5649,  1.564 ,  1.5626,  1.5567,  1.5297,
+    ...    1.5206,  1.5367,  1.5484,  1.5119,  1.4921,  1.4898,  1.4703,
+    ...    1.4504,  1.4501,  1.4521,  1.4557,  1.4498,  1.4283,  1.3969,
+    ...    1.3678,  1.3492,  1.3386,  1.3381,  1.3359,  1.3623,  1.3408,
+    ...    1.3103,  1.2925,  1.2349,  1.1969,  1.0633,  1.0477,  1.0316,
+    ...    1.0247,  1.0058,  0.9873,  0.9634,  0.9528])
+    >>> p = np.array([
+    ...    5.,   6.,   7.,   8.,   9.,  10.,  11.,  12.,  13.,  14.,  15.,
+    ...    16.,  17.,  18.,  19.,  20.,  21.,  22.,  23.,  24.,  25.,  26.,
+    ...    27.,  28.,  29.,  30.,  31.,  32.,  33.,  34.,  35.,  36.,  37.,
+    ...    38.,  39.,  40.,  41.,  42.,  43.,  44.])
+    >>> swe.zuml_so(s, t, p)
+    24.0
+
     References
     ----------
-    Mitchell B. G., Holm-Hansen, O., 1991. Observations of modeling of the
-        Antartic phytoplankton crop in relation to mixing depth. Deep Sea
-        Research, 38(89):981-1007. doi:10.1016/0198-0149(91)90093-U
+    .. [1] Mitchell B. G., Holm-Hansen, O., 1991. Observations of modeling of the
+    Antartic phytoplankton crop in relation to mixing depth. Deep Sea Research,
+    38(89):981-1007. doi:10.1016/0198-0149(91)90093-U
     """
     sigma_t = sigmatheta(s, t, p)
     depth = p
@@ -869,17 +901,18 @@ def zmld_so(s, t, p, threshold=0.05, smooth=None):
     sublayer = np.where(depth[(depth >= 5) & (depth <= 10)])[0]
     sigma_x = np.nanmean(sigma_t[sublayer])
     nan_sigma = np.where(sigma_t < sigma_x + threshold)[0]
-    sigma_t[nan_sigma] = np.nan
-    der = np.divide(np.diff(sigma_t), np.diff(depth))
-    mld = np.where(der == np.nanmax(der))[0]
-    zmld = depth[mld]
+    zuml = np.max(depth[nan_sigma])
 
-    return zmld
+    return zuml
 
 
-def zmld_boyer(s, t, p):
+def zuml_boyer(s, t, p):
     """
-    Computes mixed layer depth, based on de Boyer Montégut et al., 2004.
+    Calculate the MLD using a threshold method with de Boyer Montegut et al's
+    criteria; a density difference of .03 :math:`kg m^3` or a temperature
+    difference of .2 degrees C.  The measurement closest to 10 dbar is used as
+    the reference value.  The threshold MLDs are interpolated to exactly match
+    the threshold criteria.
 
     Parameters
     ----------
@@ -889,6 +922,41 @@ def zmld_boyer(s, t, p):
         temperature [℃ (ITS-90)]
     p : array_like
         pressure [db].
+
+    Return
+    ------
+    mldepthdens_mldindex : float
+        Depth of mixed layer based on density
+
+    mldepthptemp_mldindex : float
+        Depth of mixed layer based on temperature
+
+    Examples
+    --------
+    >>> from oceans import sw_extras as swe
+    >>> import numpy as np
+    >>> s = np.array([
+    ...    34.0991,  34.0978,  34.0978,  34.1006,  34.1023,  34.1041,
+    ...    34.1136,  34.1171,  34.1112,  34.1069,  34.1198,  34.1269,
+    ...    34.1267,  34.1332,  34.1391,  34.1391,  34.1382,  34.1368,
+    ...    34.1379,  34.1442,  34.1528,  34.1603,  34.1653,  34.168 ,
+    ...    34.1679,  34.1683,  34.1618,  34.166 ,  34.1752,  34.1796,
+    ...    34.199 ,  34.2086,  34.2574,  34.2643,  34.2668,  34.2665,
+    ...    34.2684,  34.2695,  34.2734,  34.2732])
+    >>> t = np.array([
+    ...    1.5636,  1.5645,  1.5649,  1.564 ,  1.5626,  1.5567,  1.5297,
+    ...    1.5206,  1.5367,  1.5484,  1.5119,  1.4921,  1.4898,  1.4703,
+    ...    1.4504,  1.4501,  1.4521,  1.4557,  1.4498,  1.4283,  1.3969,
+    ...    1.3678,  1.3492,  1.3386,  1.3381,  1.3359,  1.3623,  1.3408,
+    ...    1.3103,  1.2925,  1.2349,  1.1969,  1.0633,  1.0477,  1.0316,
+    ...    1.0247,  1.0058,  0.9873,  0.9634,  0.9528])
+    >>> p = np.array([
+    ...    5.,   6.,   7.,   8.,   9.,  10.,  11.,  12.,  13.,  14.,  15.,
+    ...    16.,  17.,  18.,  19.,  20.,  21.,  22.,  23.,  24.,  25.,  26.,
+    ...    27.,  28.,  29.,  30.,  31.,  32.,  33.,  34.,  35.,  36.,  37.,
+    ...    38.,  39.,  40.,  41.,  42.,  43.,  44.])
+    >>> swe.zuml_boyer(s, t, p)
+    (18.0, 26.5)
 
     Notes
     -----
