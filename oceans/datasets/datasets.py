@@ -67,6 +67,7 @@ def woa_subset(llcrnrlon=2.5, urcrnrlon=357.5, llcrnrlat=-87.5, urcrnrlat=87.5,
     >>> import numpy.ma as ma
     >>> import matplotlib.pyplot as plt
     >>> from oceans.colormaps import cm, get_color
+    >>> from oceans.datasets import map_limits, woa_subset
     >>> from mpl_toolkits.basemap import Basemap
     >>> fig, ax = plt.subplots(figsize=(12, 6))
     >>> def make_map(llcrnrlon=2.5, urcrnrlon=360, llcrnrlat=-80, urcrnrlat=80,
