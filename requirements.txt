@@ -1,0 +1,14 @@
+shapely
+basemap
+cartopy
+coveralls
+gsw
+iris
+matplotlib
+netCDF4
+numpy
+pandas
+pytest
+pytest-cov
+scipy
+seawater

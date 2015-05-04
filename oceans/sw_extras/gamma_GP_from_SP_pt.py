@@ -23,7 +23,7 @@ def inpolygon(xp, yp, x_poly, y_poly):
 
 
 def gamma_G_north_atlantic(SP, pt):
-    r"""Polynomials definitions: North Atlantic. VERSION 1: WOCE dataset."""
+    """Polynomials definitions: North Atlantic. VERSION 1: WOCE dataset."""
     Fit = np.array([[0., 0., 0.868250629754601], [1., 0., 4.40022403081395],
                     [0., 1., 0.0324341891674178], [2., 0., -6.45929201288070],
                     [1., 1., -9.92256348514822], [0., 2., 1.72145961018658],
@@ -50,7 +50,7 @@ def gamma_G_north_atlantic(SP, pt):
 
 
 def gamma_G_south_atlantic(SP, pt):
-    r"""Polynomials definitions: South Atlantic. VERSION 1: WOCE dataset."""
+    """Polynomials definitions: South Atlantic. VERSION 1: WOCE dataset."""
     Fit = np.array([[0., 0., 0.970176813506429], [1., 0., 0.755382324920216],
                     [0., 1., 0.270391840513646], [2., 0., 10.0570534575124],
                     [1., 1., -3.30869686476731], [0., 2., -0.702511207122356],
@@ -78,7 +78,7 @@ def gamma_G_south_atlantic(SP, pt):
 
 
 def gamma_G_pacific(SP, pt):
-    r"""Polynomials definitions: Pacific. VERSION 1: WOCE_dataset."""
+    """Polynomials definitions: Pacific. VERSION 1: WOCE_dataset."""
     Fit = np.array([[0., 0., 0.990419160678528], [1., 0., 1.10691302482411],
                     [0., 1., 0.0545075600726227], [2., 0., 5.48298954708578],
                     [1., 1., -1.81027781763969], [0., 2., 0.673362062889351],
@@ -106,7 +106,7 @@ def gamma_G_pacific(SP, pt):
 
 
 def gamma_G_indian(SP, pt):
-    r"""Polynomials definitions: Indian. VERSION 1: WOCE_dataset."""
+    """Polynomials definitions: Indian. VERSION 1: WOCE_dataset."""
     Fit = np.array([[0., 0., 0.915127744449523], [1., 0., 2.52567287174508],
                     [0., 1., 0.276709571734987], [2., 0., -0.531583207697361],
                     [1., 1., -5.95006196623071], [0., 2., -1.29591003712053],
@@ -134,7 +134,7 @@ def gamma_G_indian(SP, pt):
 
 
 def gamma_G_southern_ocean(SP, pt, p):
-    r"""Polynomials definitions: Southern Ocean. VERSION 1: WOCE_dataset."""
+    """Polynomials definitions: Southern Ocean. VERSION 1: WOCE_dataset."""
 
     Fit_N = np.array([[0., 0., 0.874520046342081], [1., 0., -1.64820627969497],
                       [0., 1., 2.05462556912973], [2., 0., 28.0996269467290],
@@ -186,7 +186,7 @@ def gamma_G_southern_ocean(SP, pt, p):
 
 
 def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
-    r"""Global Polynomial of Neutral Density with respect to Practical Salinity
+    """Global Polynomial of Neutral Density with respect to Practical Salinity
     and potential temperature.
 
     Calculates the Global Polynomial of Neutral Density gammma_GP using an

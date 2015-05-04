@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Fri 27 Feb 2015 05:37:54 PM BRT
+# modified: Mon 04 May 2015 02:30:43 PM BRT
 #
 # obs: some Functions were based on:
 # http://www.trondkristiansen.com/?page_id=1071
@@ -15,16 +15,21 @@
 
 from __future__ import division
 
+import warnings
+
+import iris
 import numpy as np
 import matplotlib.pyplot as plt
 
-from pandas import Panel4D
-from netCDF4 import Dataset, num2date
+
+from netCDF4 import Dataset
 from ..ff_tools import get_profile, wrap_lon360
+from iris.analysis.interpolate import extract_nearest_neighbour
 
 
 __all__ = ['map_limits',
            'woa_subset',
+           'woa_profile',
            'etopo_subset',
            'map_limits',
            'get_depth',
@@ -41,127 +46,191 @@ def map_limits(m):
     return boundary
 
 
-def woa_subset(llcrnrlon=2.5, urcrnrlon=357.5, llcrnrlat=-87.5, urcrnrlat=87.5,
-               var='temperature', clim_type='monthly', resolution='1deg',
-               levels=slice(0, 40)):
-    """Get World Ocean Atlas variables at a given lon, lat bounding box.
-    Choose data `var` from:
+def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature',
+               clim_type='00', resolution='1.00', full=False):
+    """Return an iris.cube instance from a World Ocean Atlas 2013 variable at a
+    given lon, lat bounding box.
+
+    Parameters
+    ----------
+    bbox: list, tuple
+          minx, maxx, miny, maxy positions to extract.
+    Choose data `variable` from:
         `dissolved_oxygen`, `salinity`, `temperature`, `oxygen_saturation`,
         `apparent_oxygen_utilization`, `phosphate`, `silicate`, or `nitrate`.
     Choose `clim_type` averages from:
-        `monthly`, `seasonal`, or `annual`.
+        01-12 :: monthly
+        13-16 :: seasonal (North Hemisphere Winter, Spring, Summer,
+                           and Autumn respectively)
+        00 :: annual
     Choose `resolution` from:
-        `1deg` or `5deg`
-    Choose `levels` slice:
-        all slice(0, 40, 1) , surface slice(0, 1)
+        1 (1 degree), or 4 (0.25 degrees)
 
     Returns
     -------
-    Nested dictionary with with climatology (first level), variables
-    (second level) and the data as a pandas 3D Panel.
+    Iris.cube instance with the climatology.
 
-    Example
-    -------
+    Examples
+    --------
+    >>> import cartopy.crs as ccrs
+    >>> import matplotlib.pyplot as plt
+    >>> import cartopy.feature as cfeature
+    >>> from cartopy.mpl.gridliner import (LONGITUDE_FORMATTER,
+    ...                                    LATITUDE_FORMATTER)
+    >>> LAND = cfeature.NaturalEarthFeature('physical', 'land', '50m',
+    ...                                     edgecolor='face',
+    ...                                     facecolor=cfeature.COLORS['land'])
+    >>> def make_map(bbox, projection=ccrs.PlateCarree()):
+    ...     fig, ax = plt.subplots(figsize=(8, 6),
+    ...                            subplot_kw=dict(projection=projection))
+    ...     ax.set_extent(bbox)
+    ...     ax.add_feature(LAND, facecolor='0.75')
+    ...     ax.coastlines(resolution='50m')
+    ...     gl = ax.gridlines(draw_labels=True)
+    ...     gl.xlabels_top = gl.ylabels_right = False
+    ...     gl.xformatter = LONGITUDE_FORMATTER
+    ...     gl.yformatter = LATITUDE_FORMATTER
+    ...     return fig, ax
     >>> # Extract a 2D surface -- Annual temperature climatology:
     >>> import numpy as np
     >>> import numpy.ma as ma
     >>> import matplotlib.pyplot as plt
+    >>> from oceans.ff_tools import wrap_lon180
     >>> from oceans.colormaps import cm, get_color
-    >>> from oceans.datasets import map_limits, woa_subset
-    >>> from mpl_toolkits.basemap import Basemap
-    >>> fig, ax = plt.subplots(figsize=(12, 6))
-    >>> def make_map(llcrnrlon=2.5, urcrnrlon=360, llcrnrlat=-80, urcrnrlat=80,
-    ...              projection='robin', lon_0=-55, lat_0=-10, resolution='c'):
-    ...    m = Basemap(llcrnrlon=llcrnrlon, urcrnrlon=urcrnrlon,
-    ...                llcrnrlat=llcrnrlat, urcrnrlat=urcrnrlat,
-    ...                projection=projection, resolution=resolution,
-    ...                lon_0=lon_0, ax=ax)
-    ...    m.drawcoastlines()
-    ...    m.fillcontinents(color='0.85')
-    ...    dx, dy = 60, 20
-    ...    meridians = np.arange(llcrnrlon, urcrnrlon + dx, dx)
-    ...    parallels = np.arange(llcrnrlat, urcrnrlat + dy, dy)
-    ...    m.drawparallels(parallels, linewidth=0, labels=[1, 0, 0, 0])
-    ...    m.drawmeridians(meridians, linewidth=0, labels=[0, 0, 0, 1])
-    ...    return m
-    >>> m = make_map()
-    >>> boundary = map_limits(m)
-    >>> dataset = woa_subset(var='temperature', clim_type='annual',
-    ...                      resolution='1deg', levels=slice(0, 1), **boundary)
-    >>> dataset = dataset['OA Climatology']
-    >>> lon, lat = dataset.minor_axis.values, dataset.major_axis.values
-    >>> lon, lat = np.meshgrid(lon,lat)
-    >>> surface_temp = ma.masked_invalid(dataset['annual'].ix[0].values)
-    >>> cs = m.pcolormesh(lon, lat, surface_temp, latlon=True, cmap=cm.avhrr)
-    >>> _ = fig.colorbar(cs)
-    >>> # Extract a square around (averaged into a profile) the Mariana Trench:
-    >>> dataset = woa_subset(var='temperature', clim_type='monthly',
-    ...                      resolution='1deg', levels=slice(0, 40),
-    ...                      llcrnrlon=-143, urcrnrlon=-141, llcrnrlat=10,
-    ...                      urcrnrlat=12)
-    >>> dataset = dataset['OA Climatology']
-    >>> fig, ax = plt.subplots()
-    >>> z = dataset['Jan'].items.values.astype(float)
+    >>> import iris.plot as iplt
+    >>> from oceans.datasets import woa_subset
+    >>> bbox = [2.5, 357.5, -87.5, 87.5]
+    >>> kw = dict(bbox=bbox, variable='temperature', clim_type='00',
+    ...           resolution='0.25')
+    >>> cube = woa_subset(**kw)
+    >>> c = cube[0, 0, ...]  # Slice singleton time and first level.
+    >>> cs = iplt.pcolormesh(c, cmap=cm.avhrr)
+    >>> cbar = plt.colorbar(cs)
+    >>> # Extract a square around the Mariana Trench averaging into a profile.
+    >>> bbox = [-143, -141, 10, 12]
+    >>> kw = dict(bbox=bbox, variable='temperature', resolution='0.25',
+    ...           clim_type=None)
+    >>> fig, ax = plt.subplots(figsize=(5, 5))
     >>> colors = get_color(12)
-    >>> for month in dataset:
-    ...     profile = dataset[month].mean().mean()
-    ...     _ = ax.plot(profile, z, label=month, color=next(colors))
+    >>> months = 'Jan Feb Apr Mar May Jun Jul Aug Sep Oct Nov Dec'.split()
+    >>> months = dict(zip(months, range(12)))
+    >>> for month, clim_type in months.items():
+    ...     clim_type = '{0:02d}'.format(clim_type+1)
+    ...     kw.update(clim_type=clim_type)
+    ...     cube = woa_subset(**kw)
+    ...     grid_areas = iris.analysis.cartography.area_weights(cube)
+    ...     c = cube.collapsed(['longitude', 'latitude'], iris.analysis.MEAN,
+    ...                         weights=grid_areas)
+    ...     z = c.coord(axis='Z').points
+    ...     l = ax.plot(c[0, :].data, z, label=month, color=next(colors))
     >>> ax.grid(True)
     >>> ax.invert_yaxis()
-    >>> leg = ax.legend(loc='lower right')
+    >>> leg = ax.legend(loc='lower left')
+    >>> _ = ax.set_ylim(200, 0)
     """
 
-    uri = "http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA09/NetCDFdata"
-    fname = "%s_%s_%s.nc" % (var, clim_type, resolution)
-    url = '%s/%s' % (uri, fname)
-    nc = Dataset(url)
+    if variable not in ['salinity', 'temperature']:
+        resolution = '1.00'
+        decav = 'all'
+        msg = '{} is only available at 1 degree resolution'.format
+        warnings.warn(msg(variable))
+    else:
+        decav = 'decav'
 
-    v = dict(temperature='t', dissolved_oxygen='o', salinity='s',
-             oxygen_saturation='O', apparent_oxygen_utilization='A',
-             phosphate='p', silicate='p', nitrate='n')
+    v = dict(temperature='t', silicate='i', salinity='s', phosphate='p',
+             oxygen='o', o2sat='O', nitrate='n', AOU='A')
 
-    d = dict({'%s_an' % v[var]: 'OA Climatology',
-              '%s_mn' % v[var]: 'Statistical Mean',
-              '%s_dd' % v[var]: 'N. of Observations',
-              '%s_se' % v[var]: 'Std Error of the Statistical Mean',
-              '%s_sd' % v[var]: 'Std Deviation from Statistical Mean',
-              '%s_oa' % v[var]: 'Statistical Mean minus OA Climatology',
-              '%s_ma' % v[var]: 'Seasonal/Monthly minus Annual Climatology',
-              '%s_gp' % v[var]: 'N. of Mean Values within Influence Radius'})
+    r = dict({'1.00': '1', '0.25': '4'})
 
-    depths = [0, 10, 20, 30, 50, 75, 100, 125, 150, 200, 250, 300, 400, 500,
-              600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1750,
-              2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000,
-              7500, 8000, 8500, 9000][levels]
+    var = v[variable]
+    res = r[resolution]
 
-    llcrnrlon, urcrnrlon = map(wrap_lon360, (llcrnrlon, urcrnrlon))
-    lon = wrap_lon360(nc.variables.pop('lon')[:])
-    lat = nc.variables.pop('lat')[:]
-    depth = nc.variables.pop('depth')[:]
-    times = nc.variables.pop('time')
-    times = num2date(times[:], times.units, calendar='365_day')
-    times = [time.strftime('%b') for time in times]
+    uri = ("http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA13/DATA/"
+           "{variable}/netcdf/{decav}/{resolution}/woa13_{decav}_{var}"
+           "{clim_type}_0{res}.nc").format
+    url = uri(**dict(variable=variable, decav=decav, resolution=resolution,
+                     var=var, clim_type=clim_type, res=res))
 
-    if clim_type == 'annual':
-        times = clim_type
+    cubes = iris.load_raw(url)
+    cubes = [cube.intersection(longitude=(bbox[0], bbox[1]),
+                               latitude=(bbox[2], bbox[3])) for cube in cubes]
 
-    # Select data subset.
-    maskx = np.logical_and(lon >= llcrnrlon, lon <= urcrnrlon)
-    masky = np.logical_and(lat >= llcrnrlat, lat <= urcrnrlat)
-    maskz = np.array([z in depths for z in depth])
+    if full:
+        return cubes
+    else:
+        cubes = [c for c in cubes if c.var_name == '{}_an'.format(var)]
+        return cubes[0]
 
-    lon, lat, depth = lon[maskx], lat[masky], depth[maskz]
 
-    start = '%s_' % v[var]
-    variables = dict()
-    for variable in nc.variables.keys():
-        if variable.startswith(start):
-            subset = nc.variables[variable][..., maskz, masky, maskx]
-            data = Panel4D(subset, major_axis=lat, minor_axis=lon,
-                           labels=np.atleast_1d(times),
-                           items=np.atleast_1d(depth))
-            variables.update({d[variable]: data})
-    return variables
+def woa_profile(lon, lat, variable='temperature', clim_type='00',
+                resolution='1.00', full=False):
+    """Return an iris.cube instance from a World Ocean Atlas 2013 variable at a
+    given lon, lat point.
+
+    Parameters
+    ----------
+    lon, lat: float
+          point positions to extract the profile.
+    Choose data `variable` from:
+          'temperature', 'silicate', 'salinity', 'phosphate',
+          'oxygen', 'o2sat', 'nitrate', and 'AOU'.
+    Choose `clim_type` averages from:
+        01-12 :: monthly
+        13-16 :: seasonal (North Hemisphere Winter, Spring, Summer,
+                           and Autumn respectively)
+        00 :: annual
+    Choose `resolution` from:
+        1 (1 degree), or 4 (0.25 degrees)
+
+    Returns
+    -------
+    Iris.cube instance with the climatology.
+
+    Examples
+    --------
+    >>> import matplotlib.pyplot as plt
+    >>> from oceans.datasets import woa_profile
+    >>> cube = woa_profile(-143, 10, variable='temperature',
+    ...                    clim_type='00', resolution='1.00', full=False)
+    >>> fig, ax = plt.subplots(figsize=(2.25, 5))
+    >>> z = cube.coord(axis='Z').points
+    >>> l = ax.plot(cube[0, :].data, z)
+    >>> ax.grid(True)
+    >>> ax.invert_yaxis()
+    """
+
+    if variable not in ['salinity', 'temperature']:
+        resolution = '1.00'
+        decav = 'all'
+        msg = '{} is only available at 1 degree resolution'.format
+        warnings.warn(msg(variable))
+    else:
+        decav = 'decav'
+
+    v = dict(temperature='t', silicate='i', salinity='s', phosphate='p',
+             oxygen='o', o2sat='O', nitrate='n', AOU='A')
+
+    r = dict({'1.00': '1', '0.25': '4'})
+
+    var = v[variable]
+    res = r[resolution]
+
+    uri = ("http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA13/DATA/"
+           "{variable}/netcdf/{decav}/{resolution}/woa13_{decav}_{var}"
+           "{clim_type}_0{res}.nc").format
+    url = uri(**dict(variable=variable, decav=decav, resolution=resolution,
+                     var=var, clim_type=clim_type, res=res))
+
+    cubes = iris.load_raw(url)
+    cubes = [extract_nearest_neighbour(cube, [('longitude', lon),
+                                              ('latitude', lat)])
+             for cube in cubes]
+
+    if full:
+        return cubes
+    else:
+        cubes = [c for c in cubes if c.var_name == '{}_an'.format(var)]
+        return cubes[0]
 
 
 def etopo_subset(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
@@ -171,8 +240,8 @@ def etopo_subset(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
     http://www.trondkristiansen.com/wp-content/uploads/downloads/
     2011/07/contourICEMaps.py
 
-    Example
-    -------
+    Examples
+    --------
     >>> import matplotlib.pyplot as plt
     >>> offset = 5
     >>> #tfile = './ETOPO1_Bed_g_gmt4.grd'
