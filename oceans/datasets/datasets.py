@@ -7,7 +7,7 @@
 # e-mail:   ocefpaf@gmail
 # web:      http://ocefpaf.tiddlyspot.com/
 # created:  09-Sep-2011
-# modified: Mon 04 May 2015 02:30:43 PM BRT
+# modified: Mon 04 May 2015 05:44:40 PM BRT
 #
 # obs: some Functions were based on:
 # http://www.trondkristiansen.com/?page_id=1071
@@ -92,8 +92,6 @@ def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature',
     ...     gl.yformatter = LATITUDE_FORMATTER
     ...     return fig, ax
     >>> # Extract a 2D surface -- Annual temperature climatology:
-    >>> import numpy as np
-    >>> import numpy.ma as ma
     >>> import matplotlib.pyplot as plt
     >>> from oceans.ff_tools import wrap_lon180
     >>> from oceans.colormaps import cm, get_color
@@ -154,7 +152,7 @@ def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature',
     cubes = iris.load_raw(url)
     cubes = [cube.intersection(longitude=(bbox[0], bbox[1]),
                                latitude=(bbox[2], bbox[3])) for cube in cubes]
-
+    cubes = iris.cube.CubeList(cubes)
     if full:
         return cubes
     else:
@@ -225,7 +223,7 @@ def woa_profile(lon, lat, variable='temperature', clim_type='00',
     cubes = [extract_nearest_neighbour(cube, [('longitude', lon),
                                               ('latitude', lat)])
              for cube in cubes]
-
+    cubes = iris.cube.CubeList(cubes)
     if full:
         return cubes
     else:
