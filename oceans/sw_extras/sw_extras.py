@@ -620,14 +620,6 @@ def psu2ppt(psu):
             psu ** 2 + a[6] * psu ** 2.5)
 
 
-def swstate():
-    pass
-
-
-def adiabattempgrad():
-    pass
-
-
 def soundspeed(S, T, D, equation='mackenzie'):
     """Various sound-speed equations.
     1)  soundspeed(s, t, d) returns the sound speed (m/sec) given vectors
@@ -721,20 +713,6 @@ def soundspeed(S, T, D, equation='mackenzie'):
         C = ((C3 * P + C2) * P + C1) * P + C0
         # SOUND SPEED RETURN.
         ssp = C + (A + B * SR + D * S) * S
-    elif equation == 'state':
-        raise TypeError("Not implemented!")
-        P = D
-        # Copied somewhat from program EOSSPEED.F
-        svan, sigma = swstate(S, T, P)
-        VOL = (1.) / (1000. + sigma)
-        # DV/DP|ADIA = (DV/DP) AT CONSTANT T + ADIA.LAPSE RATE *
-        # (DV/DT) AT CONSTANT P
-        # Note: factor of 10 is convert pressure from dB to Bars.
-        dVdP = swstate(S, T, P, 'dP')
-        dVdT = swstate(S, T, P, 'dT')
-        dVdPad = (dVdP + adiabattempgrad(S, T, P) * dVdT) * 10
-        # C = V * SQRT ( 1/DV/DP| ADIA)
-        ssp = VOL * np.sqrt(np.abs((1.e5) / dVdPad))
     else:
         raise TypeError('Unrecognizable equation specified: %s' % equation)
     return ssp

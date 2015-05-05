@@ -1,9 +1,14 @@
 Changelog
 ---------
 
+Version 0.2.4, 05-May-2015.
+
+* Added `woa_profile`.
+* Re-write of `woa_subset` to use iris instead of Pandas.
+* Deprecate 'state' option in soundspeed.
+
 Version 0.2.3, 23-Jan-2015.
 
-* Unpinned version in setup.py.
 * Several small bugs and typos fixes.
 
 Version 0.2.2, 18-Aug-2014.
