@@ -1,30 +1,13 @@
-# -*- coding: utf-8 -*-
-#
-# datasets.py
-#
-# purpose:  Functions to handle datasets.
-# author:   Filipe P. A. Fernandes
-# e-mail:   ocefpaf@gmail
-# web:      http://ocefpaf.tiddlyspot.com/
-# created:  09-Sep-2011
-# modified: Mon 04 May 2015 05:44:40 PM BRT
-#
-# obs: some Functions were based on:
-# http://www.trondkristiansen.com/?page_id=1071
-
-
-from __future__ import division
+from __future__ import absolute_import, division
 
 import warnings
 
-import iris
 import numpy as np
 import matplotlib.pyplot as plt
 
 
 from netCDF4 import Dataset
 from ..ff_tools import get_profile, wrap_lon360
-from iris.analysis.interpolate import extract_nearest_neighbour
 
 
 __all__ = ['map_limits',
@@ -48,7 +31,8 @@ def map_limits(m):
 
 def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature',
                clim_type='00', resolution='1.00', full=False):
-    """Return an iris.cube instance from a World Ocean Atlas 2013 variable at a
+    """
+    Return an iris.cube instance from a World Ocean Atlas 2013 variable at a
     given lon, lat bounding box.
 
     Parameters
@@ -72,6 +56,7 @@ def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature',
 
     Examples
     --------
+    >>> import iris
     >>> import cartopy.crs as ccrs
     >>> import matplotlib.pyplot as plt
     >>> import cartopy.feature as cfeature
@@ -125,7 +110,9 @@ def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature',
     >>> ax.invert_yaxis()
     >>> leg = ax.legend(loc='lower left')
     >>> _ = ax.set_ylim(200, 0)
+
     """
+    import iris
 
     if variable not in ['salinity', 'temperature']:
         resolution = '1.00'
@@ -162,7 +149,8 @@ def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature',
 
 def woa_profile(lon, lat, variable='temperature', clim_type='00',
                 resolution='1.00', full=False):
-    """Return an iris.cube instance from a World Ocean Atlas 2013 variable at a
+    """
+    Return an iris.cube instance from a World Ocean Atlas 2013 variable at a
     given lon, lat point.
 
     Parameters
@@ -195,7 +183,10 @@ def woa_profile(lon, lat, variable='temperature', clim_type='00',
     >>> l = ax.plot(cube[0, :].data, z)
     >>> ax.grid(True)
     >>> ax.invert_yaxis()
+
     """
+    import iris
+    from iris.analysis.interpolate import extract_nearest_neighbour
 
     if variable not in ['salinity', 'temperature']:
         resolution = '1.00'
@@ -233,7 +224,8 @@ def woa_profile(lon, lat, variable='temperature', clim_type='00',
 
 def etopo_subset(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
                  urcrnrlat=None, tfile='dap', smoo=False, subsample=False):
-    """Get a etopo subset.
+    """
+    Get a etopo subset.
     Should work on any netCDF with x, y, data
     http://www.trondkristiansen.com/wp-content/uploads/downloads/
     2011/07/contourICEMaps.py
@@ -254,8 +246,8 @@ def etopo_subset(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
     >>> cs = ax.pcolormesh(lons, lats, bathy)
     >>> _ = ax.axis([-42, -28, -23, -15])
     >>> _ = ax.set_title(tfile)
-    """
 
+    """
     if tfile == 'dap':
         tfile = 'http://opendap.ccst.inpe.br/Misc/etopo2/ETOPO2v2c_f4.nc'
 
@@ -281,8 +273,11 @@ def etopo_subset(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
 
 
 def get_depth(lon, lat, tfile='dap'):
-    """Find the depths for each station on the etopo2 database."""
-    lon, lat = map(np.atleast_1d, (lon, lat))
+    """
+    Find the depths for each station on the etopo2 database.
+
+    """
+    lon, lat = list(map(np.atleast_1d, (lon, lat)))
 
     lons, lats, bathy = etopo_subset(lat.min() - 5, lat.max() + 5,
                                      lon.min() - 5, lon.max() + 5,
@@ -293,8 +288,11 @@ def get_depth(lon, lat, tfile='dap'):
 
 def get_isobath(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
                 urcrnrlat=None, iso=-200., tfile='dap'):
-    """Finds an isobath on the etopo2 database and returns
-    its lon,lat coordinates for plotting."""
+    """
+    Finds an isobath on the etopo2 database and returns
+    its lon,lat coordinates for plotting.
+
+    """
     plt.ioff()
     lon, lat, topo = etopo_subset(llcrnrlon=llcrnrlon, urcrnrlon=urcrnrlon,
                                   llcrnrlat=llcrnrlat, urcrnrlat=urcrnrlat,
@@ -309,8 +307,10 @@ def get_isobath(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
 
 
 def get_indices(min_lat, max_lat, min_lon, max_lon, lons, lats):
-    """Return the data indices for a lon, lat square."""
+    """
+    Return the data indices for a lon, lat square.
 
+    """
     distances1, distances2, indices = [], [], []
     index = 1
     for point in lats:
@@ -349,10 +349,12 @@ def get_indices(min_lat, max_lat, min_lon, max_lon, lons, lats):
 
 
 def laplace_X(F, M):
-    """1D Laplace Filter in X-direction.
+    """
+    1D Laplace Filter in X-direction.
     http://www.trondkristiansen.com/wp-content/uploads/downloads/
-    2010/09/laplaceFilter.py"""
+    2010/09/laplaceFilter.py
 
+    """
     jmax, imax = F.shape
 
     # Add strips of land.
@@ -368,10 +370,12 @@ def laplace_X(F, M):
 
 
 def laplace_Y(F, M):
-    """1D Laplace Filter in Y-direction.
+    """
+    1D Laplace Filter in Y-direction.
     http://www.trondkristiansen.com/wp-content/uploads/downloads/
-    2010/09/laplaceFilter.py"""
+    2010/09/laplaceFilter.py
 
+    """
     jmax, imax = F.shape
 
     # Add strips of land.
@@ -387,11 +391,13 @@ def laplace_Y(F, M):
 
 
 def laplace_filter(F, M=None):
-    """Laplace filter a 2D field with mask.  The mask may cause laplace_X and
+    """
+    Laplace filter a 2D field with mask.  The mask may cause laplace_X and
     laplace_Y to not commute.  Take average of both directions.
     http://www.trondkristiansen.com/wp-content/uploads/downloads/
-    2010/09/laplaceFilter.py"""
+    2010/09/laplaceFilter.py
 
+    """
     if not M:
         M = np.ones_like(F)
 

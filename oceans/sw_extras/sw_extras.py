@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
+
 """
 Extra seawater functions
 ========================
+
 """
 
-from __future__ import division
+from __future__ import absolute_import, division
 
 import numpy as np
 import seawater as sw
@@ -36,7 +38,8 @@ __all__ = ['sigma_t',
 
 
 def sigma_t(s, t, p):
-    """:math:`\\sigma_{t}` is the remainder of subtracting 1000 kg m :sup:`-3`
+    """
+    :math:`\\sigma_{t}` is the remainder of subtracting 1000 kg m :sup:`-3`
     from the density of a sea water sample at atmospheric pressure.
 
     Parameters
@@ -80,15 +83,14 @@ def sigma_t(s, t, p):
     high pressure equation of state for seawater. Deap-Sea Research., 1980,
     Vol27A, pp255-264. doi:10.1016/0198-0149(80)90016-3
 
-    Modifications: Filipe Fernandes, 2010
-                   10-01-26. Filipe Fernandes, first version.
     """
     s, t, p = list(map(np.asanyarray, (s, t, p)))
     return sw.dens(s, t, p) - 1000.0
 
 
 def sigmatheta(s, t, p, pr=0):
-    """:math:`\\sigma_{\\theta}` is a measure of the density of ocean water
+    """
+    :math:`\\sigma_{\\theta}` is a measure of the density of ocean water
     where the quantity :math:`\\sigma_{t}` is calculated using the potential
     temperature (:math:`\\theta`) rather than the in situ temperature and
     potential density of water mass relative to the specified reference
@@ -132,13 +134,15 @@ def sigmatheta(s, t, p, pr=0):
     .. [2] Millero, F.J., Chen, C.T., Bradshaw, A., and Schleicher, K. A new
     high pressure equation of state for seawater. Deap-Sea Research., 1980,
     Vol27A, pp255-264. doi:10.1016/0198-0149(80)90016-3
+
     """
     s, t, p, pr = list(map(np.asanyarray, (s, t, p, pr)))
     return sw.pden(s, t, p, pr) - 1000.0
 
 
 def N(bvfr2):
-    """Buoyancy frequency is the frequency with which a parcel or particle of
+    """
+    Buoyancy frequency is the frequency with which a parcel or particle of
     fluid displaced a small vertical distance from its equilibrium position in
     a stable environment will oscillate. It will oscillate in simple harmonic
     motion with an angular frequency defined by
@@ -177,14 +181,15 @@ def N(bvfr2):
     .. [2] Jackett, David R., Trevor J. Mcdougall, 1995: Minimal Adjustment of
     Hydrographic Profiles to Achieve Static Stability. J. Atmos. Oceanic
     Technol., 12, 381-389. doi: 10.1175/1520-0426(1995)012<0381:MAOHPT>2.0.CO;2
-    """
 
+    """
     bvfr2 = np.asanyarray(bvfr2)
     return np.sqrt(np.abs(bvfr2)) * np.sign(bvfr2)
 
 
 def cph(bvfr2):
-    """Buoyancy frequency in Cycles Per Hour.
+    """
+    Buoyancy frequency in Cycles Per Hour.
 
     Parameters
     ----------
@@ -213,6 +218,7 @@ def cph(bvfr2):
     ----------
     .. [1] A.E. Gill 1982. p.54  eqn 3.7.15 "Atmosphere-Ocean Dynamics"
     Academic Press: New York. ISBN: 0-12-283522-0
+
     """
     bvfr2 = np.asanyarray(bvfr2)
 
@@ -222,7 +228,8 @@ def cph(bvfr2):
 
 
 def shear(z, u, v=0):
-    """Calculates the vertical shear for u, v velocity section.
+    """
+    Calculates the vertical shear for u, v velocity section.
 
     .. math::
         \\textrm{shear} = \\frac{\\partial (u^2 + v^2)^{0.5}}{\partial z}
@@ -253,6 +260,7 @@ def shear(z, u, v=0):
     array([[ -1.40000000e-03,  -1.40000000e-03,  -1.40000000e-03],
            [ -4.80000000e-04,  -4.80000000e-04,  -4.80000000e-04],
            [ -6.00000000e-05,  -6.00000000e-05,  -6.00000000e-05]])
+
     """
     z, u, v = list(map(np.asanyarray, (z, u, v)))
     z, u, v = np.broadcast_arrays(z, u, v)
@@ -269,7 +277,8 @@ def shear(z, u, v=0):
 
 
 def richnumb(bvfr2, S2):
-    """Calculates  the ratio of buoyancy to inertial forces which measures the
+    """
+    Calculates  the ratio of buoyancy to inertial forces which measures the
     stability of a fluid layer. this functions computes the gradient Richardson
     number in the form of:
 
@@ -310,6 +319,7 @@ def richnumb(bvfr2, S2):
     array([[   230.37941215,    230.45444299,    230.57181258],
            [  1934.01949759,   1934.64933431,   1935.63457818],
            [ 20583.24410868,  20589.94661835,  20600.43125069]])
+
     """
     bvfr2, S2 = list(map(np.asanyarray, (bvfr2, S2)))
     # FIXME: check this.
@@ -317,7 +327,8 @@ def richnumb(bvfr2, S2):
 
 
 def cor_beta(lat):
-    """Calculates the Coriolis :math:`\\beta` factor defined by:
+    """
+    Calculates the Coriolis :math:`\\beta` factor defined by:
 
     .. math::
         beta = 2 \\Omega \\cos(lat)
@@ -351,13 +362,15 @@ def cor_beta(lat):
 
     .. [2] A.E. Gill 1982. p.54  eqn 3.7.15 "Atmosphere-Ocean Dynamics"
     Academic Press: New York. ISBN: 0-12-283522-0
+
     """
     lat = np.asanyarray(lat)
     return 2 * OMEGA * np.cos(lat) / earth_radius
 
 
 def inertial_period(lat):
-    """Calculate the inertial period as:
+    """
+    Calculate the inertial period as:
 
     .. math::
         Ti = \\frac{2\\pi}{f} = \\frac{T_{sd}}{2\\sin\\phi}
@@ -378,13 +391,15 @@ def inertial_period(lat):
     >>> lat = 30.
     >>> swe.inertial_period(lat)/3600
     23.934849862785651
+
     """
     lat = np.asanyarray(lat)
     return 2 * np.pi / sw.f(lat)
 
 
 def strat_period(N):
-    """Stratification period is the inverse of the Buoyancy frequency and it
+    """
+    Stratification period is the inverse of the Buoyancy frequency and it
     is defined by:
 
     .. math:: Tn = \\frac{2\\pi}{N}
@@ -416,13 +431,15 @@ def strat_period(N):
     References
     ----------
     .. [1] TODO: Pickard
+
     """
     N = np.asanyarray(N)
     return 2 * np.pi / N
 
 
 def visc(s, t, p):
-    """Calculates kinematic viscosity of sea-water.  Based on Dan Kelley's fit
+    """
+    Calculates kinematic viscosity of sea-water.  Based on Dan Kelley's fit
     to Knauss's TABLE II-8.
 
     Parameters
@@ -448,7 +465,7 @@ def visc(s, t, p):
     8.2001924966338036e-07
 
     Modifications: Original 1998/01/19 - Ayal Anis 1998
-                   2010/11/25. Filipe Fernandes, python translation.
+
     """
     s, t, p = np.broadcast_arrays(s, t, p)
 
@@ -459,7 +476,8 @@ def visc(s, t, p):
 
 
 def tcond(s, t, p):
-    """Calculates thermal conductivity of sea-water.
+    """
+    Calculates thermal conductivity of sea-water.
 
     Parameters
     ----------
@@ -491,7 +509,7 @@ def tcond(s, t, p):
     .. [2] Catelli et al.'s DSR 21:311-3179(1974)  eq. 5
 
     Modifications: Original 1998/01/19 - Ayal Anis 1998
-                   2010/11/25. Filipe Fernandes, python translation.
+
     """
     s, t, p = list(map(np.asanyarray, (s, t, p)))
 
@@ -507,7 +525,8 @@ def tcond(s, t, p):
 
 
 def spice(s, t, p):
-    """Compute sea spiciness as defined by Flament (2002).
+    """
+    Compute sea spiciness as defined by Flament (2002).
 
     .. math:: \pi(\theta,s) = \sum^5_{i=0} \sum^4_{j=0} b_{ij}\theta^i(s-35)^i
 
@@ -552,7 +571,6 @@ def spice(s, t, p):
 
     http://www.satlab.hawaii.edu/spice/spice.m
 
-    Modifications: 2011/03/15. Filipe Fernandes, python translation.
     """
     s, t, p = list(map(np.asanyarray, (s, t, p)))
     # FIXME: I'm not sure about this.
@@ -610,9 +628,10 @@ def spice(s, t, p):
 
 
 def psu2ppt(psu):
-    """Converts salinity from PSU units to PPT
-    http://stommel.tamu.edu/~baum/paleo/ocean/node31.html
-    #PracticalSalinityScale
+    """
+    Converts salinity from PSU units to PPT
+    http://stommel.tamu.edu/~baum/paleo/ocean/node31.html#PracticalSalinityScale
+
     """
 
     a = [0.008, -0.1692, 25.3851, 14.0941, -7.0261, 2.7081]
@@ -621,7 +640,8 @@ def psu2ppt(psu):
 
 
 def soundspeed(S, T, D, equation='mackenzie'):
-    """Various sound-speed equations.
+    """
+    Various sound-speed equations.
     1)  soundspeed(s, t, d) returns the sound speed (m/sec) given vectors
        of salinity (ppt), temperature (deg C) and DEPTH (m) using
        the formula of Mackenzie:  Mackenzie, K.V. "Nine-term Equation for
@@ -644,6 +664,7 @@ def soundspeed(S, T, D, equation='mackenzie'):
 
     Notes: RP (WHOI) 3/dec/91
             Added state equation ss
+
     """
     if equation == 'mackenzie':
         c = 1.44896e3
@@ -736,10 +757,10 @@ def photic_depth(z, par):
         Array of depth in which light is available.
     photic_ix : array_like
         Index of available `par` data from surface to critical depth
+
     """
     photic_ix = np.where(par >= par[0] / 100.)[0]
     photic_depth = z[photic_ix]
-
     return photic_depth, photic_ix
 
 
@@ -759,17 +780,17 @@ def cr_depth(z, par):
     -------
     crdepth : int
         Critical depth. Depth where 1% of surface PAR is available.
+
     """
     ix = photic_depth(z, par)[1]
     crdepth = z[ix][-1]
-
     return crdepth
 
 
 def kdpar(z, par, boundary):
     """
-    Compute Kd value, since light extiontion coefficient can be computed
-    from depth and Photossintentecally Available Radiation (PAR).
+    Compute Kd value, since light extinction coefficient can be computed
+    from depth and Photossintetically Available Radiation (PAR).
     It will compute a linear regression through out following depths from
     boundary and them will be regressed to the upper depth to boundary
     limits.
@@ -786,7 +807,7 @@ def kdpar(z, par, boundary):
     Return
     ------
     kd : float
-        Light extintion coefficient.
+        Light extinction coefficient.
     par_surface : float
         Surface PAR, modeled from first meters data.
 
@@ -794,6 +815,7 @@ def kdpar(z, par, boundary):
     ----------
     Smith RC, Baker KS (1978) Optical classification of natural waters.
         Limnol Ocenogr 23:260-267.
+
     """
     # First linear regression. Returns fit parameters to be used on
     # reconstruction of surface PAR.
@@ -838,6 +860,7 @@ def zmld_so(s, t, p, threshold=0.05, smooth=None):
     Mitchell B. G., Holm-Hansen, O., 1991. Observations of modeling of the
         Antartic phytoplankton crop in relation to mixing depth. Deep Sea
         Research, 38(89):981-1007. doi:10.1016/0198-0149(91)90093-U
+
     """
     sigma_t = sigmatheta(s, t, p)
     depth = p

@@ -1,21 +1,19 @@
-#
-# lines.py
-#
-# purpose:  Reproduce LineCurvature2D.m and LineNormals2D.m
-# author:   Filipe P. A. Fernandes
-# e-mail:   ocefpaf@gmail
-# web:      http://ocefpaf.tiddlyspot.com/
-# created:  17-Jul-2012
-# modified: Mon 02 Mar 2015 10:07:06 AM BRT
-#
-# obs:
-#
+from __future__ import absolute_import, division
 
+import os
 import numpy as np
 
 
+__all__ = ['LineNormals2D',
+           'LineCurvature2D',
+           'inverse3']
+
+_default_path = os.path.join(os.path.dirname(__file__), 'data')
+
+
 def LineNormals2D(Vertices, Lines):
-    r"""This function calculates the normals, of the line points using the
+    """
+    This function calculates the normals, of the line points using the
     neighbouring points of each contour point, and forward an backward
     differences on the end points.
 
@@ -34,7 +32,7 @@ def LineNormals2D(Vertices, Lines):
     --------
     >>> import numpy as np
     >>> import matplotlib.pyplot as plt
-    >>> data = np.load('testdata.npz')
+    >>> data = np.load(os.path.join(_default_path, 'testdata.npz'))
     >>> Lines, Vertices = data['Lines'], data['Vertices']
     >>> N = LineNormals2D(Vertices, Lines)
     >>> fig, ax = plt.subplots(nrows=1, ncols=1)
@@ -43,8 +41,8 @@ def LineNormals2D(Vertices, Lines):
 
     Function based on LineNormals2D.m written by
     D.Kroon University of Twente (August 2011)
-    """
 
+    """
     eps = np.spacing(1)
 
     if isinstance(Lines, np.ndarray):
@@ -81,7 +79,8 @@ def LineNormals2D(Vertices, Lines):
 
 
 def LineCurvature2D(Vertices, Lines=None):
-    r"""This function calculates the curvature of a 2D line. It first fits
+    """
+    This function calculates the curvature of a 2D line. It first fits
     polygons to the points. Then calculates the analytical curvature from
     the polygons.
 
@@ -100,7 +99,7 @@ def LineCurvature2D(Vertices, Lines=None):
     --------
     >>> import numpy as np
     >>> import matplotlib.pyplot as plt
-    >>> data = np.load('testdata.npz', squeeze_me=True)
+    >>> data = np.load(os.path.join(_default_path, 'testdata.npz'))
     >>> Lines, Vertices = data['Lines'], data['Vertices']
     >>> k = LineCurvature2D(Vertices, Lines)
     >>> N = LineNormals2D(Vertices, Lines)
@@ -116,8 +115,8 @@ def LineCurvature2D(Vertices, Lines=None):
 
     Function based on LineCurvature2D.m written by
     D.Kroon University of Twente (August 2011)
-    """
 
+    """
     # If no line-indices, assume a x[0] connected with x[1], x[2] with x[3].
     if isinstance(Lines, np.ndarray):
         pass
@@ -207,7 +206,10 @@ def LineCurvature2D(Vertices, Lines=None):
 
 
 def inverse3(M):
-    r"""This function does inv(M), but then for an array of 3x3 matrices."""
+    """
+    This function does inv(M), but then for an array of 3x3 matrices.
+
+    """
     adjM = np.zeros((M.shape[0], 3, 3))
     adjM[:, 0, 0] = M[:, 4] * M[:, 8] - M[:, 7] * M[:, 5]
     adjM[:, 0, 1] = -(M[:, 3] * M[:, 8] - M[:, 6] * M[:, 5])

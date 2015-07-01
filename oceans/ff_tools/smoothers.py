@@ -1,25 +1,12 @@
-# -*- coding: utf-8 -*-
-#
-# smoothers.py
-#
-# purpose:  Data Smoother
-# author:   Filipe P. A. Fernandes
-# e-mail:   ocefpaf@gmail
-# web:      http://ocefpaf.tiddlyspot.com/
-# created:  03-Nov-2012
-# modified: Fri 27 Feb 2015 06:20:06 PM BRT
-#
-# obs:
-#
-
-from __future__ import division
+from __future__ import absolute_import, division
 
 import numpy as np
 from scipy import signal
 
 
 def savitzky_golay(y, window_size, order, deriv=0):
-    r"""Smooth (and optionally differentiate) data with a Savitzky-Golay
+    """
+    Smooth (and optionally differentiate) data with a Savitzky-Golay
     filter.  The Savitzky-Golay filter removes high frequency noise from data.
     It has the advantage of preserving the original shape and
     features of the signal better than other types of filtering
@@ -70,6 +57,7 @@ def savitzky_golay(y, window_size, order, deriv=0):
        Cambridge University Press ISBN-13: 9780521880688
 
     http://www.scipy.org/Cookbook/SavitzkyGolay
+
     """
     try:
         window_size = np.abs(np.int(window_size))
@@ -80,14 +68,14 @@ def savitzky_golay(y, window_size, order, deriv=0):
         raise TypeError("window_size size must be a positive odd number")
     if window_size < order + 2:
         raise TypeError("window_size is too small for the polynomials order")
-    order_range = range(order + 1)
+    order_range = list(range(order + 1))
     half_window = (window_size - 1) // 2
-    # precomputed coefficients
+    # Precomputed coefficients.
     b = np.mat([[k ** i for i in order_range] for k in
                 range(-half_window, half_window + 1)])
     m = np.linalg.pinv(b).A[deriv]
-    # pad the signal at the extremes with
-    # values taken from the signal itself
+    # Pad the signal at the extremes with
+    # values taken from the signal itself.
     firstvals = y[0] - np.abs(y[1:half_window + 1][::-1] - y[0])
     lastvals = y[-1] + np.abs(y[-half_window - 1:-1][::-1] - y[-1])
     y = np.concatenate((firstvals, y, lastvals))
@@ -95,7 +83,10 @@ def savitzky_golay(y, window_size, order, deriv=0):
 
 
 def savitzky_golay_piecewise(xvals, data, kernel=11, order=4):
-    r"""TODO"""
+    """
+    TODO
+
+    """
     turnpoint = 0
     last = len(xvals)
     if xvals[1] > xvals[0]:  # x is increasing?
@@ -120,8 +111,7 @@ def savitzky_golay_piecewise(xvals, data, kernel=11, order=4):
 
 
 def sgolay2d(z, window_size, order, derivative=None):
-    r"""TODO
-
+    """
     Examples
     --------
     >>> import matplotlib.pyplot as plt
@@ -139,8 +129,8 @@ def sgolay2d(z, window_size, order, derivative=None):
     >>> img0 = ax0.matshow(Z)
     >>> img1 = ax1.matshow(Zn)
     >>> img2 = ax2.matshow(Zf)
-    """
 
+    """
     # Number of terms in the polynomial expression.
     n_terms = (order + 1) * (order + 2) / 2.0
 
@@ -152,7 +142,7 @@ def sgolay2d(z, window_size, order, derivative=None):
 
     half_size = window_size // 2
 
-    # exponents of the polynomial.
+    # Exponents of the polynomial.
     # p(x,y) = a0 + a1*x + a2*y + a3*x^2 + a4*y^2 + a5*x*y + ...
     # this line gives a list of two item tuple. Each tuple contains
     # the exponents of the k-th term. First element of tuple is for x

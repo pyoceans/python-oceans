@@ -1,16 +1,4 @@
-# -*- coding: utf-8 -*-
-#
-# utilities.py
-#
-# purpose:  Some handy functions used throughout this package.
-# author:   Filipe P. A. Fernandes
-# e-mail:   ocefpaf@gmail
-# web:      http://ocefpaf.tiddlyspot.com/
-# created:  22-Jun-2011
-# modified: Sun 04 May 2014 10:50:43 PM BRT
-#
-# obs:
-#
+from __future__ import absolute_import, division
 
 import os
 import numpy as np
@@ -21,10 +9,12 @@ def basename(fname):
 
 
 class match_args_return(object):
-    """Function decorator to homogenize input arguments and to make the output
+    """
+    Function decorator to homogenize input arguments and to make the output
     match the original input with respect to scalar versus array, and masked
-    versus ndarray."""
+    versus ndarray.
 
+    """
     def __init__(self, func):
         self.func = func
         self.__doc__ = func.__doc__
@@ -43,5 +33,4 @@ class match_args_return(object):
             ret = np.ma.filled(ret, np.nan)
         if not self.array:  # Return scalar if not array.
             ret = ret[0]
-
         return ret

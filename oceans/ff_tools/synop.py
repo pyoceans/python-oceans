@@ -1,19 +1,4 @@
-# -*- coding: utf-8 -*-
-#
-# synop.py
-#
-# purpose:  Legacy Synop-LaDO toolbox
-# author:   Filipe P. A. Fernandes
-# e-mail:   ocefpaf@gmail
-# web:      http://ocefpaf.tiddlyspot.com/
-# created:  13-Sep-2012
-# modified: Sat 09 Mar 2013 03:37:13 PM BRT
-#
-# obs:  Mostly backwards compatible functions.  There are newer and better ways
-# to do all this!!!
-#
-
-from __future__ import division
+from __future__ import absolute_import, division
 
 import numpy as np
 
@@ -21,7 +6,8 @@ __all__ = ['scaloa']
 
 
 def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None, zc=None):
-    r"""Scalar objective analysis.  Interpolates t(x, y) into tp(xc, yc)
+    """
+    Scalar objective analysis.  Interpolates t(x, y) into tp(xc, yc)
     Assumes spatial correlation function to be isotropic and Gaussian in the
     form of: C = (1 - err) * np.exp(-d**2 / corrlen**2) where:
     d : Radial distance from the observations.
@@ -50,6 +36,7 @@ def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None, zc=None):
     that these parameters where chosen arbitrary.  The usual guess are the
     first baroclinic Rossby radius for `corrlen` and 0.1 e 0.2 to the sampling
     error.
+
     """
 
     n = len(x)

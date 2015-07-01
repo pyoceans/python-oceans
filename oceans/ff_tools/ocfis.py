@@ -1,18 +1,4 @@
-# -*- coding: utf-8 -*-
-#
-# ocfis.py
-#
-# purpose:  Some misc PO functions
-# author:   Filipe P. A. Fernandes
-# e-mail:   ocefpaf@gmail
-# web:      http://ocefpaf.tiddlyspot.com/
-# created:  09-Sep-2011
-# modified: Fri 27 Feb 2015 05:41:59 PM BRT
-#
-# obs:
-#
-
-from __future__ import division
+from __future__ import absolute_import, division
 
 import gsw
 import numpy as np
@@ -46,7 +32,8 @@ __all__ = ['bin_dates',
 
 
 def lanc(numwt, haf):
-    """Generates a numwt + 1 + numwt lanczos cosine low pass filter with -6dB
+    """
+    Generates a numwt + 1 + numwt lanczos cosine low pass filter with -6dB
     (1/4 power, 1/2 amplitude) point at haf
 
     Parameters
@@ -73,6 +60,7 @@ def lanc(numwt, haf):
     >>> _ = ax1.plot(low, label='low')
     >>> _ = ax0.legend(numpoints=1)
     >>> _ = ax1.legend(numpoints=1)
+
     """
     summ = 0
     numwt += 1
@@ -91,7 +79,8 @@ def lanc(numwt, haf):
 
 
 def spdir2uv(spd, ang, deg=False):
-    """Computes u, v components from speed and direction.
+    """
+    Computes u, v components from speed and direction.
 
     Parameters
     ----------
@@ -108,6 +97,7 @@ def spdir2uv(spd, ang, deg=False):
         zonal wind velocity [m s :sup:`-1`]
     v : array_like
         meridional wind velocity [m s :sup:`-1`]
+
     """
 
     if deg:
@@ -120,7 +110,8 @@ def spdir2uv(spd, ang, deg=False):
 
 
 def uv2spdir(u, v, mag=0, rot=0):
-    """Computes speed and direction from u, v components.
+    """
+    Computes speed and direction from u, v components.
     Converts rectangular to polar coordinate, geographic convention
     Allows for rotation and magnetic declination correction.
 
@@ -159,9 +150,10 @@ def uv2spdir(u, v, mag=0, rot=0):
     >>> lines = [ax.annotate("", xy=(d, s), xytext=(0, 0), arrowprops=kw)
     ...  for d, s in zip(wd, ws)]
     >>> _ = ax.set_ylim(0, np.max(ws))
+
     """
 
-    u, v, mag, rot = map(np.asarray, (u, v, mag, rot))
+    u, v, mag, rot = list(map(np.asarray, (u, v, mag, rot)))
 
     vec = u + 1j * v
     spd = np.abs(vec)
@@ -173,7 +165,8 @@ def uv2spdir(u, v, mag=0, rot=0):
 
 
 def del_eta_del_x(U, f, g, balance='geostrophic', R=None):
-    """Calculate :mat: `\frac{\partial \eta} {\partial x}` for different
+    """
+    Calculate :mat: `\frac{\partial \eta} {\partial x}` for different
     force balances
 
     Parameters:
@@ -188,6 +181,7 @@ def del_eta_del_x(U, f, g, balance='geostrophic', R=None):
               geostrophic [default], gradient or max_gradient
     R : float, optional
         Radius
+
     """
 
     if balance == 'geostrophic':
@@ -203,7 +197,8 @@ def del_eta_del_x(U, f, g, balance='geostrophic', R=None):
 
 
 def mld(SA, CT, p, criterion='pdvar'):
-    """Compute the mixed layer depth.
+    """
+    Compute the mixed layer depth.
 
     Parameters
     ----------
@@ -266,11 +261,12 @@ def mld(SA, CT, p, criterion='pdvar'):
     .. [1] Monterey, G., and S. Levitus, 1997: Seasonal variability of mixed
     layer depth for the World Ocean. NOAA Atlas, NESDIS 14, 100 pp.
     Washington, D.C.
+
     """
 
-    SA, CT, p = map(np.asanyarray, (SA, CT, p))
+    SA, CT, p = list(map(np.asanyarray, (SA, CT, p)))
     SA, CT, p = np.broadcast_arrays(SA, CT, p)
-    SA, CT, p = map(ma.masked_invalid, (SA, CT, p))
+    SA, CT, p = list(map(ma.masked_invalid, (SA, CT, p)))
 
     p_min, idx = p.min(), p.argmin()
 
@@ -300,7 +296,8 @@ def mld(SA, CT, p, criterion='pdvar'):
 
 
 def pcaben(u, v):
-    """Principal components of 2-d (e.g. current meter) data
+    """
+    Principal components of 2-d (e.g. current meter) data
     calculates ellipse parameters for currents.
 
     Parameters
@@ -350,6 +347,7 @@ def pcaben(u, v):
 
     Notes:
     http://pubs.usgs.gov/of/2002/of02-217/m-files/pcaben.m
+
     """
 
     u, v = np.broadcast_arrays(u, v)
@@ -382,7 +380,8 @@ def pcaben(u, v):
 
 
 def smoo1(datain, window_len=11, window='hanning'):
-    """Smooth the data using a window with requested size.
+    """
+    Smooth the data using a window with requested size.
 
     Parameters
     ----------
@@ -441,6 +440,7 @@ def smoo1(datain, window_len=11, window='hanning'):
 
     TODO: window parameter can be the window itself (i.e. an array)
     instead of a string.
+
     """
 
     datain = np.asarray(datain)
@@ -471,7 +471,8 @@ def smoo1(datain, window_len=11, window='hanning'):
 
 
 def spec_rot(u, v):
-    """Compute the rotary spectra from u,v velocity components
+    """
+    Compute the rotary spectra from u,v velocity components
 
     Parameters
     ----------
@@ -503,10 +504,11 @@ def spec_rot(u, v):
     References
     ----------
     .. [1] J. Gonella Deep Sea Res., 833-846, 1972.
+
     """
 
     # Individual components Fourier series.
-    fu, fv = map(np.fft.fft, (u, v))
+    fu, fv = list(map(np.fft.fft, (u, v)))
 
     # Auto-spectra of the scalar components.
     pu = fu * np.conj(fu)
@@ -528,7 +530,8 @@ def spec_rot(u, v):
 
 
 def lagcorr(x, y, M=None):
-    """Compute lagged correlation between two series.
+    """
+    Compute lagged correlation between two series.
     Follow emery and Thomson book "summation" notation.
 
     Parameters
@@ -548,9 +551,10 @@ def lagcorr(x, y, M=None):
     Examples
     --------
     TODO: Emery and Thomson.
+
     """
 
-    x, y = map(np.asanyarray, (x, y))
+    x, y = list(map(np.asanyarray, (x, y)))
     try:
         np.broadcast(x, y)
     except ValueError:
@@ -574,7 +578,8 @@ def lagcorr(x, y, M=None):
 
 
 def complex_demodulation(series, f, fc, axis=-1):
-    """Perform a Complex Demodulation
+    """
+    Perform a Complex Demodulation
     It acts as a bandpass filter for `f`.
 
     series => Time-Series object with data and datetime
@@ -582,6 +587,7 @@ def complex_demodulation(series, f, fc, axis=-1):
     fc => normalized cutoff [0.2]
 
     math : series.data * np.exp(2 * np.pi * 1j * (1 / T) * time_in_seconds)
+
     """
 
     # Time period ie freq = 1 / T
@@ -613,16 +619,20 @@ def complex_demodulation(series, f, fc, axis=-1):
 
 
 def plot_spectrum(data, fs):
-    """Plots a Single-Sided Amplitude Spectrum of y(t)."""
+    """
+    Plots a Single-Sided Amplitude Spectrum of y(t).
+
+    """
     n = len(data)  # Length of the signal.
     k = np.arange(n)
     T = n / fs
     frq = k / T  # Two sides frequency range.
-    frq = frq[range(n // 2)]  # One side frequency range
+    N = list(range(n // 2))
+    frq = frq[N]  # One side frequency range
 
     # FFT computing and normalization.
     Y = np.fft.fft(data) / n
-    Y = Y[range(n // 2)]
+    Y = Y[N]
 
     # Plotting the spectrum.
     plt.semilogx(frq, np.abs(Y), 'r')
@@ -632,7 +642,8 @@ def plot_spectrum(data, fs):
 
 
 def medfilt1(x, L=3):
-    """Median filter for 1d arrays.
+    """
+    Median filter for 1d arrays.
 
     Performs a discrete one-dimensional median filter with window length `L` to
     input vector `x`.  Produces a vector the same size as `x`.  Boundaries are
@@ -687,6 +698,7 @@ def medfilt1(x, L=3):
     Notes
     -----
     Based on: http://staff.washington.edu/bdjwww/medfilt.py
+
     """
 
     xin = np.atleast_1d(np.asanyarray(x))
@@ -729,10 +741,12 @@ def medfilt1(x, L=3):
 
 
 def fft_lowpass(signal, low, high):
-    """Performs a low pass filer on the series.
+    """
+    Performs a low pass filer on the series.
     low and high specifies the boundary of the filter.
 
     obs: From tappy's filters.py.
+
     """
 
     if len(signal) % 2:
@@ -761,7 +775,8 @@ def fft_lowpass(signal, low, high):
 
 
 def binave(datain, r):
-    """Averages vector data in bins of length r. The last bin may be the
+    """
+    Averages vector data in bins of length r. The last bin may be the
     average of less than r elements. Useful for computing daily average time
     series (with r=24 for hourly data).
 
@@ -797,6 +812,7 @@ def binave(datain, r):
     03/08/1997: version 1.0
     09/19/1998: version 1.1 (vectorized by RP)
     08/05/1999: version 2.0
+
     """
 
     datain, r = np.asarray(datain), np.asarray(r, dtype=np.int)
@@ -816,13 +832,15 @@ def binave(datain, r):
 
 
 def binavg(x, y, db):
-    """Bins y(x) into db spacing.  The spacing is given in `x` units.
+    """
+    Bins y(x) into db spacing.  The spacing is given in `x` units.
     y = np.random.random(20)
     x = np.arange(len(y))
     xb, yb = binavg(x, y, 2)
     plt.figure()
     plt.plot(x, y, 'k.-')
     plt.plot(xb, yb, 'r.-')
+
     """
     # Cut the corners.
     x_min, x_max = np.ceil(x.min()), np.floor(x.max())
@@ -846,7 +864,8 @@ def binavg(x, y, db):
 
 
 def bin_dates(self, freq, tz=None):
-    """Take a pandas time Series and return a new Series on the specified
+    """
+    Take a pandas time Series and return a new Series on the specified
     frequency.
 
     Examples
@@ -858,6 +877,7 @@ def bin_dates(self, freq, tz=None):
     >>> dates = date_range(start='1/1/2000', periods=n, freq='H')
     >>> series = Series(data=sig, index=dates)
     >>> new_series = bin_dates(series, freq='D', tz=None)
+
     """
     new_index = date_range(start=self.index[0], end=self.index[-1],
                            freq=freq, tz=tz)
@@ -869,7 +889,10 @@ def bin_dates(self, freq, tz=None):
 
 
 def series_spline(self):
-    """Fill NaNs using a spline interpolation."""
+    """
+    Fill NaNs using a spline interpolation.
+
+    """
 
     inds, values = np.arange(len(self)), self.values
 
@@ -889,9 +912,12 @@ def series_spline(self):
 
 
 def despike(self, n=3, recursive=False, verbose=False):
-    """Replace spikes with np.NaN.
+    """
+    Replace spikes with np.NaN.
     Removing spikes that are >= n * std.
-    default n = 3."""
+    default n = 3.
+
+    """
 
     result = self.values.copy()
     outliers = (np.abs(self.values - nanmean(self.values)) >= n *
@@ -917,11 +943,13 @@ def despike(self, n=3, recursive=False, verbose=False):
 
 
 def md_trenberth(x):
-    """Returns the filtered series using the Trenberth filter as described
+    """
+    Returns the filtered series using the Trenberth filter as described
     on Monthly Weather Review, vol. 112, No. 2, Feb 1984.
 
     Input data: series x of dimension 1Xn (must be at least dimension 11)
     Output data: y = md_trenberth(x) where y has dimension 1X(n-10)
+
     """
     x = np.asanyarray(x)
     weight = np.array([0.02700, 0.05856, 0.09030, 0.11742, 0.13567, 0.14210,
@@ -938,9 +966,12 @@ def md_trenberth(x):
 
 
 def pol2cart(theta, radius, units='deg'):
-    """Convert from polar to Cartesian coordinates
+    """
+    Convert from polar to Cartesian coordinates
     **usage**:
-        x, y = pol2cart(theta, radius, units='deg')."""
+        x, y = pol2cart(theta, radius, units='deg').
+
+    """
     if units in ['deg', 'degs']:
         theta = theta * np.pi / 180.0
     x = radius * np.cos(theta)
@@ -949,7 +980,8 @@ def pol2cart(theta, radius, units='deg'):
 
 
 def cart2pol(x, y):
-    """Convert from Cartesian to polar coordinates.
+    """
+    Convert from Cartesian to polar coordinates.
 
     Example
     -------
@@ -957,6 +989,7 @@ def cart2pol(x, y):
     >>> y = [+1, +0.5]
     >>> cart2pol(x, y)
     (array([ 1.57079633,  2.35619449]), array([ 1.        ,  0.70710678]))
+
     """
     radius = np.hypot(x, y)
     theta = np.arctan2(y, x)
@@ -974,6 +1007,7 @@ def compass(u, v, **arrowprops):
     >>> u = [+0, -0.5, -0.50, +0.90]
     >>> v = [+1, +0.5, -0.45, -0.85]
     >>> fig, ax = compass(u, v)
+
     """
 
     # Create plot.
