@@ -9,8 +9,6 @@
 # created:  09-Sep-2011
 # modified: Mon 02 Mar 2015 04:17:22 PM BRT
 #
-# obs:  rstyle, rhist and rbox are from:
-# http://messymind.net/2012/07/making-matplotlib-look-like-ggplot/
 #
 
 
