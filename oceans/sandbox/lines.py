@@ -4,6 +4,10 @@ import os
 import numpy as np
 
 
+__all__ = ['LineNormals2D',
+           'LineCurvature2D',
+           'inverse3']
+
 _default_path = os.path.join(os.path.dirname(__file__), 'data')
 
 

@@ -11,6 +11,11 @@ from scipy.io import loadmat
 
 from ..RPSstuff import near
 
+__all__ = ['ftopo',
+           'fwoa',
+           'weim',
+           'smoo2']
+
 
 def ftopo(x, y, topofile='gebco15-40s_30-52w_30seg.nc'):
     """
