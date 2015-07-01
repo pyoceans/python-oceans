@@ -17,14 +17,12 @@ from __future__ import division
 
 import warnings
 
-import iris
 import numpy as np
 import matplotlib.pyplot as plt
 
 
 from netCDF4 import Dataset
 from ..ff_tools import get_profile, wrap_lon360
-from iris.analysis.interpolate import extract_nearest_neighbour
 
 
 __all__ = ['map_limits',
@@ -48,7 +46,8 @@ def map_limits(m):
 
 def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature',
                clim_type='00', resolution='1.00', full=False):
-    """Return an iris.cube instance from a World Ocean Atlas 2013 variable at a
+    """
+    Return an iris.cube instance from a World Ocean Atlas 2013 variable at a
     given lon, lat bounding box.
 
     Parameters
@@ -125,7 +124,9 @@ def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature',
     >>> ax.invert_yaxis()
     >>> leg = ax.legend(loc='lower left')
     >>> _ = ax.set_ylim(200, 0)
+
     """
+    import iris
 
     if variable not in ['salinity', 'temperature']:
         resolution = '1.00'
@@ -162,7 +163,8 @@ def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature',
 
 def woa_profile(lon, lat, variable='temperature', clim_type='00',
                 resolution='1.00', full=False):
-    """Return an iris.cube instance from a World Ocean Atlas 2013 variable at a
+    """
+    Return an iris.cube instance from a World Ocean Atlas 2013 variable at a
     given lon, lat point.
 
     Parameters
@@ -195,7 +197,10 @@ def woa_profile(lon, lat, variable='temperature', clim_type='00',
     >>> l = ax.plot(cube[0, :].data, z)
     >>> ax.grid(True)
     >>> ax.invert_yaxis()
+
     """
+    import iris
+    from iris.analysis.interpolate import extract_nearest_neighbour
 
     if variable not in ['salinity', 'temperature']:
         resolution = '1.00'
@@ -282,7 +287,7 @@ def etopo_subset(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
 
 def get_depth(lon, lat, tfile='dap'):
     """Find the depths for each station on the etopo2 database."""
-    lon, lat = map(np.atleast_1d, (lon, lat))
+    lon, lat = list(map(np.atleast_1d, (lon, lat)))
 
     lons, lats, bathy = etopo_subset(lat.min() - 5, lat.max() + 5,
                                      lon.min() - 5, lon.max() + 5,
