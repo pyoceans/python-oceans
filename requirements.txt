@@ -1,14 +1,12 @@
-shapely
-basemap
-cartopy
-coveralls
+# Mandatory
 gsw
-iris
 matplotlib
-netCDF4
 numpy
-pandas
-pytest
-pytest-cov
-scipy
 seawater
+# Optional
+cartopy
+iris
+netcdf4
+pandas
+scipy
+shapely

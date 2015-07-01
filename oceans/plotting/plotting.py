@@ -1,18 +1,4 @@
-# -*- coding: utf-8 -*-
-#
-# plotting.py
-#
-# purpose:  Some plotting helper functions
-# author:   Filipe P. A. Fernandes
-# e-mail:   ocefpaf@gmail
-# web:      http://ocefpaf.tiddlyspot.com/
-# created:  09-Sep-2011
-# modified: Mon 02 Mar 2015 04:17:22 PM BRT
-#
-#
-
-
-from __future__ import division
+from __future__ import absolute_import, division
 
 import matplotlib
 import numpy as np
@@ -57,7 +43,9 @@ def stick_plot(time, u, v, **kw):
     >>> l1 = ax2.plot(time.to_pydatetime(), v, label='v')
 
     Based on Stephane Raynaud's example from:
-    https://www.mail-archive.com/matplotlib-users@lists.sourceforge.net/msg18051.html"""
+    https://www.mail-archive.com/matplotlib-users@lists.sourceforge.net/msg18051.html
+
+    """
     width = kw.pop('width', 0.002)
     headwidth = kw.pop('headwidth', 0)
     headlength = kw.pop('headlength', 0)
@@ -70,7 +58,7 @@ def stick_plot(time, u, v, **kw):
                              "if *U*==*V* the angle of the arrow on"
                              "the plot is 45 degrees CCW from the *x*-axis.")
 
-    time, u, v = map(np.asanyarray, (time, u, v))
+    time, u, v = list(map(np.asanyarray, (time, u, v)))
     if not ax:
         fig, ax = plt.subplots()
 
@@ -85,9 +73,11 @@ def stick_plot(time, u, v, **kw):
 
 
 def landmask(M, color='0.8'):
-    """Plot land mask.
-    http://www.trondkristiansen.com/wp-content/uploads/downloads/
-    2011/07/mpl_util.py."""
+    """
+    Plot land mask.
+    http://www.trondkristiansen.com/wp-content/uploads/downloads/2011/07/mpl_util.py.
+
+    """
     # Make a constant colormap, default = grey
     constmap = np.matplotlib.colors.ListedColormap([color])
 
@@ -104,10 +94,12 @@ def landmask(M, color='0.8'):
 
 
 def level_colormap(levels, cmap=None):
-    """Make a colormap based on an increasing sequence of levels.
+    """
+    Make a colormap based on an increasing sequence of levels.
     http://www.trondkristiansen.com/wp-content/uploads/downloads/
-    2011/07/mpl_util.py."""
+    2011/07/mpl_util.py.
 
+    """
     # Start with an existing colormap.
     if not cmap:
         cmap = plt.get_cmap()
@@ -132,12 +124,16 @@ def level_colormap(levels, cmap=None):
 
 
 def get_pointsxy(points):
-    """Return x, y of the given point object."""
+    """
+    Return x, y of the given point object.
+
+    """
     return points.get_xdata(), points.get_ydata()
 
 
 class EditPoints(object):
-    """Edit points on a graph with the mouse.  Handles only one set of points.
+    """
+    Edit points on a graph with the mouse.  Handles only one set of points.
 
     Key-bindings:
       't' toggle on and off.  (When on, you can move, delete, or add points.)
@@ -161,8 +157,8 @@ class EditPoints(object):
     Drawing...
 
     Based on http://matplotlib.org/examples/event_handling/poly_editor.html
-    """
 
+    """
     epsilon = 5  # Maximum pixel distance to count as a point hit.
     showpoint = True
 
@@ -199,7 +195,10 @@ class EditPoints(object):
             print("\nDrawing...")
 
     def points_changed(self, points):
-        """This method is called whenever the points object is called."""
+        """
+        This method is called whenever the points object is called.
+
+        """
         # Only copy the artist props to the line (except visibility).
         vis = self.line.get_visible()
         Artist.update_from(self.line, points)
@@ -210,9 +209,10 @@ class EditPoints(object):
             print("\nPoints modified.")
 
     def get_ind_under_point(self, event):
-        """Get the index of the point under mouse if within epsilon
-            tolerance."""
+        """
+        Get the index of the point under mouse if within epsilon tolerance.
 
+        """
         # Display coordinates.
         arr = self.ax.transData.transform(self.points.get_xydata())
         x, y = arr[:, 0], arr[:, 1]
@@ -229,7 +229,10 @@ class EditPoints(object):
         return ind
 
     def button_press_callback(self, event):
-        """Whenever a mouse button is pressed."""
+        """
+        Whenever a mouse button is pressed.
+
+        """
         if not self.showpoint:
             return
         if not event.inaxes:
@@ -246,7 +249,10 @@ class EditPoints(object):
             print("\nGot point: (%s), ind: %s" % (self.pick_pos, self._ind))
 
     def button_release_callback(self, event):
-        """Whenever a mouse button is released."""
+        """
+        Whenever a mouse button is released.
+
+        """
         if not self.showpoint:
             return
         if not event.button:
@@ -256,7 +262,10 @@ class EditPoints(object):
             print("\nButton released.")
 
     def key_press_callback(self, event):
-        """Whenever a key is pressed."""
+        """
+        Whenever a key is pressed.
+
+        """
         if not event.inaxes:
             return
         if event.key == 't':
@@ -295,7 +304,10 @@ class EditPoints(object):
         self.canvas.draw()
 
     def motion_notify_callback(self, event):
-        """On mouse movement."""
+        """
+        On mouse movement.
+
+        """
         if not self.showpoint:
             return
         if not self._ind:
@@ -314,7 +326,7 @@ class EditPoints(object):
             print("\nevent.ydata %s" % event.ydata)
         self.points.set_xdata(x)
         self.points.set_ydata(y)
-        self.line.set_data(zip(self.points.get_data()))
+        self.line.set_data(list(zip(self.points.get_data())))
 
         self.canvas.restore_region(self.background)
         self.ax.draw_artist(self.line)

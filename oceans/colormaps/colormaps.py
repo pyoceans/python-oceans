@@ -1,18 +1,4 @@
-# -*- coding: utf-8 -*-
-#
-# colormaps.py
-#
-# purpose:  Extra colormaps for matplotlib
-# author:   Filipe P. A. Fernandes
-# e-mail:   ocefpaf@gmail
-# web:      http://ocefpaf.tiddlyspot.com/
-# created:  11-Oct-2010
-# modified: Sun 04 May 2014 10:50:57 PM BRT
-#
-# obs:
-#
-
-from __future__ import division
+from __future__ import absolute_import, division
 
 import os
 
@@ -35,8 +21,11 @@ class Bunch(dict):
 
 
 def get_color(color):
-    """http://stackoverflow.com/questions/10254207/
-    color-and-line-writing-using-matplotlib"""
+    """
+    http://stackoverflow.com/questions/10254207/
+    color-and-line-writing-using-matplotlib
+
+    """
     for hue in range(color):
         hue = 1. * hue / color
         col = [int(x) for x in hsv_to_rgb(hue, 1.0, 230)]
@@ -44,7 +33,10 @@ def get_color(color):
 
 
 def cmat2cmpl(rgb, reverse=False):
-    """Convert RGB matplotlib colormap."""
+    """
+    Convert RGB matplotlib colormap.
+
+    """
     rgb = np.asanyarray(rgb)
     if reverse:
         rgb = np.flipud(rgb)
@@ -52,7 +44,10 @@ def cmat2cmpl(rgb, reverse=False):
 
 
 def phasemap_cm(m=256):
-    """Colormap periodic/circular data (phase)."""
+    """
+    Colormap periodic/circular data (phase).
+
+    """
 
     theta = 2 * np.pi * np.arange(0, m) / m
     circ = np.exp(1j * theta)
@@ -73,7 +68,8 @@ def phasemap_cm(m=256):
 
 
 def zebra_cm(a=4, m=0.5, n=256):
-    """Zebra palette colormap with NBANDS broad bands and NENTRIES rows in
+    """
+    Zebra palette colormap with NBANDS broad bands and NENTRIES rows in
     the color map.
 
     The default is 4 broad bands
@@ -89,7 +85,8 @@ def zebra_cm(a=4, m=0.5, n=256):
     Notes
     -----
     Saturation and value go from m to 1 don't use m = 0.
-    a = 4 -> there are this many large bands in the palette
+    a = 4 -> there are this many large bands in the palette.
+
     """
     x = np.arange(0, n)
     hue = np.exp(-3. * x / n)
@@ -99,15 +96,21 @@ def zebra_cm(a=4, m=0.5, n=256):
 
 
 def ctopo_pos_neg_cm(m=256):
-    """Colormap for positive/negative data with gray scale only
-    original from cushman-roisin book cd-rom."""
+    """
+    Colormap for positive/negative data with gray scale only
+    original from cushman-roisin book cd-rom.
+
+    """
     dx = 1. / (m - 1)
     values = np.arange(0., 1., dx)
     return np.c_[values, values, values]
 
 
 def avhrr_cm(m=256):
-    """AHVRR colormap used by NOAA Coastwatch."""
+    """
+    AHVRR colormap used by NOAA Coastwatch.
+
+    """
 
     x = np.arange(0.0, m) / (m - 1)
 

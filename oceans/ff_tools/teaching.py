@@ -1,19 +1,7 @@
 # -*- coding: utf-8 -*-
-#
-#
-# teaching.py
-#
-# purpose:  Teaching module of ff_tools.
-# author:   Filipe P. A. Fernandes
-# e-mail:   ocefpaf@gmail
-# web:      http://ocefpaf.tiddlyspot.com/
-# created:  09-Sep-2011
-# modified: Fri 27 Feb 2015 05:45:06 PM BRT
-#
-# obs: Just some basic example function.
-#
 
-from __future__ import division
+
+from __future__ import absolute_import, division
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -37,18 +25,22 @@ __all__ = ['TimeSeries',
 
 
 class TimeSeries(object):
-    """Time-series object to store data and time information.
+    """
+    Time-series object to store data and time information.
     Contains some handy methods... Still a work in progress.
+
     """
     def __init__(self, data, time):
-        """data : array_like
+        """
+        data : array_like
             Just a data container
         time : datetime object
             The series time information.
             TODO: Must be regularly spaced.
             Changed this to a more robust method, maybe interpolate?
+
         """
-        data, time = map(np.asanyarray, (data, time))
+        data, time = list(map(np.asanyarray, (data, time)))
 
         # Derived information.
         time_in_seconds = [(t - time[0]).total_seconds() for t in time]
@@ -68,16 +60,20 @@ class TimeSeries(object):
         self.time_in_seconds = np.asanyarray(time_in_seconds)
 
     def plot_spectrum(self):
-        """Plots a Single-Sided Amplitude Spectrum of y(t)."""
+        """
+        Plots a Single-Sided Amplitude Spectrum of y(t).
+
+        """
         n = len(self.data)  # Length of the signal.
         k = np.arange(n)
         T = n / self.fs
         frq = k / T  # Two sides frequency range.
-        frq = frq[range(n // 2)]  # One side frequency range
+        N = list(range(n // 2))
+        frq = frq[N]  # One side frequency range
 
         # fft computing and normalization
         Y = np.fft.fft(self.data) / n
-        Y = Y[range(n // 2)]
+        Y = Y[N]
 
         # Plotting the spectrum.
         plt.semilogx(frq, np.abs(Y), 'r')
@@ -87,13 +83,15 @@ class TimeSeries(object):
 
 
 def cov(x, y):
-    """Compute covariance for `x`, `y`
+    """
+    Compute covariance for `x`, `y`
 
     input:  `x`, `y` -> data sets `x` and `y`
     `c` -> covariance of `x` and `y`
+
     """
 
-    x, y = map(np.asanyarray, (x, y))
+    x, y = list(map(np.asanyarray, (x, y)))
 
     x = x - x.mean()
     y = y - y.mean()
@@ -105,8 +103,10 @@ def cov(x, y):
 
 
 def rms(x):
-    """Compute root mean square."""
+    """
+    Compute root mean square.
 
+    """
     x = np.asanyarray(x)
     rms = np.sqrt(np.sum(x ** 2) / x.size)
 
@@ -114,14 +114,15 @@ def rms(x):
 
 
 def rmsd(x, y, normalize=False):
-    """Compute root mean square difference (or distance).
+    """
+    Compute root mean square difference (or distance).
 
     The normalized root-mean-square deviation or error (NRMSD or NRMSE) is the
     RMSD divided by the range of observed values.  The value is often expressed
     as a percentage, where lower values indicate less residual variance.
-    """
 
-    x, y = map(np.asanyarray, (x, y))
+    """
+    x, y = list(map(np.asanyarray, (x, y)))
 
     rmsd = np.sqrt(np.sum((x - y) ** 2) / x.size)
 
@@ -132,7 +133,8 @@ def rmsd(x, y, normalize=False):
 
 
 def allstats(Cr, Cf):
-    """Compute statistics from 2 series.
+    """
+    Compute statistics from 2 series.
 
     statm = allstats(Cr, Cf)
 
@@ -175,8 +177,9 @@ def allstats(Cr, Cf):
                                      N*STD(C)*STD(Cr)
 
        - statm[2, 0] = 0 and statm[3, 0] = 1 by definition !
+
     """
-    Cr, Cf = map(np.asanyarray, (Cr, Cf))
+    Cr, Cf = list(map(np.asanyarray, (Cr, Cf)))
 
     # Check NaNs.
     # iok = find(isnan(Cr)==0 & isnan(Cf)==0);
@@ -212,17 +215,8 @@ def allstats(Cr, Cf):
 
     return statm
 
-# lsqfit_regression.py
-#
-# purpose:  Several snippets for least regression.
-# author:   Filipe P. A. Fernandes
-# e-mail:   ocefpaf@gmail
-# web:      http://ocefpaf.tiddlyspot.com/
-# created:  14-Sep-2011
-# modified: Wed 14 Sep 2011 02:16:53 PM EDT
-#
-# obs: Modified from Edward T Peltzer
-#      http://www.mbari.org/staff/etp3/regress/rules.htm
+# lsqfit_regression
+# http://www.mbari.org/staff/etp3/regress/rules.htm
 
 """
 For Model II regressions, neither X nor Y is an INDEPENDENT variable but both
@@ -262,7 +256,7 @@ def lsqfity(X, Y):
 
     """
 
-    X, Y = map(np.asanyarray, (X, Y))
+    X, Y = list(map(np.asanyarray, (X, Y)))
 
     # Determine the size of the vector.
     n = len(X)
@@ -294,7 +288,8 @@ def lsqfity(X, Y):
 
 
 def lsqfitx(X, Y):
-    """Calculate a "MODEL-1" least squares fit.
+    """
+    Calculate a "MODEL-1" least squares fit.
 
     The line is fit by MINIMIZING the residuals in X only.
 
@@ -316,8 +311,7 @@ def lsqfitx(X, Y):
     sbx    =    standard deviation of the y-intercept
 
     """
-
-    X, Y = map(np.asanyarray, (X, Y))
+    X, Y = list(map(np.asanyarray, (X, Y)))
 
     # Determine the size of the vector.
     n = len(X)
@@ -355,7 +349,8 @@ def lsqfitx(X, Y):
 
 
 def lsqfitgm(X, Y):
-    """Calculate a "MODEL-2" least squares fit.
+    """
+    Calculate a "MODEL-2" least squares fit.
 
     The SLOPE of the line is determined by calculating the GEOMETRIC MEAN
     of the slopes from the regression of Y-on-X and X-on-Y.
@@ -390,8 +385,7 @@ def lsqfitgm(X, Y):
     Note that the equation passes through the centroid:  (x-mean, y-mean)
 
     """
-
-    X, Y = map(np.asanyarray, (X, Y))
+    X, Y = list(map(np.asanyarray, (X, Y)))
 
     # Determine slope of Y-on-X regression.
     my = lsqfity(X, Y)[0]
@@ -470,8 +464,7 @@ def lsqfitma(X, Y):
     Note that the equation passes through the centroid:  (x-mean, y-mean)
 
     """
-
-    X, Y = map(np.asanyarray, (X, Y))
+    X, Y = list(map(np.asanyarray, (X, Y)))
 
     # Determine the size of the vector.
     n = len(X)
@@ -542,8 +535,7 @@ def lsqbisec(X, Y):
     Note that the equation passes through the centroid:  (x-mean, y-mean)
 
     """
-
-    X, Y = map(np.asanyarray, (X, Y))
+    X, Y = list(map(np.asanyarray, (X, Y)))
 
     # Determine slope of Y-on-X regression.
     my = lsqfity(X, Y)[0]
@@ -627,8 +619,7 @@ def lsqcubic(X, Y, sX, sY, tl=1e-6):
             3.  Suggested values of tl = 1e-4 to 1e-6.
 
     """
-
-    X, Y = map(np.asanyarray, (X, Y))
+    X, Y = list(map(np.asanyarray, (X, Y)))
 
     # Find the number of data points and make one time calculations:
     n = len(X)
@@ -726,8 +717,7 @@ def lsqfityw(X, Y, sY):
     NOTE: that the line passes through the weighted centroid: (xw,yw).
 
     """
-
-    X, Y = map(np.asanyarray, (X, Y))
+    X, Y = list(map(np.asanyarray, (X, Y)))
 
     # Determine the size of the vector.
     # n = len(X)  # FIXME: Assigned but never used.
@@ -797,8 +787,7 @@ def lsqfityz(X, Y, sY):
     NOTE: that the line passes through the weighted centroid: (xz,yz).
 
     """
-
-    X, Y = map(np.asanyarray, (X, Y))
+    X, Y = list(map(np.asanyarray, (X, Y)))
 
     # Determine the size of the vector.
     n = len(X)
@@ -900,9 +889,9 @@ def gmregress(X, Y, alpha=0.05):
         Sokal, R. R. and Rohlf, F. J. (1995), Biometry. The principles and
             practice of the statistics in biologicalreserach. 3rd. ed.
             New-York:W.H.,Freeman. [Sections 14.13 and 15.7]
-    """
 
-    X, Y = map(np.asanyarray, (X, Y))
+    """
+    X, Y = list(map(np.asanyarray, (X, Y)))
 
     n = len(Y)
     S = np.cov(X, Y)
@@ -942,7 +931,8 @@ def gmregress(X, Y, alpha=0.05):
 
 
 def r_earth(lon=None, lat=None):
-    """Radius of the earth as a function of latitude and longitude using the
+    """
+    Radius of the earth as a function of latitude and longitude using the
     WGS-84 earth ellipsoid.
 
     Parameters
@@ -982,8 +972,8 @@ def r_earth(lon=None, lat=None):
     Notes
     -----
     Based on http://staff.washington.edu/bdjwww/earth_radius.py
-    """
 
+    """
     # WGS-84 semi-major and semi-minor axes,
     a, b = 6378137.0, 6356752.314245  # In meters.
 
@@ -992,22 +982,21 @@ def r_earth(lon=None, lat=None):
         # Geometric mean radius, sphere of equivalent volume.
         return (a ** 2 * b) ** (1. / 3.)
 
-    """Convert to physicist's spherical coordinates (e.g. Arfken, 1985)
-    phi = azimuthal angle, 0 <= phi < 2 pi
-    theta = polar angle, 0 <= theta <= pi
-    Conversion notes:
-    phi is longitude converted to radians.
-    theta is co-latitude: theta = pi/2 - lat (after lat converted to radians).
-    """
+    # Convert to physicist's spherical coordinates (e.g. Arfken, 1985)
+    # phi = azimuthal angle, 0 <= phi < 2 pi
+    # theta = polar angle, 0 <= theta <= pi
+    # Conversion notes:
+    # phi is longitude converted to radians.
+    # theta is co-latitude: theta = pi/2 - lat (after lat converted to rad).
 
     # Spherical coordinates
     phi = lon * np.pi / 180.
     theta = np.pi / 2. - lat * np.pi / 180.
 
-    """The equation of an ellipsoid is $x^2 /a^2 + y^2/a^2 + z^2/b^2 = 1$,
-    with two "a" axes because the earth is fat around the equator.  Now use
-    x = r sin(theta) cos(phi), y = r sin(theta) sin(phi), z = r cos(theta),
-    and we easily obtain the next equation."""
+    # The equation of an ellipsoid is $x^2 /a^2 + y^2/a^2 + z^2/b^2 = 1$,
+    # with two "a" axes because the earth is fat around the equator.  Now use
+    # x = r sin(theta) cos(phi), y = r sin(theta) sin(phi), z = r cos(theta),
+    # and we easily obtain the next equation.
 
     inv_r_squared = ((np.sin(theta) * np.cos(phi) / a) ** 2 +
                      (np.sin(theta) * np.sin(phi) / a) ** 2 +

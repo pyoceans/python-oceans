@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+
+from __future__ import absolute_import, division
+
+
 import numpy as np
 
 from seawater import dist
@@ -9,7 +13,7 @@ from ..RPSstuff import near
 
 
 def ftopo(x, y, topofile='gebco15-40s_30-52w_30seg.nc'):
-    r"""
+    """
     Usage
     -----
     H, D, Xo, Yo = ftopo(x, y, topofile='gebco/gebco_08_30seg.nc')
@@ -68,9 +72,9 @@ def ftopo(x, y, topofile='gebco15-40s_30-52w_30seg.nc'):
     July 2012: Python Translation and modifications performed by André Palóczy
     Filho <paloczy@gmail.com>
     to handle GEBCO dataset (30 arc seconds resolution).
-    """
 
-    x, y = map(np.asanyarray, (x, y))
+    """
+    x, y = list(map(np.asanyarray, (x, y)))
 
     # Opening netCDF file and extracting data.
     grid = Dataset(topofile)
@@ -113,7 +117,7 @@ def ftopo(x, y, topofile='gebco15-40s_30-52w_30seg.nc'):
 
 
 def fwoa(x, y, woafile='woa2009_annual.mat'):
-    r"""
+    """
     Usage
     -----
     T,S,X,D,Xo,Yo = fwoa(x, y, woafile='woa2009_annual.mat')
@@ -167,9 +171,9 @@ def fwoa(x, y, woafile='woa2009_annual.mat'):
     Implement netCDF file reading (Original WOA 2009 format)
     Implement option to retrieve linearly interpolated profiles instead of
     nearest ones.
-    """
 
-    x, y = map(np.asanyarray, (x, y))
+    """
+    x, y = list(map(np.asanyarray, (x, y)))
 
     # Reading .mat file.
     d = loadmat(woafile)
@@ -205,7 +209,7 @@ def fwoa(x, y, woafile='woa2009_annual.mat'):
 
 
 def weim(x, N, kind='hann', badflag=-9999, beta=14):
-    r"""
+    """
     Usage
     -----
     xs = weim(x, N, kind='hann', badflag=-9999, beta=14)
@@ -256,8 +260,8 @@ def weim(x, N, kind='hann', badflag=-9999, beta=14):
 
     ---------------------------------------
     André Palóczy Filho (paloczy@gmail.com) June 2012
-    """
 
+    """
     # Checking window type and dimensions.
     kinds = ['hann', 'hamming', 'blackman', 'bartlett', 'kaiser']
     if (kind not in kinds):
@@ -323,7 +327,7 @@ def weim(x, N, kind='hann', badflag=-9999, beta=14):
 
 
 def smoo2(A, hei, wid, kind='hann', badflag=-9999, beta=14):
-    r"""
+    """
     Usage
     -----
     As = smoo2(A, hei, wid, kind='hann', badflag=-9999, beta=14)
@@ -381,6 +385,7 @@ def smoo2(A, hei, wid, kind='hann', badflag=-9999, beta=14):
 
     André Palóczy Filho (paloczy@gmail.com)
     April 2012
+
     """
     # Checking window type and dimensions
     kinds = ['hann', 'hamming', 'blackman', 'bartlett', 'kaiser']

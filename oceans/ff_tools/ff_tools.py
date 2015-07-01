@@ -1,18 +1,4 @@
-# -*- coding: utf-8 -*-
-#
-# ff_tools.py
-#
-# purpose:
-# author:   Filipe P. A. Fernandes
-# e-mail:   ocefpaf@gmail
-# web:      http://ocefpaf.tiddlyspot.com/
-# created:  12-Feb-2012
-# modified: Fri 27 Feb 2015 05:38:16 PM BRT
-#
-# obs:
-#
-
-from __future__ import division
+from __future__ import absolute_import, division
 
 import re
 import warnings
@@ -50,12 +36,13 @@ def wrap_lon360(lon):
 
 def alphanum_key(s):
     key = re.split(r"(\d+)", s)
-    key[1::2] = map(int, key[1::2])
+    key[1::2] = list(map(int, key[1::2]))
     return key
 
 
 def get_profile(x, y, f, xi, yi, mode='nearest', order=3):
-    r"""Interpolate regular data.
+    """
+    Interpolate regular data.
 
     Parameters
     ----------
@@ -104,9 +91,10 @@ def get_profile(x, y, f, xi, yi, mode='nearest', order=3):
     Notes
     -----
     http://mail.scipy.org/pipermail/scipy-user/2011-June/029857.html
+
     """
 
-    x, y, f, xi, yi = map(np.asanyarray, (x, y, f, xi, yi))
+    x, y, f, xi, yi = list(map(np.asanyarray, (x, y, f, xi, yi)))
     conditions = np.array([xi.min() < x.min(),
                            xi.max() > x.max(),
                            yi.min() < y.min(),
@@ -127,7 +115,8 @@ def get_profile(x, y, f, xi, yi, mode='nearest', order=3):
 
 
 def princomp(A, numpc=None):
-    r"""Performs principal components analysis (PCA) on the n-by-p data matrix
+    """
+    Performs principal components analysis (PCA) on the n-by-p data matrix
     `A`.  Rows of A correspond to observations, columns to variables.
 
     Returns :
@@ -180,6 +169,7 @@ def princomp(A, numpc=None):
     -----
     http://glowingpython.blogspot.com/
     2011/07/principal-component-analysis-with-numpy.html?spref=tw
+
     """
 
     # computing eigenvalues and eigenvectors of covariance matrix
@@ -193,16 +183,17 @@ def princomp(A, numpc=None):
         # Sorting eigenvectors according to the sorted eigenvalues.
         coeff = coeff[:, idx]
         latent = latent[idx]  # sorting eigenvalues
-
         if numpc < p or numpc >= 0:
-            coeff = coeff[:, range(numpc)]  # Cutting some PCs.
-
+            coeff = coeff[:, list(range(numpc))]  # Cutting some PCs.
     score = np.dot(coeff.T, M)  # Projection of the data in the new space.
     return coeff, score, latent
 
 
 def strip_mask(arr, fill_value=np.NaN):
-    r"""Take a masked array and return its data(filled) + mask."""
+    """
+    Take a masked array and return its data(filled) + mask.
+
+    """
     if ma.isMaskedArray(arr):
         mask = np.ma.getmaskarray(arr)
         arr = np.ma.filled(arr, fill_value)
@@ -212,7 +203,8 @@ def strip_mask(arr, fill_value=np.NaN):
 
 
 def shiftdim(x, n=None):
-    r""" Matlab's shiftdim in python.
+    """
+    Matlab's shiftdim in python.
 
     Examples
     --------
@@ -233,6 +225,7 @@ def shiftdim(x, n=None):
     Notes
     -----
     http://www.python-it.org/forum/index.php?topic=4688.0
+
     """
 
     def no_leading_ones(shape):
@@ -251,7 +244,7 @@ def shiftdim(x, n=None):
     elif n >= 0:
         # When n is positive, shiftdim shifts the dimensions
         # to the left and wraps the n leading dimensions to the end.
-        return x.transpose(np.roll(range(x.ndim), -n))
+        return x.transpose(np.roll(list(range(x.ndim)), -n))
     else:
         # When n is negative, shiftdim shifts the dimensions
         # to the right and pads with singletons.
@@ -259,7 +252,10 @@ def shiftdim(x, n=None):
 
 
 def nc_time(time):
-    r"""Convert netcdf time variable to a datetime obj."""
+    """
+    Convert netcdf time variable to a datetime obj.
+
+    """
     units = time.units
     calendar = time.calendar
     return num2date(time[:], units, calendar=calendar)

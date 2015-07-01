@@ -1,18 +1,4 @@
-# -*- coding: utf-8 -*-
-#
-# RPStuff.py
-#
-# purpose:  RPStuff matlab routines in python
-# author:   Filipe P. A. Fernandes
-# e-mail:   ocefpaf@gmail
-# web:      http://ocefpaf.tiddlyspot.com/
-# created:  22-Jun-2011
-# modified: Fri 27 Feb 2015 05:36:39 PM BRT
-#
-# obs: This "legacy" package is intended for compatibility only.
-#
-
-from __future__ import division
+from __future__ import absolute_import, division
 
 from datetime import datetime
 
@@ -40,12 +26,14 @@ earth_radius = 6371.e3
 
 
 def h2hms(hours):
-    """Converts hours to hours, minutes, and seconds.
+    """
+    Converts hours to hours, minutes, and seconds.
 
     Example
     -------
     >>> h2hms(12.51)
     (12.0, 30.0, 36.0)
+
     """
     hour = np.floor(hours)
     mins = np.remainder(hours, 1.) * 60.
@@ -55,7 +43,8 @@ def h2hms(hours):
 
 
 def hms2h(h, m=None, s=None):
-    """Converts hours, minutes, and seconds to hours.
+    """
+    Converts hours, minutes, and seconds to hours.
 
     Example
     -------
@@ -64,6 +53,7 @@ def hms2h(h, m=None, s=None):
     >>> # Or,
     >>> hms2h(123036)
     12.51
+
     """
     if not m and not s:
         hms = h
@@ -78,12 +68,14 @@ def hms2h(h, m=None, s=None):
 
 
 def ms2hms(millisecs):
-    """Converts milliseconds to integer hour, minute, seconds.
+    """
+    Converts milliseconds to integer hour, minute, seconds.
 
     Example
     -------
     >>> ms2hms(1e3 * 60)
     (0.0, 1.0, 0.0)
+
     """
     sec = np.round(millisecs / 1000)
     hour = np.floor(sec / 3600)
@@ -93,7 +85,8 @@ def ms2hms(millisecs):
 
 
 def julian(y, m=0, d=0, h=0, mi=0, s=0, noon=False):
-    """Converts Gregorian calendar dates to Julian dates
+    """
+    Converts Gregorian calendar dates to Julian dates
 
     USAGE: [j]=julian(y,m,d,h)
 
@@ -125,8 +118,9 @@ def julian(y, m=0, d=0, h=0, mi=0, s=0, noon=False):
     -------
     >>> julian(1968, 5, 23, 0)
     array([ 2440000.])
+
     """
-    y, m, d, h, mi, s = map(np.atleast_1d, (y, m, d, h, mi, s))
+    y, m, d, h, mi, s = list(map(np.atleast_1d, (y, m, d, h, mi, s)))
     h = hms2h(h, mi, s)
 
     mo = m + 9
@@ -148,31 +142,36 @@ def julian(y, m=0, d=0, h=0, mi=0, s=0, noon=False):
 
 
 def jdrps2jdmat(jd):
-    """Convert Signell's Julian days to Matlab's Serial day
+    """
+    Convert Signell's Julian days to Matlab's Serial day
     matlab's serial date = 1 at 0000 UTC, 1-Jan-0000.
 
     Example
     -------
     >>> jdrps2jdmat(2440000)
     array([ 718941.])
+
     """
     return jd - julian(0000, 1, 1, 0, 0, 0) + 1
 
 
 def jdmat2jdrps(jdmat):
-    """Convert Matlab's Serial Day to Signell's Julian days
+    """
+    Convert Matlab's Serial Day to Signell's Julian days
     matlab's serial date = 1 at 0000 UTC, 1-Jan-0000.
 
     Example
     -------
     >>> jdmat2jdrps(718941)
     array([ 2440000.])
+
     """
     return jdmat + julian(0000, 1, 1, 0, 0, 0) - 1
 
 
 def gregorian(jd, noon=False):
-    """Converts decimal Julian days to Gregorian dates using the astronomical
+    """
+    Converts decimal Julian days to Gregorian dates using the astronomical
     conversion, but with time zero starting at midnight instead of noon.  In
     this convention, Julian day 2440000 begins at 0000 hours, May 23, 1968.
     The Julian day does not have to be an integer, and with Matlab's double
@@ -196,17 +195,17 @@ def gregorian(jd, noon=False):
     array([[ 1968.,     5.,    23.,     0.,     0.,     0.]])
 
     AUTHOR: Rich Signell  (rsignell@usgs.gov)
-    """
 
     """
-    Add 0.2 milliseconds before Gregorian calculation to prevent
-    roundoff error resulting from math operations on time
-    from occasionally representing midnight as
-    (for example) [1990 11 30 23 59 59.99...] instead of [1990 12 1 0 0 0]);
-    If adding a 0.2 ms to time (each time you go back and forth between
-    Julian and Gregorian) bothers you more than the inconvenient representation
-    of Gregorian time at midnight you can comment this line out...
-    """
+    # Add 0.2 milliseconds before Gregorian calculation to prevent
+    # roundoff error resulting from math operations on time
+    # from occasionally representing midnight as
+    # (for example) [1990 11 30 23 59 59.99...] instead of [1990 12 1 0 0 0]);
+    # If adding a 0.2 ms to time (each time you go back and forth between
+    # Julian and Gregorian) bothers you more than the inconvenient
+    # representation of Gregorian time at midnight you can comment this
+    # line out...
+
     jd = np.atleast_1d(jd)
     jd = jd + 2.e-9
 
@@ -242,15 +241,16 @@ def gregorian(jd, noon=False):
 
 
 def s2hms(secs):
-    """Converts seconds to integer hour,minute,seconds
+    """
+    Converts seconds to integer hour,minute,seconds
     Usage: hour, min, sec = s2hms(secs)
 
     Example
     -------
     >>> s2hms(3600 + 60 + 1)
     (1.0, 1.0, 1)
-    """
 
+    """
     hr = np.floor(secs / 3600)
     mi = np.floor(np.remainder(secs, 3600) / 60)
     sc = np.round(np.remainder(secs, 60))
@@ -260,12 +260,13 @@ def s2hms(secs):
 
 # FIXME: STOPPED HERE
 def ss2(jd):
-    """Return Gregorian start and stop dates of Julian day variable
-    Usage:  start, stop =ss2(jd)"""
+    """
+    Return Gregorian start and stop dates of Julian day variable
+    Usage:  start, stop = ss2(jd)
 
+    """
     start = gregorian(jd[0])
     stop = gregorian(jd[-1])
-
     return start, stop
 
 
@@ -278,10 +279,9 @@ def angled(h):
         deg = angled(h)
         h = complex matrix
         deg = angle in math convention (degrees counterclockwise from "east")
+
     """
-
     pd = np.angle(h, deg=True)
-
     return pd
 
 
@@ -291,24 +291,27 @@ def ij2ind(a, i, j):
 
 
 def ind2ij(a, ind):
-    """ind2ij returns i, j indices of array."""
+    """
+    ind2ij returns i, j indices of array.
 
+    """
     m, n = a.shape
     j = np.ceil(ind / m)
     i = np.remainder(ind, m)
     i[i == 0] = m
-
     return i, j
 
 
 def rms(u):
-    """Compute root mean square for each column of matrix u."""
+    """
+    Compute root mean square for each column of matrix u.
+
+    """
     # TODO: use an axis arg.
     if u.ndim > 1:
         m, n = u.shape
     else:
         m = u.size
-
     return np.sqrt(np.sum(u ** 2) / m)
 
 
@@ -328,6 +331,7 @@ def z0toCn(z0, H):
         C, n = z0toCn(0.003, np.arange(2, 200))
         finds vectors C and n corresponding to a z0=0.003 and
         a range of water depths from 2--200 meters
+
     """
 
     k_s = 30 * z0
@@ -338,10 +342,11 @@ def z0toCn(z0, H):
 
 
 def z0tocd(z0, zr):
-    """Calculates CD at a given ZR corresponding to Z0."""
+    """
+    Calculates CD at a given ZR corresponding to Z0.
 
+    """
     cd = (0.4 * np.ones(z0.size) / np.log(zr / z0)) ** 2
-
     return cd
 
 
@@ -349,56 +354,79 @@ def short_calc(amin, amax):
     rang = 32767 - (-32767)
     add_offset = (amax + amin) * 0.5
     scale_factor = (amax - amin) / rang
-
     return add_offset, scale_factor
 
 
 def gsum(x, **kw):
-    """Just like sum, except that it skips over bad points."""
+    """
+    Just like sum, except that it skips over bad points.
+
+    """
     xnew = ma.masked_invalid(x)
     return np.sum(xnew, **kw)
 
 
 def gmean(x, **kw):
-    """Just like mean, except that it skips over bad points."""
+    """
+    Just like mean, except that it skips over bad points.
+
+    """
     xnew = ma.masked_invalid(x)
     return np.mean(xnew, **kw)
 
 
 def gmedian(x, **kw):
-    """Just like median, except that it skips over bad points."""
+    """
+    Just like median, except that it skips over bad points.
+
+    """
     xnew = ma.masked_invalid(x)
     return np.median(xnew, **kw)
 
 
 def gmin(x, **kw):
-    """Just like min, except that it skips over bad points."""
+    """
+    Just like min, except that it skips over bad points.
+
+    """
     xnew = ma.masked_invalid(x)
     return np.min(xnew, **kw)
 
 
 def gmax(x, **kw):
-    """Just like max, except that it skips over bad points."""
+    """
+    Just like max, except that it skips over bad points.
+
+    """
     xnew = ma.masked_invalid(x)
     return np.max(xnew, **kw)
 
 
 def gstd(x, **kw):
-    """Just like std, except that it skips over bad points."""
+    """
+    Just like std, except that it skips over bad points.
+
+    """
     xnew = ma.masked_invalid(x)
     return np.std(xnew, **kw)
 
 
 def near(x, x0, n=1):
-    """Given an 1D array `x` and a scalar `x0`, returns the `n` indices of the
-    element of `x` closest to `x0`."""
+    """
+    Given an 1D array `x` and a scalar `x0`, returns the `n` indices of the
+    element of `x` closest to `x0`.
+
+    """
     distance = np.abs(x - x0)
     index = np.argsort(distance)
     return index[:n], distance[index[:n]]
 
 
 def swantime(a):
-    """Converts SWAN default time format to datetime object."""
+    """
+    Converts SWAN default time format to datetime object.
+
+    """
     if isinstance(a, str):
         a = float(a)
         a = np.asanyarray(a)
@@ -419,30 +447,35 @@ def swantime(a):
 
 
 def shift(a, b, n):
-    """a and b are vectors
+    """
+    a and b are vectors
     n is number of points of a to cut off
-    anew and bnew will be the same length."""
+    anew and bnew will be the same length.
 
+    """
     # la, lb = a.size, lb = b.size
 
-    anew = a[range(0 + n, len(a)), :]
+    anew = a[list(range(0 + n, len(a))), :]
 
     if len(anew) > len(b):
-        anew = anew[range(0, len(b)), :]
+        anew = anew[list(range(0, len(b))), :]
         bnew = b
     else:
-        bnew = b[range(0, len(anew)), :]
+        bnew = b[list(range(0, len(anew))), :]
     return anew, bnew
 
 
 def lagcor(a, b, n):
-    """Finds lagged correlations between two series.
+    """
+    Finds lagged correlations between two series.
     a and b are two column vectors
     n is range of lags
-    cor is correlation as fn of lag."""
+    cor is correlation as fn of lag.
+
+    """
     cor = []
-    for i in range(0, n + 1):
-        d1, d2 = shift(a, b, i)
+    for k in range(0, n + 1):
+        d1, d2 = shift(a, b, k)
         ind = ~np.isnan(d1 + d2)
         c = np.corrcoef(d1[ind], d2[ind])
         if len(c) > 1:
@@ -452,36 +485,42 @@ def lagcor(a, b, n):
 
 
 def coast2bln(coast, bln_file):
-    """Converts a matlab coast (two column array w/ nan for line breaks) into
+    """
+    Converts a matlab coast (two column array w/ nan for line breaks) into
     a Surfer blanking file.
 
     Where coast is a two column vector and bln_file is the output file name.
 
-    Needs `fixcoast`."""
+    Needs `fixcoast`.
+
+    """
 
     c2 = fixcoast(coast)
     ind = np.where(np.isnan(c2[:, 0]))[0]
     n = len(ind) - 1
     bln = c2.copy()
 
-    for i in range(0, n - 1):
-        ii = range(ind[i] + 1, ind[i + 1])
-        NP = int(len(ii))
-        bln[ind[i], 0] = NP
-        bln[ind[i], 1] = int(1)
+    for k in range(0, n - 1):
+        kk = list(range(ind[k] + 1, ind[k + 1]))
+        NP = int(len(kk))
+        bln[ind[k], 0] = NP
+        bln[ind[k], 1] = int(1)
 
     bln = bln[:-1]
     np.savetxt(bln_file, bln, fmt='%g')
 
 
 def fixcoast(coast):
-    """FIXCOAST  Makes sure coastlines meet Signell's conventions.
+    """
+    FIXCOAST  Makes sure coastlines meet Signell's conventions.
 
     Fixes coastline is in the format we want.  Assumes that lon/lat are in the
     first two columns of the matrix coast, and that coastline segments are
     separated by rows of NaNs (or -99999s).  This routine ensures that only 1
     row of NaNs separates each segment, and makes sure that the first and last
-    rows contain NaNs."""
+    rows contain NaNs.
+
+    """
 
     ind = coast == -99999.
     coast[ind] = np.NaN

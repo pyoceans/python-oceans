@@ -1,11 +1,13 @@
-# -*- coding: utf-8 -*-
+from __future__ import absolute_import, division
+
 
 import gsw
 import numpy as np
 
 
 class Waves(object):
-    """Solves the wave dispersion relationship via Newton-raphson.
+    """
+    Solves the wave dispersion relationship via Newton-raphson.
 
     .. math::
         \omega^2 = gk\tanh kh
@@ -88,14 +90,7 @@ class Waves(object):
     >>> # print("  = %s" % wav.theta)
     >>> # print("  = %s" % wav.H)
 
-    References
-    ----------
-    TODO
-
-    Modifications: Filipe Fernandes, 2010
-                10-01-26. Filipe Fernandes, first version.
     """
-
     def __init__(self, h, T=None, L=None, thetao=None, Ho=None, lat=None):
         self.T = np.asarray(T, dtype=np.float)
         self.L = np.asarray(L, dtype=np.float)
