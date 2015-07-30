@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+Version 0.2.5, 30-Jul-2015.
+
+* Lazy imports.
+* Several minor bug fixes.
+
 Version 0.2.4, 05-May-2015.
 
 * Added `woa_profile`.
