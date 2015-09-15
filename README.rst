@@ -1,14 +1,25 @@
 python-oceans
 =============
 
-.. image:: https://badge.fury.io/py/oceans.png
-   :target: http://badge.fury.io/py/oceans
-.. image:: https://api.travis-ci.org/pyoceans/python-oceans.png?branch=master
-   :target: https://travis-ci.org/pyoceans/python-oceans
 .. image:: https://zenodo.org/badge/5715/pyoceans/python-oceans.svg
    :target: http://dx.doi.org/10.5281/zenodo.17359
+   :alt: DOI
+.. image:: http://img.shields.io/pypi/v/oceans.svg?style=flat
+   :target: https://pypi.python.org/pypi/oceans
+   :alt: Version_status
+.. image:: http://img.shields.io/pypi/dm/oceans.svg?style=flat
+   :target: https://pypi.python.org/pypi/oceans
+   :alt: Downloads
+.. image:: http://img.shields.io/travis/pyoceans/python-oceans/master.svg?style=flat
+   :target: https://travis-ci.org/pyoceans/python-oceans
+   :alt: Build_status
+.. image:: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
+   :target: https://github.com/pyoceans/python-oceans/blob/master/LICENSE.txt
+   :alt: license
 .. image:: http://bottlepy.org/docs/dev/_static/Gittip.png
-   :target: https://www.gittip.com/ocefpaf/
+   :target: https://gratipay.com/~ocefpaf/
+   :alt: Gittip
+
 
 colormaps
 ~~~~~~~~~
