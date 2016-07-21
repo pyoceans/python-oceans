@@ -615,7 +615,7 @@ def spice(s, t, p):
 
     sp = np.zeros_like(pt)
     T = np.ones_like(pt)
-    s -= 35
+    s = s - 35
     r, c = B.shape
     for i in range(r):
         S = np.ones_like(pt)
