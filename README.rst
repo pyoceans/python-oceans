@@ -1,8 +1,8 @@
 python-oceans
 =============
 
-.. image:: https://zenodo.org/badge/5715/pyoceans/python-oceans.svg
-   :target: http://dx.doi.org/10.5281/zenodo.17359
+.. image:: https://zenodo.org/badge/5715/ocefpaf/python-oceans.svg
+   :target: https://zenodo.org/badge/latestdoi/5715/ocefpaf/python-oceans
    :alt: DOI
 .. image:: http://img.shields.io/pypi/v/oceans.svg?style=flat
    :target: https://pypi.python.org/pypi/oceans
