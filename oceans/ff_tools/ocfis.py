@@ -6,7 +6,6 @@ import numpy.ma as ma
 import scipy.signal as signal
 import matplotlib.pyplot as plt
 
-from scipy.stats import nanmean, nanstd
 from pandas import Series, date_range, isnull
 from scipy.interpolate import InterpolatedUnivariateSpline
 
@@ -17,65 +16,14 @@ __all__ = ['bin_dates',
            'complex_demodulation',
            'del_eta_del_x',
            'despike',
-           'fft_lowpass',
            'lagcorr',
-           'lanc',
-           'medfilt1',
            'mld',
            'pcaben',
            'plot_spectrum',
            'series_spline',
-           'smoo1',
            'spdir2uv',
            'spec_rot',
            'uv2spdir']
-
-
-def lanc(numwt, haf):
-    """
-    Generates a numwt + 1 + numwt lanczos cosine low pass filter with -6dB
-    (1/4 power, 1/2 amplitude) point at haf
-
-    Parameters
-    ----------
-    numwt : int
-            number of points
-    haf : float
-          frequency (in 'cpi' of -6dB point, 'cpi' is cycles per interval.
-          For hourly data cpi is cph,
-
-    Examples
-    --------
-    >>> from datetime import datetime
-    >>> import matplotlib.pyplot as plt
-    >>> t = np.arange(500)  # Time in hours.
-    >>> h = 2.5 * np.sin(2 * np.pi * t / 12.42)
-    >>> h += 1.5 * np.sin(2 * np.pi * t / 12.0)
-    >>> h += 0.3 * np.random.randn(len(t))
-    >>> wt = lanc(96+1+96, 1./40)
-    >>> low = np.convolve(wt, h, mode='same')
-    >>> high = h - low
-    >>> fig, (ax0, ax1) = plt.subplots(nrows=2)
-    >>> _ = ax0.plot(high, label='high')
-    >>> _ = ax1.plot(low, label='low')
-    >>> _ = ax0.legend(numpoints=1)
-    >>> _ = ax1.legend(numpoints=1)
-
-    """
-    summ = 0
-    numwt += 1
-    wt = np.zeros(numwt)
-
-    # Filter weights.
-    ii = np.arange(numwt)
-    wt = 0.5 * (1.0 + np.cos(np.pi * ii * 1. / numwt))
-    ii = np.arange(1, numwt)
-    xx = np.pi * 2 * haf * ii
-    wt[1:numwt + 1] = wt[1:numwt + 1] * np.sin(xx) / xx
-    summ = wt[1:numwt + 1].sum()
-    xx = wt.sum() + summ
-    wt /= xx
-    return np.r_[wt[::-1], wt[1:numwt + 1]]
 
 
 def spdir2uv(spd, ang, deg=False):
@@ -379,97 +327,6 @@ def pcaben(u, v):
     return (majrax, majaz, minrax, minaz, elptcty), (x1, x2, y1, y2)
 
 
-def smoo1(datain, window_len=11, window='hanning'):
-    """
-    Smooth the data using a window with requested size.
-
-    Parameters
-    ----------
-    datain : array_like
-             input series
-    window_len : int
-                 size of the smoothing window; should be an odd integer
-    window : str
-             window from 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'.
-             flat window will produce a moving average smoothing.
-
-    Returns
-    -------
-    data_out : array_like
-            smoothed signal
-
-    See Also
-    --------
-    scipy.signal.lfilter
-
-    Notes
-    -----
-    original from: http://www.scipy.org/Cookbook/SignalSmooth
-    This method is based on the convolution of a scaled window with the signal.
-    The signal is prepared by introducing reflected copies of the signal (with
-    the window size) in both ends so that transient parts are minimized in the
-    beginning and end part of the output signal.
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> import matplotlib.pyplot as plt
-    >>> from oceans import smoo1
-    >>> time = np.linspace( -4, 4, 100 )
-    >>> series = np.sin(time)
-    >>> noise_series = series + np.random.randn( len(time) ) * 0.1
-    >>> data_out = smoo1(series)
-    >>> ws = 31
-    >>> ax = plt.subplot(211)
-    >>> _ = ax.plot(np.ones(ws))
-    >>> windows = ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']
-    >>> for w in windows[1:]:
-    ...     _ = eval('plt.plot(np.' + w + '(ws) )')
-    >>> _ = ax.axis([0, 30, 0, 1.1])
-    >>> _ = ax.legend(windows)
-    >>> _ = plt.title("The smoothing windows")
-    >>> ax = plt.subplot(212)
-    >>> _ = ax.plot(series)
-    >>> _ = ax.plot(noise_series)
-    >>> for w in windows:
-    ...     _ = plt.plot(smoo1(noise_series, 10, w))
-    >>> l = ['original signal', 'signal with noise']
-    >>> l.extend(windows)
-    >>> leg = ax.legend(l)
-    >>> _ = plt.title("Smoothing a noisy signal")
-
-    TODO: window parameter can be the window itself (i.e. an array)
-    instead of a string.
-
-    """
-
-    datain = np.asarray(datain)
-
-    if datain.ndim != 1:
-        raise ValueError("smooth only accepts 1 dimension arrays.")
-
-    if datain.size < window_len:
-        raise ValueError("Input vector needs to be bigger than window size.")
-
-    if window_len < 3:
-        return datain
-
-    if window not in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
-        raise ValueError("""Window is on of 'flat', 'hanning', 'hamming',
-                         'bartlett', 'blackman'""")
-
-    s = np.r_[2 * datain[0] - datain[window_len:1:-1], datain, 2 *
-              datain[-1] - datain[-1:-window_len:-1]]
-
-    if window == 'flat':  # Moving average.
-        w = np.ones(window_len, 'd')
-    else:
-        w = eval('np.' + window + '(window_len)')
-
-    data_out = np.convolve(w / w.sum(), s, mode='same')
-    return data_out[window_len - 1:-window_len + 1]
-
-
 def spec_rot(u, v):
     """
     Compute the rotary spectra from u,v velocity components
@@ -641,139 +498,6 @@ def plot_spectrum(data, fs):
     plt.show()
 
 
-def medfilt1(x, L=3):
-    """
-    Median filter for 1d arrays.
-
-    Performs a discrete one-dimensional median filter with window length `L` to
-    input vector `x`.  Produces a vector the same size as `x`.  Boundaries are
-    handled by shrinking `L` at edges; no data outside of `x` is used in
-    producing the median filtered output.
-
-    Parameters
-    ----------
-    x : array_like
-        Input 1D data
-    L : integer
-        Window length
-
-    Returns
-    -------
-    xout : array_like
-           Numpy 1d array of median filtered result; same size as x
-
-    Examples
-    --------
-    >>> import matplotlib.pyplot as plt
-    >>> from oceans import medfilt1
-    >>> # 100 pseudo-random integers ranging from 1 to 100, plus three large
-    >>> # outliers for illustration.
-    >>> x = np.r_[np.ceil(np.random.rand(25)*100), [1000],
-    ...           np.ceil(np.random.rand(25)*100), [2000],
-    ...           np.ceil(np.random.rand(25)*100), [3000],
-    ...           np.ceil(np.random.rand(25)*100)]
-    >>> L = 2
-    >>> xout = medfilt1(x=x, L=L)
-    >>> ax = plt.subplot(211)
-    >>> l1, l2 = ax.plot(x), ax.plot(xout)
-    >>> ax.grid(True)
-    >>> y1min, y1max = np.min(xout) * 0.5, np.max(xout) * 2.0
-    >>> _ = ax.legend(['x (pseudo-random)','xout'])
-    >>> _ = ax.set_title('''Median filter with window length %s.
-    ...                 Removes outliers, tracks remaining signal)''' % L)
-    >>> L = 103
-    >>> xout = medfilt1(x=x, L=L)
-    >>> ax = plt.subplot(212)
-    >>> l1, l2, = ax.plot(x), ax.plot(xout)
-    >>> ax.grid(True)
-    >>> y2min, y2max = np.min(xout) * 0.5, np.max(xout) * 2.0
-    >>> _ = ax.legend(["Same x (pseudo-random)", "xout"])
-    >>> _ = ax.set_title('''Median filter with window length %s.
-    ...              Removes outliers and noise''' % L)
-    >>> ax = plt.subplot(211)
-    >>> _ = ax.set_ylim([min(y1min, y2min), max(y1max, y2max)])
-    >>> ax = plt.subplot(212)
-    >>> _ = ax.set_ylim([min(y1min, y2min), max(y1max, y2max)])
-
-    Notes
-    -----
-    Based on: http://staff.washington.edu/bdjwww/medfilt.py
-
-    """
-
-    xin = np.atleast_1d(np.asanyarray(x))
-    N = len(x)
-    L = int(L)  # Ensure L is odd integer so median requires no interpolation.
-    if L % 2 == 0:
-        L += 1
-
-    if N < 2:
-        raise ValueError("Input sequence must be >= 2")
-        return None
-
-    if L < 2:
-        raise ValueError("Input filter window length must be >=2")
-        return None
-
-    if L > N:
-        raise ValueError('''Input filter window length must be shorter than
-                         series: L = %d, len(x) = %d''' % (L, N))
-        return None
-
-    if xin.ndim > 1:
-        raise ValueError("input sequence has to be 1d: ndim = %s" % xin.ndim)
-        return None
-
-    xout = np.zeros_like(xin) + np.NaN
-
-    Lwing = (L - 1) // 2
-
-    # NOTE: Use np.ndenumerate in case I expand to +1D case
-    for i, xi in enumerate(xin):
-        if i < Lwing:  # Left boundary.
-            xout[i] = np.median(xin[0:i + Lwing + 1])   # (0 to i + Lwing)
-        elif i >= N - Lwing:  # Right boundary.
-            xout[i] = np.median(xin[i - Lwing:N])  # (i-Lwing to N-1)
-        else:  # Middle (N-2*Lwing input vector and filter window overlap).
-            xout[i] = np.median(xin[i - Lwing:i + Lwing + 1])
-            # (i-Lwing to i+Lwing)
-    return xout
-
-
-def fft_lowpass(signal, low, high):
-    """
-    Performs a low pass filer on the series.
-    low and high specifies the boundary of the filter.
-
-    obs: From tappy's filters.py.
-
-    """
-
-    if len(signal) % 2:
-        result = np.fft.rfft(signal, len(signal))
-    else:
-        result = np.fft.rfft(signal)
-
-    freq = np.fft.fftfreq(len(signal))[:len(signal) / 2 + 1]
-    factor = np.ones_like(freq)
-    factor[freq > low] = 0.0
-    sl = np.logical_and(high < freq, freq < low)
-    a = factor[sl]
-
-    # Create float array of required length and reverse.
-    a = np.arange(len(a) + 2).astype(float)[::-1]
-
-    # Ramp from 1 to 0 exclusive.
-    a = (a / a[0])[1:-1]
-
-    # Insert ramp into factor.
-    factor[sl] = a
-
-    result = result * factor
-
-    return np.fft.irfft(result, len(signal))
-
-
 def binave(datain, r):
     """
     Averages vector data in bins of length r. The last bin may be the
@@ -920,8 +644,8 @@ def despike(self, n=3, recursive=False, verbose=False):
     """
 
     result = self.values.copy()
-    outliers = (np.abs(self.values - nanmean(self.values)) >= n *
-                nanstd(self.values))
+    outliers = (np.abs(self.values - np.nanmean(self.values)) >= n *
+                np.nanstd(self.values))
 
     removed = np.count_nonzero(outliers)
     result[outliers] = np.NaN
@@ -933,36 +657,14 @@ def despike(self, n=3, recursive=False, verbose=False):
     if recursive:
         while outliers.any():
             result[outliers] = np.NaN
-            outliers = np.abs(result - nanmean(result)) >= n * nanstd(result)
+            base = np.abs(result - np.nanmean(result))
+            outliers = base >= n * np.nanstd(result)
             counter += 1
             removed += np.count_nonzero(outliers)
         if verbose:
             print("Removing from %s\nNumber of iterations: %s # removed: %s" %
                   (self.name, counter, removed))
     return Series(result, index=self.index, name=self.name)
-
-
-def md_trenberth(x):
-    """
-    Returns the filtered series using the Trenberth filter as described
-    on Monthly Weather Review, vol. 112, No. 2, Feb 1984.
-
-    Input data: series x of dimension 1Xn (must be at least dimension 11)
-    Output data: y = md_trenberth(x) where y has dimension 1X(n-10)
-
-    """
-    x = np.asanyarray(x)
-    weight = np.array([0.02700, 0.05856, 0.09030, 0.11742, 0.13567, 0.14210,
-                       0.13567, 0.11742, 0.09030, 0.05856, 0.02700])
-
-    sz = len(x)
-    y = np.zeros(sz - 10)
-    for i in range(5, sz - 5):
-        y[i - 5] = 0
-        for j in range(11):
-            y[i - 5] = y[i - 5] + x[i - 6 + j + 1] * weight[j]
-
-    return y
 
 
 def pol2cart(theta, radius, units='deg'):
