@@ -9,6 +9,8 @@ from matplotlib.lines import Line2D
 from matplotlib.artist import Artist
 from matplotlib.dates import date2num
 
+from pandas import DatetimeIndex
+
 __all__ = ['stick_plot',
            'landmask',
            'level_colormap',
@@ -35,7 +37,7 @@ def stick_plot(time, u, v, **kw):
     >>> v = np.cos(0.1 * time.to_julian_date().values)
     >>> fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, figsize=(10, 6),
     ...                                     sharex=True)
-    >>> q = stick_plot(time.to_pydatetime(), u, v, ax=ax0)
+    >>> q = stick_plot(time, u, v, ax=ax0)
     >>> qk = ax0.quiverkey(q, 0.2, 0.65, 1, "1 m s$^{-1}$",
     ...                    labelpos='N', coordinates='axes')
     >>> l = ax1.plot(time.to_pydatetime(), np.sqrt(u**2 + v**2), label='speed')
@@ -58,14 +60,16 @@ def stick_plot(time, u, v, **kw):
                              "if *U*==*V* the angle of the arrow on"
                              "the plot is 45 degrees CCW from the *x*-axis.")
 
+    if isinstance(time, DatetimeIndex):
+        time = time.to_pydatetime()
+
     time, u, v = list(map(np.asanyarray, (time, u, v)))
     if not ax:
         fig, ax = plt.subplots()
 
     q = ax.quiver(date2num(time), [[0]*len(time)], u, v,
                   angles='uv', width=width, headwidth=headwidth,
-                  headlength=headlength, headaxislength=headaxislength,
-                  **kw)
+                  headlength=headlength, headaxislength=headaxislength, **kw)
 
     ax.axes.get_yaxis().set_visible(False)
     ax.xaxis_date()
@@ -153,8 +157,6 @@ class EditPoints(object):
     >>> _ = ax.set_title('Click and drag a point to move it')
     >>> _ = ax.axis([-2, 2, -2, 2])
     >>> plt.show()
-    <BLANKLINE>
-    Drawing...
 
     Based on http://matplotlib.org/examples/event_handling/poly_editor.html
 
