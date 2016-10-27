@@ -1,6 +1,16 @@
 Changelog
 ---------
 
+Version 0.4.0, 27-Oct-2016.
+
+* re-written `get_isobath` function that uses latest matplotlib contour machinery.
+* Use integer indexes to fix `numpy` deprecations.
+* Change license from MIT to BSD 3-Clause.
+
+Version 0.3.0, 17-Aug-2016.
+
+* Fix `nanmean` and `nanstd` removed from latest `scipy`.
+
 Version 0.2.5, 30-Jul-2015.
 
 * Lazy imports.
