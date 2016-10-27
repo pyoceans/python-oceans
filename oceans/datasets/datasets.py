@@ -340,7 +340,7 @@ def get_indices(min_lat, max_lat, min_lon, max_lon, lons, lats):
     indices.append(distances2[0])
 
     # max_lat_indices, min_lat_indices, max_lon_indices, min_lon_indices.
-    res = np.zeros((4), dtype=np.float64)
+    res = np.zeros((4), dtype=np.integer)
     res[0] = indices[3][2]
     res[1] = indices[2][2]
     res[2] = indices[1][2]
