@@ -5,7 +5,6 @@ import warnings
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 from netCDF4 import Dataset
 from ..ff_tools import get_profile, wrap_lon360
 
@@ -290,20 +289,22 @@ def get_isobath(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
                 urcrnrlat=None, iso=-200., tfile='dap'):
     """
     Finds an isobath on the etopo2 database and returns
-    its lon,lat coordinates for plotting.
+    its lon, lat segments for plotting.
 
     """
-    plt.ioff()
+    import matplotlib._contour as contour
     lon, lat, topo = etopo_subset(llcrnrlon=llcrnrlon, urcrnrlon=urcrnrlon,
                                   llcrnrlat=llcrnrlat, urcrnrlat=urcrnrlat,
                                   tfile=tfile)
 
-    fig, ax = plt.subplots()
-    cs = ax.contour(lon, lat, topo, [iso])
-    path = cs.collections[0].get_paths()[0]
-    del(fig, ax, cs)
-    plt.ion()
-    return path.vertices[:, 0], path.vertices[:, 1]
+    mask = None
+    corner_mask = True
+    nchunk = 0
+    c = contour.QuadContourGenerator(lon, lat, topo, mask, corner_mask, nchunk)
+    res = c.create_contour(iso)
+    nseg = len(res) // 2
+    segments, codes = res[:nseg], res[nseg:]
+    return segments
 
 
 def get_indices(min_lat, max_lat, min_lon, max_lon, lons, lats):
