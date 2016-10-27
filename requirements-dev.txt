@@ -1,0 +1,6 @@
+cartopy
+iris
+netcdf4
+pandas
+scipy
+shapely

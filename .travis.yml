@@ -1,23 +1,27 @@
-language: python
+language: generic
 
 sudo: false
 
 env:
-    - CONDA="python=2.7"
-    - CONDA="python=3.4"
-    - CONDA="python=3.5"
+  - CONDA="python=2.7"
+  - CONDA="python=3.4"
+  - CONDA="python=3.5"
 
 before_install:
-    - wget http://bit.ly/miniconda -O miniconda.sh
-    - bash miniconda.sh -b -p $HOME/miniconda
-    - export PATH="$HOME/miniconda/bin:$PATH"
-    - conda update --yes conda
-    - conda config --add channels conda-forge -f
-    - travis_retry conda create --yes -n test --file requirements.txt $CONDA
-    - source activate test
-    # GUI tests.
-    - "export DISPLAY=:99.0"
-    - "sh -e /etc/init.d/xvfb start"
+  - wget http://bit.ly/miniconda -O miniconda.sh
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - conda update --yes conda
+  - conda config --add channels conda-forge --force
+  - travis_retry conda create --yes --name TEST --file requirements.txt --file requirements-dev.txt $CONDA
+  - source activate TEST
+  # GUI tests.
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+
+# Test source distribution.
+install:
+  - python setup.py sdist && version=$(python setup.py --version) && pushd dist  && pip install oceans-${version}.tar.gz && popd
 
 script:
-    - python setup.py test
+  - python setup.py test
