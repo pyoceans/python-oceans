@@ -23,8 +23,6 @@ from .ocfis import (
     get_profile,
     strip_mask,
     shiftdim,
-    weim,
-    smoo2,
     )
 
 
@@ -51,6 +49,4 @@ __all__ = [
     'strip_mask',
     'shiftdim',
     'scaloa',
-    'weim',
-    'smoo2'
     ]

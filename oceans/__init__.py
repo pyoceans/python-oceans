@@ -6,7 +6,8 @@ from . import (
     datasets,
     ocfis,
     plotting,
-    sw_extras
+    sw_extras,
+    filters,
     )
 
 
@@ -16,7 +17,8 @@ __all__ = [
     'datasets',
     'ocfis',
     'plotting',
-    'sw_extras'
+    'sw_extras',
+    'filters',
     ]
 
 
