@@ -35,7 +35,7 @@ install:
 
 script:
     - if [[ $TEST_TARGET == 'testing' ]]; then
-        py.test -vv setup.py test ;
+        py.test -vv oceans/ --doctest-modules ;
       fi
 
     - if [[ $TEST_TARGET == 'coding_standards' ]]; then

@@ -273,7 +273,7 @@ def get_isobath(bbox, iso=-200, tfile=None, smoo=False):
     >>> fig, ax = plt.subplots()
     >>> cs = ax.pcolormesh(lon, lat, bathy)
     >>> for segment in segments:
-    ...     ax.plot(segment[:, 0], segment[:, -1], 'k', linewidth=2)
+    ...     lines = ax.plot(segment[:, 0], segment[:, -1], 'k', linewidth=2)
 
     """
     import matplotlib._contour as contour
