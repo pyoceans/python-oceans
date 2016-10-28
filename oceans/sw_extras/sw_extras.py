@@ -1,40 +1,40 @@
 # -*- coding: utf-8 -*-
 
-
 """
 Extra seawater functions
 ========================
 
 """
 
-from __future__ import absolute_import, division
+from __future__ import (absolute_import, division, print_function)
 
 import numpy as np
 import seawater as sw
-from pandas import rolling_mean
 from seawater.constants import OMEGA, earth_radius
 
 
-__all__ = ['sigma_t',
-           'sigmatheta',
-           'N',
-           'cph',
-           'shear',
-           'richnumb',
-           'cor_beta',
-           'inertial_period',
-           'strat_period',
-           'visc',
-           'tcond',
-           'spice',
-           'psu2ppt',
-           'visc',
-           'soundspeed',
-           'photic_depth',
-           'cr_depth',
-           'kdpar',
-           'zmld_so',
-           'zmld_boyer']
+__all__ = [
+    'sigma_t',
+    'sigmatheta',
+    'N',
+    'cph',
+    'shear',
+    'richnumb',
+    'cor_beta',
+    'inertial_period',
+    'strat_period',
+    'visc',
+    'tcond',
+    'spice',
+    'psu2ppt',
+    'visc',
+    'soundspeed',
+    'photic_depth',
+    'cr_depth',
+    'kdpar',
+    'zmld_so',
+    'zmld_boyer'
+    ]
 
 
 def sigma_t(s, t, p):
@@ -322,7 +322,7 @@ def richnumb(bvfr2, S2):
 
     """
     bvfr2, S2 = list(map(np.asanyarray, (bvfr2, S2)))
-    # FIXME: check this.
+    # FIXME: check this for correctness.
     return bvfr2 / S2
 
 
@@ -428,10 +428,6 @@ def strat_period(N):
            [ 297.6515901 ,  297.60313502,  297.52738493],
            [ 729.91402019,  729.79520847,  729.60946944]])
 
-    References
-    ----------
-    .. [1] TODO: Pickard
-
     """
     N = np.asanyarray(N)
     return 2 * np.pi / N
@@ -450,6 +446,7 @@ def visc(s, t, p):
         temperature [℃ (ITS-90)]  # FIXME: [degree C (IPTS-68)]
     p : array_like
         pressure [db]
+
     Returns
     -------
     visc : kinematic viscosity of sea-water [m^2/s]
@@ -573,7 +570,7 @@ def spice(s, t, p):
 
     """
     s, t, p = list(map(np.asanyarray, (s, t, p)))
-    # FIXME: I'm not sure about this.
+    # FIXME: I'm not sure about this next step.
     pt = sw.ptmp(s, t, p)
 
     B = np.zeros((6, 5))
@@ -735,7 +732,7 @@ def soundspeed(S, T, D, equation='mackenzie'):
         # SOUND SPEED RETURN.
         ssp = C + (A + B * SR + D * S) * S
     else:
-        raise TypeError('Unrecognizable equation specified: %s' % equation)
+        raise TypeError('Unrecognizable equation specified: {}'.format(equation))
     return ssp
 
 
@@ -862,6 +859,7 @@ def zmld_so(s, t, p, threshold=0.05, smooth=None):
         Research, 38(89):981-1007. doi:10.1016/0198-0149(91)90093-U
 
     """
+    from pandas import rolling_mean
     sigma_t = sigmatheta(s, t, p)
     depth = p
     if smooth is not None:
@@ -920,7 +918,7 @@ def zmld_boyer(s, t, p):
             mldepthdens_mldindex = i
             break
 
-    # Interpolate to exactly match the potential density threshold
+    # Interpolate to exactly match the potential density threshold.
     presseg = [pres[mldepthdens_mldindex-1], pres[mldepthdens_mldindex]]
     pdenseg = [pden[starti] - pden[mldepthdens_mldindex-1], pden[starti] -
                pden[mldepthdens_mldindex]]
@@ -932,14 +930,14 @@ def zmld_boyer(s, t, p):
     ix = np.max(np.where(np.abs(pdenthreshold) < 0.03)[0])
     mldepthdens_mldindex = presinterp[ix]
 
-    # Search for the first level that exceeds the temperature threshold
+    # Search for the first level that exceeds the temperature threshold.
     mldepthptmp_mldindex = m
     for i, tt in enumerate(temp):
         if np.abs(temp[starti] - tt) > 0.2:
             mldepthptmp_mldindex = i
             break
 
-    # Interpolate to exactly match the temperature threshold
+    # Interpolate to exactly match the temperature threshold.
     presseg = [pres[mldepthptmp_mldindex-1], pres[mldepthptmp_mldindex]]
     tempseg = [temp[starti] - temp[mldepthptmp_mldindex-1],
                temp[starti] - temp[mldepthptmp_mldindex]]

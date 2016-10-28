@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import (absolute_import, division, print_function)
 
 import os
 import sys
@@ -37,23 +38,22 @@ def extract_version():
                 break
     return version
 
-email = "ocefpaf@gmail.com"
-maintainer = "Filipe Fernandes"
-authors = ['André Palóczy', 'Arnaldo Russo', 'Filipe Fernandes']
+email = 'ocefpaf@gmail.com'
+maintainer = 'Filipe Fernandes'
+authors = [u'André Palóczy', 'Arnaldo Russo', 'Filipe Fernandes']
 
 LICENSE = read('LICENSE.txt')
 long_description = '{}\n{}'.format(read('README.rst'), read('CHANGES.txt'))
 
 # Dependencies.
 hard = ['gsw', 'matplotlib', 'numpy', 'seawater']
-soft = dict(full=['cartopy' 'iris', 'netcdf4', 'pandas', 'scipy',
-                  'shapely'])
+soft = dict(full=['cartopy' 'iris', 'netcdf4', 'pandas', 'scipy'])
+packages = ['oceans', 'oceans/RPSstuff', 'oceans/colormaps', 'oceans/datasets',
+            'oceans/ocfis', 'oceans/plotting', 'oceans/sw_extras']
 
 setup(name='oceans',
       version=extract_version(),
-      packages=['oceans', 'oceans/RPSstuff', 'oceans/colormaps',
-                'oceans/datasets', 'oceans/ff_tools',
-                'oceans/plotting', 'oceans/sw_extras', 'oceans/tests'],
+      packages=packages,
       package_data=dict(oceans=['colormaps/cmap_data/*.dat']),
       cmdclass=dict(test=PyTest),
       license=LICENSE,

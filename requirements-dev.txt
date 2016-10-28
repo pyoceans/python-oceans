@@ -3,5 +3,5 @@ iris
 netcdf4
 pandas
 scipy
-shapely
 pytest
+flake8

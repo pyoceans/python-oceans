@@ -1,8 +1,8 @@
-from __future__ import absolute_import, division
+# -*- coding: utf-8 -*-
+
+from __future__ import (absolute_import, division, print_function)
 
 import numpy as np
-
-__all__ = ['scaloa']
 
 
 def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None, zc=None):
@@ -54,7 +54,7 @@ def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None, zc=None):
            (np.tile(yc, (n, 1)).T - np.tile(y, (nv, 1))) ** 2)
 
     # Correlation matrix between stations (A) and cross correlation (stations
-    # and grid points (C))
+    # and grid points (C)).
     A = (1 - err) * np.exp(-d2 / corrlen ** 2)
     C = (1 - err) * np.exp(-dc2 / corrlen ** 2)
 
@@ -79,7 +79,7 @@ def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None, zc=None):
             tp = (C * (np.linalg.solve(A, t)))
             tp = tp + mD * np.ones(tp.shape)
     if not t:
-        print("Computing just the interpolation errors.")
+        print('Computing just the interpolation errors.')
 
     # Normalized mean error.  Taking the squared root you can get the
     # interpolation error in percentage.

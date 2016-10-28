@@ -1,11 +1,14 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import (absolute_import, division, print_function)
 
 import warnings
 
 import numpy as np
-
 from netCDF4 import Dataset
-from ..ff_tools import get_profile, wrap_lon180
+
+from ..ocfis import get_profile, wrap_lon180
+from ..RPSstuff import near
 
 
 def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature', clim_type='00', resolution='1.00', full=False):  # noqa
@@ -56,7 +59,7 @@ def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature', clim_type
     ...     return fig, ax
     >>> # Extract a 2D surface -- Annual temperature climatology:
     >>> import matplotlib.pyplot as plt
-    >>> from oceans.ff_tools import wrap_lon180
+    >>> from oceans.ocfis import wrap_lon180
     >>> from oceans.colormaps import cm, get_color
     >>> import iris.plot as iplt
     >>> from oceans.datasets import woa_subset
@@ -108,9 +111,9 @@ def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature', clim_type
     var = v[variable]
     res = r[resolution]
 
-    uri = ("http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA13/DATA/"
-           "{variable}/netcdf/{decav}/{resolution}/woa13_{decav}_{var}"
-           "{clim_type}_0{res}.nc").format
+    uri = ('http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA13/DATA/'
+           '{variable}/netcdf/{decav}/{resolution}/woa13_{decav}_{var}'
+           '{clim_type}_0{res}.nc').format
     url = uri(**dict(variable=variable, decav=decav, resolution=resolution,
                      var=var, clim_type=clim_type, res=res))
 
@@ -181,9 +184,9 @@ def woa_profile(lon, lat, variable='temperature', clim_type='00', resolution='1.
     var = v[variable]
     res = r[resolution]
 
-    uri = ("http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA13/DATA/"
-           "{variable}/netcdf/{decav}/{resolution}/woa13_{decav}_{var}"
-           "{clim_type}_0{res}.nc").format
+    uri = ('http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA13/DATA/'
+           '{variable}/netcdf/{decav}/{resolution}/woa13_{decav}_{var}'
+           '{clim_type}_0{res}.nc').format
     url = uri(**dict(variable=variable, decav=decav, resolution=resolution,
                      var=var, clim_type=clim_type, res=res))
 
@@ -310,6 +313,112 @@ def _get_indices(bbox, lons, lats):
         msg = 'Cannot understand input shapes lons {!r} and lats {!r}'.format
         raise ValueError(msg(lons.shape, lats.shape))
     return imin, imax+1, jmin, jmax+1
+
+
+def get_gebco15(x, y, topofile='gebco15-40s_30-52w_30seg.nc'):
+    """
+    Usage
+    -----
+    H, D, Xo, Yo = get_gebco15(x, y, topofile='gebco/gebco_08_30seg.nc')
+
+    Description
+    -----------
+    Finds the depth of points of coordinates 'x','y' using GEBCO data set.
+
+    Parameters
+    ----------
+    x         : 1D array
+                Array containing longitudes of the points of unknown depth.
+
+    y         : 1D array
+                Array containing latitudes of the points of unknown depth.
+
+    topofile  : string, optional
+                String containing path to the GEBCO netCDF file.
+
+    Returns
+    -------
+    H         : 1D array
+                Array containing depths of points closest to the input X, Y
+                coordinates.
+
+    X         : 1D array
+                Array of horizontal distance associated with array 'H'.
+
+    D         : 1D array
+                Array containing distances (in km) from the input X, Y
+                coordinates to the data points.
+
+    Xo        : 1D array
+                Array containing longitudes of the data points.
+
+    Yo        : 1D array
+                Array containing latitudes of the data points.
+
+    NOTES
+    -------
+    This function reads the entire netCDF file before extracting the wanted
+    data.  Therefore, it does not handle the full GEBCO dataset (1.8 GB)
+    efficiently.
+
+    TODO
+    -------
+    Make it possible to work with the full gebco dataset, by extracting only
+    the wanted indexes.
+
+    Code History
+    ---------------------------------------
+    Author of the original Matlab code (ftopo.m, ETOPO2 dataset):
+    Marcelo Andrioni <marceloandrioni@yahoo.com.br>
+    December 2008: Modification performed by Cesar Rocha <cesar.rocha@usp.br>
+    to handle ETOPO1 dataset.
+    July 2012: Python Translation and modifications performed by André Palóczy
+    Filho <paloczy@gmail.com>
+    to handle GEBCO dataset (30 arc seconds resolution).
+
+    """
+    from seawater import dist
+
+    x, y = list(map(np.asanyarray, (x, y)))
+
+    # Opening netCDF file and extracting data.
+    grid = Dataset(topofile)
+    yyr = grid.variables['y_range'][:]
+    xxr = grid.variables['x_range'][:]
+    spacing = grid.variables['spacing'][:]
+    dx, dy = spacing[0], spacing[1]
+
+    # Creating lon and lat 1D arrays.
+    xx = np.arange(xxr[0], xxr[1], dx)
+    xx = xx + dx / 2
+    yy = np.arange(yyr[0], yyr[1], dy)
+    yy = yy + dy / 2
+    h = grid.variables['z'][:]
+    grid.close()
+
+    # Retrieving nearest point for each input coordinate.
+    A = np.asanyarray([])
+    xx, yy = np.meshgrid(xx, yy)
+    ni, nj = xx.shape[0], yy.shape[1]
+    h = np.reshape(h, (ni, nj))
+    h = np.flipud(h)
+    Xo = A.copy()
+    Yo = A.copy()
+    H = A.copy()
+    D = A.copy()
+    for I in range(x.size):
+        ix = near(xx[0, :], x[I])
+        iy = near(yy[:, 0], y[I])
+        H = np.append(H, h[iy, ix])
+        # Calculating distance between input and GEBCO points.
+        D = np.append(D, dist([x[I], xx[0, ix]], [y[I], yy[iy, 0]],
+                              units='km')[0])
+        Xo = np.append(Xo, xx[0, ix])
+        Yo = np.append(Yo, yy[iy, 0])
+        # Calculating distance axis.
+        X = np.append(0, np.cumsum(dist(Xo, Yo, units='km')[0]))
+
+    return H, X, D, Xo, Yo
 
 
 if __name__ == '__main__':

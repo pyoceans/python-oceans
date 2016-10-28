@@ -1,29 +1,13 @@
-from __future__ import absolute_import, division
+# -*- coding: utf-8 -*-
+
+from __future__ import (absolute_import, division, print_function)
+
+import re
+import warnings
 
 import gsw
 import numpy as np
 import numpy.ma as ma
-import scipy.signal as signal
-import matplotlib.pyplot as plt
-
-from pandas import Series, date_range, isnull
-from scipy.interpolate import InterpolatedUnivariateSpline
-
-
-__all__ = ['bin_dates',
-           'binave',
-           'binavg',
-           'complex_demodulation',
-           'del_eta_del_x',
-           'despike',
-           'lagcorr',
-           'mld',
-           'pcaben',
-           'plot_spectrum',
-           'series_spline',
-           'spdir2uv',
-           'spec_rot',
-           'uv2spdir']
 
 
 def spdir2uv(spd, ang, deg=False):
@@ -88,7 +72,7 @@ def uv2spdir(u, v, mag=0, rot=0):
     Examples
     --------
     >>> import matplotlib.pyplot as plt
-    >>> from oceans.ff_tools import uv2spdir
+    >>> from oceans.ocfis import uv2spdir
     >>> u = [+0, -0.5, -0.50, +0.90]
     >>> v = [+1, +0.5, -0.45, -0.85]
     >>> wd, ws = uv2spdir(u,v)
@@ -185,7 +169,7 @@ def mld(SA, CT, p, criterion='pdvar'):
     >>> import os
     >>> import gsw
     >>> import matplotlib.pyplot as plt
-    >>> from oceans import mld
+    >>> from oceans.ocfis import mld
     >>> from gsw.utilities import Bunch
     >>> # Read data file with check value profiles
     >>> datadir = os.path.join(os.path.dirname(gsw.utilities.__file__), 'data')
@@ -235,7 +219,7 @@ def mld(SA, CT, p, criterion='pdvar'):
         sig_diff = Sig0 + 0.125
         idx_mld = (sigma <= sig_diff)
     else:
-        raise NameError("Unknown criteria %s" % criterion)
+        raise NameError('Unknown criteria {}'.format(criterion))
 
     MLD = ma.masked_all_like(p)
     MLD[idx_mld] = p[idx_mld]
@@ -266,7 +250,7 @@ def pcaben(u, v):
     Examples
     --------
     >>> import matplotlib.pyplot as plt
-    >>> from oceans import pcaben, uv2spdir
+    >>> from oceans.ocfis import pcaben, uv2spdir
     >>> u = np.r_[(0., 1., -2., -1., 1.), np.random.randn(10)]
     >>> v = np.r_[(3., 1., 0., -1., -1.), np.random.randn(10)]
     >>> (mjrax, mjaz, mirax, miaz, el), (x1, x2, y1, y2) = pcaben(u, v)
@@ -378,7 +362,7 @@ def spec_rot(u, v):
     quv = -fu.real * fv.imag + fv.real * fu.imag
 
     # Rotatory components
-    # TODO: Check the division, 4 or 8?
+    # TODO: Check the division, 4 (original code) or 8 (paper)?
     cw = (pu + pv - 2 * quv) / 4.
     ccw = (pu + pv + 2 * quv) / 4.
     N = len(u)
@@ -407,15 +391,11 @@ def lagcorr(x, y, M=None):
 
     Examples
     --------
-    TODO: Emery and Thomson.
+    TODO: Implement Emery and Thomson example.
 
     """
 
     x, y = list(map(np.asanyarray, (x, y)))
-    try:
-        np.broadcast(x, y)
-    except ValueError:
-        pass  # TODO: Print error and leave gracefully.
 
     if not M:
         M = x.size
@@ -446,17 +426,18 @@ def complex_demodulation(series, f, fc, axis=-1):
     math : series.data * np.exp(2 * np.pi * 1j * (1 / T) * time_in_seconds)
 
     """
+    import scipy.signal as signal
 
     # Time period ie freq = 1 / T
     T = 2 * np.pi / f
     # fc = fc * 1 / T # Filipe
 
-    # De mean data.
+    # De-mean data.
     d = series.data - series.data.mean(axis=axis)
     dfs = d * np.exp(2 * np.pi * 1j * (1 / T) * series.time_in_seconds)
 
-    # make a 5th order butter filter
-    # FIXME: Why 5th order? Try signal.buttord
+    # Make a 5th order butter filter.
+    # FIXME: Why 5th order? Try signal.buttord!?
     Wn = fc / series.Nyq
 
     [b, a] = signal.butter(5, Wn, btype='low')
@@ -465,37 +446,14 @@ def complex_demodulation(series, f, fc, axis=-1):
     cc = signal.filtfilt(b, a, dfs)  # FIXME: * 1e3
     amplitude = 2 * np.abs(cc)
 
-    # TODO: Fix the outputs
+    # TODO: Fix the outputs.
     # phase = np.arctan2(np.imag(cc), np.real(cc))
 
     filtered_series = amplitude * np.exp(-2 * np.pi * 1j *
                                          (1 / T) * series.time_in_seconds)
     new_series = filtered_series.real, series.time
-    # return cc, amplitude, phase, dfs, filtered_series
+    # Return cc, amplitude, phase, dfs, filtered_series
     return new_series
-
-
-def plot_spectrum(data, fs):
-    """
-    Plots a Single-Sided Amplitude Spectrum of y(t).
-
-    """
-    n = len(data)  # Length of the signal.
-    k = np.arange(n)
-    T = n / fs
-    frq = k / T  # Two sides frequency range.
-    N = list(range(n // 2))
-    frq = frq[N]  # One side frequency range
-
-    # FFT computing and normalization.
-    Y = np.fft.fft(data) / n
-    Y = Y[N]
-
-    # Plotting the spectrum.
-    plt.semilogx(frq, np.abs(Y), 'r')
-    plt.xlabel('Freq (Hz)')
-    plt.ylabel('|Y(freq)|')
-    plt.show()
 
 
 def binave(datain, r):
@@ -521,7 +479,7 @@ def binave(datain, r):
 
     Examples
     --------
-    >>> from oceans.ff_tools import binave
+    >>> from oceans.ocfis import binave
     >>> data = [10., 11., 13., 2., 34., 21.5, 6.46, 6.27, 7.0867, 15., 123.,
     ...         3.2, 0.52, 18.2, 10., 11., 13., 2., 34., 21.5, 6.46, 6.27,
     ...         7.0867, 15., 123., 3.2, 0.52, 18.2, 10., 11., 13., 2., 34.,
@@ -542,10 +500,10 @@ def binave(datain, r):
     datain, r = np.asarray(datain), np.asarray(r, dtype=np.int)
 
     if datain.ndim != 1:
-        raise ValueError("Must be a 1D array")
+        raise ValueError('Must be a 1D array.')
 
     if r <= 0:
-        raise ValueError("Bin size R must be a positive integer.")
+        raise ValueError('Bin size R must be a positive integer.')
 
     # Compute bin averaged series.
     l = datain.size // r
@@ -603,6 +561,8 @@ def bin_dates(self, freq, tz=None):
     >>> new_series = bin_dates(series, freq='D', tz=None)
 
     """
+    from pandas import date_range
+
     new_index = date_range(start=self.index[0], end=self.index[-1],
                            freq=freq, tz=tz)
     new_series = self.groupby(new_index.asof).mean()
@@ -617,6 +577,8 @@ def series_spline(self):
     Fill NaNs using a spline interpolation.
 
     """
+    from pandas import Series, isnull
+    from scipy.interpolate import InterpolatedUnivariateSpline
 
     inds, values = np.arange(len(self)), self.values
 
@@ -635,13 +597,14 @@ def series_spline(self):
     return Series(result, index=self.index, name=self.name)
 
 
-def despike(self, n=3, recursive=False, verbose=False):
+def despike(self, n=3, recursive=False):
     """
     Replace spikes with np.NaN.
     Removing spikes that are >= n * std.
     default n = 3.
 
     """
+    from pandas import Series
 
     result = self.values.copy()
     outliers = (np.abs(self.values - np.nanmean(self.values)) >= n *
@@ -649,9 +612,6 @@ def despike(self, n=3, recursive=False, verbose=False):
 
     removed = np.count_nonzero(outliers)
     result[outliers] = np.NaN
-
-    if verbose and not recursive:
-        print("Removing from %s\n # removed: %s" % (self.name, removed))
 
     counter = 0
     if recursive:
@@ -661,9 +621,6 @@ def despike(self, n=3, recursive=False, verbose=False):
             outliers = base >= n * np.nanstd(result)
             counter += 1
             removed += np.count_nonzero(outliers)
-        if verbose:
-            print("Removing from %s\nNumber of iterations: %s # removed: %s" %
-                  (self.name, counter, removed))
     return Series(result, index=self.index, name=self.name)
 
 
@@ -698,35 +655,425 @@ def cart2pol(x, y):
     return theta, radius
 
 
-def compass(u, v, **arrowprops):
+def wrap_lon180(lon):
+    lon = np.atleast_1d(lon).copy()
+    angles = np.logical_or((lon < -180), (180 < lon))
+    lon[angles] = wrap_lon360(lon[angles] + 180) - 180
+    return lon
+
+
+def wrap_lon360(lon):
+    lon = np.atleast_1d(lon).copy()
+    positive = lon > 0
+    lon = lon % 360
+    lon[np.logical_and(lon == 0, positive)] = 360
+    return lon
+
+
+def alphanum_key(s):
+    key = re.split(r'(\d+)', s)
+    key[1::2] = list(map(int, key[1::2]))
+    return key
+
+
+def get_profile(x, y, f, xi, yi, mode='nearest', order=3):
     """
-    Compass draws a graph that displays the vectors with
-    components `u` and `v` as arrows from the origin.
+    Interpolate regular data.
+
+    Parameters
+    ----------
+    x : two dimensional np.ndarray
+        an array for the :math:`x` coordinates
+
+    y : two dimensional np.ndarray
+        an array for the :math:`y` coordinates
+
+    f : two dimensional np.ndarray
+        an array with the value of the function to be interpolated
+        at :math:`x,y` coordinates.
+
+    xi : one dimension np.ndarray
+        the :math:`x` coordinates of the point where we want
+        the function to be interpolated.
+
+    yi : one dimension np.ndarray
+        the :math:`y` coordinates of the point where we want
+        the function to be interpolated.
+
+    order : int
+        the order of the bivariate spline interpolation
+
+
+    Returns
+    -------
+    fi : one dimension np.ndarray
+        the value of the interpolating spline at :math:`xi,yi`
+
 
     Examples
     --------
     >>> import numpy as np
-    >>> u = [+0, -0.5, -0.50, +0.90]
-    >>> v = [+1, +0.5, -0.45, -0.85]
-    >>> fig, ax = compass(u, v)
+    >>> from oceans.ocfis import get_profile
+    >>> x, y = np.meshgrid(range(360), range(91))
+    >>> f = np.array(range(91 * 360)).reshape((91, 360))
+    >>> Paris = [2.4, 48.9]
+    >>> Rome = [12.5, 41.9]
+    >>> Greenwich = [0, 51.5]
+    >>> xi = Paris[0], Rome[0], Greenwich[0]
+    >>> yi = Paris[1], Rome[1], Greenwich[1]
+    >>> get_profile(x, y, f, xi, yi, order=3)
+    array([17606, 15096, 18540])
+
+    Notes
+    -----
+    http://mail.scipy.org/pipermail/scipy-user/2011-June/029857.html
+
+    """
+    from scipy.ndimage import map_coordinates
+
+    x, y, f, xi, yi = list(map(np.asanyarray, (x, y, f, xi, yi)))
+    conditions = np.array([xi.min() < x.min(),
+                           xi.max() > x.max(),
+                           yi.min() < y.min(),
+                           yi.max() > y.max()])
+
+    if conditions.any():
+        warnings.warn('Warning! Extrapolation!!')
+
+    dx = x[0, 1] - x[0, 0]
+    dy = y[1, 0] - y[0, 0]
+
+    jvals = (xi - x[0, 0]) / dx
+    ivals = (yi - y[0, 0]) / dy
+
+    coords = np.array([ivals, jvals])
+
+    return map_coordinates(f, coords, mode=mode, order=order)
+
+
+def strip_mask(arr, fill_value=np.NaN):
+    """
+    Take a masked array and return its data(filled) + mask.
+
+    """
+    if ma.isMaskedArray(arr):
+        mask = np.ma.getmaskarray(arr)
+        arr = np.ma.filled(arr, fill_value)
+        return mask, arr
+    else:
+        return arr
+
+
+def shiftdim(x, n=None):
+    """
+    Matlab's shiftdim in python.
+
+    Examples
+    --------
+    >>> import oceans.ocfis as ff
+    >>> a = np.random.rand(1,1,3,1,2)
+    >>> print("a shape and dimension: %s, %s" % (a.shape, a.ndim))
+    a shape and dimension: (1, 1, 3, 1, 2), 5
+    >>> # print(range(a.ndim))
+    >>> # print(np.roll(range(a.ndim), -2))
+    >>> # print(a.transpose(np.roll(range(a.ndim), -2)))
+    >>> b = ff.shiftdim(a)
+    >>> print("b shape and dimension: %s, %s" % (b.shape, b.ndim))
+    b shape and dimension: (3, 1, 2), 3
+    >>> c = ff.shiftdim(b, -2)
+    >>> c.shape == a.shape
+    True
+
+    Notes
+    -----
+    http://www.python-it.org/forum/index.php?topic=4688.0
 
     """
 
-    # Create plot.
-    fig, ax = plt.subplots(subplot_kw=dict(polar=True))
+    def no_leading_ones(shape):
+        shape = np.atleast_1d(shape)
+        if shape[0] == 1:
+            shape = shape[1:]
+            return no_leading_ones(shape)
+        else:
+            return shape
 
-    angles, radii = cart2pol(u, v)
+    if n is None:
+        # returns the array B with the same number of
+        # elements as X but with any leading singleton
+        # dimensions removed.
+        return x.reshape(no_leading_ones(x.shape))
+    elif n >= 0:
+        # When n is positive, shiftdim shifts the dimensions
+        # to the left and wraps the n leading dimensions to the end.
+        return x.transpose(np.roll(list(range(x.ndim)), -n))
+    else:
+        # When n is negative, shiftdim shifts the dimensions
+        # to the right and pads with singletons.
+        return x.reshape((1,) * -n + x.shape)
 
-    # Arrows or sticks?
-    kw = dict(arrowstyle="->")
-    kw.update(arrowprops)
-    [ax.annotate("", xy=(angle, radius), xytext=(0, 0),
-                 arrowprops=kw) for
-     angle, radius in zip(angles, radii)]
 
-    ax.set_ylim(0, np.max(radii))
+def weim(x, N, kind='hann', badflag=-9999, beta=14):
+    """
+    Usage
+    -----
+    xs = weim(x, N, kind='hann', badflag=-9999, beta=14)
 
-    return fig, ax
+    Description
+    -----------
+    Calculates the smoothed array 'xs' from the original array 'x' using the
+    specified window of type 'kind' and size 'N'. 'N' must be an odd number.
+
+    Parameters
+    ----------
+    x       : 1D array
+              Array to be smoothed.
+
+    N       : integer
+              Window size. Must be odd.
+
+    kind    : string, optional
+              One of the window types available in the numpy module:
+
+              hann (default) : Gaussian-like.  The weight decreases toward the
+                               ends.  Its end-points are zeroed.
+              hamming        : Similar to the hann window. Its end-points are
+                               not zeroed, therefore it is discontinuous at the
+                               edges, and may produce undesired artifacts.
+              blackman       : Similar to the hann and hamming windows, with
+                               sharper ends.
+              bartlett       : Triangular-like. Its end-points are zeroed.
+              kaiser         : Flexible shape. Takes the optional parameter
+                               "beta" as a shape parameter.  For beta=0, the
+                               window is rectangular. As beta increases, the
+                               window gets narrower.
+
+              Refer to the numpy functions for details about each window type.
+
+    badflag : float, optional
+              The bad data flag. Elements of the input array 'A' holding this
+              value are ignored.
+
+    beta    : float, optional
+              Shape parameter for the kaiser window. For windows other than the
+              kaiser window, this parameter does nothing.
+
+    Returns
+    -------
+    xs      : 1D array
+              The smoothed array.
+
+    ---------------------------------------
+    André Palóczy Filho (paloczy@gmail.com) June 2012
+
+    """
+    # Checking window type and dimensions.
+    kinds = ['hann', 'hamming', 'blackman', 'bartlett', 'kaiser']
+    if (kind not in kinds):
+        raise ValueError('Invalid window type requested: %s' % kind)
+
+    if np.mod(N, 2) == 0:
+        raise ValueError('Window size must be odd')
+
+    # Creating the window.
+    if (kind == 'kaiser'):  # If the window kind is kaiser (beta is required).
+        wstr = 'np.kaiser(N, beta)'
+    # If the window kind is hann, hamming, blackman or bartlett (beta is not
+    # required).
+    else:
+        if kind == 'hann':
+            # Converting the correct window name (Hann) to the numpy function
+            # name (numpy.hanning).
+            kind = 'hanning'
+            # Computing outer product to make a 2D window out of the original
+            # 1D windows.
+        wstr = 'np.' + kind + '(N)'
+
+    # FIXME: Do not use `eval`.
+    w = eval(wstr)
+    x = np.asarray(x).flatten()
+    Fnan = np.isnan(x).flatten()
+
+    ln = (N - 1) / 2
+    lx = x.size
+    lf = lx - ln
+    xs = np.NaN * np.ones(lx)
+
+    # Eliminating bad data from mean computation.
+    fbad = x == badflag
+    x[fbad] = np.nan
+
+    for i in range(lx):
+        if i <= ln:
+            xx = x[:ln + i + 1]
+            ww = w[ln - i:]
+        elif i >= lf:
+            xx = x[i - ln:]
+            ww = w[:lf - i - 1]
+        else:
+            xx = x[i - ln:i + ln + 1]
+            ww = w.copy()
+
+        # Counting only NON-NaNs, both in the input array and in the window
+        # points.
+        f = ~np.isnan(xx)
+        xx = xx[f]
+        ww = ww[f]
+
+        # Thou shalt not divide by zero.
+        if f.sum() == 0:
+            xs[i] = x[i]
+        else:
+            xs[i] = np.sum(xx * ww) / np.sum(ww)
+
+    # Assigning NaN to the positions holding NaNs in the input array.
+    xs[Fnan] = np.nan
+
+    return xs
+
+
+def smoo2(A, hei, wid, kind='hann', badflag=-9999, beta=14):
+    """
+    Usage
+    -----
+    As = smoo2(A, hei, wid, kind='hann', badflag=-9999, beta=14)
+
+    Description
+    -----------
+    Calculates the smoothed array 'As' from the original array 'A' using the
+    specified window of type 'kind' and shape ('hei', 'wid').
+
+    Parameters
+    ----------
+    A       : 2D array
+              Array to be smoothed.
+
+    hei     : integer
+              Window height. Must be odd and greater than or equal to 3.
+
+    wid     : integer
+              Window width. Must be odd and greater than or equal to 3.
+
+    kind    : string, optional
+              One of the window types available in the numpy module:
+
+              hann (default) : Gaussian-like. The weight decreases toward the
+              ends. Its end-points are zeroed.
+              hamming        : Similar to the hann window. Its end-points are
+                               not zeroed, therefore it is discontinuous at
+                               the edges, and may produce artifacts.
+              blackman       : Similar to the hann and hamming windows, with
+                               sharper ends.
+              bartlett       : Triangular-like. Its end-points are zeroed.
+              kaiser         : Flexible shape. Takes the optional parameter
+                               "beta" as a shape parameter.  For beta=0, the
+                               window is rectangular. As beta increases, the
+                               window gets narrower.
+
+              Refer to Numpy for details about each window type.
+
+    badflag : float, optional
+              The bad data flag. Elements of the input array 'A' holding this
+              value are ignored.
+
+    beta    : float, optional
+              Shape parameter for the kaiser window. For windows other than
+              the kaiser window, this parameter does nothing.
+
+    Returns
+    -------
+    As      : 2D array
+              The smoothed array.
+
+    André Palóczy Filho (paloczy@gmail.com)
+    April 2012
+
+    """
+    # Checking window type and dimensions
+    kinds = ['hann', 'hamming', 'blackman', 'bartlett', 'kaiser']
+    if (kind not in kinds):
+        raise ValueError('Invalid window type requested: %s' % kind)
+
+    if (np.mod(hei, 2) == 0) or (np.mod(wid, 2) == 0):
+        raise ValueError('Window dimensions must be odd')
+
+    if (hei <= 1) or (wid <= 1):
+        raise ValueError('Window shape must be (3,3) or greater')
+
+    # Creating the 2D window.
+    if (kind == 'kaiser'):  # If the window kind is kaiser (beta is required).
+        wstr = 'np.outer(np.kaiser(hei, beta), np.kaiser(wid, beta))'
+    # If the window kind is hann, hamming, blackman or bartlett
+    # (beta is not required).
+    else:
+        if kind == 'hann':
+            # Converting the correct window name (Hann) to the numpy function
+            # name (numpy.hanning).
+            kind = 'hanning'
+        # Computing outer product to make a 2D window out of the original 1d
+        # windows.
+        # TODO: Get rid of this evil eval.
+        wstr = 'np.outer(np.' + kind + '(hei), np.' + kind + '(wid))'
+    wdw = eval(wstr)
+
+    A = np.asanyarray(A)
+    Fnan = np.isnan(A)
+    imax, jmax = A.shape
+    As = np.NaN * np.ones((imax, jmax))
+
+    for i in range(imax):
+        for j in range(jmax):
+            # Default window parameters.
+            wupp = 0
+            wlow = hei
+            wlef = 0
+            wrig = wid
+            lh = np.floor(hei / 2)
+            lw = np.floor(wid / 2)
+
+            # Default array ranges (functions of the i, j indices).
+            upp = i - lh
+            low = i + lh + 1
+            lef = j - lw
+            rig = j + lw + 1
+
+            # Tiling window and input array at the edges.
+            # Upper edge.
+            if upp < 0:
+                wupp = wupp - upp
+                upp = 0
+
+            # Left edge.
+            if lef < 0:
+                wlef = wlef - lef
+                lef = 0
+
+            # Bottom edge.
+            if low > imax:
+                ex = low - imax
+                wlow = wlow - ex
+                low = imax
+
+            # Right edge.
+            if rig > jmax:
+                ex = rig - jmax
+                wrig = wrig - ex
+                rig = jmax
+
+            # Computing smoothed value at point (i, j).
+            Ac = A[upp:low, lef:rig]
+            wdwc = wdw[wupp:wlow, wlef:wrig]
+            fnan = np.isnan(Ac)
+            Ac[fnan] = 0
+            wdwc[fnan] = 0  # Eliminating NaNs from mean computation.
+            fbad = Ac == badflag
+            wdwc[fbad] = 0  # Eliminating bad data from mean computation.
+            a = Ac * wdwc
+            As[i, j] = a.sum() / wdwc.sum()
+    # Assigning NaN to the positions holding NaNs in the original array.
+    As[Fnan] = np.NaN
+
+    return As
 
 
 if __name__ == '__main__':

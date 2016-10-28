@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import (absolute_import, division, print_function)
 
 from .datasets import (
@@ -15,4 +17,5 @@ __all__ = [
     'get_isobath',
     'woa_profile',
     'woa_subset',
+    'get_gebco15',
     ]

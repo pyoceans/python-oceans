@@ -1,4 +1,6 @@
-from __future__ import absolute_import, division
+# -*- coding: utf-8 -*-
+
+from __future__ import (absolute_import, division, print_function)
 
 import matplotlib
 import numpy as np
@@ -9,13 +11,7 @@ from matplotlib.lines import Line2D
 from matplotlib.artist import Artist
 from matplotlib.dates import date2num
 
-from pandas import DatetimeIndex
-
-__all__ = ['stick_plot',
-           'landmask',
-           'level_colormap',
-           'get_pointsxy',
-           'EditPoints']
+from ..ocfis import cart2pol
 
 
 def stick_plot(time, u, v, **kw):
@@ -48,6 +44,8 @@ def stick_plot(time, u, v, **kw):
     https://www.mail-archive.com/matplotlib-users@lists.sourceforge.net/msg18051.html
 
     """
+    from pandas import DatetimeIndex
+
     width = kw.pop('width', 0.002)
     headwidth = kw.pop('headwidth', 0)
     headlength = kw.pop('headlength', 0)
@@ -56,9 +54,9 @@ def stick_plot(time, u, v, **kw):
     ax = kw.pop('ax', None)
 
     if angles != 'uv':
-        raise AssertionError("Stickplot angles must be 'uv' so that"
-                             "if *U*==*V* the angle of the arrow on"
-                             "the plot is 45 degrees CCW from the *x*-axis.")
+        raise AssertionError('Stickplot angles must be `uv` so that'
+                             'if *U*==*V* the angle of the arrow on'
+                             'the plot is 45 degrees CCW from the *x*-axis.')
 
     if isinstance(time, DatetimeIndex):
         time = time.to_pydatetime()
@@ -135,6 +133,60 @@ def get_pointsxy(points):
     return points.get_xdata(), points.get_ydata()
 
 
+def compass(u, v, **arrowprops):
+    """
+    Compass draws a graph that displays the vectors with
+    components `u` and `v` as arrows from the origin.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> u = [+0, -0.5, -0.50, +0.90]
+    >>> v = [+1, +0.5, -0.45, -0.85]
+    >>> fig, ax = compass(u, v)
+
+    """
+
+    # Create plot.
+    fig, ax = plt.subplots(subplot_kw=dict(polar=True))
+
+    angles, radii = cart2pol(u, v)
+
+    # Arrows or sticks?
+    kw = dict(arrowstyle='->')
+    kw.update(arrowprops)
+    [ax.annotate('', xy=(angle, radius), xytext=(0, 0),
+                 arrowprops=kw) for
+     angle, radius in zip(angles, radii)]
+
+    ax.set_ylim(0, np.max(radii))
+
+    return fig, ax
+
+
+def plot_spectrum(data, fs):
+    """
+    Plots a Single-Sided Amplitude Spectrum of y(t).
+
+    """
+    n = len(data)  # Length of the signal.
+    k = np.arange(n)
+    T = n / fs
+    frq = k / T  # Two sides frequency range.
+    N = list(range(n // 2))
+    frq = frq[N]  # One side frequency range
+
+    # FFT computing and normalization.
+    Y = np.fft.fft(data) / n
+    Y = Y[N]
+
+    # Plotting the spectrum.
+    plt.semilogx(frq, np.abs(Y), 'r')
+    plt.xlabel('Freq (Hz)')
+    plt.ylabel('|Y(freq)|')
+    plt.show()
+
+
 class EditPoints(object):
     """
     Edit points on a graph with the mouse.  Handles only one set of points.
@@ -156,7 +208,6 @@ class EditPoints(object):
     >>> p = EditPoints(fig, ax, points[0], verbose=True)
     >>> _ = ax.set_title('Click and drag a point to move it')
     >>> _ = ax.axis([-2, 2, -2, 2])
-    >>> plt.show()
 
     Based on http://matplotlib.org/examples/event_handling/poly_editor.html
 
@@ -167,7 +218,7 @@ class EditPoints(object):
     def __init__(self, fig, ax, points, verbose=False):
         matplotlib.interactive(True)
         if points is None:
-            raise RuntimeError("""First add points to a figure or canvas.""")
+            raise RuntimeError("First add points to a figure or canvas.")
         canvas = fig.canvas
         self.ax = ax
         self.dragged = None
@@ -194,7 +245,7 @@ class EditPoints(object):
         self.canvas.blit(self.ax.bbox)
 
         if self.verbose:
-            print("\nDrawing...")
+            print('\nDrawing...')
 
     def points_changed(self, points):
         """
@@ -208,7 +259,7 @@ class EditPoints(object):
         self.line.set_visible(vis)
 
         if self.verbose:
-            print("\nPoints modified.")
+            print('\nPoints modified.')
 
     def get_ind_under_point(self, event):
         """
@@ -222,12 +273,12 @@ class EditPoints(object):
         indseq = np.nonzero(np.equal(d, np.amin(d)))[0]
         ind = indseq[0]
         if self.verbose:
-            print("d[ind] %s epsilon %s" % (d[ind], self.epsilon))
+            print('d[ind] {} epsilon {}'.format(d[ind], self.epsilon))
         if d[ind] >= self.epsilon:
             ind = None
 
         if self.verbose:
-            print("\nClicked at (%s, %s)" % (event.xdata, event.ydata))
+            print('\nClicked at ({}, {})'.format(event.xdata, event.ydata))
         return ind
 
     def button_press_callback(self, event):
@@ -248,7 +299,7 @@ class EditPoints(object):
         self.pick_pos = (x[self._ind], y[self._ind])
 
         if self.verbose:
-            print("\nGot point: (%s), ind: %s" % (self.pick_pos, self._ind))
+            print('\nGot point: ({}), ind: {}'.format(self.pick_pos, self._ind))
 
     def button_release_callback(self, event):
         """
@@ -261,7 +312,7 @@ class EditPoints(object):
             return
         self._ind = None
         if self.verbose:
-            print("\nButton released.")
+            print('\nButton released.')
 
     def key_press_callback(self, event):
         """
@@ -277,14 +328,14 @@ class EditPoints(object):
                 self._ind = None
 
             if self.verbose:
-                print("\nToggle %d" % self.showpoint)
+                print('\nToggle {:d}'.format(self.showpoint))
             return get_pointsxy(self.points)
         elif event.key == 'd':
             x, y = get_pointsxy(self.points)
             ind = self.get_ind_under_point(event)
             if ind is not None:
                 if self.verbose:
-                    print("\nDeleted (%s, %s) ind: %s" % (x[ind], y[ind], ind))
+                    print('\nDeleted ({}, {}) ind: {}'.format(x[ind], y[ind], ind))
                 x = np.delete(x, ind)
                 y = np.delete(y, ind)
                 self.points.set_xdata(x)
@@ -292,7 +343,7 @@ class EditPoints(object):
                 self.line.set_data(self.points.get_data())
         elif event.key == 'i':
             if self.verbose:
-                print("Insert point")
+                print('Insert point')
             xs = self.points.get_xdata()
             ex, ey = event.xdata, event.ydata
             for i in range(len(xs) - 1):
@@ -300,7 +351,7 @@ class EditPoints(object):
                 self.points.set_ydata(np.r_[self.points.get_ydata(), ey])
                 self.line.set_data(self.points.get_data())
                 if self.verbose:
-                    print("\nInserting: (%s, %s)" % (ex, ey))
+                    print('\nInserting: ({}, {})'.format(ex, ey))
                 break
 
         self.canvas.draw()
@@ -324,8 +375,8 @@ class EditPoints(object):
         x[self._ind] = self.pick_pos[0] + dx
         y[self._ind] = self.pick_pos[1] + dy
         if self.verbose:
-            print("\nevent.xdata %s" % event.xdata)
-            print("\nevent.ydata %s" % event.ydata)
+            print('\nevent.xdata {}'.format(event.xdata))
+            print('\nevent.ydata {}'.format(event.ydata))
         self.points.set_xdata(x)
         self.points.set_ydata(y)
         self.line.set_data(list(zip(self.points.get_data())))
@@ -335,7 +386,7 @@ class EditPoints(object):
         self.canvas.blit(self.ax.bbox)
 
         if self.verbose:
-            print("\nMoving")
+            print('\nMoving')
 
 
 if __name__ == '__main__':
