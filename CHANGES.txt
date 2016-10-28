@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+Version 0.5.0, unreleased
+
+* Replaced custom smooth filter for scipy's ndimage filter.
+* Re-factor datasets to avoid the basemap syntax in favor of a `bbox` ike syntax.
+
 Version 0.4.0, 27-Oct-2016.
 
 * re-written `get_isobath` function that uses latest matplotlib contour machinery.
