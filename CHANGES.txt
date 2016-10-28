@@ -9,8 +9,9 @@ Version 0.5.0, unreleased
 * Moved `compass` to plotting.
 * Added `get_gebco15` function to extract gebco15 bathymetry.
 * Removed `teaching` and `smoothers` modules as they were here only for learning purposes.
-* Removed shapely dependency. Using matplotlib `Path` in `in_polygon` instead.
+* Removed `shapely` and use `matplotlib.path.Path` in `in_polygon` instead.
 * Many speed improvements via lazy imports and updates.
+* Re-added a re-factored version of the filters module.
 
 Version 0.4.0, 27-Oct-2016.
 
