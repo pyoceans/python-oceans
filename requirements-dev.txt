@@ -4,3 +4,4 @@ netcdf4
 pandas
 scipy
 shapely
+pytest
