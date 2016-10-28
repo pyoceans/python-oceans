@@ -10,3 +10,6 @@ python-oceans
 
 
 Misc helper functions for ocean sciences.
+
+Most of the functions here are Python versions of some common MatlabTM functions.
+They are untested and probably buggy. Use with caution!
