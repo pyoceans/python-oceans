@@ -1,10 +1,12 @@
+# -*- coding: utf-8 -*-
+
 """
 Test Extra seawater functions
 =============================
 
 """
 
-from __future__ import absolute_import, division
+from __future__ import (absolute_import, division, print_function)
 
 import numpy as np
 

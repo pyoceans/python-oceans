@@ -1,4 +1,6 @@
-from __future__ import absolute_import, division
+# -*- coding: utf-8 -*-
+
+from __future__ import (absolute_import, division, print_function)
 
 
 import gsw
@@ -7,7 +9,7 @@ import numpy as np
 
 class Waves(object):
     """
-    Solves the wave dispersion relationship via Newton-raphson.
+    Solves the wave dispersion relationship via Newton-Raphson.
 
     .. math::
         \omega^2 = gk\tanh kh

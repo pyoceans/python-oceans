@@ -1,17 +1,23 @@
-__version__ = '0.4.0'
+# -*- coding: utf-8 -*-
+
+from . import (
+    RPSstuff,
+    colormaps,
+    datasets,
+    ocfis,
+    plotting,
+    sw_extras
+    )
 
 
-__all__ = ['RPSstuff',
-           'datasets',
-           'ff_tools',
-           'plotting',
-           'colormaps',
-           'sw_extras']
+__all__ = [
+    'RPSstuff',
+    'colormaps',
+    'datasets',
+    'ocfis',
+    'plotting',
+    'sw_extras'
+    ]
 
 
-from .RPSstuff import *
-from .datasets import *
-from .ff_tools import *
-from .plotting import *
-from .colormaps import *
-from .sw_extras import *
+__version__ = '0.5.0'

@@ -1,13 +1,31 @@
-from __future__ import absolute_import, division
+# -*- coding: utf-8 -*-
+
+from __future__ import (absolute_import, division, print_function)
 
 import numpy as np
 
 
-def inpolygon(xp, yp, x_poly, y_poly):
-    from shapely.geometry import Point, Polygon
-    poly = Polygon(list(zip(x_poly, y_poly)))
-    return np.array([Point(x, y).intersects(poly) for x, y in zip(xp, yp)],
-                    dtype=np.int)
+def in_polygon(xp, yp, polygon, transform=None, radius=0.0):
+    """
+    Check is points `xp` and `yp` are inside the `polygon`.
+    Polygon is a `matplotlib.path.Path` object.
+
+    http://stackoverflow.com/questions/21328854/shapely-and-matplotlib-point-in-polygon-not-accurate-with-geolocation
+
+    Examples
+    --------
+    >>> from matplotlib.path import Path
+    >>> polygon = Path([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]])
+    >>> x1, y1 = 0.5, 0.5
+    >>> x2, y2 = 1, 1
+    >>> x3, y3 = 0, 1.5
+    >>> in_polygon([x1, x2, x3], [y1, y2, y3], polygon)
+    array([ True, False, False], dtype=bool)
+
+    """
+    xp, yp = map(np.atleast_1d, (xp, yp))
+    points = np.atleast_2d([xp, yp]).T
+    return polygon.contains_points(points, transform=None, radius=0.0)
 
 
 def gamma_G_north_atlantic(SP, pt):
@@ -224,6 +242,7 @@ def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
 
     Examples
     --------
+    >>> from oceans.sw_extras import gamma_GP_from_SP_pt
     >>> SP = [35.066, 35.086, 35.089, 35.078, 35.025, 34.851, 34.696, 34.572,
     ...      34.531, 34.509, 34.496, 34.452, 34.458, 34.456, 34.488, 34.536,
     ...      34.579, 34.612, 34.642, 34.657, 34.685, 34.707, 34.72, 34.729]
@@ -249,6 +268,8 @@ def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
     VERSION NUMBER: 1.0 (27th October, 2011)
 
     """
+    from matplotlib.path import Path
+
     SP, pt, p, lon, lat = list(map(np.asanyarray, (SP, pt, p, lon, lat)))
     SP, pt, p, lon, lat = np.broadcast_arrays(SP, pt, p, lon, lat)
 
@@ -283,11 +304,13 @@ def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
                        -8.7, -8.82, -8.02, -7.04, -3.784, 2.9, 10, 20])
 
     # Definition of the polygon filters.
-    i_inter_indian_pacific = (inpolygon(lon, lat, io_lon, io_lat) *
-                              inpolygon(lon, lat, po_lon, po_lat))
+    io_polygon = Path(list(zip(io_lon, io_lat)))
+    po_polygon = Path(list(zip(po_lon, po_lat)))
+    i_inter_indian_pacific = (in_polygon(lon, lat, io_polygon) *
+                              in_polygon(lon, lat, po_polygon))
 
-    i_indian = inpolygon(lon, lat, io_lon, io_lat) - i_inter_indian_pacific
-    i_pacific = inpolygon(lon, lat, po_lon, po_lat)
+    i_indian = in_polygon(lon, lat, io_polygon) - i_inter_indian_pacific
+    i_pacific = in_polygon(lon, lat, po_polygon)
     i_atlantic = (1 - i_pacific) * (1 - i_indian)
 
     # Definition of the Atlantic weighting function.

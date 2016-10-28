@@ -1,4 +1,6 @@
-from __future__ import absolute_import, division
+# -*- coding: utf-8 -*-
+
+from __future__ import (absolute_import, division, print_function)
 
 import os
 
@@ -9,7 +11,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from matplotlib import colors
-from scipy.signal import sawtooth
 
 cmap_path = os.path.join(os.path.dirname(__file__), 'cmap_data')
 
@@ -22,8 +23,7 @@ class Bunch(dict):
 
 def get_color(color):
     """
-    http://stackoverflow.com/questions/10254207/
-    color-and-line-writing-using-matplotlib
+    http://stackoverflow.com/questions/10254207/color-and-line-writing-using-matplotlib
 
     """
     for hue in range(color):
@@ -88,6 +88,8 @@ def zebra_cm(a=4, m=0.5, n=256):
     a = 4 -> there are this many large bands in the palette.
 
     """
+    from scipy.signal import sawtooth
+
     x = np.arange(0, n)
     hue = np.exp(-3. * x / n)
     sat = m + (1. - m) * (0.5 * (1. + sawtooth(2. * np.pi * x / (n / a))))

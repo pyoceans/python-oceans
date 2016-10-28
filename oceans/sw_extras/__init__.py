@@ -1,3 +1,50 @@
-from .sw_extras import *
+# -*- coding: utf-8 -*-
+
 from .waves import Waves
 from .gamma_GP_from_SP_pt import gamma_GP_from_SP_pt
+from .sw_extras import (
+    sigma_t,
+    sigmatheta,
+    N,
+    cph,
+    shear,
+    richnumb,
+    cor_beta,
+    inertial_period,
+    strat_period,
+    tcond,
+    spice,
+    psu2ppt,
+    visc,
+    soundspeed,
+    photic_depth,
+    cr_depth,
+    kdpar,
+    zmld_so,
+    zmld_boyer,
+    )
+
+__all__ = [
+    'sw_extras',
+    'Waves',
+    'gamma_GP_from_SP_pt',
+    'sigma_t',
+    'sigmatheta',
+    'N',
+    'cph',
+    'shear',
+    'richnumb',
+    'cor_beta',
+    'inertial_period',
+    'strat_period',
+    'visc',
+    'tcond',
+    'spice',
+    'psu2ppt',
+    'soundspeed',
+    'photic_depth',
+    'cr_depth',
+    'kdpar',
+    'zmld_so',
+    'zmld_boyer',
+    ]

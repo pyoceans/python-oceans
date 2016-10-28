@@ -1,12 +1,10 @@
-from __future__ import absolute_import, division
+# -*- coding: utf-8 -*-
+
+from __future__ import (absolute_import, division, print_function)
 
 import os
 import numpy as np
 
-
-__all__ = ['LineNormals2D',
-           'LineCurvature2D',
-           'inverse3']
 
 _default_path = os.path.join(os.path.dirname(__file__), 'data')
 
@@ -14,7 +12,7 @@ _default_path = os.path.join(os.path.dirname(__file__), 'data')
 def LineNormals2D(Vertices, Lines):
     """
     This function calculates the normals, of the line points using the
-    neighbouring points of each contour point, and forward an backward
+    neighboring points of each contour point, and forward an backward
     differences on the end points.
 
     N = LineNormals2D(V, L)
@@ -124,7 +122,7 @@ def LineCurvature2D(Vertices, Lines=None):
         Lines = np.c_[np.arange(1, Vertices.shape[0]),
                       np.arange(2, Vertices.shape[0] + 1)]
     else:
-        print("Lines is passed but not recognized.")
+        raise ValueError('Cannot recognized {!r}.'.format(Lines))
 
     # Get left and right neighbor of each points.
     Na = np.zeros(Vertices.shape[0], dtype=np.int)

@@ -1,35 +1,17 @@
-from __future__ import absolute_import, division
+# -*- coding: utf-8 -*-
+
+from __future__ import (absolute_import, division, print_function)
 
 import warnings
 
 import numpy as np
-import matplotlib.pyplot as plt
-
 from netCDF4 import Dataset
-from ..ff_tools import get_profile, wrap_lon360
+
+from ..ocfis import get_profile, wrap_lon180
+from ..RPSstuff import near
 
 
-__all__ = ['map_limits',
-           'woa_subset',
-           'woa_profile',
-           'etopo_subset',
-           'map_limits',
-           'get_depth',
-           'get_isobath',
-           'laplace_filter']
-
-
-def map_limits(m):
-    lons, lats = wrap_lon360(m.boundarylons), m.boundarylats
-    boundary = dict(llcrnrlon=min(lons),
-                    urcrnrlon=max(lons),
-                    llcrnrlat=min(lats),
-                    urcrnrlat=max(lats))
-    return boundary
-
-
-def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature',
-               clim_type='00', resolution='1.00', full=False):
+def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature', clim_type='00', resolution='1.00', full=False):  # noqa
     """
     Return an iris.cube instance from a World Ocean Atlas 2013 variable at a
     given lon, lat bounding box.
@@ -77,7 +59,7 @@ def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature',
     ...     return fig, ax
     >>> # Extract a 2D surface -- Annual temperature climatology:
     >>> import matplotlib.pyplot as plt
-    >>> from oceans.ff_tools import wrap_lon180
+    >>> from oceans.ocfis import wrap_lon180
     >>> from oceans.colormaps import cm, get_color
     >>> import iris.plot as iplt
     >>> from oceans.datasets import woa_subset
@@ -129,9 +111,9 @@ def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature',
     var = v[variable]
     res = r[resolution]
 
-    uri = ("http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA13/DATA/"
-           "{variable}/netcdf/{decav}/{resolution}/woa13_{decav}_{var}"
-           "{clim_type}_0{res}.nc").format
+    uri = ('http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA13/DATA/'
+           '{variable}/netcdf/{decav}/{resolution}/woa13_{decav}_{var}'
+           '{clim_type}_0{res}.nc').format
     url = uri(**dict(variable=variable, decav=decav, resolution=resolution,
                      var=var, clim_type=clim_type, res=res))
 
@@ -146,8 +128,7 @@ def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature',
         return cubes[0]
 
 
-def woa_profile(lon, lat, variable='temperature', clim_type='00',
-                resolution='1.00', full=False):
+def woa_profile(lon, lat, variable='temperature', clim_type='00', resolution='1.00', full=False):  # noqa
     """
     Return an iris.cube instance from a World Ocean Atlas 2013 variable at a
     given lon, lat point.
@@ -203,9 +184,9 @@ def woa_profile(lon, lat, variable='temperature', clim_type='00',
     var = v[variable]
     res = r[resolution]
 
-    uri = ("http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA13/DATA/"
-           "{variable}/netcdf/{decav}/{resolution}/woa13_{decav}_{var}"
-           "{clim_type}_0{res}.nc").format
+    uri = ('http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA13/DATA/'
+           '{variable}/netcdf/{decav}/{resolution}/woa13_{decav}_{var}'
+           '{clim_type}_0{res}.nc').format
     url = uri(**dict(variable=variable, decav=decav, resolution=resolution,
                      var=var, clim_type=clim_type, res=res))
 
@@ -221,189 +202,223 @@ def woa_profile(lon, lat, variable='temperature', clim_type='00',
         return cubes[0]
 
 
-def etopo_subset(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
-                 urcrnrlat=None, tfile='dap', smoo=False, subsample=False):
+def etopo_subset(bbox=[-43, -30, -22, -17], tfile=None, smoo=False):
     """
     Get a etopo subset.
     Should work on any netCDF with x, y, data
-    http://www.trondkristiansen.com/wp-content/uploads/downloads/
-    2011/07/contourICEMaps.py
+    http://www.trondkristiansen.com/wp-content/uploads/downloads/2011/07/contourICEMaps.py
 
     Examples
     --------
+    >>> from oceans.datasets import etopo_subset
     >>> import matplotlib.pyplot as plt
-    >>> offset = 5
-    >>> #tfile = './ETOPO1_Bed_g_gmt4.grd'
-    >>> tfile = 'dap'
-    >>> llcrnrlon, urcrnrlon, llcrnrlat, urcrnrlat = -43, -30, -22, -17
-    >>> lons, lats, bathy = etopo_subset(llcrnrlon - offset,
-    ...                                  urcrnrlon + offset,
-    ...                                  llcrnrlat - offset,
-    ...                                  urcrnrlat + offset,
-    ...                                  smoo=True, tfile=tfile)
+    >>> bbox = [-43, -30, -22, -17]
+    >>> lon, lat, bathy = etopo_subset(bbox=bbox, smoo=True)
     >>> fig, ax = plt.subplots()
-    >>> cs = ax.pcolormesh(lons, lats, bathy)
-    >>> _ = ax.axis([-42, -28, -23, -15])
-    >>> _ = ax.set_title(tfile)
+    >>> cs = ax.pcolormesh(lon, lat, bathy)
 
     """
-    if tfile == 'dap':
+    if tfile is None:
         tfile = 'http://opendap.ccst.inpe.br/Misc/etopo2/ETOPO2v2c_f4.nc'
 
-    etopo = Dataset(tfile, 'r')
+    with Dataset(tfile, 'r') as etopo:
+        lons = etopo.variables['x'][:]
+        lats = etopo.variables['y'][:]
 
-    lons = etopo.variables["x"][:]
-    lats = etopo.variables["y"][:]
+        imin, imax, jmin, jmax = _get_indices(bbox, lons, lats)
+        lon, lat = np.meshgrid(lons[imin:imax], lats[jmin:jmax])
 
-    res = get_indices(llcrnrlat, urcrnrlat, llcrnrlon, urcrnrlon, lons, lats)
-
-    lon, lat = np.meshgrid(lons[res[0]:res[1]], lats[res[2]:res[3]])
-
-    bathy = etopo.variables["z"][int(res[2]):int(res[3]),
-                                 int(res[0]):int(res[1])]
+        # FIXME: This assumes j, i order.
+        bathy = etopo.variables['z'][jmin:jmax, imin:imax]
 
     if smoo:
-        bathy = laplace_filter(bathy, M=None)
+        from scipy.ndimage.filters import gaussian_filter
+        bathy = gaussian_filter(bathy, sigma=1)
 
-    if subsample:
-        bathy = bathy[::subsample]
-        lon, lat = lon[::subsample], lat[::subsample]
     return lon, lat, bathy
 
 
-def get_depth(lon, lat, tfile='dap'):
+def get_depth(lon, lat, tfile=None):
     """
     Find the depths for each station on the etopo2 database.
+
+    Examples
+    --------
+    >>> from oceans.datasets import get_depth
+    >>> station_lon = [-40, -32]
+    >>> station_lat = [-20, -20]
+    >>> get_depth(station_lon, station_lat)
+    array([  -32.98816299, -4275.63378906], dtype=float32)
 
     """
     lon, lat = list(map(np.atleast_1d, (lon, lat)))
 
-    lons, lats, bathy = etopo_subset(lat.min() - 5, lat.max() + 5,
-                                     lon.min() - 5, lon.max() + 5,
-                                     tfile=tfile, smoo=False)
+    offset = 5
+    bbox = [lon.min() - offset, lon.max() + offset,
+            lat.min() - offset, lat.max() + offset]
+    lons, lats, bathy = etopo_subset(bbox, tfile=tfile, smoo=False)
 
     return get_profile(lons, lats, bathy, lon, lat, mode='nearest', order=3)
 
 
-def get_isobath(llcrnrlon=None, urcrnrlon=None, llcrnrlat=None,
-                urcrnrlat=None, iso=-200., tfile='dap'):
+def get_isobath(bbox, iso=-200, tfile=None, smoo=False):
     """
     Finds an isobath on the etopo2 database and returns
     its lon, lat segments for plotting.
 
+    Examples
+    --------
+    >>> from oceans.datasets import etopo_subset, get_isobath
+    >>> import matplotlib.pyplot as plt
+    >>> bbox = [-43, -30, -22, -17]
+    >>> segments = get_isobath(bbox=bbox, iso=-200, smoo=True)
+    >>> lon, lat, bathy = etopo_subset(bbox=bbox, smoo=True)
+    >>> fig, ax = plt.subplots()
+    >>> cs = ax.pcolormesh(lon, lat, bathy)
+    >>> for segment in segments:
+    ...     lines = ax.plot(segment[:, 0], segment[:, -1], 'k', linewidth=2)
+
     """
     import matplotlib._contour as contour
-    lon, lat, topo = etopo_subset(llcrnrlon=llcrnrlon, urcrnrlon=urcrnrlon,
-                                  llcrnrlat=llcrnrlat, urcrnrlat=urcrnrlat,
-                                  tfile=tfile)
+    lon, lat, topo = etopo_subset(bbox, tfile=tfile, smoo=smoo)
 
-    mask = None
-    corner_mask = True
-    nchunk = 0
+    # Required args for QuadContourGenerator.
+    mask, corner_mask, nchunk = None, True, 0
     c = contour.QuadContourGenerator(lon, lat, topo, mask, corner_mask, nchunk)
     res = c.create_contour(iso)
     nseg = len(res) // 2
-    segments, codes = res[:nseg], res[nseg:]
+    segments = res[:nseg]
     return segments
 
 
-def get_indices(min_lat, max_lat, min_lon, max_lon, lons, lats):
+def _minmax(v):
+    return np.min(v), np.max(v)
+
+
+def _get_indices(bbox, lons, lats):
+    """Return the data indices for a lon, lat square."""
+    lons = wrap_lon180(lons)
+
+    idx_x = np.logical_and(lons >= bbox[0], lons <= bbox[1])
+    idx_y = np.logical_and(lats >= bbox[2], lats <= bbox[3])
+    if lons.ndim == 2 and lats.ndim == 2:
+        inregion = np.logical_and(idx_x, idx_y)
+        region_inds = np.where(inregion)
+        imin, imax = _minmax(region_inds[0])
+        jmin, jmax = _minmax(region_inds[1])
+    elif lons.ndim == 1 and lats.ndim == 1:
+        imin, imax = _minmax(np.where(idx_x))
+        jmin, jmax = _minmax(np.where(idx_y))
+    else:
+        msg = 'Cannot understand input shapes lons {!r} and lats {!r}'.format
+        raise ValueError(msg(lons.shape, lats.shape))
+    return imin, imax+1, jmin, jmax+1
+
+
+def get_gebco15(x, y, topofile='gebco15-40s_30-52w_30seg.nc'):
     """
-    Return the data indices for a lon, lat square.
+    Usage
+    -----
+    H, D, Xo, Yo = get_gebco15(x, y, topofile='gebco/gebco_08_30seg.nc')
 
-    """
-    distances1, distances2, indices = [], [], []
-    index = 1
-    for point in lats:
-        s1 = max_lat - point
-        s2 = min_lat - point
-        distances1.append((np.dot(s1, s1), point, index))
-        distances2.append((np.dot(s2, s2), point, index - 1))
-        index = index + 1
+    Description
+    -----------
+    Finds the depth of points of coordinates 'x','y' using GEBCO data set.
 
-    distances1.sort()
-    distances2.sort()
-    indices.append(distances1[0])
-    indices.append(distances2[0])
+    Parameters
+    ----------
+    x         : 1D array
+                Array containing longitudes of the points of unknown depth.
 
-    distances1, distances2 = [], []
-    index = 1
-    for point in lons:
-        s1 = max_lon - point
-        s2 = min_lon - point
-        distances1.append((np.dot(s1, s1), point, index))
-        distances2.append((np.dot(s2, s2), point, index - 1))
-        index = index + 1
+    y         : 1D array
+                Array containing latitudes of the points of unknown depth.
 
-    distances1.sort()
-    distances2.sort()
-    indices.append(distances1[0])
-    indices.append(distances2[0])
+    topofile  : string, optional
+                String containing path to the GEBCO netCDF file.
 
-    # max_lat_indices, min_lat_indices, max_lon_indices, min_lon_indices.
-    res = np.zeros((4), dtype=np.integer)
-    res[0] = indices[3][2]
-    res[1] = indices[2][2]
-    res[2] = indices[1][2]
-    res[3] = indices[0][2]
-    return res
+    Returns
+    -------
+    H         : 1D array
+                Array containing depths of points closest to the input X, Y
+                coordinates.
 
+    X         : 1D array
+                Array of horizontal distance associated with array 'H'.
 
-def laplace_X(F, M):
-    """
-    1D Laplace Filter in X-direction.
-    http://www.trondkristiansen.com/wp-content/uploads/downloads/
-    2010/09/laplaceFilter.py
+    D         : 1D array
+                Array containing distances (in km) from the input X, Y
+                coordinates to the data points.
 
-    """
-    jmax, imax = F.shape
+    Xo        : 1D array
+                Array containing longitudes of the data points.
 
-    # Add strips of land.
-    F2 = np.zeros((jmax, imax + 2), dtype=F.dtype)
-    F2[:, 1:-1] = F
-    M2 = np.zeros((jmax, imax + 2), dtype=M.dtype)
-    M2[:, 1:-1] = M
+    Yo        : 1D array
+                Array containing latitudes of the data points.
 
-    MS = M2[:, 2:] + M2[:, :-2]
-    FS = F2[:, 2:] * M2[:, 2:] + F2[:, :-2] * M2[:, :-2]
+    NOTES
+    -------
+    This function reads the entire netCDF file before extracting the wanted
+    data.  Therefore, it does not handle the full GEBCO dataset (1.8 GB)
+    efficiently.
 
-    return np.where(M > 0.5, (1 - 0.25 * MS) * F + 0.25 * FS, F)
+    TODO
+    -------
+    Make it possible to work with the full gebco dataset, by extracting only
+    the wanted indexes.
 
-
-def laplace_Y(F, M):
-    """
-    1D Laplace Filter in Y-direction.
-    http://www.trondkristiansen.com/wp-content/uploads/downloads/
-    2010/09/laplaceFilter.py
-
-    """
-    jmax, imax = F.shape
-
-    # Add strips of land.
-    F2 = np.zeros((jmax + 2, imax), dtype=F.dtype)
-    F2[1:-1, :] = F
-    M2 = np.zeros((jmax + 2, imax), dtype=M.dtype)
-    M2[1:-1, :] = M
-
-    MS = M2[2:, :] + M2[:-2, :]
-    FS = F2[2:, :] * M2[2:, :] + F2[:-2, :] * M2[:-2, :]
-
-    return np.where(M > 0.5, (1 - 0.25 * MS) * F + 0.25 * FS, F)
-
-
-def laplace_filter(F, M=None):
-    """
-    Laplace filter a 2D field with mask.  The mask may cause laplace_X and
-    laplace_Y to not commute.  Take average of both directions.
-    http://www.trondkristiansen.com/wp-content/uploads/downloads/
-    2010/09/laplaceFilter.py
+    Code History
+    ---------------------------------------
+    Author of the original Matlab code (ftopo.m, ETOPO2 dataset):
+    Marcelo Andrioni <marceloandrioni@yahoo.com.br>
+    December 2008: Modification performed by Cesar Rocha <cesar.rocha@usp.br>
+    to handle ETOPO1 dataset.
+    July 2012: Python Translation and modifications performed by André Palóczy
+    Filho <paloczy@gmail.com>
+    to handle GEBCO dataset (30 arc seconds resolution).
 
     """
-    if not M:
-        M = np.ones_like(F)
+    from seawater import dist
 
-    return 0.5 * (laplace_X(laplace_Y(F, M), M) +
-                  laplace_Y(laplace_X(F, M), M))
+    x, y = list(map(np.asanyarray, (x, y)))
+
+    # Opening netCDF file and extracting data.
+    grid = Dataset(topofile)
+    yyr = grid.variables['y_range'][:]
+    xxr = grid.variables['x_range'][:]
+    spacing = grid.variables['spacing'][:]
+    dx, dy = spacing[0], spacing[1]
+
+    # Creating lon and lat 1D arrays.
+    xx = np.arange(xxr[0], xxr[1], dx)
+    xx = xx + dx / 2
+    yy = np.arange(yyr[0], yyr[1], dy)
+    yy = yy + dy / 2
+    h = grid.variables['z'][:]
+    grid.close()
+
+    # Retrieving nearest point for each input coordinate.
+    A = np.asanyarray([])
+    xx, yy = np.meshgrid(xx, yy)
+    ni, nj = xx.shape[0], yy.shape[1]
+    h = np.reshape(h, (ni, nj))
+    h = np.flipud(h)
+    Xo = A.copy()
+    Yo = A.copy()
+    H = A.copy()
+    D = A.copy()
+    for I in range(x.size):
+        ix = near(xx[0, :], x[I])
+        iy = near(yy[:, 0], y[I])
+        H = np.append(H, h[iy, ix])
+        # Calculating distance between input and GEBCO points.
+        D = np.append(D, dist([x[I], xx[0, ix]], [y[I], yy[iy, 0]],
+                              units='km')[0])
+        Xo = np.append(Xo, xx[0, ix])
+        Yo = np.append(Yo, yy[iy, 0])
+        # Calculating distance axis.
+        X = np.append(0, np.cumsum(dist(Xo, Yo, units='km')[0]))
+
+    return H, X, D, Xo, Yo
 
 
 if __name__ == '__main__':
