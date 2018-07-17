@@ -121,11 +121,13 @@ def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature', clim_type
     res = r[resolution]
 
     url = (
-        f'http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA13/DATA/'
+        f'https://data.nodc.noaa.gov/thredds/dodsC/woa/WOA13/DATA/'
         f'{variable}/netcdf/{decav}/{resolution}/woa13_{decav}_{var}'
         f'{clim_type}_0{res}.nc')
 
-    cubes = iris.load_raw(url)
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore')
+        cubes = iris.load_raw(url)
     cubes = [cube.intersection(longitude=(bbox[0], bbox[1]),
                                latitude=(bbox[2], bbox[3])) for cube in cubes]
     cubes = iris.cube.CubeList(cubes)
@@ -174,7 +176,6 @@ def woa_profile(lon, lat, variable='temperature', clim_type='00', resolution='1.
 
     """
     import iris
-    import warnings
 
     if variable not in ['salinity', 'temperature']:
         resolution = '1.00'
@@ -201,7 +202,7 @@ def woa_profile(lon, lat, variable='temperature', clim_type='00', resolution='1.
     res = r[resolution]
 
     url = (
-        f'http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA13/DATAv2/'
+        f'https://data.nodc.noaa.gov/thredds/dodsC/woa/WOA13/DATAv2/'
         f'{variable}/netcdf/{decav}/{resolution}/woa13_{decav}_{var}'
         f'{clim_type}_0{res}v2.nc')
 
