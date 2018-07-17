@@ -2,3 +2,5 @@ include README.rst
 include *.txt
 recursive-include oceans *.py
 include oceans/colormaps/cmap_data/*.dat
+include versioneer.py
+include oceans/_version.py
