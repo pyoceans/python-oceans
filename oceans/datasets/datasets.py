@@ -201,9 +201,9 @@ def woa_profile(lon, lat, variable='temperature', clim_type='00', resolution='1.
     res = r[resolution]
 
     url = (
-        f'http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA13/DATA/'
+        f'http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA13/DATAv2/'
         f'{variable}/netcdf/{decav}/{resolution}/woa13_{decav}_{var}'
-        f'{clim_type}_0{res}.nc')
+        f'{clim_type}_0{res}v2.nc')
 
     with warnings.catch_warnings():
         warnings.simplefilter('ignore')
