@@ -859,11 +859,11 @@ def zmld_so(s, t, p, threshold=0.05, smooth=None):
         Research, 38(89):981-1007. doi:10.1016/0198-0149(91)90093-U
 
     """
-    from pandas import rolling_mean
+    from pandas import rolling
     sigma_t = sigmatheta(s, t, p)
     depth = p
     if smooth is not None:
-        sigma_t = rolling_mean(sigma_t, smooth, min_periods=1)
+        sigma_t = rolling(sigma_t, smooth, min_periods=1).mean()
 
     sublayer = np.where(depth[(depth >= 5) & (depth <= 10)])[0]
     sigma_x = np.nanmean(sigma_t[sublayer])
