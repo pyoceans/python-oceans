@@ -248,7 +248,7 @@ def get_depth(lon, lat, tfile=None):
     >>> station_lon = [-40, -32]
     >>> station_lat = [-20, -20]
     >>> get_depth(station_lon, station_lat)
-    array([  -32.98816299, -4275.63378906], dtype=float32)
+    array([  -32.988163, -4275.634   ], dtype=float32)
 
     """
     lon, lat = list(map(np.atleast_1d, (lon, lat)))

@@ -20,7 +20,7 @@ def in_polygon(xp, yp, polygon, transform=None, radius=0.0):
     >>> x2, y2 = 1, 1
     >>> x3, y3 = 0, 1.5
     >>> in_polygon([x1, x2, x3], [y1, y2, y3], polygon)
-    array([ True, False, False], dtype=bool)
+    array([ True, False, False])
 
     """
     xp, yp = map(np.atleast_1d, (xp, yp))

@@ -43,54 +43,48 @@ class Waves(object):
     >>> from oceans.sw_extras import Waves
     >>> wav = Waves(h=10, T=5, L=None)
     >>> print("ho/Lo = %s" % wav.hoLo)
-    ho/Lo = 0.256195119559
+    ho/Lo = 0.2561951195588007
     >>> print("ho/L  = %s" % wav.hoL)
-    ho/L  = 0.273273564378
+    ho/L  = 0.2732735643784346
     >>> print("Lo    = %s" % wav.Lo)
-    Lo    = 39.0327497933
+    Lo    = 39.03274979328733
     >>> print("L     = %s" % wav.L)
-    L     = 36.5933676122
+    L     = 36.59336761221369
     >>> print("k     = %s" % wav.k)
-    k     = 0.171702844454
+    k     = 0.17170284445431747
     >>> print("omega = %s" % wav.omega)
-    omega = 1.25663706144
+    omega = 1.2566370614359172
     >>> print("T     = %s" % wav.T)
     T     = 5.0
     >>> print("C     = %s" % wav.C)
-    C     = 7.31867352244
+    C     = 7.318673522442738
     >>> print("Cg    = %s" % wav.Cg)
-    Cg    = 4.47085819307
+    Cg    = 4.470858193067349
     >>> print("G     = %s" % wav.G)
-    G     = 0.22176735425
+    G     = 0.22176735425004176
     >>> wav = Waves(h=10, T=None, L=100)
     >>> print("ho/Lo = %s" % wav.hoLo)
-    ho/Lo = 0.05568933069
+    ho/Lo = 0.05568933069002106
     >>> print("ho/L  = %s" % wav.hoL)
     ho/L  = 0.1
     >>> print("Lo    = %s" % wav.Lo)
-    Lo    = 179.56760974
+    Lo    = 179.56760973950605
     >>> print("L     = %s" % wav.L)
     L     = 100.0
     >>> print("k     = %s" % wav.k)
-    k     = 0.0628318530718
+    k     = 0.06283185307179587
     >>> print("omega = %s" % wav.omega)
-    omega = 0.585882379881
+    omega = 0.5858823798813203
     >>> print("T     = %s" % wav.T)
-    T     = 10.7243117782
+    T     = 10.724311778163298
     >>> print("C     = %s" % wav.C)
-    C     = 9.32460768286
+    C     = 9.324607682855573
     >>> print("Cg    = %s" % wav.Cg)
-    Cg    = 8.29120888868
+    Cg    = 8.291208888683515
     >>> print("G     = %s" % wav.G)
-    G     = 0.778350182802
-    >>> # print("  = %s" % wav.Ks)
-    >>> # print("  = %s" % wav.Kr)
-    >>> # print("  = %s" % wav.theta)
-    >>> # print("  = %s" % wav.H)
-    >>> # print("  = %s" % wav.Ks)
-    >>> # print("  = %s" % wav.Kr)
-    >>> # print("  = %s" % wav.theta)
-    >>> # print("  = %s" % wav.H)
+    G     = 0.7783501828024171
+    >>> print("Ks  = %s" % wav.Ks)
+    Ks  = 1.00485953746193
 
     """
     def __init__(self, h, T=None, L=None, thetao=None, Ho=None, lat=None):
