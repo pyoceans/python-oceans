@@ -163,31 +163,6 @@ def mld(SA, CT, p, criterion='pdvar'):
     idx_mld : bool array
               Boolean array in the shape of p with MLD index.
 
-
-    Examples
-    --------
-    >>> import os
-    >>> import gsw
-    >>> import matplotlib.pyplot as plt
-    >>> from oceans.ocfis import mld
-    >>> from gsw.utilities import Bunch
-    >>> # Read data file with check value profiles
-    >>> datadir = os.path.join(os.path.dirname(gsw.utilities.__file__), 'data')
-    >>> cv = Bunch(np.load(os.path.join(datadir, 'gsw_cv_v3_0.npz')))
-    >>> SA, CT, p = (cv.SA_chck_cast[:, 0], cv.CT_chck_cast[:, 0],
-    ...              cv.p_chck_cast[:, 0])
-    >>> fig, (ax0, ax1, ax2) = plt.subplots(nrows=1, ncols=3, sharey=True)
-    >>> l0 = ax0.plot(CT, -p, 'b.-')
-    >>> MDL, idx = mld(SA, CT, p, criterion='temperature')
-    >>> l1 = ax0.plot(CT[idx], -p[idx], 'ro')
-    >>> l2 = ax1.plot(CT, -p, 'b.-')
-    >>> MDL, idx = mld(SA, CT, p, criterion='density')
-    >>> l3 = ax1.plot(CT[idx], -p[idx], 'ro')
-    >>> l4 = ax2.plot(CT, -p, 'b.-')
-    >>> MDL, idx = mld(SA, CT, p, criterion='pdvar')
-    >>> l5 = ax2.plot(CT[idx], -p[idx], 'ro')
-    >>> _ = ax2.set_ylim(-500, 0)
-
     References
     ----------
     .. [1] Monterey, G., and S. Levitus, 1997: Seasonal variability of mixed
