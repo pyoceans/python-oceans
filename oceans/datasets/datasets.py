@@ -4,11 +4,12 @@ from __future__ import (absolute_import, division, print_function)
 
 import warnings
 
-import numpy as np
 from netCDF4 import Dataset
 
-from ..ocfis import get_profile, wrap_lon180
+import numpy as np
+
 from ..RPSstuff import near
+from ..ocfis import get_profile, wrap_lon180
 
 
 def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature', clim_type='00', resolution='1.00', full=False):  # noqa
@@ -48,7 +49,7 @@ def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature', clim_type
     ...                                     facecolor=cfeature.COLORS['land'])
     >>> def make_map(bbox, projection=ccrs.PlateCarree()):
     ...     fig, ax = plt.subplots(figsize=(8, 6),
-    ...                            subplot_kw=dict(projection=projection))
+    ...                            subplot_kw={'projection': projection})
     ...     ax.set_extent(bbox)
     ...     ax.add_feature(LAND, facecolor='0.75')
     ...     ax.coastlines(resolution='50m')
@@ -64,16 +65,16 @@ def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature', clim_type
     >>> import iris.plot as iplt
     >>> from oceans.datasets import woa_subset
     >>> bbox = [2.5, 357.5, -87.5, 87.5]
-    >>> kw = dict(bbox=bbox, variable='temperature', clim_type='00',
-    ...           resolution='0.25')
+    >>> kw = {'bbox': bbox, 'variable': 'temperature', 'clim_type': '00',
+    ...        'resolution': '0.25'}
     >>> cube = woa_subset(**kw)
     >>> c = cube[0, 0, ...]  # Slice singleton time and first level.
     >>> cs = iplt.pcolormesh(c, cmap=cm.avhrr)
     >>> cbar = plt.colorbar(cs)
     >>> # Extract a square around the Mariana Trench averaging into a profile.
     >>> bbox = [-143, -141, 10, 12]
-    >>> kw = dict(bbox=bbox, variable='temperature', resolution='0.25',
-    ...           clim_type=None)
+    >>> kw = {'bbox': bbox, 'variable': 'temperature', 'resolution': '0.25',
+    ...       'clim_type': None}
     >>> fig, ax = plt.subplots(figsize=(5, 5))
     >>> colors = get_color(12)
     >>> months = 'Jan Feb Apr Mar May Jun Jul Aug Sep Oct Nov Dec'.split()
@@ -103,19 +104,26 @@ def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature', clim_type
     else:
         decav = 'decav'
 
-    v = dict(temperature='t', silicate='i', salinity='s', phosphate='p',
-             oxygen='o', o2sat='O', nitrate='n', AOU='A')
+    v = {
+        'temperature': 't',
+        'silicate': 'i',
+        'salinity': 's',
+        'phosphate': 'p',
+        'oxygen': 'o',
+        'o2sat': 'O',
+        'nitrate': 'n',
+        'AOU': 'A'
+    }
 
-    r = dict({'1.00': '1', '0.25': '4'})
+    r = {'1.00': '1', '0.25': '4'}
 
     var = v[variable]
     res = r[resolution]
 
-    uri = ('http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA13/DATA/'
-           '{variable}/netcdf/{decav}/{resolution}/woa13_{decav}_{var}'
-           '{clim_type}_0{res}.nc').format
-    url = uri(**dict(variable=variable, decav=decav, resolution=resolution,
-                     var=var, clim_type=clim_type, res=res))
+    url = (
+        f'http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA13/DATA/'
+        f'{variable}/netcdf/{decav}/{resolution}/woa13_{decav}_{var}'
+        f'{clim_type}_0{res}.nc')
 
     cubes = iris.load_raw(url)
     cubes = [cube.intersection(longitude=(bbox[0], bbox[1]),
@@ -128,7 +136,7 @@ def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature', clim_type
         return cubes[0]
 
 
-def woa_profile(lon, lat, variable='temperature', clim_type='00', resolution='1.00', full=False):  # noqa
+def woa_profile(lon, lat, variable='temperature', clim_type='00', resolution='1.00'):
     """
     Return an iris.cube instance from a World Ocean Atlas 2013 variable at a
     given lon, lat point.
@@ -157,7 +165,7 @@ def woa_profile(lon, lat, variable='temperature', clim_type='00', resolution='1.
     >>> import matplotlib.pyplot as plt
     >>> from oceans.datasets import woa_profile
     >>> cube = woa_profile(-143, 10, variable='temperature',
-    ...                    clim_type='00', resolution='1.00', full=False)
+    ...                    clim_type='00', resolution='1.00')
     >>> fig, ax = plt.subplots(figsize=(2.25, 5))
     >>> z = cube.coord(axis='Z').points
     >>> l = ax.plot(cube[0, :].data, z)
@@ -166,7 +174,7 @@ def woa_profile(lon, lat, variable='temperature', clim_type='00', resolution='1.
 
     """
     import iris
-    from iris.analysis.interpolate import extract_nearest_neighbour
+    import warnings
 
     if variable not in ['salinity', 'temperature']:
         resolution = '1.00'
@@ -176,30 +184,41 @@ def woa_profile(lon, lat, variable='temperature', clim_type='00', resolution='1.
     else:
         decav = 'decav'
 
-    v = dict(temperature='t', silicate='i', salinity='s', phosphate='p',
-             oxygen='o', o2sat='O', nitrate='n', AOU='A')
+    v = {
+        'temperature': 't',
+        'silicate': 'i',
+        'salinity': 's',
+        'phosphate': 'p',
+        'oxygen': 'o',
+        'o2sat': 'O',
+        'nitrate': 'n',
+        'AOU': 'A'
+    }
 
-    r = dict({'1.00': '1', '0.25': '4'})
+    r = {'1.00': '1', '0.25': '4'}
 
     var = v[variable]
     res = r[resolution]
 
-    uri = ('http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA13/DATA/'
-           '{variable}/netcdf/{decav}/{resolution}/woa13_{decav}_{var}'
-           '{clim_type}_0{res}.nc').format
-    url = uri(**dict(variable=variable, decav=decav, resolution=resolution,
-                     var=var, clim_type=clim_type, res=res))
+    url = (
+        f'http://data.nodc.noaa.gov/thredds/dodsC/woa/WOA13/DATA/'
+        f'{variable}/netcdf/{decav}/{resolution}/woa13_{decav}_{var}'
+        f'{clim_type}_0{res}.nc')
 
-    cubes = iris.load_raw(url)
-    cubes = [extract_nearest_neighbour(cube, [('longitude', lon),
-                                              ('latitude', lat)])
-             for cube in cubes]
-    cubes = iris.cube.CubeList(cubes)
-    if full:
-        return cubes
-    else:
-        cubes = [c for c in cubes if c.var_name == '{}_an'.format(var)]
-        return cubes[0]
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore')
+        cubes = iris.load_raw(url)
+
+    cube = [c for c in cubes if c.var_name == '{}_an'.format(var)][0]
+    scheme = iris.analysis.Nearest()
+    sample_points = [('longitude', lon), ('latitude', lat)]
+    kw = {
+        'sample_points': sample_points,
+        'scheme': scheme,
+        'collapse_scalar': True
+    }
+
+    return cube.interpolate(**kw)
 
 
 def etopo_subset(bbox=[-43, -30, -22, -17], tfile=None, smoo=False):
