@@ -254,12 +254,12 @@ def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
     ...      2020.0, 2216.0, 2413.0, 2611.0, 2878.0, 3000.0]
     >>> lon, lat, n = [187.317, -41.6667, 24]
     >>> gamma_GP_from_SP_pt(SP, pt, p, lon, lat)
-    array([ 26.66339976,  26.68613362,  26.71169809,  26.72286813,
-            26.74102625,  26.82472769,  26.91707848,  26.9874849 ,
-            27.03564777,  27.08512861,  27.15880197,  27.24506111,
-            27.32438575,  27.40418818,  27.54227885,  27.67691837,
-            27.77693976,  27.84683646,  27.90297626,  27.9428694 ,
-            27.98107846,  28.01323277,  28.05769996,  28.09071215])
+    <class 'numpy.ndarray'>
+    array([26.66339976, 26.68613362, 26.71169809, 26.72286813, 26.74102625,
+           26.82472769, 26.91707848, 26.9874849 , 27.03564777, 27.08512861,
+           27.15880197, 27.24506111, 27.32438575, 27.40418818, 27.54227885,
+           27.67691837, 27.77693976, 27.84683646, 27.90297626, 27.9428694 ,
+           27.98107846, 28.01323277, 28.05769996, 28.09071215])
 
     Author
     ------
@@ -309,7 +309,9 @@ def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
     i_inter_indian_pacific = (in_polygon(lon, lat, io_polygon) *
                               in_polygon(lon, lat, po_polygon))
 
-    i_indian = in_polygon(lon, lat, io_polygon) - i_inter_indian_pacific
+    print(type(i_inter_indian_pacific))
+
+    i_indian = np.logical_xor(in_polygon(lon, lat, io_polygon), i_inter_indian_pacific)
     i_pacific = in_polygon(lon, lat, po_polygon)
     i_atlantic = (1 - i_pacific) * (1 - i_indian)
 
