@@ -14,30 +14,6 @@ import seawater as sw
 from seawater.constants import OMEGA, earth_radius
 
 
-__all__ = [
-    'sigma_t',
-    'sigmatheta',
-    'N',
-    'cph',
-    'shear',
-    'richnumb',
-    'cor_beta',
-    'inertial_period',
-    'strat_period',
-    'visc',
-    'tcond',
-    'spice',
-    'psu2ppt',
-    'visc',
-    'soundspeed',
-    'photic_depth',
-    'cr_depth',
-    'kdpar',
-    'zmld_so',
-    'zmld_boyer'
-    ]
-
-
 def sigma_t(s, t, p):
     """
     :math:`\\sigma_{t}` is the remainder of subtracting 1000 kg m :sup:`-3`
@@ -905,51 +881,57 @@ def zmld_boyer(s, t, p):
     Codes based on : http://mixedlayer.ucsd.edu/
 
     """
-    m = len(s)
-    # starti = min(find((pres-10).^2==min((pres-10).^2)));
-    starti = np.min(np.where(((p - 10.)**2 == np.min((p - 10.)**2)))[0])
-    pres = p[starti:m]
-    sal = s[starti:m]
-    temp = t[starti:m]
-    starti = 0
-    m = len(sal)
-    pden = sw.dens0(sal, temp)-1000
+    m = len(np.nonzero(~np.isnan(s))[0])
 
-    mldepthdens_mldindex = m
-    for i, pp in enumerate(pden):
-        if np.abs(pden[starti] - pp) > .03:
-            mldepthdens_mldindex = i
-            break
+    if m <= 1:
+        mldepthdens_mldindex = 0
+        mldepthptemp_mldindex = 0
+        return mldepthdens_mldindex, mldepthptemp_mldindex
+    else:
+        # starti = min(find((pres-10).^2==min((pres-10).^2)));
+        starti = np.min(np.where(((p - 10.)**2 == np.min((p - 10.)**2)))[0])
+        starti = 0
+        pres = p[starti:m]
+        sal = s[starti:m]
+        temp = t[starti:m]
 
-    # Interpolate to exactly match the potential density threshold.
-    presseg = [pres[mldepthdens_mldindex-1], pres[mldepthdens_mldindex]]
-    pdenseg = [pden[starti] - pden[mldepthdens_mldindex-1], pden[starti] -
-               pden[mldepthdens_mldindex]]
-    P = np.polyfit(presseg, pdenseg, 1)
-    presinterp = np.linspace(presseg[0], presseg[1], 3)
-    pdenthreshold = np.polyval(P, presinterp)
+        pden = sw.dens0(sal, temp)-1000
 
-    # The potential density threshold MLD value:
-    ix = np.max(np.where(np.abs(pdenthreshold) < 0.03)[0])
-    mldepthdens_mldindex = presinterp[ix]
+        mldepthdens_mldindex = m-1
+        for i, pp in enumerate(pden):
+            if np.abs(pden[starti] - pp) > .03:
+                mldepthdens_mldindex = i
+                break
 
-    # Search for the first level that exceeds the temperature threshold.
-    mldepthptmp_mldindex = m
-    for i, tt in enumerate(temp):
-        if np.abs(temp[starti] - tt) > 0.2:
-            mldepthptmp_mldindex = i
-            break
+        # Interpolate to exactly match the potential density threshold.
+        presseg = [pres[mldepthdens_mldindex-1], pres[mldepthdens_mldindex]]
+        pdenseg = [pden[starti] - pden[mldepthdens_mldindex-1], pden[starti] -
+                   pden[mldepthdens_mldindex]]
+        P = np.polyfit(presseg, pdenseg, 1)
+        presinterp = np.linspace(presseg[0], presseg[1], 3)
+        pdenthreshold = np.polyval(P, presinterp)
 
-    # Interpolate to exactly match the temperature threshold.
-    presseg = [pres[mldepthptmp_mldindex-1], pres[mldepthptmp_mldindex]]
-    tempseg = [temp[starti] - temp[mldepthptmp_mldindex-1],
-               temp[starti] - temp[mldepthptmp_mldindex]]
-    P = np.polyfit(presseg, tempseg, 1)
-    presinterp = np.linspace(presseg[0], presseg[1], 3)
-    tempthreshold = np.polyval(P, presinterp)
+        # The potential density threshold MLD value:
+        ix = np.max(np.where(np.abs(pdenthreshold) < 0.03)[0])
+        mldepthdens_mldindex = presinterp[ix]
 
-    # The temperature threshold MLD value:
-    ix = np.max(np.where(np.abs(tempthreshold) < 0.2)[0])
-    mldepthptemp_mldindex = presinterp[ix]
+        # Search for the first level that exceeds the temperature threshold.
+        mldepthptmp_mldindex = m-1
+        for i, tt in enumerate(temp):
+            if np.abs(temp[starti] - tt) > 0.2:
+                mldepthptmp_mldindex = i
+                break
 
-    return mldepthdens_mldindex, mldepthptemp_mldindex
+        # Interpolate to exactly match the temperature threshold.
+        presseg = [pres[mldepthptmp_mldindex-1], pres[mldepthptmp_mldindex]]
+        tempseg = [temp[starti] - temp[mldepthptmp_mldindex-1],
+                   temp[starti] - temp[mldepthptmp_mldindex]]
+        P = np.polyfit(presseg, tempseg, 1)
+        presinterp = np.linspace(presseg[0], presseg[1], 3)
+        tempthreshold = np.polyval(P, presinterp)
+
+        # The temperature threshold MLD value:
+        ix = np.max(np.where(np.abs(tempthreshold) < 0.2)[0])
+        mldepthptemp_mldindex = presinterp[ix]
+
+        return mldepthdens_mldindex, mldepthptemp_mldindex
