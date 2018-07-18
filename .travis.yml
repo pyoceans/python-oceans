@@ -5,25 +5,22 @@ sudo: false
 matrix:
   fast_finish: true
   include:
-  - python: 2.7
-    env: TEST_TARGET=testing
-  - python: 3.4
-    env: TEST_TARGET=testing
-  - python: 3.5
-    env: TEST_TARGET=testing
-  - python: 3.5
+  - python: 3.6
+    env: TEST_TARGET=default
+  - python: 3.6
     env: TEST_TARGET=coding_standards
   allow_failures:
-  - python: 3.5
+  - python: 3.6
     env: TEST_TARGET=coding_standards
 
 before_install:
   - wget http://bit.ly/miniconda -O miniconda.sh
   - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
-  - conda update --yes conda
+  - conda config --set always_yes yes --set changeps1 no --set show_channel_urls true
+  - conda update conda
   - conda config --add channels conda-forge --force
-  - travis_retry conda create --yes --name TEST python=$TRAVIS_PYTHON_VERSION --file requirements.txt --file requirements-dev.txt
+  - conda create --name TEST python=$TRAVIS_PYTHON_VERSION --file requirements.txt --file requirements-dev.txt
   - source activate TEST
   # GUI tests.
   - "export DISPLAY=:99.0"
@@ -34,10 +31,10 @@ install:
   - python setup.py sdist && version=$(python setup.py --version) && pushd dist  && pip install oceans-${version}.tar.gz && popd
 
 script:
-    - if [[ $TEST_TARGET == 'testing' ]]; then
-        py.test -vv oceans/ --doctest-modules ;
+    - if [[ $TEST_TARGET == 'default' ]]; then
+        pytest -vv oceans --doctest-modules ;
       fi
 
     - if [[ $TEST_TARGET == 'coding_standards' ]]; then
-        find . -type f -name "*.py" ! -name 'conf.py' | xargs flake8 --max-line-length=100 ;
+        flake8 --max-line-length=105 oceans --exclude=_version.py ;
       fi

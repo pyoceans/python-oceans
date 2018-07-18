@@ -1,8 +1,6 @@
-# -*- coding: utf-8 -*-
-
-from .colormaps import get_color, cm
+from .colormaps import cm, get_color
 
 __all__ = [
-    'get_color',
-    'cm'
-    ]
+    cm,
+    get_color,
+]

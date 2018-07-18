@@ -1,8 +1,5 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import (absolute_import, division, print_function)
-
 import os
+
 import numpy as np
 
 
@@ -49,7 +46,7 @@ def LineNormals2D(Vertices, Lines):
         Lines = np.c_[np.arange(1, Vertices.shape[0]),
                       np.arange(2, Vertices.shape[0] + 1)]
     else:
-        print("Lines is passed but not recognized.")
+        raise ValueError(f'Expected np.array but got {Lines:!r}.')
 
     # Calculate tangent vectors.
     DT = Vertices[Lines[:, 0] - 1, :] - Vertices[Lines[:, 1] - 1, :]
@@ -224,7 +221,3 @@ def inverse3(M):
             M[:, 6] * M[:, 1] * M[:, 5] - M[:, 6] * M[:, 4] * M[:, 2])
 
     return adjM / detM[:, None, None]
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

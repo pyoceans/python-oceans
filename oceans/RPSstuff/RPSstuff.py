@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import (absolute_import, division, print_function)
-
 from datetime import datetime
 
 import numpy as np
@@ -103,7 +99,7 @@ def julian(y, m=0, d=0, h=0, mi=0, s=0, noon=False):
     Example
     -------
     >>> julian(1968, 5, 23, 0)
-    array([ 2440000.])
+    array([2440000.])
 
     """
     y, m, d, h, mi, s = list(map(np.atleast_1d, (y, m, d, h, mi, s)))
@@ -135,7 +131,7 @@ def jdrps2jdmat(jd):
     Example
     -------
     >>> jdrps2jdmat(2440000)
-    array([ 718941.])
+    array([718941.])
 
     """
     return jd - julian(0000, 1, 1, 0, 0, 0) + 1
@@ -149,7 +145,7 @@ def jdmat2jdrps(jdmat):
     Example
     -------
     >>> jdmat2jdrps(718941)
-    array([ 2440000.])
+    array([2440000.])
 
     """
     return jdmat + julian(0000, 1, 1, 0, 0, 0) - 1
@@ -178,7 +174,7 @@ def gregorian(jd, noon=False):
     Example
     -------
     >>> gregorian(2440000)
-    array([[ 1968.,     5.,    23.,     0.,     0.,     0.]])
+    array([[1968.,    5.,   23.,    0.,    0.,    0.]])
 
     AUTHOR: Rich Signell  (rsignell@usgs.gov)
 
@@ -524,8 +520,3 @@ def fixcoast(coast):
         coast = np.append(coast, np.c_[np.NaN, np.NaN], axis=0)
 
     return coast
-
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

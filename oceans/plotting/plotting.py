@@ -1,17 +1,14 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import (absolute_import, division, print_function)
-
 import matplotlib
-import numpy as np
-import numpy.ma as ma
 import matplotlib.pyplot as plt
-
-from matplotlib.lines import Line2D
 from matplotlib.artist import Artist
 from matplotlib.dates import date2num
+from matplotlib.lines import Line2D
 
-from ..ocfis import cart2pol
+import numpy as np
+import numpy.ma as ma
+
+
+from oceans.ocfis import cart2pol
 
 
 def stick_plot(time, u, v, **kw):
@@ -119,10 +116,13 @@ def level_colormap(levels, cmap=None):
     R = [(L[i], A[i, 0], A[i, 0]) for i in range(nlev)]
     G = [(L[i], A[i, 1], A[i, 1]) for i in range(nlev)]
     B = [(L[i], A[i, 2], A[i, 2]) for i in range(nlev)]
-    cdict = dict(red=tuple(R), green=tuple(G), blue=tuple(B))
+    cdict = {
+        'red': tuple(R),
+        'green': tuple(G),
+        'blue': tuple(B)
+    }
 
-    return matplotlib.colors.LinearSegmentedColormap('%s_levels' %
-                                                     cmap.name, cdict, 256)
+    return matplotlib.colors.LinearSegmentedColormap('%s_levels' % cmap.name, cdict, 256)
 
 
 def get_pointsxy(points):
@@ -148,12 +148,12 @@ def compass(u, v, **arrowprops):
     """
 
     # Create plot.
-    fig, ax = plt.subplots(subplot_kw=dict(polar=True))
+    fig, ax = plt.subplots(subplot_kw={'polar': True})
 
     angles, radii = cart2pol(u, v)
 
     # Arrows or sticks?
-    kw = dict(arrowstyle='->')
+    kw = {'arrowstyle': '->'}
     kw.update(arrowprops)
     [ax.annotate('', xy=(angle, radius), xytext=(0, 0),
                  arrowprops=kw) for
@@ -218,7 +218,7 @@ class EditPoints(object):
     def __init__(self, fig, ax, points, verbose=False):
         matplotlib.interactive(True)
         if points is None:
-            raise RuntimeError("First add points to a figure or canvas.")
+            raise RuntimeError('First add points to a figure or canvas.')
         canvas = fig.canvas
         self.ax = ax
         self.dragged = None
@@ -245,7 +245,7 @@ class EditPoints(object):
         self.canvas.blit(self.ax.bbox)
 
         if self.verbose:
-            print('\nDrawing...')
+            print('\nDrawing...')  # noqa
 
     def points_changed(self, points):
         """
@@ -259,7 +259,7 @@ class EditPoints(object):
         self.line.set_visible(vis)
 
         if self.verbose:
-            print('\nPoints modified.')
+            print('\nPoints modified.')  # noqa
 
     def get_ind_under_point(self, event):
         """
@@ -273,12 +273,12 @@ class EditPoints(object):
         indseq = np.nonzero(np.equal(d, np.amin(d)))[0]
         ind = indseq[0]
         if self.verbose:
-            print('d[ind] {} epsilon {}'.format(d[ind], self.epsilon))
+            print('d[ind] {} epsilon {}'.format(d[ind], self.epsilon))  # noqa
         if d[ind] >= self.epsilon:
             ind = None
 
         if self.verbose:
-            print('\nClicked at ({}, {})'.format(event.xdata, event.ydata))
+            print('\nClicked at ({}, {})'.format(event.xdata, event.ydata))  # noqa
         return ind
 
     def button_press_callback(self, event):
@@ -299,7 +299,7 @@ class EditPoints(object):
         self.pick_pos = (x[self._ind], y[self._ind])
 
         if self.verbose:
-            print('\nGot point: ({}), ind: {}'.format(self.pick_pos, self._ind))
+            print('\nGot point: ({}), ind: {}'.format(self.pick_pos, self._ind))  # noqa
 
     def button_release_callback(self, event):
         """
@@ -312,7 +312,7 @@ class EditPoints(object):
             return
         self._ind = None
         if self.verbose:
-            print('\nButton released.')
+            print('\nButton released.')  # noqa
 
     def key_press_callback(self, event):
         """
@@ -328,14 +328,14 @@ class EditPoints(object):
                 self._ind = None
 
             if self.verbose:
-                print('\nToggle {:d}'.format(self.showpoint))
+                print('\nToggle {:d}'.format(self.showpoint))  # noqa
             return get_pointsxy(self.points)
         elif event.key == 'd':
             x, y = get_pointsxy(self.points)
             ind = self.get_ind_under_point(event)
             if ind is not None:
                 if self.verbose:
-                    print('\nDeleted ({}, {}) ind: {}'.format(x[ind], y[ind], ind))
+                    print('\nDeleted ({}, {}) ind: {}'.format(x[ind], y[ind], ind))  # noqa
                 x = np.delete(x, ind)
                 y = np.delete(y, ind)
                 self.points.set_xdata(x)
@@ -343,7 +343,7 @@ class EditPoints(object):
                 self.line.set_data(self.points.get_data())
         elif event.key == 'i':
             if self.verbose:
-                print('Insert point')
+                print('Insert point')  # noqa
             xs = self.points.get_xdata()
             ex, ey = event.xdata, event.ydata
             for i in range(len(xs) - 1):
@@ -351,7 +351,7 @@ class EditPoints(object):
                 self.points.set_ydata(np.r_[self.points.get_ydata(), ey])
                 self.line.set_data(self.points.get_data())
                 if self.verbose:
-                    print('\nInserting: ({}, {})'.format(ex, ey))
+                    print('\nInserting: ({}, {})'.format(ex, ey))  # noqa
                 break
 
         self.canvas.draw()
@@ -375,8 +375,8 @@ class EditPoints(object):
         x[self._ind] = self.pick_pos[0] + dx
         y[self._ind] = self.pick_pos[1] + dy
         if self.verbose:
-            print('\nevent.xdata {}'.format(event.xdata))
-            print('\nevent.ydata {}'.format(event.ydata))
+            print('\nevent.xdata {}'.format(event.xdata))  # noqa
+            print('\nevent.ydata {}'.format(event.ydata))  # noqa
         self.points.set_xdata(x)
         self.points.set_ydata(y)
         self.line.set_data(list(zip(self.points.get_data())))
@@ -386,9 +386,4 @@ class EditPoints(object):
         self.canvas.blit(self.ax.bbox)
 
         if self.verbose:
-            print('\nMoving')
-
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()
+            print('\nMoving')  # noqa

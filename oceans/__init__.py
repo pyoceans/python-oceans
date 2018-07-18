@@ -1,25 +1,25 @@
-# -*- coding: utf-8 -*-
-
 from . import (
     RPSstuff,
     colormaps,
     datasets,
+    filters,
     ocfis,
     plotting,
     sw_extras,
-    filters,
-    )
+)
 
 
 __all__ = [
-    'RPSstuff',
-    'colormaps',
-    'datasets',
-    'ocfis',
-    'plotting',
-    'sw_extras',
-    'filters',
-    ]
+    RPSstuff,
+    colormaps,
+    datasets,
+    filters,
+    ocfis,
+    plotting,
+    sw_extras,
+]
 
 
-__version__ = '0.5.0'
+from ._version import get_versions  # noqa
+__version__ = get_versions()['version']
+del get_versions

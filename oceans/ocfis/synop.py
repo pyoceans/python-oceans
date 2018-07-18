@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import (absolute_import, division, print_function)
-
 import numpy as np
 
 
@@ -79,14 +75,10 @@ def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None, zc=None):
             tp = (C * (np.linalg.solve(A, t)))
             tp = tp + mD * np.ones(tp.shape)
     if not t:
-        print('Computing just the interpolation errors.')
+        print('Computing just the interpolation errors.')  # noqa
 
     # Normalized mean error.  Taking the squared root you can get the
     # interpolation error in percentage.
     ep = 1 - np.sum(C.T * np.linalg.solve(A, C.T), axis=0) / (1 - err)
 
     return tp, ep
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()
