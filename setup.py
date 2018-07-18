@@ -1,6 +1,6 @@
 import os
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
 import versioneer
 
@@ -22,21 +22,11 @@ long_description = '{}\n{}'.format(read('README.rst'), read('CHANGES.txt'))
 hard = ['gsw', 'matplotlib', 'numpy', 'seawater']
 soft = {'full': ['cartopy' 'iris', 'netcdf4', 'pandas', 'scipy']}
 
-packages = [
-    'oceans',
-    'oceans/RPSstuff',
-    'oceans/colormaps',
-    'oceans/datasets',
-    'oceans/ocfis',
-    'oceans/plotting',
-    'oceans/sw_extras'
-    ]
-
 setup(
     name='oceans',
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
-    packages=packages,
+    packages=find_packages(),
     package_data={'oceans': ['colormaps/cmap_data/*.dat']},
     license=LICENSE,
     long_description=long_description,
