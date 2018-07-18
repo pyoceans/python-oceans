@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import (absolute_import, division, print_function)
-
 import numpy as np
 
 
@@ -309,8 +305,6 @@ def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
     i_inter_indian_pacific = (in_polygon(lon, lat, io_polygon) *
                               in_polygon(lon, lat, po_polygon))
 
-    print(type(i_inter_indian_pacific))
-
     i_indian = np.logical_xor(in_polygon(lon, lat, io_polygon), i_inter_indian_pacific)
     i_pacific = in_polygon(lon, lat, po_polygon)
     i_atlantic = (1 - i_pacific) * (1 - i_indian)
@@ -344,7 +338,3 @@ def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
     gamma_GP = 20. * gamma_GP - 20
 
     return gamma_GP
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

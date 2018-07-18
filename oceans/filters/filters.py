@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import (absolute_import, division, print_function)
-
 import numpy as np
 
 
@@ -650,7 +646,3 @@ def pl33tn(x, dt=1.0, T=33.0, mode='valid'):
 
     xf = np.convolve(x, pl33, mode=mode)
     return xf
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

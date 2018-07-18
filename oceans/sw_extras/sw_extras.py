@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 Extra seawater functions
 ========================
@@ -955,8 +953,3 @@ def zmld_boyer(s, t, p):
     mldepthptemp_mldindex = presinterp[ix]
 
     return mldepthdens_mldindex, mldepthptemp_mldindex
-
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

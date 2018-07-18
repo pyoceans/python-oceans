@@ -1,11 +1,8 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import (absolute_import, division, print_function)
-
 import re
 import warnings
 
 import gsw
+
 import numpy as np
 import numpy.ma as ma
 
@@ -472,18 +469,18 @@ def binave(datain, r):
 
     """
 
-    datain, r = np.asarray(datain), np.asarray(r, dtype=np.int)
+    datain, rows = np.asarray(datain), np.asarray(r, dtype=np.int)
 
     if datain.ndim != 1:
         raise ValueError('Must be a 1D array.')
 
-    if r <= 0:
+    if rows <= 0:
         raise ValueError('Bin size R must be a positive integer.')
 
     # Compute bin averaged series.
-    l = datain.size // r
-    z = datain[0:(l * r)].reshape(r, l, order='F')
-    bindata = np.r_[np.mean(z, axis=0), np.mean(datain[(l * r):])]
+    lines = datain.size // r
+    z = datain[0:(lines * rows)].reshape(rows, lines, order='F')
+    bindata = np.r_[np.mean(z, axis=0), np.mean(datain[(lines * r):])]
 
     return bindata
 
@@ -786,8 +783,3 @@ def shiftdim(x, n=None):
         # When n is negative, shiftdim shifts the dimensions
         # to the right and pads with singletons.
         return x.reshape((1,) * -n + x.shape)
-
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

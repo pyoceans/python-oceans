@@ -1,9 +1,5 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import (absolute_import, division, print_function)
-
-
 import gsw
+
 import numpy as np
 
 
@@ -160,7 +156,3 @@ class Waves(object):
             self.H = np.NaN
         if Ho is not None:
             self.H = self.Ho * self.Ks * self.Kr
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

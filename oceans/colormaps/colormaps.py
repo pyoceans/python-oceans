@@ -1,16 +1,11 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import (absolute_import, division, print_function)
-
 import os
-
-from glob import glob
 from colorsys import hsv_to_rgb
+from glob import glob
+
+import matplotlib.pyplot as plt
+from matplotlib import colors
 
 import numpy as np
-import matplotlib.pyplot as plt
-
-from matplotlib import colors
 
 cmap_path = os.path.join(os.path.dirname(__file__), 'cmap_data')
 
@@ -29,7 +24,7 @@ def get_color(color):
     for hue in range(color):
         hue = 1. * hue / color
         col = [int(x) for x in hsv_to_rgb(hue, 1.0, 230)]
-        yield "#{0:02x}{1:02x}{2:02x}".format(*col)
+        yield '#{0:02x}{1:02x}{2:02x}'.format(*col)
 
 
 def cmat2cmpl(rgb, reverse=False):
@@ -137,10 +132,12 @@ def load_cmap(fname):
 
 
 # Functions colormaps.
-arrays = dict(zebra=zebra_cm(),
-              avhrr=avhrr_cm(),
-              phasemap=phasemap_cm(),
-              ctopo_pos_neg=ctopo_pos_neg_cm())
+arrays = {
+    'zebra': zebra_cm(),
+    'avhrr': avhrr_cm(),
+    'phasemap': phasemap_cm(),
+    'ctopo_pos_neg': ctopo_pos_neg_cm()
+}
 
 # Data colormaps.
 for fname in glob('%s/*.dat' % cmap_path):
@@ -154,14 +151,14 @@ for key, value in arrays.items():
     cm.update({'%s_r' % key: cmat2cmpl(value, reverse=True)})
 
 
-if __name__ == '__main__':
+def demo():
     data = np.outer(np.arange(0, 1, 0.01), np.ones(10))
     fig = plt.figure(figsize=(10, 5))
     fig.subplots_adjust(top=0.8, bottom=0.05, left=0.01, right=0.99)
-    cmaps = sorted([m for m in cm.keys() if not m.endswith("_r")])
+    cmaps = sorted((m for m in cm.keys() if not m.endswith('_r')))
     length = len(cmaps)
     for k, cmap in enumerate(cmaps):
         plt.subplot(1, length + 1, k + 1)
-        plt.axis("off")
-        plt.imshow(data, aspect='auto', cmap=cm.get(cmap), origin="lower")
+        plt.axis('off')
+        plt.imshow(data, aspect='auto', cmap=cm.get(cmap), origin='lower')
         plt.title(cmap, rotation=90, fontsize=10)
