@@ -6,6 +6,8 @@ matrix:
   fast_finish: true
   include:
   - python: 3.6
+    env: TEST_TARGET=default
+  - python: 3.6
     env: TEST_TARGET=coding_standards
   allow_failures:
   - python: 3.6
@@ -29,7 +31,7 @@ install:
   - python setup.py sdist && version=$(python setup.py --version) && pushd dist  && pip install oceans-${version}.tar.gz && popd
 
 script:
-    - if [[ $TEST_TARGET == 'testing' ]]; then
+    - if [[ $TEST_TARGET == 'default' ]]; then
         pytest -vv oceans --doctest-modules ;
       fi
 
