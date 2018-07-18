@@ -1,18 +1,17 @@
-# -*- coding: utf-8 -*-
-
 from .plotting import (
-    stick_plot,
+    EditPoints,
+    compass,
+    get_pointsxy,
     landmask,
     level_colormap,
-    get_pointsxy,
-    EditPoints
-    )
+    stick_plot,
+)
 
 __all__ = [
-    'stick_plot',
-    'landmask',
-    'level_colormap',
-    'get_pointsxy',
-    'compass',
-    'EditPoints'
-    ]
+    EditPoints,
+    compass,
+    get_pointsxy,
+    landmask,
+    level_colormap,
+    stick_plot,
+]

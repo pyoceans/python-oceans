@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 Miscellaneous tools from Rich Signell's RPSstuff (matlab)
 =========================================================
@@ -7,34 +5,34 @@ Miscellaneous tools from Rich Signell's RPSstuff (matlab)
 """
 
 from .RPSstuff import (
-    h2hms,
-    hms2h,
-    ms2hms,
-    julian,
-    jdrps2jdmat,
-    jdmat2jdrps,
-    gregorian,
-    s2hms,
-    ss2,
-    near,
     angled,
     coast2bln,
     fixcoast,
-    )
+    gregorian,
+    h2hms,
+    hms2h,
+    jdmat2jdrps,
+    jdrps2jdmat,
+    julian,
+    ms2hms,
+    near,
+    s2hms,
+    ss2,
+)
 
 
 __all__ = [
-    'h2hms',
-    'hms2h',
-    'ms2hms',
-    'julian',
-    'jdrps2jdmat',
-    'jdmat2jdrps',
-    'gregorian',
-    's2hms',
-    'ss2',
-    'near',
-    'angled',
-    'coast2bln',
-    'fixcoast',
-    ]
+    angled,
+    coast2bln,
+    fixcoast,
+    gregorian,
+    h2hms,
+    hms2h,
+    jdmat2jdrps,
+    jdrps2jdmat,
+    julian,
+    ms2hms,
+    near,
+    s2hms,
+    ss2,
+]

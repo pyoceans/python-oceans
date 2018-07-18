@@ -1,23 +1,21 @@
-# -*- coding: utf-8 -*-
-
 from .filters import (
+    fft_lowpass,
     lanc,
+    md_trenberth,
+    medfilt1,
+    pl33tn,
     smoo1,
     smoo2,
     weim,
-    medfilt1,
-    fft_lowpass,
-    md_trenberth,
-    pl33tn
 )
 
 __all__ = [
-    'lanc',
-    'smoo1',
-    'smoo2',
-    'weim',
-    'medfilt1',
-    'fft_lowpass',
-    'md_trenberth',
-    'pl33tn',
-    ]
+    fft_lowpass,
+    lanc,
+    md_trenberth,
+    medfilt1,
+    pl33tn,
+    smoo1,
+    smoo2,
+    weim,
+]
