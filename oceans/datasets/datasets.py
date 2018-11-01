@@ -235,7 +235,7 @@ def etopo_subset(bbox=[-43, -30, -22, -17], tfile=None, smoo=False):
 
     """
     if tfile is None:
-        tfile = 'http://opendap.ccst.inpe.br/Misc/etopo2/ETOPO2v2c_f4.nc'
+        tfile = 'http://gamone.whoi.edu/thredds/dodsC/usgs/data0/bathy/ETOPO2v2c_f4.nc'
 
     with Dataset(tfile, 'r') as etopo:
         lons = etopo.variables['x'][:]
