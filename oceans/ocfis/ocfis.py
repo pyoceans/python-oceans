@@ -94,7 +94,7 @@ def uv2spdir(u, v, mag=0, rot=0):
 
 
 def del_eta_del_x(U, f, g, balance='geostrophic', R=None):
-    """
+    r"""
     Calculate :mat: `\frac{\partial \eta} {\partial x}` for different
     force balances
 
@@ -126,7 +126,7 @@ def del_eta_del_x(U, f, g, balance='geostrophic', R=None):
 
 
 def mld(SA, CT, p, criterion='pdvar'):
-    """
+    r"""
     Compute the mixed layer depth.
 
     Parameters
