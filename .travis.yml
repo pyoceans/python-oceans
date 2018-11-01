@@ -1,17 +1,16 @@
-language: python
+language: minimal
 
 sudo: false
 
 matrix:
   fast_finish: true
   include:
-  - python: 3.6
-    env: TEST_TARGET=default
-  - python: 3.6
-    env: TEST_TARGET=coding_standards
-  allow_failures:
-  - python: 3.6
-    env: TEST_TARGET=coding_standards
+  - name: default-python2
+    env: TEST_TARGET=default PY=2.7
+  - name: default
+    env: TEST_TARGET=default PY=3.7
+  - python: coding_standards
+    env: TEST_TARGET=coding_standards PY=3.7
 
 before_install:
   - wget http://bit.ly/miniconda -O miniconda.sh
@@ -19,8 +18,9 @@ before_install:
   - export PATH="$HOME/miniconda/bin:$PATH"
   - conda config --set always_yes yes --set changeps1 no --set show_channel_urls true
   - conda update conda
+  - conda config --remove channels defaults --force
   - conda config --add channels conda-forge --force
-  - conda create --name TEST python=$TRAVIS_PYTHON_VERSION --file requirements.txt --file requirements-dev.txt
+  - conda create --name TEST python=$PY --file requirements.txt --file requirements-dev.txt
   - source activate TEST
   # GUI tests.
   - "export DISPLAY=:99.0"
