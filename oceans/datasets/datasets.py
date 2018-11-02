@@ -90,7 +90,8 @@ def _woa_url(variable, time_period, resolution):
 
     if not tt:
         raise ValueError(
-            f'Unrecognizable time_period. Expected one of {list(time_periods.keys())}, got "{time_period}".'
+            f'Unrecognizable time_period. '
+            f'Expected one of {list(time_periods.keys())}, got "{time_period}".'
         )
 
     url = (
