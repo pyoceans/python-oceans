@@ -40,7 +40,10 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Topic :: Education',
-        'Topic :: Scientific/Engineering'
+        'Topic :: Scientific/Engineering',
+        'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         ],
     description='Misc functions for oceanographic data analysis',
     author=authors,

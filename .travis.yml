@@ -5,8 +5,6 @@ sudo: false
 matrix:
   fast_finish: true
   include:
-  - name: default-python2
-    env: TEST_TARGET=default PY=2.7
   - name: default
     env: TEST_TARGET=default PY=3.7
   - python: coding_standards
