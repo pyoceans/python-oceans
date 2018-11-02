@@ -11,7 +11,7 @@ matrix:
   include:
   - name: default
     env: TEST_TARGET=default PY=3.7
-  - python: coding_standards
+  - name: coding_standards
     env: TEST_TARGET=coding_standards PY=3.7
   - name: docs
     env: TEST_TARGET=docs PY=3.7
