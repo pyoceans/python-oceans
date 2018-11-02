@@ -73,7 +73,7 @@ def smoo1(datain, window_len=11, window='hanning'):
 
     Notes
     -----
-    original from: http://www.scipy.org/Cookbook/SignalSmooth
+    original from: https://scipy-cookbook.readthedocs.io/items/SignalSmooth.html
     This method is based on the convolution of a scaled window with the signal.
     The signal is prepared by introducing reflected copies of the signal (with
     the window size) in both ends so that transient parts are minimized in the
@@ -141,56 +141,31 @@ def smoo1(datain, window_len=11, window='hanning'):
 
 def smoo2(A, hei, wid, kind='hann', badflag=-9999, beta=14):
     """
-    Usage
-    -----
-    As = smoo2(A, hei, wid, kind='hann', badflag=-9999, beta=14)
-
-    Description
-    -----------
     Calculates the smoothed array 'As' from the original array 'A' using the
     specified window of type 'kind' and shape ('hei', 'wid').
 
+    Usage:
+    As = smoo2(A, hei, wid, kind='hann', badflag=-9999, beta=14)
+
     Parameters
     ----------
-    A       : 2D array
-              Array to be smoothed.
-
-    hei     : integer
-              Window height. Must be odd and greater than or equal to 3.
-
-    wid     : integer
-              Window width. Must be odd and greater than or equal to 3.
-
-    kind    : string, optional
-              One of the window types available in the numpy module:
-
-              hann (default) : Gaussian-like. The weight decreases toward the
-              ends. Its end-points are zeroed.
-              hamming        : Similar to the hann window. Its end-points are
-                               not zeroed, therefore it is discontinuous at
-                               the edges, and may produce artifacts.
-              blackman       : Similar to the hann and hamming windows, with
-                               sharper ends.
-              bartlett       : Triangular-like. Its end-points are zeroed.
-              kaiser         : Flexible shape. Takes the optional parameter
-                               "beta" as a shape parameter.  For beta=0, the
-                               window is rectangular. As beta increases, the
-                               window gets narrower.
-
-              Refer to Numpy for details about each window type.
-
+    A : 2D array
+      Array to be smoothed.
+    hei : integer
+      Window height. Must be odd and greater than or equal to 3.
+    wid : integer
+      Window width. Must be odd and greater than or equal to 3.
+    kind : string, optional
+      Refer to Numpy for details about each window type.
     badflag : float, optional
-              The bad data flag. Elements of the input array 'A' holding this
-              value are ignored.
-
-    beta    : float, optional
-              Shape parameter for the kaiser window. For windows other than
-              the kaiser window, this parameter does nothing.
+      The bad data flag. Elements of the input array 'A' holding this value are ignored.
+    beta : float, optional
+      Shape parameter for the kaiser window.
 
     Returns
     -------
-    As      : 2D array
-              The smoothed array.
+    As : 2D array
+      The smoothed array.
 
     André Palóczy Filho (paloczy@gmail.com)
     April 2012
@@ -285,40 +260,23 @@ def smoo2(A, hei, wid, kind='hann', badflag=-9999, beta=14):
 
 def weim(x, N, kind='hann', badflag=-9999, beta=14):
     """
-    Usage
-    -----
-    xs = weim(x, N, kind='hann', badflag=-9999, beta=14)
-
-    Description
-    -----------
     Calculates the smoothed array 'xs' from the original array 'x' using the
     specified window of type 'kind' and size 'N'. 'N' must be an odd number.
 
+    Usage:
+    xs = weim(x, N, kind='hann', badflag=-9999, beta=14)
+
+
     Parameters
     ----------
-    x       : 1D array
-              Array to be smoothed.
+    x : 1D array
+      Array to be smoothed.
 
-    N       : integer
-              Window size. Must be odd.
+    N : integer
+      Window size. Must be odd.
 
-    kind    : string, optional
-              One of the window types available in the numpy module:
-
-              hann (default) : Gaussian-like.  The weight decreases toward the
-                               ends.  Its end-points are zeroed.
-              hamming        : Similar to the hann window. Its end-points are
-                               not zeroed, therefore it is discontinuous at the
-                               edges, and may produce undesired artifacts.
-              blackman       : Similar to the hann and hamming windows, with
-                               sharper ends.
-              bartlett       : Triangular-like. Its end-points are zeroed.
-              kaiser         : Flexible shape. Takes the optional parameter
-                               "beta" as a shape parameter.  For beta=0, the
-                               window is rectangular. As beta increases, the
-                               window gets narrower.
-
-              Refer to the numpy functions for details about each window type.
+    kind : string, optional
+    Refer to Numpy for details about each window type.
 
     badflag : float, optional
               The bad data flag. Elements of the input array 'A' holding this
@@ -455,10 +413,6 @@ def medfilt1(x, L=3):
     >>> lims1 = ax.set_ylim([min(y1min, y2min), max(y1max, y2max)])
     >>> ax = plt.subplot(212)
     >>> lims2 = ax.set_ylim([min(y1min, y2min), max(y1max, y2max)])
-
-    Notes
-    -----
-    Based on: http://staff.washington.edu/bdjwww/medfilt.py
 
     """
 

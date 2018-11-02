@@ -4,7 +4,6 @@ from netCDF4 import Dataset
 
 import numpy as np
 
-from oceans.RPSstuff import near
 from oceans.ocfis import get_profile, wrap_lon180
 
 

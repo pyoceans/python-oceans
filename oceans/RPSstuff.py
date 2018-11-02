@@ -11,8 +11,8 @@ def h2hms(hours):
     """
     Converts hours to hours, minutes, and seconds.
 
-    Example
-    -------
+    Examples
+    --------
     >>> h2hms(12.51)
     (12.0, 30.0, 36.0)
 
@@ -28,8 +28,8 @@ def hms2h(h, m=None, s=None):
     """
     Converts hours, minutes, and seconds to hours.
 
-    Example
-    -------
+    Examples
+    --------
     >>> hms2h(12., 30., 36.)
     12.51
     >>> # Or,
@@ -53,8 +53,8 @@ def ms2hms(millisecs):
     """
     Converts milliseconds to integer hour, minute, seconds.
 
-    Example
-    -------
+    Examples
+    --------
     >>> ms2hms(1e3 * 60)
     (0.0, 1.0, 0.0)
 
@@ -82,22 +82,21 @@ def julian(y, m=0, d=0, h=0, mi=0, s=0, noon=False):
     If you want Julian days to start and end at noon set `noon` to True.
 
     INPUT:
-        y =  year (e.g., 1979) component
-        m =  month (1-12) component
-        d =  day (1-31) component of Gregorian date
-
-        hour = hours (0-23)
-        min =  minutes (0-59)
-        sec =  decimal seconds
-            or
-        h =  decimal hours (assumed 0 if absent)
+    y : year (e.g., 1979) component
+    m : month (1-12) component
+    d : day (1-31) component of Gregorian date
+    hour : hours (0-23)
+    min : minutes (0-59)
+    sec : decimal seconds or
+    h : decimal hours (assumed 0 if absent)
 
     OUTPUT:
-        j =  decimal Julian day number
+    j : decimal Julian day number
+
     last revised 1/3/96 by Rich Signell (rsignell@usgs.gov)
 
-    Example
-    -------
+    Examples
+    --------
     >>> julian(1968, 5, 23, 0)
     array([2440000.])
 
@@ -128,8 +127,8 @@ def jdrps2jdmat(jd):
     Convert Signell's Julian days to Matlab's Serial day
     matlab's serial date = 1 at 0000 UTC, 1-Jan-0000.
 
-    Example
-    -------
+    Examples
+    --------
     >>> jdrps2jdmat(2440000)
     array([718941.])
 
@@ -142,8 +141,8 @@ def jdmat2jdrps(jdmat):
     Convert Matlab's Serial Day to Signell's Julian days
     matlab's serial date = 1 at 0000 UTC, 1-Jan-0000.
 
-    Example
-    -------
+    Examples
+    --------
     >>> jdmat2jdrps(718941)
     array([2440000.])
 
@@ -161,18 +160,18 @@ def gregorian(jd, noon=False):
 
     INPUT:   jd  = decimal Julian days
 
-    OUTPUT:  gtime = six column Gregorian time matrix, where each row is
-                     [yyyy mo da hr mi sec].
-                      yyyy = year (e.g., 1979)
-                        mo = month (1-12)
-                        da = day (1-31)
-                        hr = hour (0-23)
-                        mi = minute (0-59)
-                       sec = decimal seconds
-                   example: [1990 12 12 0 0 0] is midnight on Dec 12, 1990.
+    OUTPUT:  gtime = six column Gregorian time matrix, where each row is:
+    [yyyy mo da hr mi sec].
+    yyyy = year (e.g., 1979)
+    mo = month (1-12)
+    da = day (1-31)
+    hr = hour (0-23)
+    mi = minute (0-59)
+    sec = decimal seconds
+    example: [1990 12 12 0 0 0] is midnight on Dec 12, 1990.
 
-    Example
-    -------
+    Examples
+    --------
     >>> gregorian(2440000)
     array([[1968.,    5.,   23.,    0.,    0.,    0.]])
 
@@ -227,8 +226,8 @@ def s2hms(secs):
     Converts seconds to integer hour,minute,seconds
     Usage: hour, min, sec = s2hms(secs)
 
-    Example
-    -------
+    Examples
+    --------
     >>> s2hms(3600 + 60 + 1)
     (1.0, 1.0, 1)
 
@@ -309,10 +308,11 @@ def z0toCn(z0, H):
         C = Chezy "C" (non-dimensional)
         n = Manning's "n" (non-dimensional)
 
-    Example:
-        C, n = z0toCn(0.003, np.arange(2, 200))
-        finds vectors C and n corresponding to a z0=0.003 and
-        a range of water depths from 2--200 meters
+    Examples
+    --------
+    >>> # finds vectors C and n corresponding to a z0=0.003
+    >>> # and a range of water depths from 2--200 meters.
+    >>> C, n = z0toCn(0.003, np.arange(2, 200))
 
     """
 
