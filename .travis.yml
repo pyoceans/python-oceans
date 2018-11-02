@@ -49,7 +49,7 @@ script:
       pushd docs ;
       make clean html linkcheck ;
       popd ;
-      python -m doctr deploy --built-docs <path/to/built/html/> <target-directory> ;
+      python -m doctr deploy --built-docs docs/build/html . ;
     fi
 
 doctr:
