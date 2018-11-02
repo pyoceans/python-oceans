@@ -29,10 +29,10 @@ install:
   - python setup.py sdist && version=$(python setup.py --version) && pushd dist  && pip install oceans-${version}.tar.gz && popd
 
 script:
-    - if [[ $TEST_TARGET == 'default' ]]; then
-        pytest -vv oceans --doctest-modules ;
-      fi
-
-    - if [[ $TEST_TARGET == 'coding_standards' ]]; then
-        flake8 --max-line-length=105 oceans --exclude=_version.py ;
-      fi
+  - if [[ $TEST_TARGET == 'default' ]]; then
+      pytest -vv oceans --doctest-modules ;
+    fi
+  
+  - if [[ $TEST_TARGET == 'coding_standards' ]]; then
+      flake8 --max-line-length=105 oceans --exclude=_version.py ;
+    fi
