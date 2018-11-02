@@ -8,151 +8,120 @@ from ..RPSstuff import near
 from ..ocfis import get_profile, wrap_lon180
 
 
-def woa_subset(bbox=[2.5, 357.5, -87.5, 87.5], variable='temperature', clim_type='00', resolution='1.00', full=False):  # noqa
-    """
-    Return an iris.cube instance from a World Ocean Atlas 2013 variable at a
-    given lon, lat bounding box.
+def _woa_variable(variable):
+    _VAR = {
+        'temperature': 't',
+        'salinity': 's',
+        'silicate': 'i',
+        'phosphate': 'p',
+        'nitrate': 'n',
+        'oxygen_saturation': 'O',
+        'dissolved_oxygen': 'o',
+        'apparent_oxygen_utilization': 'A',
+    }
+    v = _VAR.get(variable)
+    if not v:
+        raise ValueError(
+            f'Unrecognizable variable. Expected one of {list(_VAR.keys())}, got "{variable}".'
+        )
+    return v
 
-    Parameters
-    ----------
-    bbox: list, tuple
-          minx, maxx, miny, maxy positions to extract.
-    Choose data `variable` from:
-        `dissolved_oxygen`, `salinity`, `temperature`, `oxygen_saturation`,
-        `apparent_oxygen_utilization`, `phosphate`, `silicate`, or `nitrate`.
-    Choose `clim_type` averages from:
-        01-12 :: monthly
-        13-16 :: seasonal (North Hemisphere Winter, Spring, Summer,
-                           and Autumn respectively)
-        00 :: annual
-    Choose `resolution` from:
-        1 (1 degree), or 4 (0.25 degrees)
 
-    Returns
-    -------
-    Iris.cube instance with the climatology.
+def _woa_url(variable, time_period, resolution):
+    base = 'https://data.nodc.noaa.gov/thredds/dodsC'
 
-    Examples
-    --------
-    >>> import iris
-    >>> import cartopy.crs as ccrs
-    >>> import matplotlib.pyplot as plt
-    >>> import cartopy.feature as cfeature
-    >>> from cartopy.mpl.gridliner import (LONGITUDE_FORMATTER,
-    ...                                    LATITUDE_FORMATTER)
-    >>> LAND = cfeature.NaturalEarthFeature('physical', 'land', '50m',
-    ...                                     edgecolor='face',
-    ...                                     facecolor=cfeature.COLORS['land'])
-    >>> def make_map(bbox, projection=ccrs.PlateCarree()):
-    ...     fig, ax = plt.subplots(figsize=(8, 6),
-    ...                            subplot_kw={'projection': projection})
-    ...     ax.set_extent(bbox)
-    ...     ax.add_feature(LAND, facecolor='0.75')
-    ...     ax.coastlines(resolution='50m')
-    ...     gl = ax.gridlines(draw_labels=True)
-    ...     gl.xlabels_top = gl.ylabels_right = False
-    ...     gl.xformatter = LONGITUDE_FORMATTER
-    ...     gl.yformatter = LATITUDE_FORMATTER
-    ...     return fig, ax
-    >>> # Extract a 2D surface -- Annual temperature climatology:
-    >>> import matplotlib.pyplot as plt
-    >>> from oceans.ocfis import wrap_lon180
-    >>> from oceans.colormaps import cm, get_color
-    >>> import iris.plot as iplt
-    >>> from oceans.datasets import woa_subset
-    >>> bbox = [2.5, 357.5, -87.5, 87.5]
-    >>> kw = {'bbox': bbox, 'variable': 'temperature', 'clim_type': '00',
-    ...        'resolution': '0.25'}
-    >>> cube = woa_subset(**kw)
-    >>> c = cube[0, 0, ...]  # Slice singleton time and first level.
-    >>> cs = iplt.pcolormesh(c, cmap=cm.avhrr)
-    >>> cbar = plt.colorbar(cs)
-    >>> # Extract a square around the Mariana Trench averaging into a profile.
-    >>> bbox = [-143, -141, 10, 12]
-    >>> kw = {'bbox': bbox, 'variable': 'temperature', 'resolution': '0.25',
-    ...       'clim_type': None}
-    >>> fig, ax = plt.subplots(figsize=(5, 5))
-    >>> colors = get_color(12)
-    >>> months = 'Jan Feb Apr Mar May Jun Jul Aug Sep Oct Nov Dec'.split()
-    >>> months = dict(zip(months, range(12)))
-    >>> for month, clim_type in months.items():
-    ...     clim_type = '{0:02d}'.format(clim_type+1)
-    ...     kw.update(clim_type=clim_type)
-    ...     cube = woa_subset(**kw)
-    ...     grid_areas = iris.analysis.cartography.area_weights(cube)
-    ...     c = cube.collapsed(['longitude', 'latitude'], iris.analysis.MEAN,
-    ...                         weights=grid_areas)
-    ...     z = c.coord(axis='Z').points
-    ...     l = ax.plot(c[0, :].data, z, label=month, color=next(colors))
-    >>> ax.grid(True)
-    >>> ax.invert_yaxis()
-    >>> leg = ax.legend(loc='lower left')
-    >>> _ = ax.set_ylim(200, 0)
-
-    """
-    import iris
+    v = _woa_variable(variable)
 
     if variable not in ['salinity', 'temperature']:
-        resolution = '1.00'
-        decav = 'all'
-        msg = '{} is only available at 1 degree resolution'.format
-        warnings.warn(msg(variable))
+        pref = 'woa09'
+        warnings.warn(
+            f'The variable "{variable}" is only available at 1 degree resolution, '
+            f'annual time period, and "{pref}".'
+        )
+        return (
+            f'{base}/'
+            f'{pref}/'
+            f'{variable}_annual_1deg.nc'
+        )
     else:
-        decav = 'decav'
+        dddd = 'decav'
+        pref = 'woa18'
 
-    v = {
-        'temperature': 't',
-        'silicate': 'i',
-        'salinity': 's',
-        'phosphate': 'p',
-        'oxygen': 'o',
-        'o2sat': 'O',
-        'nitrate': 'n',
-        'AOU': 'A'
+    grids = {
+        '5': ('5deg', '5d'),
+        '1': ('1.00', '01'),
+        '1/4': ('0.25', '04'),
+    }
+    grid = grids.get(resolution)
+    if not grid:
+        raise ValueError(
+            f'Unrecognizable resolution. Expected one of {list(grids.keys())}, got "{resolution}".'
+        )
+    res = grid[0]
+    gg = grid[1]
+
+    time_periods = {
+        'annual': '00',
+        'january': '01',
+        'february': '02',
+        'march': '03',
+        'april': '04',
+        'may': '05',
+        'june': '06',
+        'july': '07',
+        'august': '08',
+        'september': '09',
+        'october': '10',
+        'november': '11',
+        'december': '12',
+        'winter': '13',
+        'spring': '14',
+        'summer': '15',
+        'autumn': '16',
     }
 
-    r = {'1.00': '1', '0.25': '4'}
+    time_period = time_period.lower()
+    if len(time_period) == 3:
+        tt = [time_periods.get(k) for k in time_periods.keys() if k.startswith(time_period)][0]
+    elif len(time_period) == 2 and time_period in time_periods.values():
+        tt = time_period
+    else:
+        tt = time_periods.get(time_period)
 
-    var = v[variable]
-    res = r[resolution]
+    if not tt:
+        raise ValueError(
+            f'Unrecognizable time_period. '
+            f'Expected one of {list(time_periods.keys())}, got "{time_period}".'
+        )
 
     url = (
-        f'https://data.nodc.noaa.gov/thredds/dodsC/woa/WOA13/DATA/'
-        f'{variable}/netcdf/{decav}/{resolution}/woa13_{decav}_{var}'
-        f'{clim_type}_0{res}.nc')
-
-    with warnings.catch_warnings():
-        warnings.simplefilter('ignore')
-        cubes = iris.load_raw(url)
-    cubes = [cube.intersection(longitude=(bbox[0], bbox[1]),
-                               latitude=(bbox[2], bbox[3])) for cube in cubes]
-    cubes = iris.cube.CubeList(cubes)
-    if full:
-        return cubes
-    else:
-        cubes = [c for c in cubes if c.var_name == '{}_an'.format(var)]
-        return cubes[0]
+        f'{base}/'
+        '/ncei/woa/'
+        f'{variable}/decav/{res}/'
+        f'{pref}_{dddd}_{v}{tt}_{gg}.nc'  # '[PREF]_[DDDD]_[V][TT][FF][GG]' Is [FF] used?
+    )
+    return url
 
 
-def woa_profile(lon, lat, variable='temperature', clim_type='00', resolution='1.00'):
+def woa_profile(lon, lat, variable='temperature', time_period='annual', resolution='1'):
     """
-    Return an iris.cube instance from a World Ocean Atlas 2013 variable at a
+    Return an iris.cube instance from a World Ocean Atlas variable at a
     given lon, lat point.
 
     Parameters
     ----------
     lon, lat: float
-          point positions to extract the profile.
+        point positions to extract the interpolated profile.
     Choose data `variable` from:
-          'temperature', 'silicate', 'salinity', 'phosphate',
-          'oxygen', 'o2sat', 'nitrate', and 'AOU'.
-    Choose `clim_type` averages from:
-        01-12 :: monthly
-        13-16 :: seasonal (North Hemisphere Winter, Spring, Summer,
-                           and Autumn respectively)
-        00 :: annual
+        'temperature', 'salinity', 'silicate', 'phosphate',
+        'nitrate', 'oxygen_saturation', 'dissolved_oxygen', or
+        'apparent_oxygen_utilization'.
+    Choose `time_period` from:
+        01-12: January to December
+        13-16: seasonal (North Hemisphere `Winter`, `Spring`, `Summer`, and `Autumn` respectively)
+        00: Annual
     Choose `resolution` from:
-        1 (1 degree), or 4 (0.25 degrees)
+        '5', '1', or '1/4' degrees (str)
 
     Returns
     -------
@@ -163,7 +132,7 @@ def woa_profile(lon, lat, variable='temperature', clim_type='00', resolution='1.
     >>> import matplotlib.pyplot as plt
     >>> from oceans.datasets import woa_profile
     >>> cube = woa_profile(-143, 10, variable='temperature',
-    ...                    clim_type='00', resolution='1.00')
+    ...                    time_period='annual', resolution='5')
     >>> fig, ax = plt.subplots(figsize=(2.25, 5))
     >>> z = cube.coord(axis='Z').points
     >>> l = ax.plot(cube[0, :].data, z)
@@ -172,41 +141,15 @@ def woa_profile(lon, lat, variable='temperature', clim_type='00', resolution='1.
 
     """
     import iris
-
-    if variable not in ['salinity', 'temperature']:
-        resolution = '1.00'
-        decav = 'all'
-        msg = '{} is only available at 1 degree resolution'.format
-        warnings.warn(msg(variable))
-    else:
-        decav = 'decav'
-
-    v = {
-        'temperature': 't',
-        'silicate': 'i',
-        'salinity': 's',
-        'phosphate': 'p',
-        'oxygen': 'o',
-        'o2sat': 'O',
-        'nitrate': 'n',
-        'AOU': 'A'
-    }
-
-    r = {'1.00': '1', '0.25': '4'}
-
-    var = v[variable]
-    res = r[resolution]
-
-    url = (
-        f'https://data.nodc.noaa.gov/thredds/dodsC/woa/WOA13/DATAv2/'
-        f'{variable}/netcdf/{decav}/{resolution}/woa13_{decav}_{var}'
-        f'{clim_type}_0{res}v2.nc')
+    url = _woa_url(variable=variable, time_period=time_period, resolution=resolution)
 
     with warnings.catch_warnings():
         warnings.simplefilter('ignore')
         cubes = iris.load_raw(url)
 
-    cube = [c for c in cubes if c.var_name == '{}_an'.format(var)][0]
+    # TODO: should we be using `an` instead of `mn`?
+    v = _woa_variable(variable)
+    cube = [c for c in cubes if c.var_name == f'{v}_mn'][0]
     scheme = iris.analysis.Nearest()
     sample_points = [('longitude', lon), ('latitude', lat)]
     kw = {
@@ -214,11 +157,77 @@ def woa_profile(lon, lat, variable='temperature', clim_type='00', resolution='1.
         'scheme': scheme,
         'collapse_scalar': True
     }
-
     return cube.interpolate(**kw)
 
 
-def etopo_subset(bbox=[-43, -30, -22, -17], tfile=None, smoo=False):
+def woa_subset(bbox, variable='temperature', time_period='annual', resolution='5', full=False):
+    """
+    Return an iris.cube instance from a World Ocean Atlas variable at a
+    given lon, lat bounding box.
+
+    Parameters
+    ----------
+    bbox: list, tuple
+          minx, maxx, miny, maxy positions to extract.
+    See `woa_profile` for the other options.
+
+    Returns
+    -------
+    `iris.Cube` instance with the climatology.
+
+    Examples
+    --------
+    >>> # Extract a 2D surface -- Annual temperature climatology:
+    >>> import iris.plot as iplt
+    >>> import matplotlib.pyplot as plt
+    >>> from oceans.colormaps import cm
+    >>> bbox = [2.5, 357.5, -87.5, 87.5]
+    >>> cube = woa_subset(bbox, variable='temperature', time_period='annual', resolution='5')
+    >>> c = cube[0, 0, ...]  # Slice singleton time and first level.
+    >>> cs = iplt.pcolormesh(c, cmap=cm.avhrr)
+    >>> cbar = plt.colorbar(cs)
+
+    >>> # Extract a square around the Mariana Trench averaging into a profile.
+    >>> import iris
+    >>> from oceans.colormaps import get_color
+    >>> colors = get_color(12)
+    >>> months = 'Jan Feb Apr Mar May Jun Jul Aug Sep Oct Nov Dec'.split()
+    >>> bbox = [-143, -141, 10, 12]
+    >>> fig, ax = plt.subplots(figsize=(5, 5))
+    >>> for month in months:
+    ...     cube = woa_subset(bbox, time_period=month, variable='temperature', resolution='1')
+    ...     grid_areas = iris.analysis.cartography.area_weights(cube)
+    ...     c = cube.collapsed(['longitude', 'latitude'], iris.analysis.MEAN, weights=grid_areas)
+    ...     z = c.coord(axis='Z').points
+    ...     l = ax.plot(c[0, :].data, z, label=month, color=next(colors))
+    >>> ax.grid(True)
+    >>> ax.invert_yaxis()
+    >>> leg = ax.legend(loc='lower left')
+    >>> _ = ax.set_ylim(200, 0)
+
+    """
+    import iris
+
+    v = _woa_variable(variable)
+    url = _woa_url(variable, time_period, resolution)
+    cubes = iris.load_raw(url)
+    cubes = [
+        cube.intersection(
+            longitude=(bbox[0], bbox[1]),
+            latitude=(bbox[2], bbox[3])) for cube in cubes
+    ]
+
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore')
+        cubes = iris.cube.CubeList(cubes)
+
+    if full:
+        return cubes
+    else:
+        return [c for c in cubes if c.var_name == f'{v}_mn'][0]
+
+
+def etopo_subset(bbox, tfile=None, smoo=False):
     """
     Get a etopo subset.
     Should work on any netCDF with x, y, data
@@ -235,7 +244,7 @@ def etopo_subset(bbox=[-43, -30, -22, -17], tfile=None, smoo=False):
 
     """
     if tfile is None:
-        tfile = 'http://opendap.ccst.inpe.br/Misc/etopo2/ETOPO2v2c_f4.nc'
+        tfile = 'http://gamone.whoi.edu/thredds/dodsC/usgs/data0/bathy/ETOPO2v2c_f4.nc'
 
     with Dataset(tfile, 'r') as etopo:
         lons = etopo.variables['x'][:]

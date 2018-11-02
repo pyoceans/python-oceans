@@ -206,7 +206,7 @@ def cph(bvfr2):
 
 
 def shear(z, u, v=0):
-    """
+    r"""
     Calculates the vertical shear for u, v velocity section.
 
     .. math::
@@ -255,7 +255,7 @@ def shear(z, u, v=0):
 
 
 def richnumb(bvfr2, S2):
-    """
+    r"""
     Calculates  the ratio of buoyancy to inertial forces which measures the
     stability of a fluid layer. this functions computes the gradient Richardson
     number in the form of:
@@ -501,7 +501,7 @@ def tcond(s, t, p):
 
 
 def spice(s, t, p):
-    """
+    r"""
     Compute sea spiciness as defined by Flament (2002).
 
     .. math:: \pi(\theta,s) = \sum^5_{i=0} \sum^4_{j=0} b_{ij}\theta^i(s-35)^i

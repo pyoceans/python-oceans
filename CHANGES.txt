@@ -1,7 +1,21 @@
 Changelog
 ---------
 
-Version 0.5.0, unreleased
+Version 0.6.0
+
+* Re-factored datasets and fixed data sources URLs.
+
+Version 0.5.1
+
+* Fix find packages in setup.py #57.
+
+Version 0.5.0
+
+* Fixed pandas rolling_mean deprecation #54.
+* Fixed failing tests.
+* Added NaN support for MLD #53 and #56.
+
+Version 0.4.1
 
 * Replaced custom smooth filter for `scipy`'s `ndimage` filter.
 * Re-factor `datasets` to avoid the `basemap` syntax in favor of a `bbox` like syntax.
@@ -12,18 +26,19 @@ Version 0.5.0, unreleased
 * Removed `shapely` and use `matplotlib.path.Path` in `in_polygon` instead.
 * Many speed improvements via lazy imports and updates.
 * Re-added a re-factored version of the filters module.
+* Re-factored datasets and fixed many data sources.
 
-Version 0.4.0, 27-Oct-2016.
+Version 0.4.0
 
-* re-written `get_isobath` function that uses latest matplotlib contour machinery.
+* Re-written `get_isobath` function that uses latest matplotlib contour machinery.
 * Use integer indexes to fix `numpy` deprecations.
 * Change license from MIT to BSD 3-Clause.
 
-Version 0.3.0, 17-Aug-2016.
+Version 0.3.0
 
 * Fix `nanmean` and `nanstd` removed from latest `scipy`.
 
-Version 0.2.5, 30-Jul-2015.
+Version 0.2.5
 
 * Lazy imports.
 * Several minor bug fixes.
@@ -34,11 +49,11 @@ Version 0.2.4, 05-May-2015.
 * Re-write of `woa_subset` to use iris instead of Pandas.
 * Deprecate 'state' option in soundspeed.
 
-Version 0.2.3, 23-Jan-2015.
+Version 0.2.3
 
 * Several small bugs and typos fixes.
 
-Version 0.2.2, 18-Aug-2014.
+Version 0.2.2
 
 * Mixed Layer Depth functions.
 * Critical depth and Light extinction coefficient.
@@ -48,16 +63,16 @@ Version 0.2.1, 07-Apr-2014.
 
 * Python3 support.
 
-Version 0.2.0, 06-Aug-2013.
+Version 0.2.0
 
 * Moved CTDProfile to a separated module (python-ctd).
 
-Version 0.1.0, 26-Jun-2012
+Version 0.1.0
 
 * Added several of new functions and sub-modules
 * CTDProfile class (pandas DataFrame for CTDs).
 * time_series methods to extend pandas Series.
 
-Version 0.0.1, 13-Oct-2011
+Version 0.0.1
 
 * Initial release.

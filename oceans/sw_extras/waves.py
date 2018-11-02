@@ -4,7 +4,7 @@ import numpy as np
 
 
 class Waves(object):
-    """
+    r"""
     Solves the wave dispersion relationship via Newton-Raphson.
 
     .. math::
