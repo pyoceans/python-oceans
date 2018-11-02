@@ -227,7 +227,7 @@ def woa_subset(bbox, variable='temperature', time_period='annual', resolution='5
         return [c for c in cubes if c.var_name == f'{v}_mn'][0]
 
 
-def etopo_subset(bbox=[-43, -30, -22, -17], tfile=None, smoo=False):
+def etopo_subset(bbox, tfile=None, smoo=False):
     """
     Get a etopo subset.
     Should work on any netCDF with x, y, data
