@@ -4,8 +4,8 @@ from netCDF4 import Dataset
 
 import numpy as np
 
-from ..RPSstuff import near
-from ..ocfis import get_profile, wrap_lon180
+from oceans.RPSstuff import near
+from oceans.ocfis import get_profile, wrap_lon180
 
 
 def _woa_variable(variable):
