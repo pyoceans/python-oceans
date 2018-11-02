@@ -36,7 +36,7 @@ class Waves(object):
 
     Examples
     --------
-    >>> from oceans.sw_extras import Waves
+    >>> from oceans.sw_extras.waves import Waves
     >>> wav = Waves(h=10, T=5, L=None)
     >>> print("ho/Lo = %s" % wav.hoLo)
     ho/Lo = 0.2561951195588007

@@ -2,13 +2,19 @@ language: minimal
 
 sudo: false
 
+env:
+  global:
+    - secure: "c1HxpvYvasSjycR2iejkLxtlFzMvR8Gmf2GQDPJfIkEftQGvXOt+m91Wy26e819eHeXiQUuoNQwnp6RgOW8woNrlqfro4GX6pgLZlmr4K5Plum1KLa/xs8wk+bN/XpgRbcOqwAFbWfoPbfbm3oP1/QoFiwT38KbGWONlYVGKlKM="
+
 matrix:
   fast_finish: true
   include:
   - name: default
     env: TEST_TARGET=default PY=3.7
-  - python: coding_standards
+  - name: coding_standards
     env: TEST_TARGET=coding_standards PY=3.7
+  - name: docs
+    env: TEST_TARGET=docs PY=3.7
 
 before_install:
   - wget http://bit.ly/miniconda -O miniconda.sh
@@ -36,3 +42,30 @@ script:
   - if [[ $TEST_TARGET == 'coding_standards' ]]; then
       flake8 --max-line-length=105 oceans --exclude=_version.py ;
     fi
+
+  - if [[ $TEST_TARGET == 'docs' ]]; then
+      set -e ;
+      conda install doctr ;
+      pushd docs ;
+      make clean html linkcheck ;
+      popd ;
+      python -m doctr deploy --built-docs docs/build/html . ;
+    fi
+
+doctr:
+  require-master: true
+  sync: False
+
+deploy:
+  skip_cleanup: true
+  provider: pypi
+  user: ocefpaf
+  password:
+    secure: "HifofjCDgTUP3hv0C8xD411JBCIp7VziSE5SiD9ZXo9CGo/rnr2rxtIcA9QDHfwO0n1iK26AhUbmeUURecn7+GjvvwCsbN3y21zfx0/D6KCSCvfEuJBJG2uAZqbNBFkT5//96umsavVngp0vNzOASDCljBgC9t5X0r1JnybQUro="
+  distributions: sdist bdist_wheel
+  upload_docs: no
+  on:
+    repo: pyoceans/python-oceans
+    tags: true
+    all_branches: master
+    condition: '$TEST_TARGET == "default"'

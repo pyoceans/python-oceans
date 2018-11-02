@@ -209,7 +209,7 @@ class EditPoints(object):
     >>> _ = ax.set_title('Click and drag a point to move it')
     >>> _ = ax.axis([-2, 2, -2, 2])
 
-    Based on http://matplotlib.org/examples/event_handling/poly_editor.html
+    Based on https://matplotlib.org/examples/event_handling/poly_editor.html
 
     """
     epsilon = 5  # Maximum pixel distance to count as a point hit.

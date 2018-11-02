@@ -1,11 +1,3 @@
-"""
-Extra seawater functions
-========================
-
-"""
-
-from __future__ import (absolute_import, division, print_function)
-
 from copy import copy
 
 import numpy as np
@@ -41,7 +33,7 @@ def sigma_t(s, t, p):
     --------
     >>> # Data from UNESCO Tech. Paper in Marine Sci. No. 44, p22.
     >>> from seawater.library import T90conv
-    >>> from oceans import sw_extras as swe
+    >>> import oceans.sw_extras.sw_extras as swe
     >>> s = [0, 0, 0, 0, 35, 35, 35, 35]
     >>> t = T90conv([0, 0, 30, 30, 0, 0, 30, 30])
     >>> p = [0, 10000, 0, 10000, 0, 10000, 0, 10000]
@@ -51,12 +43,12 @@ def sigma_t(s, t, p):
 
     References
     ----------
-    .. [1] Fofonoff, P. and Millard, R.C. Jr UNESCO 1983. Algorithms for
+    Fofonoff, P. and Millard, R.C. Jr UNESCO 1983. Algorithms for
     computation of fundamental properties of seawater. UNESCO Tech. Pap. in
     Mar. Sci., No. 44, 53 pp.  Eqn.(31) p.39.
     http://www.scor-int.org/Publications.htm
 
-    .. [2] Millero, F.J., Chen, C.T., Bradshaw, A., and Schleicher, K. A new
+    Millero, F.J., Chen, C.T., Bradshaw, A., and Schleicher, K. A new
     high pressure equation of state for seawater. Deap-Sea Research., 1980,
     Vol27A, pp255-264. doi:10.1016/0198-0149(80)90016-3
 
@@ -93,7 +85,7 @@ def sigmatheta(s, t, p, pr=0):
     --------
     >>> # Data from UNESCO Tech. Paper in Marine Sci. No. 44, p22.
     >>> from seawater.library import T90conv
-    >>> from oceans import sw_extras as swe
+    >>> import oceans.sw_extras.sw_extras as swe
     >>> s = [0, 0, 0, 0, 35, 35, 35, 35]
     >>> t = T90conv([0, 0, 30, 30, 0, 0, 30, 30])
     >>> p = [0, 10000, 0, 10000, 0, 10000, 0, 10000]
@@ -103,12 +95,12 @@ def sigmatheta(s, t, p, pr=0):
 
     References
     ----------
-    .. [1] Fofonoff, P. and Millard, R.C. Jr UNESCO 1983. Algorithms for
+    Fofonoff, P. and Millard, R.C. Jr UNESCO 1983. Algorithms for
     computation of fundamental properties of seawater. UNESCO Tech. Pap. in
     Mar. Sci., No. 44, 53 pp.  Eqn.(31) p.39.
     http://www.scor-int.org/Publications.htm
 
-    .. [2] Millero, F.J., Chen, C.T., Bradshaw, A., and Schleicher, K. A new
+    Millero, F.J., Chen, C.T., Bradshaw, A., and Schleicher, K. A new
     high pressure equation of state for seawater. Deap-Sea Research., 1980,
     Vol27A, pp255-264. doi:10.1016/0198-0149(80)90016-3
 
@@ -140,7 +132,7 @@ def N(bvfr2):
     Examples
     --------
     >>> import numpy as np
-    >>> from oceans import sw_extras as swe
+    >>> import oceans.sw_extras.sw_extras as swe
     >>> s = np.array([[0, 0, 0], [15, 15, 15], [30, 30, 30],[35,35,35]])
     >>> t = np.repeat(15, s.size).reshape(s.shape)
     >>> p = [[0], [250], [500], [1000]]
@@ -153,10 +145,10 @@ def N(bvfr2):
 
     References
     ----------
-    .. [1] A.E. Gill 1982. p.54  eqn 3.7.15 "Atmosphere-Ocean Dynamics"
+    A.E. Gill 1982. p.54  eqn 3.7.15 "Atmosphere-Ocean Dynamics"
     Academic Press: New York. ISBN: 0-12-283522-0
 
-    .. [2] Jackett, David R., Trevor J. Mcdougall, 1995: Minimal Adjustment of
+    Jackett, David R., Trevor J. Mcdougall, 1995: Minimal Adjustment of
     Hydrographic Profiles to Achieve Static Stability. J. Atmos. Oceanic
     Technol., 12, 381-389. doi: 10.1175/1520-0426(1995)012<0381:MAOHPT>2.0.CO;2
 
@@ -182,7 +174,7 @@ def cph(bvfr2):
     Examples
     --------
     >>> import numpy as np
-    >>> from oceans import sw_extras as swe
+    >>> import oceans.sw_extras.sw_extras as swe
     >>> s = np.array([[0, 0, 0], [15, 15, 15], [30, 30, 30],[35,35,35]])
     >>> t = np.repeat(15, s.size).reshape(s.shape)
     >>> p = [[0], [250], [500], [1000]]
@@ -194,7 +186,7 @@ def cph(bvfr2):
 
     References
     ----------
-    .. [1] A.E. Gill 1982. p.54  eqn 3.7.15 "Atmosphere-Ocean Dynamics"
+    A.E. Gill 1982. p.54  eqn 3.7.15 "Atmosphere-Ocean Dynamics"
     Academic Press: New York. ISBN: 0-12-283522-0
 
     """
@@ -230,7 +222,7 @@ def shear(z, u, v=0):
 
     Examples
     --------
-    >>> from oceans import sw_extras as swe
+    >>> import oceans.sw_extras.sw_extras as swe
     >>> z = [[0], [250], [500], [1000]]
     >>> u = [[0.5, 0.5, 0.5], [0.15, 0.15, 0.15],
     ...      [0.03, 0.03, .03], [0.,0.,0.]]
@@ -284,7 +276,7 @@ def richnumb(bvfr2, S2):
     TODO: check the example and add real values
     >>> import numpy as np
     >>> import seawater as sw
-    >>> from oceans import sw_extras as swe
+    >>> import oceans.sw_extras.sw_extras as swe
     >>> s = np.array([[0, 0, 0], [15, 15, 15], [30, 30, 30],[ 35, 35, 35]])
     >>> t = np.repeat(15, s.size).reshape(s.shape)
     >>> p = [[0], [250], [500], [1000]]
@@ -330,16 +322,16 @@ def cor_beta(lat):
 
     Examples
     --------
-    >>> from oceans import sw_extras as swe
+    >>> import oceans.sw_extras.sw_extras as swe
     >>> swe.cor_beta(0)
     2.2891225867210798e-11
 
     References
     ----------
-    .. [1] S. Pond & G.Pickard 2nd Edition 1986 Introductory Dynamical
+    S. Pond & G.Pickard 2nd Edition 1986 Introductory Dynamical
     Oceanography Pergamon Press Sydney. ISBN 0-08-028728-X
 
-    .. [2] A.E. Gill 1982. p.54  eqn 3.7.15 "Atmosphere-Ocean Dynamics"
+    A.E. Gill 1982. p.54  eqn 3.7.15 "Atmosphere-Ocean Dynamics"
     Academic Press: New York. ISBN: 0-12-283522-0
 
     """
@@ -366,7 +358,7 @@ def inertial_period(lat):
 
     Examples
     --------
-    >>> from oceans import sw_extras as swe
+    >>> import oceans.sw_extras.sw_extras as swe
     >>> lat = 30.
     >>> swe.inertial_period(lat)/3600
     23.93484986278565
@@ -397,7 +389,7 @@ def strat_period(N):
     --------
     >>> import numpy as np
     >>> import seawater as sw
-    >>> from oceans import sw_extras as swe
+    >>> import oceans.sw_extras.sw_extras as swe
     >>> s = np.array([[0, 0, 0], [15, 15, 15], [30, 30, 30],[35,35,35]])
     >>> t = np.repeat(15, s.size).reshape(s.shape)
     >>> p = [[0], [250], [500], [1000]]
@@ -436,7 +428,7 @@ def visc(s, t, p):
 
     Examples
     --------
-    >>> from oceans import sw_extras as swe
+    >>> import oceans.sw_extras.sw_extras as swe
     >>> swe.visc(40., 40., 1000.)
     8.200192496633804e-07
 
@@ -475,14 +467,14 @@ def tcond(s, t, p):
 
     Examples
     --------
-    >>> from oceans import sw_extras as swe
+    >>> import oceans.sw_extras.sw_extras as swe
     >>> swe.tcond(35, 20, 0)
     0.5972445569999999
 
     References
     ----------
-    .. [1] Caldwell's DSR 21:131-137 (1974)  eq. 9
-    .. [2] Catelli et al.'s DSR 21:311-3179(1974)  eq. 5
+    Caldwell's DSR 21:131-137 (1974)  eq. 9
+    Catelli et al.'s DSR 21:311-3179(1974)  eq. 5
 
     Modifications: Original 1998/01/19 - Ayal Anis 1998
 
@@ -535,13 +527,13 @@ def spice(s, t, p):
 
     Examples
     --------
-    >>> from oceans import sw_extras as swe
+    >>> import oceans.sw_extras.sw_extras as swe
     >>> swe.spice(33, 15, 0)
     array(0.54458641)
 
     References
     ----------
-    .. [1] A state variable for characterizing water masses and their
+    A state variable for characterizing water masses and their
     diffusive stability: spiciness. Prog. in Oceanography Volume 54, 2002,
     Pages 493-501.
 

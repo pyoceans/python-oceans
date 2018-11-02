@@ -98,7 +98,7 @@ def del_eta_del_x(U, f, g, balance='geostrophic', R=None):
     Calculate :mat: `\frac{\partial \eta} {\partial x}` for different
     force balances
 
-    Parameters:
+    Parameters
     ----------
     U : array_like
         velocity magnitude [m/s]
@@ -148,7 +148,7 @@ def mld(SA, CT, p, criterion='pdvar'):
     'density' : computed based on the constant potential density difference
     criterion, pd[0] - pd[mld] = 0.125 in sigma units.
 
-    `pdvar` : computed based on variable potential density criterion
+    'pdvar' : computed based on variable potential density criterion
     pd[0] - pd[mld] = var(T[0], S[0]), where var is a variable potential
     density difference which corresponds to constant temperature difference of
     0.5 degree C.
@@ -162,7 +162,7 @@ def mld(SA, CT, p, criterion='pdvar'):
 
     References
     ----------
-    .. [1] Monterey, G., and S. Levitus, 1997: Seasonal variability of mixed
+    Monterey, G., and S. Levitus, 1997: Seasonal variability of mixed
     layer depth for the World Ocean. NOAA Atlas, NESDIS 14, 100 pp.
     Washington, D.C.
 
@@ -250,7 +250,7 @@ def pcaben(u, v):
     ...     print('Flatness: {}'.format(flatness))
 
     Notes:
-    http://pubs.usgs.gov/of/2002/of02-217/m-files/pcaben.m
+    https://pubs.usgs.gov/of/2002/of02-217/m-files/pcaben.m
 
     """
 
@@ -316,7 +316,7 @@ def spec_rot(u, v):
 
     References
     ----------
-    .. [1] J. Gonella Deep Sea Res., 833-846, 1972.
+    J. Gonella Deep Sea Res., 833-846, 1972.
 
     """
 
@@ -599,8 +599,11 @@ def despike(self, n=3, recursive=False):
 def pol2cart(theta, radius, units='deg'):
     """
     Convert from polar to Cartesian coordinates
-    **usage**:
-        x, y = pol2cart(theta, radius, units='deg').
+
+    Examples
+    --------
+    >>> pol2cart(0, 1, units='deg')
+    (1.0, 0.0)
 
     """
     if units in ['deg', 'degs']:
@@ -614,8 +617,8 @@ def cart2pol(x, y):
     """
     Convert from Cartesian to polar coordinates.
 
-    Example
-    -------
+    Examples
+    --------
     >>> x = [+0, -0.5]
     >>> y = [+1, +0.5]
     >>> cart2pol(x, y)
@@ -696,10 +699,6 @@ def get_profile(x, y, f, xi, yi, mode='nearest', order=3):
     >>> get_profile(x, y, f, xi, yi, order=3)
     array([17606, 15096, 18540])
 
-    Notes
-    -----
-    http://mail.scipy.org/pipermail/scipy-user/2011-June/029857.html
-
     """
     from scipy.ndimage import map_coordinates
 
@@ -738,7 +737,7 @@ def strip_mask(arr, fill_value=np.NaN):
 
 def shiftdim(x, n=None):
     """
-    Matlab's shiftdim in python.
+    Matlab-like shiftdim in python.
 
     Examples
     --------
@@ -755,10 +754,6 @@ def shiftdim(x, n=None):
     >>> c = ff.shiftdim(b, -2)
     >>> c.shape == a.shape
     True
-
-    Notes
-    -----
-    http://www.python-it.org/forum/index.php?topic=4688.0
 
     """
 

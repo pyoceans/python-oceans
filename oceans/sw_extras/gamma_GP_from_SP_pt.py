@@ -6,7 +6,7 @@ def in_polygon(xp, yp, polygon, transform=None, radius=0.0):
     Check is points `xp` and `yp` are inside the `polygon`.
     Polygon is a `matplotlib.path.Path` object.
 
-    http://stackoverflow.com/questions/21328854/shapely-and-matplotlib-point-in-polygon-not-accurate-with-geolocation
+    https://stackoverflow.com/questions/21328854/shapely-and-matplotlib-point-in-polygon-not-accurate-with-geolocation
 
     Examples
     --------
@@ -238,7 +238,7 @@ def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
 
     Examples
     --------
-    >>> from oceans.sw_extras import gamma_GP_from_SP_pt
+    >>> from oceans.sw_extras.gamma_GP_from_SP_pt import gamma_GP_from_SP_pt
     >>> SP = [35.066, 35.086, 35.089, 35.078, 35.025, 34.851, 34.696, 34.572,
     ...      34.531, 34.509, 34.496, 34.452, 34.458, 34.456, 34.488, 34.536,
     ...      34.579, 34.612, 34.642, 34.657, 34.685, 34.707, 34.72, 34.729]

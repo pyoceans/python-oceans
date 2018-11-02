@@ -18,7 +18,7 @@ class Bunch(dict):
 
 def get_color(color):
     """
-    http://stackoverflow.com/questions/10254207/color-and-line-writing-using-matplotlib
+    https://stackoverflow.com/questions/10254207/color-and-line-writing-using-matplotlib
 
     """
     for hue in range(color):
@@ -73,7 +73,7 @@ def zebra_cm(a=4, m=0.5, n=256):
 
     References
     ----------
-    [1] Hooker, S. B. et al, Detecting Dipole Ring Separatrices with Zebra
+    Hooker, S. B. et al, Detecting Dipole Ring Separatrices with Zebra
     Palettes, IEEE Transactions on Geosciences and Remote Sensing, vol. 33,
     1306-1312, 1995
 
