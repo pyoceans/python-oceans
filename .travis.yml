@@ -4,7 +4,8 @@ sudo: false
 
 env:
   global:
-    - secure: "c1HxpvYvasSjycR2iejkLxtlFzMvR8Gmf2GQDPJfIkEftQGvXOt+m91Wy26e819eHeXiQUuoNQwnp6RgOW8woNrlqfro4GX6pgLZlmr4K5Plum1KLa/xs8wk+bN/XpgRbcOqwAFbWfoPbfbm3oP1/QoFiwT38KbGWONlYVGKlKM="
+    # Doctr deploy key for pyoceans/python-oceans
+    - secure: "MohzYBz9P2VQhPTISFMV+X4Jj+E1RrrZt+39L+wc6G+uQp+cWn/gKMg2HaqH7Naed/Z4VNdcoKbT1XA+masTuLXERKtdCIi9ad7cdlaDapmnoKZ1eloZRZltQ7xzBYtMQYrgRYe4URG910pfbwRFKC0pg0+ektE5QGyEUTzHxUw="
 
 matrix:
   fast_finish: true
@@ -49,7 +50,7 @@ script:
       pushd docs ;
       make clean html linkcheck ;
       popd ;
-      python -m doctr deploy --built-docs docs/build/html . ;
+      python -m doctr deploy --sync --built-docs docs/build/html . ;
     fi
 
 doctr:
