@@ -1,13 +1,19 @@
+|PyPI| |Travis| |DOI|
+
+.. |PyPI| image:: https://img.shields.io/pypi/v/oceans.svg
+   :target: https://pypi.org/project/oceans/
+   :alt: PyPI Package
+
+.. |Travis| image:: https://travis-ci.org/pyoceans/python-oceans.svg?branch=master
+   :target: https://travis-ci.org/pyoceans/python-oceans
+   :alt: Travis Build Status
+
+.. |DOI| image:: https://zenodo.org/badge/11956337.svg
+   :target: https://zenodo.org/badge/latestdoi/11956337
+   :alt: DOI
+
 python-oceans
 =============
-
-.. image:: https://badge.fury.io/py/oceans.png
-   :target: http://badge.fury.io/py/oceans
-.. image:: https://api.travis-ci.org/pyoceans/python-oceans.png?branch=master
-   :target: https://travis-ci.org/pyoceans/python-oceans
-.. image:: https://zenodo.org/badge/11956337.svg
-   :target: https://zenodo.org/badge/latestdoi/11956337
-
 
 Misc helper functions for ocean sciences.
 
