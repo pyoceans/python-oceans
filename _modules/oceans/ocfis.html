@@ -1,0 +1,917 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>oceans.ocfis &#8212; oceans 0.6.0+3.gd749886 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=pyoceans&repo=oceans&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a class="badge" href="https://travis-ci.org/pyoceans/oceans">
+    <img
+        alt="https://secure.travis-ci.org/pyoceans/oceans.svg?branch=master"
+        src="https://secure.travis-ci.org/pyoceans/oceans.svg?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets.html"><code class="docutils literal notranslate"><span class="pre">oceans.datasets</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../colormaps.html"><code class="docutils literal notranslate"><span class="pre">oceans.colormaps</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plotting.html"><code class="docutils literal notranslate"><span class="pre">oceans.plotting</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ocfis.html"><code class="docutils literal notranslate"><span class="pre">oceans.ocfis</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../filters.html"><code class="docutils literal notranslate"><span class="pre">oceans.filters</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../RPSstuff.html"><code class="docutils literal notranslate"><span class="pre">oceans.RPSstuff</span></code></a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for oceans.ocfis</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">gsw</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy.ma</span> <span class="k">as</span> <span class="nn">ma</span>
+
+
+<div class="viewcode-block" id="spdir2uv"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.spdir2uv">[docs]</a><span class="k">def</span> <span class="nf">spdir2uv</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">ang</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes u, v components from speed and direction.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    spd : array_like</span>
+<span class="sd">          speed [m s :sup:`-1`]</span>
+<span class="sd">    ang : array_like</span>
+<span class="sd">          direction [deg]</span>
+<span class="sd">    deg : bool</span>
+<span class="sd">          option, True if data is in degrees. Default is False</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    u : array_like</span>
+<span class="sd">        zonal wind velocity [m s :sup:`-1`]</span>
+<span class="sd">    v : array_like</span>
+<span class="sd">        meridional wind velocity [m s :sup:`-1`]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">deg</span><span class="p">:</span>
+        <span class="n">ang</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">ang</span><span class="p">)</span>
+
+    <span class="c1"># Calculate U (E-W) and V (N-S) components</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">spd</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ang</span><span class="p">)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">spd</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ang</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span></div>
+
+
+<div class="viewcode-block" id="uv2spdir"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.uv2spdir">[docs]</a><span class="k">def</span> <span class="nf">uv2spdir</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">mag</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">rot</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes speed and direction from u, v components.</span>
+<span class="sd">    Converts rectangular to polar coordinate, geographic convention</span>
+<span class="sd">    Allows for rotation and magnetic declination correction.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    u : array_like</span>
+<span class="sd">        zonal wind velocity [m s :sup:`-1`]</span>
+<span class="sd">    v : array_like</span>
+<span class="sd">        meridional wind velocity [m s :sup:`-1`]</span>
+<span class="sd">    mag : float, array_like, optional</span>
+<span class="sd">          Magnetic correction [deg]</span>
+<span class="sd">    rot : float, array_like</span>
+<span class="sd">          Angle for rotation [deg]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ang : array_like</span>
+<span class="sd">          direction [deg]</span>
+<span class="sd">    spd : array_like</span>
+<span class="sd">          speed [m s :sup:`-1`]</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Zero degrees is north.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
+<span class="sd">    &gt;&gt;&gt; from oceans.ocfis import uv2spdir</span>
+<span class="sd">    &gt;&gt;&gt; u = [+0, -0.5, -0.50, +0.90]</span>
+<span class="sd">    &gt;&gt;&gt; v = [+1, +0.5, -0.45, -0.85]</span>
+<span class="sd">    &gt;&gt;&gt; wd, ws = uv2spdir(u,v)</span>
+<span class="sd">    &gt;&gt;&gt; fig, ax = plt.subplots(subplot_kw=dict(polar=True))</span>
+<span class="sd">    &gt;&gt;&gt; kw = dict(arrowstyle=&quot;-&gt;&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; wd = np.deg2rad(wd)</span>
+<span class="sd">    &gt;&gt;&gt; lines = [ax.annotate(&quot;&quot;, xy=(d, s), xytext=(0, 0), arrowprops=kw)</span>
+<span class="sd">    ...  for d, s in zip(wd, ws)]</span>
+<span class="sd">    &gt;&gt;&gt; _ = ax.set_ylim(0, np.max(ws))</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">mag</span><span class="p">,</span> <span class="n">rot</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">,</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">mag</span><span class="p">,</span> <span class="n">rot</span><span class="p">)))</span>
+
+    <span class="n">vec</span> <span class="o">=</span> <span class="n">u</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">v</span>
+    <span class="n">spd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">vec</span><span class="p">)</span>
+    <span class="n">ang</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ang</span> <span class="o">=</span> <span class="n">ang</span> <span class="o">-</span> <span class="n">mag</span> <span class="o">+</span> <span class="n">rot</span>
+    <span class="n">ang</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="mf">90.</span> <span class="o">-</span> <span class="n">ang</span><span class="p">,</span> <span class="mf">360.</span><span class="p">)</span>  <span class="c1"># Zero is North.</span>
+
+    <span class="k">return</span> <span class="n">ang</span><span class="p">,</span> <span class="n">spd</span></div>
+
+
+<div class="viewcode-block" id="del_eta_del_x"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.del_eta_del_x">[docs]</a><span class="k">def</span> <span class="nf">del_eta_del_x</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">balance</span><span class="o">=</span><span class="s1">&#39;geostrophic&#39;</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate :mat: `\frac{\partial \eta} {\partial x}` for different</span>
+<span class="sd">    force balances</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    U : array_like</span>
+<span class="sd">        velocity magnitude [m/s]</span>
+<span class="sd">    f : float</span>
+<span class="sd">        Coriolis parameter</span>
+<span class="sd">    d : float</span>
+<span class="sd">        Acceleration of gravity</span>
+<span class="sd">    balance : str, optional</span>
+<span class="sd">              geostrophic [default], gradient or max_gradient</span>
+<span class="sd">    R : float, optional</span>
+<span class="sd">        Radius</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">balance</span> <span class="o">==</span> <span class="s1">&#39;geostrophic&#39;</span><span class="p">:</span>
+        <span class="n">detadx</span> <span class="o">=</span> <span class="n">f</span> <span class="o">*</span> <span class="n">U</span> <span class="o">/</span> <span class="n">g</span>
+
+    <span class="k">elif</span> <span class="n">balance</span> <span class="o">==</span> <span class="s1">&#39;gradient&#39;</span><span class="p">:</span>
+        <span class="n">detadx</span> <span class="o">=</span> <span class="p">(</span><span class="n">U</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">R</span> <span class="o">+</span> <span class="n">f</span> <span class="o">*</span> <span class="n">U</span><span class="p">)</span> <span class="o">/</span> <span class="n">g</span>
+
+    <span class="k">elif</span> <span class="n">balance</span> <span class="o">==</span> <span class="s1">&#39;max_gradient&#39;</span><span class="p">:</span>
+        <span class="n">detadx</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span> <span class="o">*</span> <span class="n">f</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">g</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">detadx</span></div>
+
+
+<div class="viewcode-block" id="mld"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.mld">[docs]</a><span class="k">def</span> <span class="nf">mld</span><span class="p">(</span><span class="n">SA</span><span class="p">,</span> <span class="n">CT</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="s1">&#39;pdvar&#39;</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the mixed layer depth.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    SA : array_like</span>
+<span class="sd">         Absolute Salinity  [g/kg]</span>
+<span class="sd">    CT : array_like</span>
+<span class="sd">         Conservative Temperature [:math:`^\circ` C (ITS-90)]</span>
+<span class="sd">    p : array_like</span>
+<span class="sd">        sea pressure [dbar]</span>
+<span class="sd">    criterion : str, optional</span>
+<span class="sd">               MLD Criteria</span>
+
+<span class="sd">    Mixed layer depth criteria are:</span>
+
+<span class="sd">    &#39;temperature&#39; : Computed based on constant temperature difference</span>
+<span class="sd">    criterion, CT(0) - T[mld] = 0.5 degree C.</span>
+
+<span class="sd">    &#39;density&#39; : computed based on the constant potential density difference</span>
+<span class="sd">    criterion, pd[0] - pd[mld] = 0.125 in sigma units.</span>
+
+<span class="sd">    &#39;pdvar&#39; : computed based on variable potential density criterion</span>
+<span class="sd">    pd[0] - pd[mld] = var(T[0], S[0]), where var is a variable potential</span>
+<span class="sd">    density difference which corresponds to constant temperature difference of</span>
+<span class="sd">    0.5 degree C.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    MLD : array_like</span>
+<span class="sd">          Mixed layer depth</span>
+<span class="sd">    idx_mld : bool array</span>
+<span class="sd">              Boolean array in the shape of p with MLD index.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Monterey, G., and S. Levitus, 1997: Seasonal variability of mixed</span>
+<span class="sd">    layer depth for the World Ocean. NOAA Atlas, NESDIS 14, 100 pp.</span>
+<span class="sd">    Washington, D.C.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">SA</span><span class="p">,</span> <span class="n">CT</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">,</span> <span class="p">(</span><span class="n">SA</span><span class="p">,</span> <span class="n">CT</span><span class="p">,</span> <span class="n">p</span><span class="p">)))</span>
+    <span class="n">SA</span><span class="p">,</span> <span class="n">CT</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span><span class="n">SA</span><span class="p">,</span> <span class="n">CT</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+    <span class="n">SA</span><span class="p">,</span> <span class="n">CT</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_invalid</span><span class="p">,</span> <span class="p">(</span><span class="n">SA</span><span class="p">,</span> <span class="n">CT</span><span class="p">,</span> <span class="n">p</span><span class="p">)))</span>
+
+    <span class="n">p_min</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">p</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
+
+    <span class="n">sigma</span> <span class="o">=</span> <span class="n">gsw</span><span class="o">.</span><span class="n">rho</span><span class="p">(</span><span class="n">SA</span><span class="p">,</span> <span class="n">CT</span><span class="p">,</span> <span class="n">p_min</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1000.</span>
+
+    <span class="c1"># Temperature and Salinity at the surface,</span>
+    <span class="n">T0</span><span class="p">,</span> <span class="n">S0</span><span class="p">,</span> <span class="n">Sig0</span> <span class="o">=</span> <span class="n">CT</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">SA</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">sigma</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+    <span class="c1"># NOTE: The temperature difference criterion for MLD</span>
+    <span class="n">Tdiff</span> <span class="o">=</span> <span class="n">T0</span> <span class="o">-</span> <span class="mf">0.5</span>  <span class="c1"># 0.8 on the matlab original</span>
+
+    <span class="k">if</span> <span class="n">criterion</span> <span class="o">==</span> <span class="s1">&#39;temperature&#39;</span><span class="p">:</span>
+        <span class="n">idx_mld</span> <span class="o">=</span> <span class="p">(</span><span class="n">CT</span> <span class="o">&gt;</span> <span class="n">Tdiff</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">criterion</span> <span class="o">==</span> <span class="s1">&#39;pdvar&#39;</span><span class="p">:</span>
+        <span class="n">pdvar_diff</span> <span class="o">=</span> <span class="n">gsw</span><span class="o">.</span><span class="n">rho</span><span class="p">(</span><span class="n">S0</span><span class="p">,</span> <span class="n">Tdiff</span><span class="p">,</span> <span class="n">p_min</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1000.</span>
+        <span class="n">idx_mld</span> <span class="o">=</span> <span class="p">(</span><span class="n">sigma</span> <span class="o">&lt;=</span> <span class="n">pdvar_diff</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">criterion</span> <span class="o">==</span> <span class="s1">&#39;density&#39;</span><span class="p">:</span>
+        <span class="n">sig_diff</span> <span class="o">=</span> <span class="n">Sig0</span> <span class="o">+</span> <span class="mf">0.125</span>
+        <span class="n">idx_mld</span> <span class="o">=</span> <span class="p">(</span><span class="n">sigma</span> <span class="o">&lt;=</span> <span class="n">sig_diff</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="s1">&#39;Unknown criteria </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">criterion</span><span class="p">))</span>
+
+    <span class="n">MLD</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked_all_like</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="n">MLD</span><span class="p">[</span><span class="n">idx_mld</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="n">idx_mld</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">MLD</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">idx_mld</span></div>
+
+
+<div class="viewcode-block" id="pcaben"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.pcaben">[docs]</a><span class="k">def</span> <span class="nf">pcaben</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Principal components of 2-d (e.g. current meter) data</span>
+<span class="sd">    calculates ellipse parameters for currents.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    u : array_like</span>
+<span class="sd">        zonal wind velocity [m s :sup:`-1`]</span>
+<span class="sd">    v : array_like</span>
+<span class="sd">        meridional wind velocity [m s :sup:`-1`]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    major axis (majrax)</span>
+<span class="sd">    minor axis (minrax)</span>
+<span class="sd">    major azimuth (majaz)</span>
+<span class="sd">    minor azimuth (minaz)</span>
+<span class="sd">    elipticity (elptcty)</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
+<span class="sd">    &gt;&gt;&gt; from oceans.ocfis import pcaben, uv2spdir</span>
+<span class="sd">    &gt;&gt;&gt; u = np.r_[(0., 1., -2., -1., 1.), np.random.randn(10)]</span>
+<span class="sd">    &gt;&gt;&gt; v = np.r_[(3., 1., 0., -1., -1.), np.random.randn(10)]</span>
+<span class="sd">    &gt;&gt;&gt; (mjrax, mjaz, mirax, miaz, el), (x1, x2, y1, y2) = pcaben(u, v)</span>
+<span class="sd">    &gt;&gt;&gt; fig, ax = plt.subplots()</span>
+<span class="sd">    &gt;&gt;&gt; _ = ax.plot(x1, y1,&#39;r-&#39;, x2, y2, &#39;r-&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; ax.set_aspect(&#39;equal&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; _ = ax.set_xlabel(&#39;U component&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; _ = ax.set_ylabel(&#39;V component&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; _ = ax.plot(u, v, &#39;bo&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; _ = ax.axis([-3.2, 3.2, -3.2, 3.2])</span>
+<span class="sd">    &gt;&gt;&gt; mdir, mspd = uv2spdir(u.mean(), v.mean())</span>
+<span class="sd">    &gt;&gt;&gt; _ = ax.plot([0, u.mean()],[0, v.mean()], &#39;k-&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; flatness = 1 - mirax / mjrax</span>
+<span class="sd">    &gt;&gt;&gt; if False:</span>
+<span class="sd">    ...     print(&#39;Mean u = {}&#39;.format(u.mean()))</span>
+<span class="sd">    ...     print(&#39;Mean v = {}&#39;.format(v.mean()))</span>
+<span class="sd">    ...     print(&#39;Mean magnitude: {}&#39;.format(mspd))</span>
+<span class="sd">    ...     print(&#39;Direction: {}&#39;.format(mdir))</span>
+<span class="sd">    ...     print(&#39;Axis 1 Length: {}&#39;.format(mjrax))</span>
+<span class="sd">    ...     print(&#39;Axis 1 Azimuth: {}&#39;.format(mjaz))</span>
+<span class="sd">    ...     print(&#39;Axis 2 Length: {}&#39;.format.format(mirax))</span>
+<span class="sd">    ...     print(&#39;Axis 2 Azimuth: {}&#39;.format(miaz))</span>
+<span class="sd">    ...     print(&#39;elipticity is : {}&#39;.format(el))</span>
+<span class="sd">    ...     print(&#39;Negative (positive) means clockwise (anti-clockwise)&#39;)</span>
+<span class="sd">    ...     print(&#39;Flatness: {}&#39;.format(flatness))</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">    https://pubs.usgs.gov/of/2002/of02-217/m-files/pcaben.m</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+    <span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+    <span class="n">D</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
+
+    <span class="n">x1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">V</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">V</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+    <span class="n">y1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">V</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">V</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+    <span class="n">x2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">V</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">V</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+    <span class="n">y2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">V</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">V</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+
+    <span class="c1"># Length and direction.</span>
+    <span class="n">az</span><span class="p">,</span> <span class="n">leng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">uv2spdir</span><span class="p">(</span><span class="n">x1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y1</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">uv2spdir</span><span class="p">(</span><span class="n">x2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">y2</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">leng</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">leng</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">majrax</span><span class="p">,</span> <span class="n">majaz</span> <span class="o">=</span> <span class="n">leng</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">az</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">minrax</span><span class="p">,</span> <span class="n">minaz</span> <span class="o">=</span> <span class="n">leng</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">az</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">majrax</span><span class="p">,</span> <span class="n">majaz</span> <span class="o">=</span> <span class="n">leng</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">az</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">minrax</span><span class="p">,</span> <span class="n">minaz</span> <span class="o">=</span> <span class="n">leng</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">az</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">elptcty</span> <span class="o">=</span> <span class="n">minrax</span> <span class="o">/</span> <span class="n">majrax</span>
+
+    <span class="c1"># Radius to diameter.</span>
+    <span class="n">majrax</span> <span class="o">*=</span> <span class="mi">2</span>
+    <span class="n">minrax</span> <span class="o">*=</span> <span class="mi">2</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">majrax</span><span class="p">,</span> <span class="n">majaz</span><span class="p">,</span> <span class="n">minrax</span><span class="p">,</span> <span class="n">minaz</span><span class="p">,</span> <span class="n">elptcty</span><span class="p">),</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="spec_rot"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.spec_rot">[docs]</a><span class="k">def</span> <span class="nf">spec_rot</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the rotary spectra from u,v velocity components</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    u : array_like</span>
+<span class="sd">        zonal wind velocity [m s :sup:`-1`]</span>
+<span class="sd">    v : array_like</span>
+<span class="sd">        meridional wind velocity [m s :sup:`-1`]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    cw : array_like</span>
+<span class="sd">         Clockwise spectrum [TODO]</span>
+<span class="sd">    ccw : array_like</span>
+<span class="sd">          Counter-clockwise spectrum [TODO]</span>
+<span class="sd">    puv : array_like</span>
+<span class="sd">          Cross spectra [TODO]</span>
+<span class="sd">    quv : array_like</span>
+<span class="sd">          Quadrature spectra [ TODO]</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The spectral energy at some frequency can be decomposed into two circularly</span>
+<span class="sd">    polarized constituents, one rotating clockwise and other anti-clockwise.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    TODO: puv, quv, cw, ccw = spec_rot(u, v)</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    J. Gonella Deep Sea Res., 833-846, 1972.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Individual components Fourier series.</span>
+    <span class="n">fu</span><span class="p">,</span> <span class="n">fv</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft</span><span class="p">,</span> <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)))</span>
+
+    <span class="c1"># Auto-spectra of the scalar components.</span>
+    <span class="n">pu</span> <span class="o">=</span> <span class="n">fu</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">fu</span><span class="p">)</span>
+    <span class="n">pv</span> <span class="o">=</span> <span class="n">fv</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">fv</span><span class="p">)</span>
+
+    <span class="c1"># Cross spectra.</span>
+    <span class="n">puv</span> <span class="o">=</span> <span class="n">fu</span><span class="o">.</span><span class="n">real</span> <span class="o">*</span> <span class="n">fv</span><span class="o">.</span><span class="n">real</span> <span class="o">+</span> <span class="n">fu</span><span class="o">.</span><span class="n">imag</span> <span class="o">*</span> <span class="n">fv</span><span class="o">.</span><span class="n">imag</span>
+
+    <span class="c1"># Quadrature spectra.</span>
+    <span class="n">quv</span> <span class="o">=</span> <span class="o">-</span><span class="n">fu</span><span class="o">.</span><span class="n">real</span> <span class="o">*</span> <span class="n">fv</span><span class="o">.</span><span class="n">imag</span> <span class="o">+</span> <span class="n">fv</span><span class="o">.</span><span class="n">real</span> <span class="o">*</span> <span class="n">fu</span><span class="o">.</span><span class="n">imag</span>
+
+    <span class="c1"># Rotatory components</span>
+    <span class="c1"># TODO: Check the division, 4 (original code) or 8 (paper)?</span>
+    <span class="n">cw</span> <span class="o">=</span> <span class="p">(</span><span class="n">pu</span> <span class="o">+</span> <span class="n">pv</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">quv</span><span class="p">)</span> <span class="o">/</span> <span class="mf">4.</span>
+    <span class="n">ccw</span> <span class="o">=</span> <span class="p">(</span><span class="n">pu</span> <span class="o">+</span> <span class="n">pv</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">quv</span><span class="p">)</span> <span class="o">/</span> <span class="mf">4.</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span>
+    <span class="k">return</span> <span class="n">puv</span><span class="p">,</span> <span class="n">quv</span><span class="p">,</span> <span class="n">cw</span><span class="p">,</span> <span class="n">ccw</span><span class="p">,</span> <span class="n">F</span></div>
+
+
+<div class="viewcode-block" id="lagcorr"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.lagcorr">[docs]</a><span class="k">def</span> <span class="nf">lagcorr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute lagged correlation between two series.</span>
+<span class="sd">    Follow emery and Thomson book &quot;summation&quot; notation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : array</span>
+<span class="sd">        time-series</span>
+<span class="sd">    y : array</span>
+<span class="sd">        time-series</span>
+<span class="sd">    M : integer</span>
+<span class="sd">        number of lags</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Cxy : array</span>
+<span class="sd">          normalized cross-correlation function</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    TODO: Implement Emery and Thomson example.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">M</span><span class="p">:</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span>
+
+    <span class="n">N</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">Cxy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+    <span class="n">x_bar</span><span class="p">,</span> <span class="n">y_bar</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="n">k</span><span class="p">):</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">y_bar</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">x_bar</span><span class="p">)</span>
+
+        <span class="n">Cxy</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span> <span class="o">*</span> <span class="n">a</span>
+
+    <span class="k">return</span> <span class="n">Cxy</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="complex_demodulation"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.complex_demodulation">[docs]</a><span class="k">def</span> <span class="nf">complex_demodulation</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">fc</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform a Complex Demodulation</span>
+<span class="sd">    It acts as a bandpass filter for `f`.</span>
+
+<span class="sd">    series =&gt; Time-Series object with data and datetime</span>
+<span class="sd">    f =&gt; inertial frequency in rad/sec</span>
+<span class="sd">    fc =&gt; normalized cutoff [0.2]</span>
+
+<span class="sd">    math : series.data * np.exp(2 * np.pi * 1j * (1 / T) * time_in_seconds)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">scipy.signal</span> <span class="k">as</span> <span class="nn">signal</span>
+
+    <span class="c1"># Time period ie freq = 1 / T</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">f</span>
+    <span class="c1"># fc = fc * 1 / T # Filipe</span>
+
+    <span class="c1"># De-mean data.</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">data</span> <span class="o">-</span> <span class="n">series</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+    <span class="n">dfs</span> <span class="o">=</span> <span class="n">d</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">T</span><span class="p">)</span> <span class="o">*</span> <span class="n">series</span><span class="o">.</span><span class="n">time_in_seconds</span><span class="p">)</span>
+
+    <span class="c1"># Make a 5th order butter filter.</span>
+    <span class="c1"># FIXME: Why 5th order? Try signal.buttord!?</span>
+    <span class="n">Wn</span> <span class="o">=</span> <span class="n">fc</span> <span class="o">/</span> <span class="n">series</span><span class="o">.</span><span class="n">Nyq</span>
+
+    <span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">butter</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">Wn</span><span class="p">,</span> <span class="n">btype</span><span class="o">=</span><span class="s1">&#39;low&#39;</span><span class="p">)</span>
+
+    <span class="c1"># FIXME: These are a factor of a thousand different from Matlab, why?</span>
+    <span class="n">cc</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">filtfilt</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">dfs</span><span class="p">)</span>  <span class="c1"># FIXME: * 1e3</span>
+    <span class="n">amplitude</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">cc</span><span class="p">)</span>
+
+    <span class="c1"># TODO: Fix the outputs.</span>
+    <span class="c1"># phase = np.arctan2(np.imag(cc), np.real(cc))</span>
+
+    <span class="n">filtered_series</span> <span class="o">=</span> <span class="n">amplitude</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span>
+                                         <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">T</span><span class="p">)</span> <span class="o">*</span> <span class="n">series</span><span class="o">.</span><span class="n">time_in_seconds</span><span class="p">)</span>
+    <span class="n">new_series</span> <span class="o">=</span> <span class="n">filtered_series</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">series</span><span class="o">.</span><span class="n">time</span>
+    <span class="c1"># Return cc, amplitude, phase, dfs, filtered_series</span>
+    <span class="k">return</span> <span class="n">new_series</span></div>
+
+
+<div class="viewcode-block" id="binave"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.binave">[docs]</a><span class="k">def</span> <span class="nf">binave</span><span class="p">(</span><span class="n">datain</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Averages vector data in bins of length r. The last bin may be the</span>
+<span class="sd">    average of less than r elements. Useful for computing daily average time</span>
+<span class="sd">    series (with r=24 for hourly data).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : array_like</span>
+<span class="sd">    r : int</span>
+<span class="sd">        bin length</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bindata : array_like</span>
+<span class="sd">              bin-averaged vector</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Original from MATLAB AIRSEA TOOLBOX.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from oceans.ocfis import binave</span>
+<span class="sd">    &gt;&gt;&gt; data = [10., 11., 13., 2., 34., 21.5, 6.46, 6.27, 7.0867, 15., 123.,</span>
+<span class="sd">    ...         3.2, 0.52, 18.2, 10., 11., 13., 2., 34., 21.5, 6.46, 6.27,</span>
+<span class="sd">    ...         7.0867, 15., 123., 3.2, 0.52, 18.2, 10., 11., 13., 2., 34.,</span>
+<span class="sd">    ...         21.5, 6.46, 6.27, 7.0867, 15., 123., 3.2, 0.52, 18.2, 10.,</span>
+<span class="sd">    ...         11., 13., 2., 34., 21.5, 6.46, 6.27, 7.0867, 15., 123., 3.2,</span>
+<span class="sd">    ...         0.52, 18.2]</span>
+<span class="sd">    &gt;&gt;&gt; binave(data, 24)</span>
+<span class="sd">    array([16.564725 , 21.1523625, 22.4670875])</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    03/08/1997: version 1.0</span>
+<span class="sd">    09/19/1998: version 1.1 (vectorized by RP)</span>
+<span class="sd">    08/05/1999: version 2.0</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">datain</span><span class="p">,</span> <span class="n">rows</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">datain</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">datain</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must be a 1D array.&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">rows</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Bin size R must be a positive integer.&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Compute bin averaged series.</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">datain</span><span class="o">.</span><span class="n">size</span> <span class="o">//</span> <span class="n">r</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">datain</span><span class="p">[</span><span class="mi">0</span><span class="p">:(</span><span class="n">lines</span> <span class="o">*</span> <span class="n">rows</span><span class="p">)]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;F&#39;</span><span class="p">)</span>
+    <span class="n">bindata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">datain</span><span class="p">[(</span><span class="n">lines</span> <span class="o">*</span> <span class="n">r</span><span class="p">):])]</span>
+
+    <span class="k">return</span> <span class="n">bindata</span></div>
+
+
+<div class="viewcode-block" id="binavg"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.binavg">[docs]</a><span class="k">def</span> <span class="nf">binavg</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bins y(x) into db spacing.  The spacing is given in `x` units.</span>
+<span class="sd">    y = np.random.random(20)</span>
+<span class="sd">    x = np.arange(len(y))</span>
+<span class="sd">    xb, yb = binavg(x, y, 2)</span>
+<span class="sd">    plt.figure()</span>
+<span class="sd">    plt.plot(x, y, &#39;k.-&#39;)</span>
+<span class="sd">    plt.plot(xb, yb, &#39;r.-&#39;)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Cut the corners.</span>
+    <span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">)</span>
+
+    <span class="c1"># This is used to get the `inds`.</span>
+    <span class="n">xbin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">db</span><span class="p">)</span>
+    <span class="n">inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">xbin</span><span class="p">)</span>
+
+    <span class="c1"># But this is the center of the bins.</span>
+    <span class="n">xbin</span> <span class="o">=</span> <span class="n">xbin</span> <span class="o">-</span> <span class="p">(</span><span class="n">db</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span>
+
+    <span class="c1"># FIXME there is an IndexError if I want to show this.</span>
+    <span class="c1"># for n in range(x.size):</span>
+    <span class="c1">#    print xbin[inds[n]-1], &quot;&lt;=&quot;, x[n], &quot;&lt;&quot;, xbin[inds[n]]</span>
+
+    <span class="n">ybin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">y</span><span class="p">[</span><span class="n">inds</span> <span class="o">==</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">xbin</span><span class="p">))])</span>
+    <span class="c1"># xbin = np.array([x[inds == i].mean() for i in range(0, len(xbin))])</span>
+
+    <span class="k">return</span> <span class="n">xbin</span><span class="p">,</span> <span class="n">ybin</span></div>
+
+
+<div class="viewcode-block" id="bin_dates"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.bin_dates">[docs]</a><span class="k">def</span> <span class="nf">bin_dates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">tz</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Take a pandas time Series and return a new Series on the specified</span>
+<span class="sd">    frequency.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from pandas import Series, date_range</span>
+<span class="sd">    &gt;&gt;&gt; n = 24*30</span>
+<span class="sd">    &gt;&gt;&gt; sig = np.random.rand(n) + 2 * np.cos(2 * np.pi * np.arange(n))</span>
+<span class="sd">    &gt;&gt;&gt; dates = date_range(start=&#39;1/1/2000&#39;, periods=n, freq=&#39;H&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; series = Series(data=sig, index=dates)</span>
+<span class="sd">    &gt;&gt;&gt; new_series = bin_dates(series, freq=&#39;D&#39;, tz=None)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">date_range</span>
+
+    <span class="n">new_index</span> <span class="o">=</span> <span class="n">date_range</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">end</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                           <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span> <span class="n">tz</span><span class="o">=</span><span class="n">tz</span><span class="p">)</span>
+    <span class="n">new_series</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">new_index</span><span class="o">.</span><span class="n">asof</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="c1"># Averages at the center.</span>
+    <span class="n">secs</span> <span class="o">=</span> <span class="n">new_index</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">delta</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
+    <span class="n">new_series</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">new_series</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">secs</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new_series</span></div>
+
+
+<div class="viewcode-block" id="series_spline"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.series_spline">[docs]</a><span class="k">def</span> <span class="nf">series_spline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fill NaNs using a spline interpolation.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">Series</span><span class="p">,</span> <span class="n">isnull</span>
+    <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">InterpolatedUnivariateSpline</span>
+
+    <span class="n">inds</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)),</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="n">invalid</span> <span class="o">=</span> <span class="n">isnull</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="o">-</span><span class="n">invalid</span>
+
+    <span class="n">firstIndex</span> <span class="o">=</span> <span class="n">valid</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="n">valid</span><span class="p">[</span><span class="n">firstIndex</span><span class="p">:]</span>
+    <span class="n">invalid</span> <span class="o">=</span> <span class="n">invalid</span><span class="p">[</span><span class="n">firstIndex</span><span class="p">:]</span>
+    <span class="n">inds</span> <span class="o">=</span> <span class="n">inds</span><span class="p">[</span><span class="n">firstIndex</span><span class="p">:]</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">inds</span><span class="p">[</span><span class="n">valid</span><span class="p">],</span> <span class="n">values</span><span class="p">[</span><span class="n">firstIndex</span><span class="p">:][</span><span class="n">valid</span><span class="p">])</span>
+    <span class="n">result</span><span class="p">[</span><span class="n">firstIndex</span><span class="p">:][</span><span class="n">invalid</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span><span class="p">(</span><span class="n">inds</span><span class="p">[</span><span class="n">invalid</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">Series</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="despike"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.despike">[docs]</a><span class="k">def</span> <span class="nf">despike</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Replace spikes with np.NaN.</span>
+<span class="sd">    Removing spikes that are &gt;= n * std.</span>
+<span class="sd">    default n = 3.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">Series</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">outliers</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">))</span> <span class="o">&gt;=</span> <span class="n">n</span> <span class="o">*</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">nanstd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+
+    <span class="n">removed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">outliers</span><span class="p">)</span>
+    <span class="n">result</span><span class="p">[</span><span class="n">outliers</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">recursive</span><span class="p">:</span>
+        <span class="k">while</span> <span class="n">outliers</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">outliers</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+            <span class="n">base</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">result</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+            <span class="n">outliers</span> <span class="o">=</span> <span class="n">base</span> <span class="o">&gt;=</span> <span class="n">n</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nanstd</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">removed</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">outliers</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Series</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="pol2cart"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.pol2cart">[docs]</a><span class="k">def</span> <span class="nf">pol2cart</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert from polar to Cartesian coordinates</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; pol2cart(0, 1, units=&#39;deg&#39;)</span>
+<span class="sd">    (1.0, 0.0)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">units</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;deg&#39;</span><span class="p">,</span> <span class="s1">&#39;degs&#39;</span><span class="p">]:</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">theta</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">180.0</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">radius</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span></div>
+
+
+<div class="viewcode-block" id="cart2pol"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.cart2pol">[docs]</a><span class="k">def</span> <span class="nf">cart2pol</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert from Cartesian to polar coordinates.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; x = [+0, -0.5]</span>
+<span class="sd">    &gt;&gt;&gt; y = [+1, +0.5]</span>
+<span class="sd">    &gt;&gt;&gt; cart2pol(x, y)</span>
+<span class="sd">    (array([1.57079633, 2.35619449]), array([1.        , 0.70710678]))</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">radius</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">theta</span><span class="p">,</span> <span class="n">radius</span></div>
+
+
+<div class="viewcode-block" id="wrap_lon180"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.wrap_lon180">[docs]</a><span class="k">def</span> <span class="nf">wrap_lon180</span><span class="p">(</span><span class="n">lon</span><span class="p">):</span>
+    <span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">((</span><span class="n">lon</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">180</span><span class="p">),</span> <span class="p">(</span><span class="mi">180</span> <span class="o">&lt;</span> <span class="n">lon</span><span class="p">))</span>
+    <span class="n">lon</span><span class="p">[</span><span class="n">angles</span><span class="p">]</span> <span class="o">=</span> <span class="n">wrap_lon360</span><span class="p">(</span><span class="n">lon</span><span class="p">[</span><span class="n">angles</span><span class="p">]</span> <span class="o">+</span> <span class="mi">180</span><span class="p">)</span> <span class="o">-</span> <span class="mi">180</span>
+    <span class="k">return</span> <span class="n">lon</span></div>
+
+
+<div class="viewcode-block" id="wrap_lon360"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.wrap_lon360">[docs]</a><span class="k">def</span> <span class="nf">wrap_lon360</span><span class="p">(</span><span class="n">lon</span><span class="p">):</span>
+    <span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">positive</span> <span class="o">=</span> <span class="n">lon</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="n">lon</span> <span class="o">=</span> <span class="n">lon</span> <span class="o">%</span> <span class="mi">360</span>
+    <span class="n">lon</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">lon</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">positive</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">360</span>
+    <span class="k">return</span> <span class="n">lon</span></div>
+
+
+<div class="viewcode-block" id="alphanum_key"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.alphanum_key">[docs]</a><span class="k">def</span> <span class="nf">alphanum_key</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(\d+)&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+    <span class="n">key</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">key</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">key</span></div>
+
+
+<div class="viewcode-block" id="get_profile"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.get_profile">[docs]</a><span class="k">def</span> <span class="nf">get_profile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Interpolate regular data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : two dimensional np.ndarray</span>
+<span class="sd">        an array for the :math:`x` coordinates</span>
+
+<span class="sd">    y : two dimensional np.ndarray</span>
+<span class="sd">        an array for the :math:`y` coordinates</span>
+
+<span class="sd">    f : two dimensional np.ndarray</span>
+<span class="sd">        an array with the value of the function to be interpolated</span>
+<span class="sd">        at :math:`x,y` coordinates.</span>
+
+<span class="sd">    xi : one dimension np.ndarray</span>
+<span class="sd">        the :math:`x` coordinates of the point where we want</span>
+<span class="sd">        the function to be interpolated.</span>
+
+<span class="sd">    yi : one dimension np.ndarray</span>
+<span class="sd">        the :math:`y` coordinates of the point where we want</span>
+<span class="sd">        the function to be interpolated.</span>
+
+<span class="sd">    order : int</span>
+<span class="sd">        the order of the bivariate spline interpolation</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fi : one dimension np.ndarray</span>
+<span class="sd">        the value of the interpolating spline at :math:`xi,yi`</span>
+
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from oceans.ocfis import get_profile</span>
+<span class="sd">    &gt;&gt;&gt; x, y = np.meshgrid(range(360), range(91))</span>
+<span class="sd">    &gt;&gt;&gt; f = np.array(range(91 * 360)).reshape((91, 360))</span>
+<span class="sd">    &gt;&gt;&gt; Paris = [2.4, 48.9]</span>
+<span class="sd">    &gt;&gt;&gt; Rome = [12.5, 41.9]</span>
+<span class="sd">    &gt;&gt;&gt; Greenwich = [0, 51.5]</span>
+<span class="sd">    &gt;&gt;&gt; xi = Paris[0], Rome[0], Greenwich[0]</span>
+<span class="sd">    &gt;&gt;&gt; yi = Paris[1], Rome[1], Greenwich[1]</span>
+<span class="sd">    &gt;&gt;&gt; get_profile(x, y, f, xi, yi, order=3)</span>
+<span class="sd">    array([17606, 15096, 18540])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">scipy.ndimage</span> <span class="k">import</span> <span class="n">map_coordinates</span>
+
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">yi</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">)))</span>
+    <span class="n">conditions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">xi</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
+                           <span class="n">xi</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
+                           <span class="n">yi</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">y</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
+                           <span class="n">yi</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">y</span><span class="o">.</span><span class="n">max</span><span class="p">()])</span>
+
+    <span class="k">if</span> <span class="n">conditions</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Warning! Extrapolation!!&#39;</span><span class="p">)</span>
+
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">dy</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">jvals</span> <span class="o">=</span> <span class="p">(</span><span class="n">xi</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">dx</span>
+    <span class="n">ivals</span> <span class="o">=</span> <span class="p">(</span><span class="n">yi</span> <span class="o">-</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">dy</span>
+
+    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ivals</span><span class="p">,</span> <span class="n">jvals</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">map_coordinates</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="strip_mask"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.strip_mask">[docs]</a><span class="k">def</span> <span class="nf">strip_mask</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Take a masked array and return its data(filled) + mask.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ma</span><span class="o">.</span><span class="n">isMaskedArray</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">getmaskarray</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mask</span><span class="p">,</span> <span class="n">arr</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">arr</span></div>
+
+
+<div class="viewcode-block" id="shiftdim"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.shiftdim">[docs]</a><span class="k">def</span> <span class="nf">shiftdim</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Matlab-like shiftdim in python.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import oceans.ocfis as ff</span>
+<span class="sd">    &gt;&gt;&gt; a = np.random.rand(1,1,3,1,2)</span>
+<span class="sd">    &gt;&gt;&gt; print(&quot;a shape and dimension: %s, %s&quot; % (a.shape, a.ndim))</span>
+<span class="sd">    a shape and dimension: (1, 1, 3, 1, 2), 5</span>
+<span class="sd">    &gt;&gt;&gt; # print(range(a.ndim))</span>
+<span class="sd">    &gt;&gt;&gt; # print(np.roll(range(a.ndim), -2))</span>
+<span class="sd">    &gt;&gt;&gt; # print(a.transpose(np.roll(range(a.ndim), -2)))</span>
+<span class="sd">    &gt;&gt;&gt; b = ff.shiftdim(a)</span>
+<span class="sd">    &gt;&gt;&gt; print(&quot;b shape and dimension: %s, %s&quot; % (b.shape, b.ndim))</span>
+<span class="sd">    b shape and dimension: (3, 1, 2), 3</span>
+<span class="sd">    &gt;&gt;&gt; c = ff.shiftdim(b, -2)</span>
+<span class="sd">    &gt;&gt;&gt; c.shape == a.shape</span>
+<span class="sd">    True</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">no_leading_ones</span><span class="p">(</span><span class="n">shape</span><span class="p">):</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">shape</span> <span class="o">=</span> <span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="k">return</span> <span class="n">no_leading_ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">shape</span>
+
+    <span class="k">if</span> <span class="n">n</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># returns the array B with the same number of</span>
+        <span class="c1"># elements as X but with any leading singleton</span>
+        <span class="c1"># dimensions removed.</span>
+        <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">no_leading_ones</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># When n is positive, shiftdim shifts the dimensions</span>
+        <span class="c1"># to the left and wraps the n leading dimensions to the end.</span>
+        <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">ndim</span><span class="p">)),</span> <span class="o">-</span><span class="n">n</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># When n is negative, shiftdim shifts the dimensions</span>
+        <span class="c1"># to the right and pads with singletons.</span>
+        <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="o">-</span><span class="n">n</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, Filipe Fernandes.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/pyoceans/oceans" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,303 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>oceans.plotting &#8212; oceans 0.6.0+3.gd749886 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="oceans.ocfis" href="ocfis.html" />
+    <link rel="prev" title="oceans.colormaps" href="colormaps.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=pyoceans&repo=oceans&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a class="badge" href="https://travis-ci.org/pyoceans/oceans">
+    <img
+        alt="https://secure.travis-ci.org/pyoceans/oceans.svg?branch=master"
+        src="https://secure.travis-ci.org/pyoceans/oceans.svg?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="datasets.html"><code class="docutils literal notranslate"><span class="pre">oceans.datasets</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="colormaps.html"><code class="docutils literal notranslate"><span class="pre">oceans.colormaps</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">oceans.plotting</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="ocfis.html"><code class="docutils literal notranslate"><span class="pre">oceans.ocfis</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="filters.html"><code class="docutils literal notranslate"><span class="pre">oceans.filters</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="RPSstuff.html"><code class="docutils literal notranslate"><span class="pre">oceans.RPSstuff</span></code></a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="colormaps.html" title="previous chapter"><code class="docutils literal notranslate"><span class="pre">oceans.colormaps</span></code></a></li>
+      <li>Next: <a href="ocfis.html" title="next chapter"><code class="docutils literal notranslate"><span class="pre">oceans.ocfis</span></code></a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-oceans.plotting">
+<span id="oceans-plotting"></span><h1><a class="reference internal" href="#module-oceans.plotting" title="oceans.plotting"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.plotting</span></code></a><a class="headerlink" href="#module-oceans.plotting" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="oceans.plotting.EditPoints">
+<em class="property">class </em><code class="descclassname">oceans.plotting.</code><code class="descname">EditPoints</code><span class="sig-paren">(</span><em>fig</em>, <em>ax</em>, <em>points</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/plotting.html#EditPoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.plotting.EditPoints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Edit points on a graph with the mouse.  Handles only one set of points.</p>
+<dl class="docutils">
+<dt>Key-bindings:</dt>
+<dd>‘t’ toggle on and off.  (When on, you can move, delete, or add points.)
+‘d’ delete the point.
+‘i’ insert a point.</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="mf">1.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xs</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ys</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">points</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="s1">&#39;ko&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">EditPoints</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Click and drag a point to move it&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Based on <a class="reference external" href="https://matplotlib.org/examples/event_handling/poly_editor.html">https://matplotlib.org/examples/event_handling/poly_editor.html</a></p>
+<dl class="method">
+<dt id="oceans.plotting.EditPoints.button_press_callback">
+<code class="descname">button_press_callback</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/plotting.html#EditPoints.button_press_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.plotting.EditPoints.button_press_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whenever a mouse button is pressed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="oceans.plotting.EditPoints.button_release_callback">
+<code class="descname">button_release_callback</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/plotting.html#EditPoints.button_release_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.plotting.EditPoints.button_release_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whenever a mouse button is released.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="oceans.plotting.EditPoints.draw_callback">
+<code class="descname">draw_callback</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/plotting.html#EditPoints.draw_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.plotting.EditPoints.draw_callback" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="oceans.plotting.EditPoints.epsilon">
+<code class="descname">epsilon</code><em class="property"> = 5</em><a class="headerlink" href="#oceans.plotting.EditPoints.epsilon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="oceans.plotting.EditPoints.get_ind_under_point">
+<code class="descname">get_ind_under_point</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/plotting.html#EditPoints.get_ind_under_point"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.plotting.EditPoints.get_ind_under_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the index of the point under mouse if within epsilon tolerance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="oceans.plotting.EditPoints.key_press_callback">
+<code class="descname">key_press_callback</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/plotting.html#EditPoints.key_press_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.plotting.EditPoints.key_press_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whenever a key is pressed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="oceans.plotting.EditPoints.motion_notify_callback">
+<code class="descname">motion_notify_callback</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/plotting.html#EditPoints.motion_notify_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.plotting.EditPoints.motion_notify_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>On mouse movement.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="oceans.plotting.EditPoints.points_changed">
+<code class="descname">points_changed</code><span class="sig-paren">(</span><em>points</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/plotting.html#EditPoints.points_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.plotting.EditPoints.points_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is called whenever the points object is called.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="oceans.plotting.EditPoints.showpoint">
+<code class="descname">showpoint</code><em class="property"> = True</em><a class="headerlink" href="#oceans.plotting.EditPoints.showpoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="oceans.plotting.compass">
+<code class="descclassname">oceans.plotting.</code><code class="descname">compass</code><span class="sig-paren">(</span><em>u</em>, <em>v</em>, <em>**arrowprops</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/plotting.html#compass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.plotting.compass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compass draws a graph that displays the vectors with
+components <cite>u</cite> and <cite>v</cite> as arrows from the origin.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="p">[</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.50</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.90</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.45</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.85</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">compass</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="oceans.plotting.get_pointsxy">
+<code class="descclassname">oceans.plotting.</code><code class="descname">get_pointsxy</code><span class="sig-paren">(</span><em>points</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/plotting.html#get_pointsxy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.plotting.get_pointsxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return x, y of the given point object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="oceans.plotting.landmask">
+<code class="descclassname">oceans.plotting.</code><code class="descname">landmask</code><span class="sig-paren">(</span><em>M</em>, <em>color='0.8'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/plotting.html#landmask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.plotting.landmask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot land mask.
+<a class="reference external" href="http://www.trondkristiansen.com/wp-content/uploads/downloads/2011/07/mpl_util.py">http://www.trondkristiansen.com/wp-content/uploads/downloads/2011/07/mpl_util.py</a>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="oceans.plotting.level_colormap">
+<code class="descclassname">oceans.plotting.</code><code class="descname">level_colormap</code><span class="sig-paren">(</span><em>levels</em>, <em>cmap=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/plotting.html#level_colormap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.plotting.level_colormap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a colormap based on an increasing sequence of levels.
+<a class="reference external" href="http://www.trondkristiansen.com/wp-content/uploads/downloads/">http://www.trondkristiansen.com/wp-content/uploads/downloads/</a>
+2011/07/mpl_util.py.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="oceans.plotting.plot_spectrum">
+<code class="descclassname">oceans.plotting.</code><code class="descname">plot_spectrum</code><span class="sig-paren">(</span><em>data</em>, <em>fs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/plotting.html#plot_spectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.plotting.plot_spectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots a Single-Sided Amplitude Spectrum of y(t).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="oceans.plotting.stick_plot">
+<code class="descclassname">oceans.plotting.</code><code class="descname">stick_plot</code><span class="sig-paren">(</span><em>time</em>, <em>u</em>, <em>v</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/plotting.html#stick_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.plotting.stick_plot" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>time</strong> (<em>list/arrays of datetime objects</em>) – </li>
+<li><strong>v</strong> (<em>u</em><em>,</em>) – </li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>q</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">matplotlib’s quiver handle for quiverkey.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">date_range</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">date_range</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s1">&#39;1990-11-01 00:00&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;1991-2-1 00:00&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mf">0.1</span> <span class="o">*</span> <span class="n">time</span><span class="o">.</span><span class="n">to_julian_date</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span><span class="mf">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mf">0.1</span> <span class="o">*</span> <span class="n">time</span><span class="o">.</span><span class="n">to_julian_date</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax0</span><span class="p">,</span> <span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>
+<span class="gp">... </span>                                    <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">stick_plot</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">qk</span> <span class="o">=</span> <span class="n">ax0</span><span class="o">.</span><span class="n">quiverkey</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.65</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;1 m s$^{-1}$&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                   <span class="n">labelpos</span><span class="o">=</span><span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="n">coordinates</span><span class="o">=</span><span class="s1">&#39;axes&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">to_pydatetime</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">u</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">v</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;speed&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l0</span> <span class="o">=</span> <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">to_pydatetime</span><span class="p">(),</span> <span class="n">u</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;u&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l1</span> <span class="o">=</span> <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">to_pydatetime</span><span class="p">(),</span> <span class="n">v</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;v&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Based on Stephane Raynaud’s example from:
+<a class="reference external" href="https://www.mail-archive.com/matplotlib-users&#64;lists.sourceforge.net/msg18051.html">https://www.mail-archive.com/matplotlib-users&#64;lists.sourceforge.net/msg18051.html</a></p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, Filipe Fernandes.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/plotting.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/pyoceans/oceans" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

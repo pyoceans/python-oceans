@@ -1,0 +1,739 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>oceans.filters &#8212; oceans 0.6.0+3.gd749886 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../../index.html">
+    <img class="logo" src="../../_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=pyoceans&repo=oceans&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+    
+
+<p>
+<a class="badge" href="https://travis-ci.org/pyoceans/oceans">
+    <img
+        alt="https://secure.travis-ci.org/pyoceans/oceans.svg?branch=master"
+        src="https://secure.travis-ci.org/pyoceans/oceans.svg?branch=master"
+    />
+</a>
+</p>
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets.html"><code class="docutils literal notranslate"><span class="pre">oceans.datasets</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../colormaps.html"><code class="docutils literal notranslate"><span class="pre">oceans.colormaps</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plotting.html"><code class="docutils literal notranslate"><span class="pre">oceans.plotting</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ocfis.html"><code class="docutils literal notranslate"><span class="pre">oceans.ocfis</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../filters.html"><code class="docutils literal notranslate"><span class="pre">oceans.filters</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../RPSstuff.html"><code class="docutils literal notranslate"><span class="pre">oceans.RPSstuff</span></code></a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for oceans.filters</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="lanc"><a class="viewcode-back" href="../../filters.html#oceans.filters.lanc">[docs]</a><span class="k">def</span> <span class="nf">lanc</span><span class="p">(</span><span class="n">numwt</span><span class="p">,</span> <span class="n">haf</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a numwt + 1 + numwt lanczos cosine low pass filter with -6dB</span>
+<span class="sd">    (1/4 power, 1/2 amplitude) point at haf</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    numwt : int</span>
+<span class="sd">            number of points</span>
+<span class="sd">    haf : float</span>
+<span class="sd">          frequency (in &#39;cpi&#39; of -6dB point, &#39;cpi&#39; is cycles per interval.</span>
+<span class="sd">          For hourly data cpi is cph,</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from oceans.filters import lanc</span>
+<span class="sd">    &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
+<span class="sd">    &gt;&gt;&gt; t = np.arange(500)  # Time in hours.</span>
+<span class="sd">    &gt;&gt;&gt; h = 2.5 * np.sin(2 * np.pi * t / 12.42)</span>
+<span class="sd">    &gt;&gt;&gt; h += 1.5 * np.sin(2 * np.pi * t / 12.0)</span>
+<span class="sd">    &gt;&gt;&gt; h += 0.3 * np.random.randn(len(t))</span>
+<span class="sd">    &gt;&gt;&gt; wt = lanc(96+1+96, 1./40)</span>
+<span class="sd">    &gt;&gt;&gt; low = np.convolve(wt, h, mode=&#39;same&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; high = h - low</span>
+<span class="sd">    &gt;&gt;&gt; fig, (ax0, ax1) = plt.subplots(nrows=2)</span>
+<span class="sd">    &gt;&gt;&gt; _ = ax0.plot(high, label=&#39;high&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; _ = ax1.plot(low, label=&#39;low&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; _ = ax0.legend(numpoints=1)</span>
+<span class="sd">    &gt;&gt;&gt; _ = ax1.legend(numpoints=1)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">summ</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">numwt</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">wt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">numwt</span><span class="p">)</span>
+
+    <span class="c1"># Filter weights.</span>
+    <span class="n">ii</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">numwt</span><span class="p">)</span>
+    <span class="n">wt</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">ii</span> <span class="o">*</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">numwt</span><span class="p">))</span>
+    <span class="n">ii</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">numwt</span><span class="p">)</span>
+    <span class="n">xx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">haf</span> <span class="o">*</span> <span class="n">ii</span>
+    <span class="n">wt</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">numwt</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">wt</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">numwt</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">xx</span><span class="p">)</span> <span class="o">/</span> <span class="n">xx</span>
+    <span class="n">summ</span> <span class="o">=</span> <span class="n">wt</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">numwt</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">xx</span> <span class="o">=</span> <span class="n">wt</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="n">summ</span>
+    <span class="n">wt</span> <span class="o">/=</span> <span class="n">xx</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">wt</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">wt</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">numwt</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]</span></div>
+
+
+<div class="viewcode-block" id="smoo1"><a class="viewcode-back" href="../../filters.html#oceans.filters.smoo1">[docs]</a><span class="k">def</span> <span class="nf">smoo1</span><span class="p">(</span><span class="n">datain</span><span class="p">,</span> <span class="n">window_len</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="s1">&#39;hanning&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Smooth the data using a window with requested size.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    datain : array_like</span>
+<span class="sd">             input series</span>
+<span class="sd">    window_len : int</span>
+<span class="sd">                 size of the smoothing window; should be an odd integer</span>
+<span class="sd">    window : str</span>
+<span class="sd">             window from &#39;flat&#39;, &#39;hanning&#39;, &#39;hamming&#39;, &#39;bartlett&#39;, &#39;blackman&#39;.</span>
+<span class="sd">             flat window will produce a moving average smoothing.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    data_out : array_like</span>
+<span class="sd">            smoothed signal</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    scipy.signal.lfilter</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    original from: https://scipy-cookbook.readthedocs.io/items/SignalSmooth.html</span>
+<span class="sd">    This method is based on the convolution of a scaled window with the signal.</span>
+<span class="sd">    The signal is prepared by introducing reflected copies of the signal (with</span>
+<span class="sd">    the window size) in both ends so that transient parts are minimized in the</span>
+<span class="sd">    beginning and end part of the output signal.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from oceans.filters import smoo1</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
+<span class="sd">    &gt;&gt;&gt; time = np.linspace( -4, 4, 100 )</span>
+<span class="sd">    &gt;&gt;&gt; series = np.sin(time)</span>
+<span class="sd">    &gt;&gt;&gt; noise_series = series + np.random.randn( len(time) ) * 0.1</span>
+<span class="sd">    &gt;&gt;&gt; data_out = smoo1(series)</span>
+<span class="sd">    &gt;&gt;&gt; ws = 31</span>
+<span class="sd">    &gt;&gt;&gt; ax = plt.subplot(211)</span>
+<span class="sd">    &gt;&gt;&gt; _ = ax.plot(np.ones(ws))</span>
+<span class="sd">    &gt;&gt;&gt; windows = [&#39;flat&#39;, &#39;hanning&#39;, &#39;hamming&#39;, &#39;bartlett&#39;, &#39;blackman&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; for w in windows[1:]:</span>
+<span class="sd">    ...     _ = eval(&#39;plt.plot(np.&#39; + w + &#39;(ws) )&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; _ = ax.axis([0, 30, 0, 1.1])</span>
+<span class="sd">    &gt;&gt;&gt; leg = ax.legend(windows)</span>
+<span class="sd">    &gt;&gt;&gt; _ = plt.title(&#39;The smoothing windows&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; ax = plt.subplot(212)</span>
+<span class="sd">    &gt;&gt;&gt; l1, = ax.plot(series)</span>
+<span class="sd">    &gt;&gt;&gt; l2, = ax.plot(noise_series)</span>
+<span class="sd">    &gt;&gt;&gt; for w in windows:</span>
+<span class="sd">    ...     _ = plt.plot(smoo1(noise_series, 10, w))</span>
+<span class="sd">    &gt;&gt;&gt; l = [&#39;original signal&#39;, &#39;signal with noise&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; l.extend(windows)</span>
+<span class="sd">    &gt;&gt;&gt; leg = ax.legend(l)</span>
+<span class="sd">    &gt;&gt;&gt; _ = plt.title(&#39;Smoothing a noisy signal&#39;)</span>
+
+<span class="sd">    TODO: window parameter can be the window itself (i.e. an array)</span>
+<span class="sd">    instead of a string.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">datain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">datain</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">datain</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Smooth only accepts 1 dimension arrays.&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">datain</span><span class="o">.</span><span class="n">size</span> <span class="o">&lt;</span> <span class="n">window_len</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Input vector needs to be bigger than window size.&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">window_len</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">datain</span>
+
+    <span class="k">if</span> <span class="n">window</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;flat&#39;</span><span class="p">,</span> <span class="s1">&#39;hanning&#39;</span><span class="p">,</span> <span class="s1">&#39;hamming&#39;</span><span class="p">,</span> <span class="s1">&#39;bartlett&#39;</span><span class="p">,</span> <span class="s1">&#39;blackman&#39;</span><span class="p">]:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Window must be is one of &#39;flat&#39;, &#39;hanning&#39;, &#39;hamming&#39;, &#39;bartlett&#39;, &#39;blackman&#39;&quot;</span>  <span class="c1"># noqa</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">datain</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">datain</span><span class="p">[</span><span class="n">window_len</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">datain</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span>
+              <span class="n">datain</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">datain</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="n">window_len</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+
+    <span class="k">if</span> <span class="n">window</span> <span class="o">==</span> <span class="s1">&#39;flat&#39;</span><span class="p">:</span>  <span class="c1"># Moving average.</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">window_len</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="s1">&#39;np.&#39;</span> <span class="o">+</span> <span class="n">window</span> <span class="o">+</span> <span class="s1">&#39;(window_len)&#39;</span><span class="p">)</span>
+
+    <span class="n">data_out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">w</span> <span class="o">/</span> <span class="n">w</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">s</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data_out</span><span class="p">[</span><span class="n">window_len</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="n">window_len</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="smoo2"><a class="viewcode-back" href="../../filters.html#oceans.filters.smoo2">[docs]</a><span class="k">def</span> <span class="nf">smoo2</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">hei</span><span class="p">,</span> <span class="n">wid</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;hann&#39;</span><span class="p">,</span> <span class="n">badflag</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">14</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the smoothed array &#39;As&#39; from the original array &#39;A&#39; using the</span>
+<span class="sd">    specified window of type &#39;kind&#39; and shape (&#39;hei&#39;, &#39;wid&#39;).</span>
+
+<span class="sd">    Usage:</span>
+<span class="sd">    As = smoo2(A, hei, wid, kind=&#39;hann&#39;, badflag=-9999, beta=14)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    A : 2D array</span>
+<span class="sd">      Array to be smoothed.</span>
+<span class="sd">    hei : integer</span>
+<span class="sd">      Window height. Must be odd and greater than or equal to 3.</span>
+<span class="sd">    wid : integer</span>
+<span class="sd">      Window width. Must be odd and greater than or equal to 3.</span>
+<span class="sd">    kind : string, optional</span>
+<span class="sd">      Refer to Numpy for details about each window type.</span>
+<span class="sd">    badflag : float, optional</span>
+<span class="sd">      The bad data flag. Elements of the input array &#39;A&#39; holding this value are ignored.</span>
+<span class="sd">    beta : float, optional</span>
+<span class="sd">      Shape parameter for the kaiser window.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    As : 2D array</span>
+<span class="sd">      The smoothed array.</span>
+
+<span class="sd">    André Palóczy Filho (paloczy@gmail.com)</span>
+<span class="sd">    April 2012</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Checking window type and dimensions</span>
+    <span class="n">kinds</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;hann&#39;</span><span class="p">,</span> <span class="s1">&#39;hamming&#39;</span><span class="p">,</span> <span class="s1">&#39;blackman&#39;</span><span class="p">,</span> <span class="s1">&#39;bartlett&#39;</span><span class="p">,</span> <span class="s1">&#39;kaiser&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kinds</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid window type requested: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">kind</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">hei</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">wid</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Window dimensions must be odd&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">hei</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">wid</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Window shape must be (3,3) or greater&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Creating the 2D window.</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;kaiser&#39;</span><span class="p">):</span>  <span class="c1"># If the window kind is kaiser (beta is required).</span>
+        <span class="n">wstr</span> <span class="o">=</span> <span class="s1">&#39;np.outer(np.kaiser(hei, beta), np.kaiser(wid, beta))&#39;</span>
+    <span class="c1"># If the window kind is hann, hamming, blackman or bartlett</span>
+    <span class="c1"># (beta is not required).</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;hann&#39;</span><span class="p">:</span>
+            <span class="c1"># Converting the correct window name (Hann) to the numpy function</span>
+            <span class="c1"># name (numpy.hanning).</span>
+            <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;hanning&#39;</span>
+        <span class="c1"># Computing outer product to make a 2D window out of the original 1d</span>
+        <span class="c1"># windows.</span>
+        <span class="c1"># TODO: Get rid of this evil eval.</span>
+        <span class="n">wstr</span> <span class="o">=</span> <span class="s1">&#39;np.outer(np.&#39;</span> <span class="o">+</span> <span class="n">kind</span> <span class="o">+</span> <span class="s1">&#39;(hei), np.&#39;</span> <span class="o">+</span> <span class="n">kind</span> <span class="o">+</span> <span class="s1">&#39;(wid))&#39;</span>
+    <span class="n">wdw</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">wstr</span><span class="p">)</span>
+
+    <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="n">Fnan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="n">imax</span><span class="p">,</span> <span class="n">jmax</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">As</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">imax</span><span class="p">,</span> <span class="n">jmax</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">imax</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">jmax</span><span class="p">):</span>
+            <span class="c1"># Default window parameters.</span>
+            <span class="n">wupp</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">wlow</span> <span class="o">=</span> <span class="n">hei</span>
+            <span class="n">wlef</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">wrig</span> <span class="o">=</span> <span class="n">wid</span>
+            <span class="n">lh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">hei</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">lw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">wid</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+            <span class="c1"># Default array ranges (functions of the i, j indices).</span>
+            <span class="n">upp</span> <span class="o">=</span> <span class="n">i</span> <span class="o">-</span> <span class="n">lh</span>
+            <span class="n">low</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">lh</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">lef</span> <span class="o">=</span> <span class="n">j</span> <span class="o">-</span> <span class="n">lw</span>
+            <span class="n">rig</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="n">lw</span> <span class="o">+</span> <span class="mi">1</span>
+
+            <span class="c1"># Tiling window and input array at the edges.</span>
+            <span class="c1"># Upper edge.</span>
+            <span class="k">if</span> <span class="n">upp</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">wupp</span> <span class="o">=</span> <span class="n">wupp</span> <span class="o">-</span> <span class="n">upp</span>
+                <span class="n">upp</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="c1"># Left edge.</span>
+            <span class="k">if</span> <span class="n">lef</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">wlef</span> <span class="o">=</span> <span class="n">wlef</span> <span class="o">-</span> <span class="n">lef</span>
+                <span class="n">lef</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="c1"># Bottom edge.</span>
+            <span class="k">if</span> <span class="n">low</span> <span class="o">&gt;</span> <span class="n">imax</span><span class="p">:</span>
+                <span class="n">ex</span> <span class="o">=</span> <span class="n">low</span> <span class="o">-</span> <span class="n">imax</span>
+                <span class="n">wlow</span> <span class="o">=</span> <span class="n">wlow</span> <span class="o">-</span> <span class="n">ex</span>
+                <span class="n">low</span> <span class="o">=</span> <span class="n">imax</span>
+
+            <span class="c1"># Right edge.</span>
+            <span class="k">if</span> <span class="n">rig</span> <span class="o">&gt;</span> <span class="n">jmax</span><span class="p">:</span>
+                <span class="n">ex</span> <span class="o">=</span> <span class="n">rig</span> <span class="o">-</span> <span class="n">jmax</span>
+                <span class="n">wrig</span> <span class="o">=</span> <span class="n">wrig</span> <span class="o">-</span> <span class="n">ex</span>
+                <span class="n">rig</span> <span class="o">=</span> <span class="n">jmax</span>
+
+            <span class="c1"># Computing smoothed value at point (i, j).</span>
+            <span class="n">Ac</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="n">upp</span><span class="p">:</span><span class="n">low</span><span class="p">,</span> <span class="n">lef</span><span class="p">:</span><span class="n">rig</span><span class="p">]</span>
+            <span class="n">wdwc</span> <span class="o">=</span> <span class="n">wdw</span><span class="p">[</span><span class="n">wupp</span><span class="p">:</span><span class="n">wlow</span><span class="p">,</span> <span class="n">wlef</span><span class="p">:</span><span class="n">wrig</span><span class="p">]</span>
+            <span class="n">fnan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">Ac</span><span class="p">)</span>
+            <span class="n">Ac</span><span class="p">[</span><span class="n">fnan</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">wdwc</span><span class="p">[</span><span class="n">fnan</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Eliminating NaNs from mean computation.</span>
+            <span class="n">fbad</span> <span class="o">=</span> <span class="n">Ac</span> <span class="o">==</span> <span class="n">badflag</span>
+            <span class="n">wdwc</span><span class="p">[</span><span class="n">fbad</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Eliminating bad data from mean computation.</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">Ac</span> <span class="o">*</span> <span class="n">wdwc</span>
+            <span class="n">As</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">wdwc</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="c1"># Assigning NaN to the positions holding NaNs in the original array.</span>
+    <span class="n">As</span><span class="p">[</span><span class="n">Fnan</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+
+    <span class="k">return</span> <span class="n">As</span></div>
+
+
+<div class="viewcode-block" id="weim"><a class="viewcode-back" href="../../filters.html#oceans.filters.weim">[docs]</a><span class="k">def</span> <span class="nf">weim</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;hann&#39;</span><span class="p">,</span> <span class="n">badflag</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">14</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the smoothed array &#39;xs&#39; from the original array &#39;x&#39; using the</span>
+<span class="sd">    specified window of type &#39;kind&#39; and size &#39;N&#39;. &#39;N&#39; must be an odd number.</span>
+
+<span class="sd">    Usage:</span>
+<span class="sd">    xs = weim(x, N, kind=&#39;hann&#39;, badflag=-9999, beta=14)</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : 1D array</span>
+<span class="sd">      Array to be smoothed.</span>
+
+<span class="sd">    N : integer</span>
+<span class="sd">      Window size. Must be odd.</span>
+
+<span class="sd">    kind : string, optional</span>
+<span class="sd">    Refer to Numpy for details about each window type.</span>
+
+<span class="sd">    badflag : float, optional</span>
+<span class="sd">              The bad data flag. Elements of the input array &#39;A&#39; holding this</span>
+<span class="sd">              value are ignored.</span>
+
+<span class="sd">    beta    : float, optional</span>
+<span class="sd">              Shape parameter for the kaiser window. For windows other than the</span>
+<span class="sd">              kaiser window, this parameter does nothing.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    xs      : 1D array</span>
+<span class="sd">              The smoothed array.</span>
+
+<span class="sd">    ---------------------------------------</span>
+<span class="sd">    André Palóczy Filho (paloczy@gmail.com) June 2012</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Checking window type and dimensions.</span>
+    <span class="n">kinds</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;hann&#39;</span><span class="p">,</span> <span class="s1">&#39;hamming&#39;</span><span class="p">,</span> <span class="s1">&#39;blackman&#39;</span><span class="p">,</span> <span class="s1">&#39;bartlett&#39;</span><span class="p">,</span> <span class="s1">&#39;kaiser&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kinds</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid window type requested: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">kind</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Window size must be odd&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Creating the window.</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;kaiser&#39;</span><span class="p">):</span>  <span class="c1"># If the window kind is kaiser (beta is required).</span>
+        <span class="n">wstr</span> <span class="o">=</span> <span class="s1">&#39;np.kaiser(N, beta)&#39;</span>
+    <span class="c1"># If the window kind is hann, hamming, blackman or bartlett (beta is not</span>
+    <span class="c1"># required).</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;hann&#39;</span><span class="p">:</span>
+            <span class="c1"># Converting the correct window name (Hann) to the numpy function</span>
+            <span class="c1"># name (numpy.hanning).</span>
+            <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;hanning&#39;</span>
+            <span class="c1"># Computing outer product to make a 2D window out of the original</span>
+            <span class="c1"># 1D windows.</span>
+        <span class="n">wstr</span> <span class="o">=</span> <span class="s1">&#39;np.&#39;</span> <span class="o">+</span> <span class="n">kind</span> <span class="o">+</span> <span class="s1">&#39;(N)&#39;</span>
+
+    <span class="c1"># FIXME: Do not use `eval`.</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">wstr</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">Fnan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+    <span class="n">ln</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">lx</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">lf</span> <span class="o">=</span> <span class="n">lx</span> <span class="o">-</span> <span class="n">ln</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">lx</span><span class="p">)</span>
+
+    <span class="c1"># Eliminating bad data from mean computation.</span>
+    <span class="n">fbad</span> <span class="o">=</span> <span class="n">x</span> <span class="o">==</span> <span class="n">badflag</span>
+    <span class="n">x</span><span class="p">[</span><span class="n">fbad</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lx</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">ln</span><span class="p">:</span>
+            <span class="n">xx</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:</span><span class="n">ln</span> <span class="o">+</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">ww</span> <span class="o">=</span> <span class="n">w</span><span class="p">[</span><span class="n">ln</span> <span class="o">-</span> <span class="n">i</span><span class="p">:]</span>
+        <span class="k">elif</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="n">lf</span><span class="p">:</span>
+            <span class="n">xx</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">ln</span><span class="p">:]</span>
+            <span class="n">ww</span> <span class="o">=</span> <span class="n">w</span><span class="p">[:</span><span class="n">lf</span> <span class="o">-</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">xx</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">ln</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">ln</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">ww</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Counting only NON-NaNs, both in the input array and in the window</span>
+        <span class="c1"># points.</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">xx</span><span class="p">)</span>
+        <span class="n">xx</span> <span class="o">=</span> <span class="n">xx</span><span class="p">[</span><span class="n">f</span><span class="p">]</span>
+        <span class="n">ww</span> <span class="o">=</span> <span class="n">ww</span><span class="p">[</span><span class="n">f</span><span class="p">]</span>
+
+        <span class="c1"># Thou shalt not divide by zero.</span>
+        <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">xs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">xs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xx</span> <span class="o">*</span> <span class="n">ww</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ww</span><span class="p">)</span>
+
+    <span class="c1"># Assigning NaN to the positions holding NaNs in the input array.</span>
+    <span class="n">xs</span><span class="p">[</span><span class="n">Fnan</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+    <span class="k">return</span> <span class="n">xs</span></div>
+
+
+<div class="viewcode-block" id="medfilt1"><a class="viewcode-back" href="../../filters.html#oceans.filters.medfilt1">[docs]</a><span class="k">def</span> <span class="nf">medfilt1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Median filter for 1d arrays.</span>
+
+<span class="sd">    Performs a discrete one-dimensional median filter with window length `L` to</span>
+<span class="sd">    input vector `x`.  Produces a vector the same size as `x`.  Boundaries are</span>
+<span class="sd">    handled by shrinking `L` at edges; no data outside of `x` is used in</span>
+<span class="sd">    producing the median filtered output.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array_like</span>
+<span class="sd">        Input 1D data</span>
+<span class="sd">    L : integer</span>
+<span class="sd">        Window length</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    xout : array_like</span>
+<span class="sd">           Numpy 1d array of median filtered result; same size as x</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from oceans.filters import medfilt1</span>
+<span class="sd">    &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
+<span class="sd">    &gt;&gt;&gt; # 100 pseudo-random integers ranging from 1 to 100, plus three large</span>
+<span class="sd">    &gt;&gt;&gt; # outliers for illustration.</span>
+<span class="sd">    &gt;&gt;&gt; x = np.r_[np.ceil(np.random.rand(25)*100), [1000],</span>
+<span class="sd">    ...           np.ceil(np.random.rand(25)*100), [2000],</span>
+<span class="sd">    ...           np.ceil(np.random.rand(25)*100), [3000],</span>
+<span class="sd">    ...           np.ceil(np.random.rand(25)*100)]</span>
+<span class="sd">    &gt;&gt;&gt; L = 2</span>
+<span class="sd">    &gt;&gt;&gt; xout = medfilt1(x=x, L=L)</span>
+<span class="sd">    &gt;&gt;&gt; ax = plt.subplot(211)</span>
+<span class="sd">    &gt;&gt;&gt; l1, l2 = ax.plot(x), ax.plot(xout)</span>
+<span class="sd">    &gt;&gt;&gt; ax.grid(True)</span>
+<span class="sd">    &gt;&gt;&gt; y1min, y1max = np.min(xout) * 0.5, np.max(xout) * 2.0</span>
+<span class="sd">    &gt;&gt;&gt; leg1 = ax.legend([&#39;x (pseudo-random)&#39;,&#39;xout&#39;])</span>
+<span class="sd">    &gt;&gt;&gt; t1 = ax.set_title(&#39;&#39;&#39;Median filter with window length %s.</span>
+<span class="sd">    ...                   Removes outliers, tracks remaining signal)&#39;&#39;&#39; % L)</span>
+<span class="sd">    &gt;&gt;&gt; L = 103</span>
+<span class="sd">    &gt;&gt;&gt; xout = medfilt1(x=x, L=L)</span>
+<span class="sd">    &gt;&gt;&gt; ax = plt.subplot(212)</span>
+<span class="sd">    &gt;&gt;&gt; l1, l2, = ax.plot(x), ax.plot(xout)</span>
+<span class="sd">    &gt;&gt;&gt; ax.grid(True)</span>
+<span class="sd">    &gt;&gt;&gt; y2min, y2max = np.min(xout) * 0.5, np.max(xout) * 2.0</span>
+<span class="sd">    &gt;&gt;&gt; leg2 = ax.legend([&quot;Same x (pseudo-random)&quot;, &quot;xout&quot;])</span>
+<span class="sd">    &gt;&gt;&gt; t2 = ax.set_title(&#39;&#39;&#39;Median filter with window length %s.</span>
+<span class="sd">    ...                   Removes outliers and noise&#39;&#39;&#39; % L)</span>
+<span class="sd">    &gt;&gt;&gt; ax = plt.subplot(211)</span>
+<span class="sd">    &gt;&gt;&gt; lims1 = ax.set_ylim([min(y1min, y2min), max(y1max, y2max)])</span>
+<span class="sd">    &gt;&gt;&gt; ax = plt.subplot(212)</span>
+<span class="sd">    &gt;&gt;&gt; lims2 = ax.set_ylim([min(y1min, y2min), max(y1max, y2max)])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">xin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>  <span class="c1"># Ensure L is odd integer so median requires no interpolation.</span>
+    <span class="k">if</span> <span class="n">L</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">L</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">N</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Input sequence must be &gt;= 2.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">L</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Input filter window length must be &gt;=2.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">L</span> <span class="o">&gt;</span> <span class="n">N</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Input filter window length must be shorter than series: L = </span><span class="si">{0:d}</span><span class="s1">, len(x) = </span><span class="si">{1:d}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span>  <span class="c1"># noqa</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">N</span><span class="p">))</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">xin</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Input sequence has to be 1d: ndim = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">(</span><span class="n">xin</span><span class="o">.</span><span class="n">ndim</span><span class="p">))</span>
+
+    <span class="n">xout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">xin</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+
+    <span class="n">Lwing</span> <span class="o">=</span> <span class="p">(</span><span class="n">L</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+
+    <span class="c1"># NOTE: Use np.ndenumerate in case I expand to +1D case</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">xi</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xin</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">Lwing</span><span class="p">:</span>  <span class="c1"># Left boundary.</span>
+            <span class="n">xout</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">xin</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">Lwing</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>   <span class="c1"># (0 to i + Lwing)</span>
+        <span class="k">elif</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="n">N</span> <span class="o">-</span> <span class="n">Lwing</span><span class="p">:</span>  <span class="c1"># Right boundary.</span>
+            <span class="n">xout</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">xin</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">Lwing</span><span class="p">:</span><span class="n">N</span><span class="p">])</span>  <span class="c1"># (i-Lwing to N-1)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Middle (N-2*Lwing input vector and filter window overlap).</span>
+            <span class="n">xout</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">xin</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="n">Lwing</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">Lwing</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="c1"># (i-Lwing to i+Lwing)</span>
+    <span class="k">return</span> <span class="n">xout</span></div>
+
+
+<div class="viewcode-block" id="fft_lowpass"><a class="viewcode-back" href="../../filters.html#oceans.filters.fft_lowpass">[docs]</a><span class="k">def</span> <span class="nf">fft_lowpass</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Performs a low pass filer on the series.</span>
+<span class="sd">    low and high specifies the boundary of the filter.</span>
+
+<span class="sd">    &gt;&gt;&gt; from oceans.filters import fft_lowpass</span>
+<span class="sd">    &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
+<span class="sd">    &gt;&gt;&gt; t = np.arange(500)  # Time in hours.</span>
+<span class="sd">    &gt;&gt;&gt; x = 2.5 * np.sin(2 * np.pi * t / 12.42)</span>
+<span class="sd">    &gt;&gt;&gt; x += 1.5 * np.sin(2 * np.pi * t / 12.0)</span>
+<span class="sd">    &gt;&gt;&gt; x += 0.3 * np.random.randn(len(t))</span>
+<span class="sd">    &gt;&gt;&gt; filtered = fft_lowpass(x, low=1/30, high=1/40)</span>
+<span class="sd">    &gt;&gt;&gt; fig, ax = plt.subplots()</span>
+<span class="sd">    &gt;&gt;&gt; l1, = ax.plot(t, x, label=&#39;original&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; l2, = ax.plot(t, filtered, label=&#39;filtered&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; legend = ax.legend()</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">rfft</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">signal</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">rfft</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+
+    <span class="n">freq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftfreq</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">signal</span><span class="p">))[:</span><span class="nb">len</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span>
+    <span class="n">factor</span><span class="p">[</span><span class="n">freq</span> <span class="o">&gt;</span> <span class="n">low</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">sl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">high</span> <span class="o">&lt;</span> <span class="n">freq</span><span class="p">,</span> <span class="n">freq</span> <span class="o">&lt;</span> <span class="n">low</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">factor</span><span class="p">[</span><span class="n">sl</span><span class="p">]</span>
+
+    <span class="c1"># Create float array of required length and reverse.</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Ramp from 1 to 0 exclusive.</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">/</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">])[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Insert ramp into factor.</span>
+    <span class="n">factor</span><span class="p">[</span><span class="n">sl</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">result</span> <span class="o">*</span> <span class="n">factor</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">irfft</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">signal</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="md_trenberth"><a class="viewcode-back" href="../../filters.html#oceans.filters.md_trenberth">[docs]</a><span class="k">def</span> <span class="nf">md_trenberth</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the filtered series using the Trenberth filter as described</span>
+<span class="sd">    on Monthly Weather Review, vol. 112, No. 2, Feb 1984.</span>
+
+<span class="sd">    Input data: series x of dimension 1Xn (must be at least dimension 11)</span>
+<span class="sd">    Output data: y = md_trenberth(x) where y has dimension 1X(n-10)</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from oceans.filters import md_trenberth</span>
+<span class="sd">    &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
+<span class="sd">    &gt;&gt;&gt; t = np.arange(500)  # Time in hours.</span>
+<span class="sd">    &gt;&gt;&gt; x = 2.5 * np.sin(2 * np.pi * t / 12.42)</span>
+<span class="sd">    &gt;&gt;&gt; x += 1.5 * np.sin(2 * np.pi * t / 12.0)</span>
+<span class="sd">    &gt;&gt;&gt; x += 0.3 * np.random.randn(len(t))</span>
+<span class="sd">    &gt;&gt;&gt; filtered = md_trenberth(x)</span>
+<span class="sd">    &gt;&gt;&gt; fig, ax = plt.subplots()</span>
+<span class="sd">    &gt;&gt;&gt; l1, = ax.plot(t, x, label=&#39;original&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; pad = [np.NaN]*5</span>
+<span class="sd">    &gt;&gt;&gt; l2, = ax.plot(t, np.r_[pad, filtered, pad], label=&#39;filtered&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; legend = ax.legend()</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.02700</span><span class="p">,</span> <span class="mf">0.05856</span><span class="p">,</span> <span class="mf">0.09030</span><span class="p">,</span> <span class="mf">0.11742</span><span class="p">,</span> <span class="mf">0.13567</span><span class="p">,</span> <span class="mf">0.14210</span><span class="p">,</span>
+                       <span class="mf">0.13567</span><span class="p">,</span> <span class="mf">0.11742</span><span class="p">,</span> <span class="mf">0.09030</span><span class="p">,</span> <span class="mf">0.05856</span><span class="p">,</span> <span class="mf">0.02700</span><span class="p">])</span>
+
+    <span class="n">sz</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">sz</span> <span class="o">-</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">sz</span> <span class="o">-</span> <span class="mi">5</span><span class="p">):</span>
+        <span class="n">y</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">11</span><span class="p">):</span>
+            <span class="n">y</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">5</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">6</span> <span class="o">+</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">weight</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">y</span></div>
+
+
+<div class="viewcode-block" id="pl33tn"><a class="viewcode-back" href="../../filters.html#oceans.filters.pl33tn">[docs]</a><span class="k">def</span> <span class="nf">pl33tn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">33.0</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;valid&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes low-passed series from `x` using pl33 filter, with optional</span>
+<span class="sd">    sample interval `dt` (hours) and filter half-amplitude period T (hours)</span>
+<span class="sd">    as input for non-hourly series.</span>
+
+<span class="sd">    The PL33 filter is described on p. 21, Rosenfeld (1983), WHOI</span>
+<span class="sd">    Technical Report 85-35.  Filter half amplitude period = 33 hrs.,</span>
+<span class="sd">    half power period = 38 hrs.  The time series x is folded over</span>
+<span class="sd">    and cosine tapered at each end to return a filtered time series</span>
+<span class="sd">    xf of the same length.  Assumes length of x greater than 67.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from oceans.filters import pl33tn</span>
+<span class="sd">    &gt;&gt;&gt; import matplotlib.pyplot as plt</span>
+<span class="sd">    &gt;&gt;&gt; t = np.arange(500)  # Time in hours.</span>
+<span class="sd">    &gt;&gt;&gt; x = 2.5 * np.sin(2 * np.pi * t / 12.42)</span>
+<span class="sd">    &gt;&gt;&gt; x += 1.5 * np.sin(2 * np.pi * t / 12.0)</span>
+<span class="sd">    &gt;&gt;&gt; x += 0.3 * np.random.randn(len(t))</span>
+<span class="sd">    &gt;&gt;&gt; filtered_33 = pl33tn(x, dt=4.0)   # 33 hr filter</span>
+<span class="sd">    &gt;&gt;&gt; filtered_33d3 = pl33tn(x, dt=4.0, T=72.0)  # 3 day filter</span>
+<span class="sd">    &gt;&gt;&gt; fig, ax = plt.subplots()</span>
+<span class="sd">    &gt;&gt;&gt; l1, = ax.plot(t, x, label=&#39;original&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; pad = [np.NaN]*8</span>
+<span class="sd">    &gt;&gt;&gt; l2, = ax.plot(t, np.r_[pad, filtered_33, pad], label=&#39;33 hours&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; pad = [np.NaN]*17</span>
+<span class="sd">    &gt;&gt;&gt; l3, = ax.plot(t, np.r_[pad, filtered_33d3, pad], label=&#39;3 days&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; legend = ax.legend()</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">pl33</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="o">-</span><span class="mf">0.00027</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00114</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00211</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00317</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00427</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00537</span><span class="p">,</span>
+            <span class="o">-</span><span class="mf">0.00641</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00735</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00811</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00864</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00887</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00872</span><span class="p">,</span>
+            <span class="o">-</span><span class="mf">0.00816</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00714</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00560</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00355</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00097</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.00213</span><span class="p">,</span>
+            <span class="o">+</span><span class="mf">0.00574</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.00980</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.01425</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.01902</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.02400</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.02911</span><span class="p">,</span>
+            <span class="o">+</span><span class="mf">0.03423</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.03923</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.04399</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.04842</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.05237</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.05576</span><span class="p">,</span>
+            <span class="o">+</span><span class="mf">0.05850</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.06051</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.06174</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.06215</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.06174</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.06051</span><span class="p">,</span>
+            <span class="o">+</span><span class="mf">0.05850</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.05576</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.05237</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.04842</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.04399</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.03923</span><span class="p">,</span>
+            <span class="o">+</span><span class="mf">0.03423</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.02911</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.02400</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.01902</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.01425</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.00980</span><span class="p">,</span>
+            <span class="o">+</span><span class="mf">0.00574</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.00213</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00097</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00355</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00560</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00714</span><span class="p">,</span>
+            <span class="o">-</span><span class="mf">0.00816</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00872</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00887</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00864</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00811</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00735</span><span class="p">,</span>
+            <span class="o">-</span><span class="mf">0.00641</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00537</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00427</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00317</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00211</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.00114</span><span class="p">,</span>
+            <span class="o">-</span><span class="mf">0.00027</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="n">_dt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">33</span><span class="p">,</span> <span class="mi">33</span><span class="p">,</span> <span class="mi">67</span><span class="p">)</span>
+
+    <span class="n">dt</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">33.0</span> <span class="o">/</span> <span class="n">T</span><span class="p">)</span>
+
+    <span class="n">filter_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">33.0</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
+    <span class="c1"># N = len(filter_time)</span>
+    <span class="n">filter_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="o">-</span><span class="n">filter_time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">filter_time</span><span class="p">))</span>
+
+    <span class="n">pl33</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">filter_time</span><span class="p">,</span> <span class="n">_dt</span><span class="p">,</span> <span class="n">pl33</span><span class="p">)</span>
+    <span class="n">pl33</span> <span class="o">/=</span> <span class="n">pl33</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="n">xf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pl33</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">xf</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2018, Filipe Fernandes.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+    <a href="https://github.com/pyoceans/oceans" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>
