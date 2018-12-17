@@ -927,3 +927,58 @@ def zmld_boyer(s, t, p):
         mldepthptemp_mldindex = presinterp[ix]
 
         return mldepthdens_mldindex, mldepthptemp_mldindex
+
+
+def o2sol_SP_pt_benson_krause_84(SP, pt):
+    """
+    Calculates the oxygen, O2, concentration expected at equilibrium with air
+    at an Absolute Pressure of 101325 Pa (sea pressure of 0 dbar) including
+    saturated water vapor.
+
+    This function uses the solubility coefficients derived from the data of
+    Benson and Krause 1984, as fitted by Garcia and Gordon 1992.
+
+    Better in the range:
+      tF >= t >= 40 degC
+      0 >= t >= 42 %o.
+
+    Parameters
+    ----------
+    SP : array_like
+        Practical Salinity
+    pt : array_like
+        Potential temperature [℃ (ITS-90)]
+
+    Examples
+    --------
+    >>> SP = [34.7118, 34.8915, 35.0256, 34.8472, 34.7366, 34.7324]
+    >>> pt = [28.8099, 28.4392, 22.7862, 10.2262, 6.8272, 4.3236]
+    >>> o2sol = o2sol_SP_pt_benson_krause_84(SP, pt)
+    >>> expected = [194.68254317, 195.61350628, 214.65593602, 273.56528327, 295.15807614, 312.95987166]
+    >>> np.testing.assert_almost_equal(expected, o2sol)
+
+
+    https://aslopubs.onlinelibrary.wiley.com/doi/pdf/10.4319/lo.1992.37.6.1307
+
+    """
+    SP, pt = list(map(np.asanyarray, (SP, pt)))
+
+    S = SP  # rename to make eq. identical to the paper and increase readability.
+    pt68 = pt * 1.00024  # IPTS-68 potential temperature in degC.
+
+    Ts = np.log((298.15 - pt68) / (273.15 + pt68))
+
+    # The coefficents for Benson and Krause 1984
+    # from the table 1 of Garcia and Gordon (1992).
+    A = [5.80871, 3.20291, 4.17887, 5.10006, -9.86643e-2, 3.80369]
+    B = [-7.01577e-3, -7.70028e-3, -1.13864e-2, -9.51519e-3]
+    C0 = -2.75915e-7
+
+    # Equation 8 from Garcia and Gordon 1992 accoring to Pilson.
+    lnCo = (
+        A[0] + A[1]*Ts + A[2]*Ts**2 + A[3]*Ts**3
+        + A[4]*Ts**4 + A[5]*Ts**5
+        + S * (B[0] + B[1]*Ts + B[2]*Ts**2 + B[3]*Ts**3)
+        + C0*S**2
+    )
+    return np.exp(lnCo)
