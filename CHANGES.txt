@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+Version 0.7.0
+
+* Added an updated version of the O2SAT function.
+
+
 Version 0.6.0
 
 * Re-factored datasets and fixed data sources URLs.
