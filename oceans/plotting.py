@@ -2,6 +2,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.ma as ma
+
 from matplotlib.artist import Artist
 from matplotlib.dates import date2num
 from matplotlib.lines import Line2D

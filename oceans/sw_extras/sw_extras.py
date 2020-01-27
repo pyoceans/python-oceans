@@ -2,6 +2,7 @@ from copy import copy
 
 import numpy as np
 import seawater as sw
+
 from seawater.constants import OMEGA, earth_radius
 
 

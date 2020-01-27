@@ -25,6 +25,7 @@ author = "Filipe Fernandes"
 
 from oceans._version import get_versions
 
+
 version = release = get_versions()["version"]
 del get_versions
 

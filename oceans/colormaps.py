@@ -1,10 +1,13 @@
 import os
+
 from colorsys import hsv_to_rgb
 from glob import glob
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 from matplotlib import colors
+
 
 cmap_path = os.path.join(os.path.dirname(__file__), "cmap_data")
 

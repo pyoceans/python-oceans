@@ -2,6 +2,7 @@ import os
 
 import numpy as np
 
+
 _default_path = os.path.join(os.path.dirname(__file__), "data")
 
 
