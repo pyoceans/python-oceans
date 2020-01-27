@@ -39,15 +39,17 @@ def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None, zc=None):
     x, y = np.reshape(x, (1, n)), np.reshape(y, (1, n))
 
     # Squared distance matrix between the observations.
-    d2 = ((np.tile(x, (n, 1)).T - np.tile(x, (n, 1))) ** 2 +
-          (np.tile(y, (n, 1)).T - np.tile(y, (n, 1))) ** 2)
+    d2 = (np.tile(x, (n, 1)).T - np.tile(x, (n, 1))) ** 2 + (
+        np.tile(y, (n, 1)).T - np.tile(y, (n, 1))
+    ) ** 2
 
     nv = len(xc)
     xc, yc = np.reshape(xc, (1, nv)), np.reshape(yc, (1, nv))
 
     # Squared distance between the observations and the grid points.
-    dc2 = ((np.tile(xc, (n, 1)).T - np.tile(x, (nv, 1))) ** 2 +
-           (np.tile(yc, (n, 1)).T - np.tile(y, (nv, 1))) ** 2)
+    dc2 = (np.tile(xc, (n, 1)).T - np.tile(x, (nv, 1))) ** 2 + (
+        np.tile(yc, (n, 1)).T - np.tile(y, (nv, 1))
+    ) ** 2
 
     # Correlation matrix between stations (A) and cross correlation (stations
     # and grid points (C)).
@@ -69,13 +71,14 @@ def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None, zc=None):
         t = np.reshape(t, (n, 1))
         tp = np.dot(C, np.linalg.solve(A, t))
         if 0:  # NOTE: `scaloa2.m`
-            mD = (np.sum(np.linalg.solve(A, t)) /
-                  np.sum(np.sum(np.linalg.inv(A))))
+            mD = np.sum(np.linalg.solve(A, t)) / np.sum(
+                np.sum(np.linalg.inv(A))
+            )
             t = t - mD
-            tp = (C * (np.linalg.solve(A, t)))
+            tp = C * (np.linalg.solve(A, t))
             tp = tp + mD * np.ones(tp.shape)
     if not t:
-        print('Computing just the interpolation errors.')  # noqa
+        print("Computing just the interpolation errors.")  # noqa
 
     # Normalized mean error.  Taking the squared root you can get the
     # interpolation error in percentage.

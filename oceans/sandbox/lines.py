@@ -3,7 +3,7 @@ import os
 import numpy as np
 
 
-_default_path = os.path.join(os.path.dirname(__file__), 'data')
+_default_path = os.path.join(os.path.dirname(__file__), "data")
 
 
 def LineNormals2D(Vertices, Lines):
@@ -43,10 +43,12 @@ def LineNormals2D(Vertices, Lines):
     if isinstance(Lines, np.ndarray):
         pass
     elif not Lines:
-        Lines = np.c_[np.arange(1, Vertices.shape[0]),
-                      np.arange(2, Vertices.shape[0] + 1)]
+        Lines = np.c_[
+            np.arange(1, Vertices.shape[0]),
+            np.arange(2, Vertices.shape[0] + 1),
+        ]
     else:
-        raise ValueError(f'Expected np.array but got {Lines:!r}.')
+        raise ValueError(f"Expected np.array but got {Lines:!r}.")
 
     # Calculate tangent vectors.
     DT = Vertices[Lines[:, 0] - 1, :] - Vertices[Lines[:, 1] - 1, :]
@@ -116,10 +118,12 @@ def LineCurvature2D(Vertices, Lines=None):
     if isinstance(Lines, np.ndarray):
         pass
     elif not Lines:
-        Lines = np.c_[np.arange(1, Vertices.shape[0]),
-                      np.arange(2, Vertices.shape[0] + 1)]
+        Lines = np.c_[
+            np.arange(1, Vertices.shape[0]),
+            np.arange(2, Vertices.shape[0] + 1),
+        ]
     else:
-        raise ValueError('Cannot recognized {!r}.'.format(Lines))
+        raise ValueError("Cannot recognized {!r}.".format(Lines))
 
     # Get left and right neighbor of each points.
     Na = np.zeros(Vertices.shape[0], dtype=np.int)
@@ -156,46 +160,63 @@ def LineCurvature2D(Vertices, Lines=None):
 
     x = np.c_[Vertices[Na, 0], Vertices[:, 0], Vertices[Nb, 0]]
     y = np.c_[Vertices[Na, 1], Vertices[:, 1], Vertices[Nb, 1]]
-    M = np.c_[np.ones_like(Tb),
-              -Ta,
-              Ta ** 2,
-              np.ones_like(Tb),
-              np.zeros_like(Tb),
-              np.zeros_like(Tb),
-              np.ones_like(Tb),
-              -Tb,
-              Tb ** 2]
+    M = np.c_[
+        np.ones_like(Tb),
+        -Ta,
+        Ta ** 2,
+        np.ones_like(Tb),
+        np.zeros_like(Tb),
+        np.zeros_like(Tb),
+        np.ones_like(Tb),
+        -Tb,
+        Tb ** 2,
+    ]
 
     invM = inverse3(M)
     a = np.zeros_like(x)
     b = np.zeros_like(a)
-    a[:, 0] = (invM[:, 0, 0] * x[:, 0] +
-               invM[:, 1, 0] * x[:, 1] +
-               invM[:, 2, 0] * x[:, 2])
+    a[:, 0] = (
+        invM[:, 0, 0] * x[:, 0]
+        + invM[:, 1, 0] * x[:, 1]
+        + invM[:, 2, 0] * x[:, 2]
+    )
 
-    a[:, 1] = (invM[:, 0, 1] * x[:, 0] +
-               invM[:, 1, 1] * x[:, 1] +
-               invM[:, 2, 1] * x[:, 2])
+    a[:, 1] = (
+        invM[:, 0, 1] * x[:, 0]
+        + invM[:, 1, 1] * x[:, 1]
+        + invM[:, 2, 1] * x[:, 2]
+    )
 
-    a[:, 2] = (invM[:, 0, 2] * x[:, 0] +
-               invM[:, 1, 2] * x[:, 1] +
-               invM[:, 2, 2] * x[:, 2])
+    a[:, 2] = (
+        invM[:, 0, 2] * x[:, 0]
+        + invM[:, 1, 2] * x[:, 1]
+        + invM[:, 2, 2] * x[:, 2]
+    )
 
-    b[:, 0] = (invM[:, 0, 0] * y[:, 0] +
-               invM[:, 1, 0] * y[:, 1] +
-               invM[:, 2, 0] * y[:, 2])
+    b[:, 0] = (
+        invM[:, 0, 0] * y[:, 0]
+        + invM[:, 1, 0] * y[:, 1]
+        + invM[:, 2, 0] * y[:, 2]
+    )
 
-    b[:, 1] = (invM[:, 0, 1] * y[:, 0] +
-               invM[:, 1, 1] * y[:, 1] +
-               invM[:, 2, 1] * y[:, 2])
+    b[:, 1] = (
+        invM[:, 0, 1] * y[:, 0]
+        + invM[:, 1, 1] * y[:, 1]
+        + invM[:, 2, 1] * y[:, 2]
+    )
 
-    b[:, 2] = (invM[:, 0, 2] * y[:, 0] +
-               invM[:, 1, 2] * y[:, 1] +
-               invM[:, 2, 2] * y[:, 2])
+    b[:, 2] = (
+        invM[:, 0, 2] * y[:, 0]
+        + invM[:, 1, 2] * y[:, 1]
+        + invM[:, 2, 2] * y[:, 2]
+    )
 
     # Calculate the curvature from the fitted polygon.
-    k = (2 * (a[:, 1] * b[:, 2] - a[:, 2] * b[:, 1]) /
-         ((a[:, 1] ** 2 + b[:, 1] ** 2) ** (3 / 2)))
+    k = (
+        2
+        * (a[:, 1] * b[:, 2] - a[:, 2] * b[:, 1])
+        / ((a[:, 1] ** 2 + b[:, 1] ** 2) ** (3 / 2))
+    )
 
     return k
 
@@ -216,8 +237,13 @@ def inverse3(M):
     adjM[:, 2, 1] = -(M[:, 0] * M[:, 5] - M[:, 3] * M[:, 2])
     adjM[:, 2, 2] = M[:, 0] * M[:, 4] - M[:, 3] * M[:, 1]
 
-    detM = (M[:, 0] * M[:, 4] * M[:, 8] - M[:, 0] * M[:, 7] * M[:, 5] -
-            M[:, 3] * M[:, 1] * M[:, 8] + M[:, 3] * M[:, 7] * M[:, 2] +
-            M[:, 6] * M[:, 1] * M[:, 5] - M[:, 6] * M[:, 4] * M[:, 2])
+    detM = (
+        M[:, 0] * M[:, 4] * M[:, 8]
+        - M[:, 0] * M[:, 7] * M[:, 5]
+        - M[:, 3] * M[:, 1] * M[:, 8]
+        + M[:, 3] * M[:, 7] * M[:, 2]
+        + M[:, 6] * M[:, 1] * M[:, 5]
+        - M[:, 6] * M[:, 4] * M[:, 2]
+    )
 
     return adjM / detM[:, None, None]

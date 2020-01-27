@@ -2,7 +2,6 @@ import re
 import warnings
 
 import gsw
-
 import numpy as np
 import numpy.ma as ma
 
@@ -88,12 +87,12 @@ def uv2spdir(u, v, mag=0, rot=0):
     spd = np.abs(vec)
     ang = np.angle(vec, deg=True)
     ang = ang - mag + rot
-    ang = np.mod(90. - ang, 360.)  # Zero is North.
+    ang = np.mod(90.0 - ang, 360.0)  # Zero is North.
 
     return ang, spd
 
 
-def del_eta_del_x(U, f, g, balance='geostrophic', R=None):
+def del_eta_del_x(U, f, g, balance="geostrophic", R=None):
     r"""
     Calculate :mat: `\frac{\partial \eta} {\partial x}` for different
     force balances
@@ -113,19 +112,19 @@ def del_eta_del_x(U, f, g, balance='geostrophic', R=None):
 
     """
 
-    if balance == 'geostrophic':
+    if balance == "geostrophic":
         detadx = f * U / g
 
-    elif balance == 'gradient':
+    elif balance == "gradient":
         detadx = (U ** 2 / R + f * U) / g
 
-    elif balance == 'max_gradient':
+    elif balance == "max_gradient":
         detadx = (R * f ** 2) / (4 * g)
 
     return detadx
 
 
-def mld(SA, CT, p, criterion='pdvar'):
+def mld(SA, CT, p, criterion="pdvar"):
     r"""
     Compute the mixed layer depth.
 
@@ -174,7 +173,7 @@ def mld(SA, CT, p, criterion='pdvar'):
 
     p_min, idx = p.min(), p.argmin()
 
-    sigma = gsw.rho(SA, CT, p_min) - 1000.
+    sigma = gsw.rho(SA, CT, p_min) - 1000.0
 
     # Temperature and Salinity at the surface,
     T0, S0, Sig0 = CT[idx], SA[idx], sigma[idx]
@@ -182,16 +181,16 @@ def mld(SA, CT, p, criterion='pdvar'):
     # NOTE: The temperature difference criterion for MLD
     Tdiff = T0 - 0.5  # 0.8 on the matlab original
 
-    if criterion == 'temperature':
-        idx_mld = (CT > Tdiff)
-    elif criterion == 'pdvar':
-        pdvar_diff = gsw.rho(S0, Tdiff, p_min) - 1000.
-        idx_mld = (sigma <= pdvar_diff)
-    elif criterion == 'density':
+    if criterion == "temperature":
+        idx_mld = CT > Tdiff
+    elif criterion == "pdvar":
+        pdvar_diff = gsw.rho(S0, Tdiff, p_min) - 1000.0
+        idx_mld = sigma <= pdvar_diff
+    elif criterion == "density":
         sig_diff = Sig0 + 0.125
-        idx_mld = (sigma <= sig_diff)
+        idx_mld = sigma <= sig_diff
     else:
-        raise NameError('Unknown criteria {}'.format(criterion))
+        raise NameError("Unknown criteria {}".format(criterion))
 
     MLD = ma.masked_all_like(p)
     MLD[idx_mld] = p[idx_mld]
@@ -267,7 +266,7 @@ def pcaben(u, v):
     # Length and direction.
     az, leng = np.c_[uv2spdir(x1[0], y1[0]), uv2spdir(x2[1], y2[1])]
 
-    if (leng[0] >= leng[1]):
+    if leng[0] >= leng[1]:
         majrax, majaz = leng[0], az[0]
         minrax, minaz = leng[1], az[1]
     else:
@@ -335,8 +334,8 @@ def spec_rot(u, v):
 
     # Rotatory components
     # TODO: Check the division, 4 (original code) or 8 (paper)?
-    cw = (pu + pv - 2 * quv) / 4.
-    ccw = (pu + pv + 2 * quv) / 4.
+    cw = (pu + pv - 2 * quv) / 4.0
+    ccw = (pu + pv + 2 * quv) / 4.0
     N = len(u)
     F = np.arange(0, N) / N
     return puv, quv, cw, ccw, F
@@ -377,11 +376,11 @@ def lagcorr(x, y, M=None):
     x_bar, y_bar = x.mean(), y.mean()
 
     for k in range(0, M, 1):
-        a = 0.
+        a = 0.0
         for i in range(N - k):
             a = a + (y[i] - y_bar) * (x[i + k] - x_bar)
 
-        Cxy[k] = 1. / (N - k) * a
+        Cxy[k] = 1.0 / (N - k) * a
 
     return Cxy / (np.std(y) * np.std(x))
 
@@ -412,7 +411,7 @@ def complex_demodulation(series, f, fc, axis=-1):
     # FIXME: Why 5th order? Try signal.buttord!?
     Wn = fc / series.Nyq
 
-    [b, a] = signal.butter(5, Wn, btype='low')
+    [b, a] = signal.butter(5, Wn, btype="low")
 
     # FIXME: These are a factor of a thousand different from Matlab, why?
     cc = signal.filtfilt(b, a, dfs)  # FIXME: * 1e3
@@ -421,8 +420,9 @@ def complex_demodulation(series, f, fc, axis=-1):
     # TODO: Fix the outputs.
     # phase = np.arctan2(np.imag(cc), np.real(cc))
 
-    filtered_series = amplitude * np.exp(-2 * np.pi * 1j *
-                                         (1 / T) * series.time_in_seconds)
+    filtered_series = amplitude * np.exp(
+        -2 * np.pi * 1j * (1 / T) * series.time_in_seconds
+    )
     new_series = filtered_series.real, series.time
     # Return cc, amplitude, phase, dfs, filtered_series
     return new_series
@@ -472,15 +472,15 @@ def binave(datain, r):
     datain, rows = np.asarray(datain), np.asarray(r, dtype=np.int)
 
     if datain.ndim != 1:
-        raise ValueError('Must be a 1D array.')
+        raise ValueError("Must be a 1D array.")
 
     if rows <= 0:
-        raise ValueError('Bin size R must be a positive integer.')
+        raise ValueError("Bin size R must be a positive integer.")
 
     # Compute bin averaged series.
     lines = datain.size // r
-    z = datain[0:(lines * rows)].reshape(rows, lines, order='F')
-    bindata = np.r_[np.mean(z, axis=0), np.mean(datain[(lines * r):])]
+    z = datain[0 : (lines * rows)].reshape(rows, lines, order="F")
+    bindata = np.r_[np.mean(z, axis=0), np.mean(datain[(lines * r) :])]
 
     return bindata
 
@@ -505,7 +505,7 @@ def binavg(x, y, db):
     inds = np.digitize(x, xbin)
 
     # But this is the center of the bins.
-    xbin = xbin - (db / 2.)
+    xbin = xbin - (db / 2.0)
 
     # FIXME there is an IndexError if I want to show this.
     # for n in range(x.size):
@@ -535,8 +535,9 @@ def bin_dates(self, freq, tz=None):
     """
     from pandas import date_range
 
-    new_index = date_range(start=self.index[0], end=self.index[-1],
-                           freq=freq, tz=tz)
+    new_index = date_range(
+        start=self.index[0], end=self.index[-1], freq=freq, tz=tz
+    )
     new_series = self.groupby(new_index.asof).mean()
     # Averages at the center.
     secs = new_index.freq.delta.total_seconds()
@@ -579,8 +580,9 @@ def despike(self, n=3, recursive=False):
     from pandas import Series
 
     result = self.values.copy()
-    outliers = (np.abs(self.values - np.nanmean(self.values)) >= n *
-                np.nanstd(self.values))
+    outliers = np.abs(self.values - np.nanmean(self.values)) >= n * np.nanstd(
+        self.values
+    )
 
     removed = np.count_nonzero(outliers)
     result[outliers] = np.NaN
@@ -596,7 +598,7 @@ def despike(self, n=3, recursive=False):
     return Series(result, index=self.index, name=self.name)
 
 
-def pol2cart(theta, radius, units='deg'):
+def pol2cart(theta, radius, units="deg"):
     """
     Convert from polar to Cartesian coordinates
 
@@ -606,7 +608,7 @@ def pol2cart(theta, radius, units='deg'):
     (1.0, 0.0)
 
     """
-    if units in ['deg', 'degs']:
+    if units in ["deg", "degs"]:
         theta = theta * np.pi / 180.0
     x = radius * np.cos(theta)
     y = radius * np.sin(theta)
@@ -646,12 +648,12 @@ def wrap_lon360(lon):
 
 
 def alphanum_key(s):
-    key = re.split(r'(\d+)', s)
+    key = re.split(r"(\d+)", s)
     key[1::2] = list(map(int, key[1::2]))
     return key
 
 
-def get_profile(x, y, f, xi, yi, mode='nearest', order=3):
+def get_profile(x, y, f, xi, yi, mode="nearest", order=3):
     """
     Interpolate regular data.
 
@@ -703,13 +705,17 @@ def get_profile(x, y, f, xi, yi, mode='nearest', order=3):
     from scipy.ndimage import map_coordinates
 
     x, y, f, xi, yi = list(map(np.asanyarray, (x, y, f, xi, yi)))
-    conditions = np.array([xi.min() < x.min(),
-                           xi.max() > x.max(),
-                           yi.min() < y.min(),
-                           yi.max() > y.max()])
+    conditions = np.array(
+        [
+            xi.min() < x.min(),
+            xi.max() > x.max(),
+            yi.min() < y.min(),
+            yi.max() > y.max(),
+        ]
+    )
 
     if conditions.any():
-        warnings.warn('Warning! Extrapolation!!')
+        warnings.warn("Warning! Extrapolation!!")
 
     dx = x[0, 1] - x[0, 0]
     dy = y[1, 0] - y[0, 0]

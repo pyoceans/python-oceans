@@ -1,12 +1,11 @@
 import matplotlib
 import matplotlib.pyplot as plt
-from matplotlib.artist import Artist
-from matplotlib.dates import date2num
-from matplotlib.lines import Line2D
-
 import numpy as np
 import numpy.ma as ma
 
+from matplotlib.artist import Artist
+from matplotlib.dates import date2num
+from matplotlib.lines import Line2D
 
 from oceans.ocfis import cart2pol
 
@@ -42,18 +41,23 @@ def stick_plot(time, u, v, **kw):
 
     """
     from pandas import DatetimeIndex
+    from pandas.plotting import register_matplotlib_converters
 
-    width = kw.pop('width', 0.002)
-    headwidth = kw.pop('headwidth', 0)
-    headlength = kw.pop('headlength', 0)
-    headaxislength = kw.pop('headaxislength', 0)
-    angles = kw.pop('angles', 'uv')
-    ax = kw.pop('ax', None)
+    register_matplotlib_converters(True)
 
-    if angles != 'uv':
-        raise AssertionError('Stickplot angles must be `uv` so that'
-                             'if *U*==*V* the angle of the arrow on'
-                             'the plot is 45 degrees CCW from the *x*-axis.')
+    width = kw.pop("width", 0.002)
+    headwidth = kw.pop("headwidth", 0)
+    headlength = kw.pop("headlength", 0)
+    headaxislength = kw.pop("headaxislength", 0)
+    angles = kw.pop("angles", "uv")
+    ax = kw.pop("ax", None)
+
+    if angles != "uv":
+        raise AssertionError(
+            "Stickplot angles must be `uv` so that"
+            "if *U*==*V* the angle of the arrow on"
+            "the plot is 45 degrees CCW from the *x*-axis."
+        )
 
     if isinstance(time, DatetimeIndex):
         time = time.to_pydatetime()
@@ -62,20 +66,29 @@ def stick_plot(time, u, v, **kw):
     if not ax:
         fig, ax = plt.subplots()
 
-    q = ax.quiver(date2num(time), [[0]*len(time)], u, v,
-                  angles='uv', width=width, headwidth=headwidth,
-                  headlength=headlength, headaxislength=headaxislength, **kw)
+    q = ax.quiver(
+        date2num(time),
+        [[0] * len(time)],
+        u,
+        v,
+        angles="uv",
+        width=width,
+        headwidth=headwidth,
+        headlength=headlength,
+        headaxislength=headaxislength,
+        **kw
+    )
 
     ax.axes.get_yaxis().set_visible(False)
     ax.xaxis_date()
     return q
 
 
-def landmask(M, color='0.8'):
+def landmask(M, color="0.8"):
     """
     Plot land mask.
-    http://www.trondkristiansen.com/wp-content/uploads/downloads/2011/07/mpl_util.py.
 
+    Based on trondkristiansen mpl_util.py.
     """
     # Make a constant colormap, default = grey
     constmap = np.matplotlib.colors.ListedColormap([color])
@@ -89,15 +102,14 @@ def landmask(M, color='0.8'):
 
     # Draw the mask by pcolor.
     M = ma.masked_where(M > 0, M)
-    plt.pcolor(X, Y, M, shading='flat', cmap=constmap)
+    plt.pcolor(X, Y, M, shading="flat", cmap=constmap)
 
 
 def level_colormap(levels, cmap=None):
     """
     Make a colormap based on an increasing sequence of levels.
-    http://www.trondkristiansen.com/wp-content/uploads/downloads/
-    2011/07/mpl_util.py.
 
+    Based on trondkristiansen.com mpl_util.py.
     """
     # Start with an existing colormap.
     if not cmap:
@@ -105,24 +117,22 @@ def level_colormap(levels, cmap=None):
 
     # Spread the colors maximally.
     nlev = len(levels)
-    S = np.arange(nlev, dtype='float') / (nlev - 1)
+    S = np.arange(nlev, dtype="float") / (nlev - 1)
     A = cmap(S)
 
     # Normalize the levels to interval [0, 1].
-    levels = np.array(levels, dtype='float')
+    levels = np.array(levels, dtype="float")
     L = (levels - levels[0]) / (levels[-1] - levels[0])
 
     # Make the color dictionary.
     R = [(L[i], A[i, 0], A[i, 0]) for i in range(nlev)]
     G = [(L[i], A[i, 1], A[i, 1]) for i in range(nlev)]
     B = [(L[i], A[i, 2], A[i, 2]) for i in range(nlev)]
-    cdict = {
-        'red': tuple(R),
-        'green': tuple(G),
-        'blue': tuple(B)
-    }
+    cdict = {"red": tuple(R), "green": tuple(G), "blue": tuple(B)}
 
-    return matplotlib.colors.LinearSegmentedColormap('%s_levels' % cmap.name, cdict, 256)
+    return matplotlib.colors.LinearSegmentedColormap(
+        "%s_levels" % cmap.name, cdict, 256
+    )
 
 
 def get_pointsxy(points):
@@ -148,16 +158,17 @@ def compass(u, v, **arrowprops):
     """
 
     # Create plot.
-    fig, ax = plt.subplots(subplot_kw={'polar': True})
+    fig, ax = plt.subplots(subplot_kw={"polar": True})
 
     angles, radii = cart2pol(u, v)
 
     # Arrows or sticks?
-    kw = {'arrowstyle': '->'}
+    kw = {"arrowstyle": "->"}
     kw.update(arrowprops)
-    [ax.annotate('', xy=(angle, radius), xytext=(0, 0),
-                 arrowprops=kw) for
-     angle, radius in zip(angles, radii)]
+    [
+        ax.annotate("", xy=(angle, radius), xytext=(0, 0), arrowprops=kw)
+        for angle, radius in zip(angles, radii)
+    ]
 
     ax.set_ylim(0, np.max(radii))
 
@@ -181,9 +192,9 @@ def plot_spectrum(data, fs):
     Y = Y[N]
 
     # Plotting the spectrum.
-    plt.semilogx(frq, np.abs(Y), 'r')
-    plt.xlabel('Freq (Hz)')
-    plt.ylabel('|Y(freq)|')
+    plt.semilogx(frq, np.abs(Y), "r")
+    plt.xlabel("Freq (Hz)")
+    plt.ylabel("|Y(freq)|")
     plt.show()
 
 
@@ -212,31 +223,39 @@ class EditPoints(object):
     Based on https://matplotlib.org/examples/event_handling/poly_editor.html
 
     """
+
     epsilon = 5  # Maximum pixel distance to count as a point hit.
     showpoint = True
 
     def __init__(self, fig, ax, points, verbose=False):
         matplotlib.interactive(True)
         if points is None:
-            raise RuntimeError('First add points to a figure or canvas.')
+            raise RuntimeError("First add points to a figure or canvas.")
         canvas = fig.canvas
         self.ax = ax
         self.dragged = None
         self.points = points
         self.verbose = verbose
         x, y = get_pointsxy(points)
-        self.line = Line2D(x, y, marker='o', markerfacecolor='r',
-                           linestyle='none', animated=True)
+        self.line = Line2D(
+            x,
+            y,
+            marker="o",
+            markerfacecolor="r",
+            linestyle="none",
+            animated=True,
+        )
         self.ax.add_line(self.line)
 
         self._ind = None  # The active point.
 
-        canvas.mpl_connect('draw_event', self.draw_callback)
-        canvas.mpl_connect('button_press_event', self.button_press_callback)
-        canvas.mpl_connect('key_press_event', self.key_press_callback)
-        canvas.mpl_connect('button_release_event',
-                           self.button_release_callback)
-        canvas.mpl_connect('motion_notify_event', self.motion_notify_callback)
+        canvas.mpl_connect("draw_event", self.draw_callback)
+        canvas.mpl_connect("button_press_event", self.button_press_callback)
+        canvas.mpl_connect("key_press_event", self.key_press_callback)
+        canvas.mpl_connect(
+            "button_release_event", self.button_release_callback
+        )
+        canvas.mpl_connect("motion_notify_event", self.motion_notify_callback)
         self.canvas = canvas
 
     def draw_callback(self, event):
@@ -245,7 +264,7 @@ class EditPoints(object):
         self.canvas.blit(self.ax.bbox)
 
         if self.verbose:
-            print('\nDrawing...')  # noqa
+            print("\nDrawing...")  # noqa
 
     def points_changed(self, points):
         """
@@ -259,7 +278,7 @@ class EditPoints(object):
         self.line.set_visible(vis)
 
         if self.verbose:
-            print('\nPoints modified.')  # noqa
+            print("\nPoints modified.")  # noqa
 
     def get_ind_under_point(self, event):
         """
@@ -273,12 +292,14 @@ class EditPoints(object):
         indseq = np.nonzero(np.equal(d, np.amin(d)))[0]
         ind = indseq[0]
         if self.verbose:
-            print('d[ind] {} epsilon {}'.format(d[ind], self.epsilon))  # noqa
+            print("d[ind] {} epsilon {}".format(d[ind], self.epsilon))  # noqa
         if d[ind] >= self.epsilon:
             ind = None
 
         if self.verbose:
-            print('\nClicked at ({}, {})'.format(event.xdata, event.ydata))  # noqa
+            print(
+                "\nClicked at ({}, {})".format(event.xdata, event.ydata)
+            )  # noqa
         return ind
 
     def button_press_callback(self, event):
@@ -299,7 +320,9 @@ class EditPoints(object):
         self.pick_pos = (x[self._ind], y[self._ind])
 
         if self.verbose:
-            print('\nGot point: ({}), ind: {}'.format(self.pick_pos, self._ind))  # noqa
+            print(
+                "\nGot point: ({}), ind: {}".format(self.pick_pos, self._ind)
+            )  # noqa
 
     def button_release_callback(self, event):
         """
@@ -312,7 +335,7 @@ class EditPoints(object):
             return
         self._ind = None
         if self.verbose:
-            print('\nButton released.')  # noqa
+            print("\nButton released.")  # noqa
 
     def key_press_callback(self, event):
         """
@@ -321,29 +344,33 @@ class EditPoints(object):
         """
         if not event.inaxes:
             return
-        if event.key == 't':
+        if event.key == "t":
             self.showpoint = not self.showpoint
             self.line.set_visible(self.showpoint)
             if not self.showpoint:
                 self._ind = None
 
             if self.verbose:
-                print('\nToggle {:d}'.format(self.showpoint))  # noqa
+                print("\nToggle {:d}".format(self.showpoint))  # noqa
             return get_pointsxy(self.points)
-        elif event.key == 'd':
+        elif event.key == "d":
             x, y = get_pointsxy(self.points)
             ind = self.get_ind_under_point(event)
             if ind is not None:
                 if self.verbose:
-                    print('\nDeleted ({}, {}) ind: {}'.format(x[ind], y[ind], ind))  # noqa
+                    print(
+                        "\nDeleted ({}, {}) ind: {}".format(
+                            x[ind], y[ind], ind
+                        )
+                    )  # noqa
                 x = np.delete(x, ind)
                 y = np.delete(y, ind)
                 self.points.set_xdata(x)
                 self.points.set_ydata(y)
                 self.line.set_data(self.points.get_data())
-        elif event.key == 'i':
+        elif event.key == "i":
             if self.verbose:
-                print('Insert point')  # noqa
+                print("Insert point")  # noqa
             xs = self.points.get_xdata()
             ex, ey = event.xdata, event.ydata
             for i in range(len(xs) - 1):
@@ -351,7 +378,7 @@ class EditPoints(object):
                 self.points.set_ydata(np.r_[self.points.get_ydata(), ey])
                 self.line.set_data(self.points.get_data())
                 if self.verbose:
-                    print('\nInserting: ({}, {})'.format(ex, ey))  # noqa
+                    print("\nInserting: ({}, {})".format(ex, ey))  # noqa
                 break
 
         self.canvas.draw()
@@ -375,8 +402,8 @@ class EditPoints(object):
         x[self._ind] = self.pick_pos[0] + dx
         y[self._ind] = self.pick_pos[1] + dy
         if self.verbose:
-            print('\nevent.xdata {}'.format(event.xdata))  # noqa
-            print('\nevent.ydata {}'.format(event.ydata))  # noqa
+            print("\nevent.xdata {}".format(event.xdata))  # noqa
+            print("\nevent.ydata {}".format(event.ydata))  # noqa
         self.points.set_xdata(x)
         self.points.set_ydata(y)
         self.line.set_data(list(zip(self.points.get_data())))
@@ -386,4 +413,4 @@ class EditPoints(object):
         self.canvas.blit(self.ax.bbox)
 
         if self.verbose:
-            print('\nMoving')  # noqa
+            print("\nMoving")  # noqa

@@ -38,17 +38,17 @@ def lanc(numwt, haf):
 
     # Filter weights.
     ii = np.arange(numwt)
-    wt = 0.5 * (1.0 + np.cos(np.pi * ii * 1. / numwt))
+    wt = 0.5 * (1.0 + np.cos(np.pi * ii * 1.0 / numwt))
     ii = np.arange(1, numwt)
     xx = np.pi * 2 * haf * ii
-    wt[1:numwt + 1] = wt[1:numwt + 1] * np.sin(xx) / xx
-    summ = wt[1:numwt + 1].sum()
+    wt[1 : numwt + 1] = wt[1 : numwt + 1] * np.sin(xx) / xx
+    summ = wt[1 : numwt + 1].sum()
     xx = wt.sum() + summ
     wt /= xx
-    return np.r_[wt[::-1], wt[1:numwt + 1]]
+    return np.r_[wt[::-1], wt[1 : numwt + 1]]
 
 
-def smoo1(datain, window_len=11, window='hanning'):
+def smoo1(datain, window_len=11, window="hanning"):
     """
     Smooth the data using a window with requested size.
 
@@ -115,31 +115,34 @@ def smoo1(datain, window_len=11, window='hanning'):
     datain = np.asarray(datain)
 
     if datain.ndim != 1:
-        raise ValueError('Smooth only accepts 1 dimension arrays.')
+        raise ValueError("Smooth only accepts 1 dimension arrays.")
 
     if datain.size < window_len:
-        raise ValueError('Input vector needs to be bigger than window size.')
+        raise ValueError("Input vector needs to be bigger than window size.")
 
     if window_len < 3:
         return datain
 
-    if window not in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
+    if window not in ["flat", "hanning", "hamming", "bartlett", "blackman"]:
         msg = "Window must be is one of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'"  # noqa
         raise ValueError(msg)
 
-    s = np.r_[2 * datain[0] - datain[window_len:1:-1], datain, 2 *
-              datain[-1] - datain[-1:-window_len:-1]]
+    s = np.r_[
+        2 * datain[0] - datain[window_len:1:-1],
+        datain,
+        2 * datain[-1] - datain[-1:-window_len:-1],
+    ]
 
-    if window == 'flat':  # Moving average.
-        w = np.ones(window_len, 'd')
+    if window == "flat":  # Moving average.
+        w = np.ones(window_len, "d")
     else:
-        w = eval('np.' + window + '(window_len)')
+        w = eval("np." + window + "(window_len)")
 
-    data_out = np.convolve(w / w.sum(), s, mode='same')
-    return data_out[window_len - 1:-window_len + 1]
+    data_out = np.convolve(w / w.sum(), s, mode="same")
+    return data_out[window_len - 1 : -window_len + 1]
 
 
-def smoo2(A, hei, wid, kind='hann', badflag=-9999, beta=14):
+def smoo2(A, hei, wid, kind="hann", badflag=-9999, beta=14):
     """
     Calculates the smoothed array 'As' from the original array 'A' using the
     specified window of type 'kind' and shape ('hei', 'wid').
@@ -172,30 +175,30 @@ def smoo2(A, hei, wid, kind='hann', badflag=-9999, beta=14):
 
     """
     # Checking window type and dimensions
-    kinds = ['hann', 'hamming', 'blackman', 'bartlett', 'kaiser']
-    if (kind not in kinds):
-        raise ValueError('Invalid window type requested: %s' % kind)
+    kinds = ["hann", "hamming", "blackman", "bartlett", "kaiser"]
+    if kind not in kinds:
+        raise ValueError("Invalid window type requested: %s" % kind)
 
     if (np.mod(hei, 2) == 0) or (np.mod(wid, 2) == 0):
-        raise ValueError('Window dimensions must be odd')
+        raise ValueError("Window dimensions must be odd")
 
     if (hei <= 1) or (wid <= 1):
-        raise ValueError('Window shape must be (3,3) or greater')
+        raise ValueError("Window shape must be (3,3) or greater")
 
     # Creating the 2D window.
-    if (kind == 'kaiser'):  # If the window kind is kaiser (beta is required).
-        wstr = 'np.outer(np.kaiser(hei, beta), np.kaiser(wid, beta))'
+    if kind == "kaiser":  # If the window kind is kaiser (beta is required).
+        wstr = "np.outer(np.kaiser(hei, beta), np.kaiser(wid, beta))"
     # If the window kind is hann, hamming, blackman or bartlett
     # (beta is not required).
     else:
-        if kind == 'hann':
+        if kind == "hann":
             # Converting the correct window name (Hann) to the numpy function
             # name (numpy.hanning).
-            kind = 'hanning'
+            kind = "hanning"
         # Computing outer product to make a 2D window out of the original 1d
         # windows.
         # TODO: Get rid of this evil eval.
-        wstr = 'np.outer(np.' + kind + '(hei), np.' + kind + '(wid))'
+        wstr = "np.outer(np." + kind + "(hei), np." + kind + "(wid))"
     wdw = eval(wstr)
 
     A = np.asanyarray(A)
@@ -258,7 +261,7 @@ def smoo2(A, hei, wid, kind='hann', badflag=-9999, beta=14):
     return As
 
 
-def weim(x, N, kind='hann', badflag=-9999, beta=14):
+def weim(x, N, kind="hann", badflag=-9999, beta=14):
     """
     Calculates the smoothed array 'xs' from the original array 'x' using the
     specified window of type 'kind' and size 'N'. 'N' must be an odd number.
@@ -296,26 +299,26 @@ def weim(x, N, kind='hann', badflag=-9999, beta=14):
 
     """
     # Checking window type and dimensions.
-    kinds = ['hann', 'hamming', 'blackman', 'bartlett', 'kaiser']
-    if (kind not in kinds):
-        raise ValueError('Invalid window type requested: %s' % kind)
+    kinds = ["hann", "hamming", "blackman", "bartlett", "kaiser"]
+    if kind not in kinds:
+        raise ValueError("Invalid window type requested: %s" % kind)
 
     if np.mod(N, 2) == 0:
-        raise ValueError('Window size must be odd')
+        raise ValueError("Window size must be odd")
 
     # Creating the window.
-    if (kind == 'kaiser'):  # If the window kind is kaiser (beta is required).
-        wstr = 'np.kaiser(N, beta)'
+    if kind == "kaiser":  # If the window kind is kaiser (beta is required).
+        wstr = "np.kaiser(N, beta)"
     # If the window kind is hann, hamming, blackman or bartlett (beta is not
     # required).
     else:
-        if kind == 'hann':
+        if kind == "hann":
             # Converting the correct window name (Hann) to the numpy function
             # name (numpy.hanning).
-            kind = 'hanning'
+            kind = "hanning"
             # Computing outer product to make a 2D window out of the original
             # 1D windows.
-        wstr = 'np.' + kind + '(N)'
+        wstr = "np." + kind + "(N)"
 
     # FIXME: Do not use `eval`.
     w = eval(wstr)
@@ -333,13 +336,13 @@ def weim(x, N, kind='hann', badflag=-9999, beta=14):
 
     for i in range(lx):
         if i <= ln:
-            xx = x[:ln + i + 1]
-            ww = w[ln - i:]
+            xx = x[: ln + i + 1]
+            ww = w[ln - i :]
         elif i >= lf:
-            xx = x[i - ln:]
-            ww = w[:lf - i - 1]
+            xx = x[i - ln :]
+            ww = w[: lf - i - 1]
         else:
-            xx = x[i - ln:i + ln + 1]
+            xx = x[i - ln : i + ln + 1]
             ww = w.copy()
 
         # Counting only NON-NaNs, both in the input array and in the window
@@ -423,20 +426,20 @@ def medfilt1(x, L=3):
         L += 1
 
     if N < 2:
-        raise ValueError('Input sequence must be >= 2.')
+        raise ValueError("Input sequence must be >= 2.")
         return None
 
     if L < 2:
-        raise ValueError('Input filter window length must be >=2.')
+        raise ValueError("Input filter window length must be >=2.")
         return None
 
     if L > N:
-        msg = 'Input filter window length must be shorter than series: L = {0:d}, len(x) = {1:d}'.format  # noqa
+        msg = "Input filter window length must be shorter than series: L = {0:d}, len(x) = {1:d}".format  # noqa
         raise ValueError(msg(L, N))
         return None
 
     if xin.ndim > 1:
-        msg = 'Input sequence has to be 1d: ndim = {}'.format
+        msg = "Input sequence has to be 1d: ndim = {}".format
         raise ValueError(msg(xin.ndim))
 
     xout = np.zeros_like(xin) + np.NaN
@@ -446,11 +449,11 @@ def medfilt1(x, L=3):
     # NOTE: Use np.ndenumerate in case I expand to +1D case
     for i, xi in enumerate(xin):
         if i < Lwing:  # Left boundary.
-            xout[i] = np.median(xin[0:i + Lwing + 1])   # (0 to i + Lwing)
+            xout[i] = np.median(xin[0 : i + Lwing + 1])  # (0 to i + Lwing)
         elif i >= N - Lwing:  # Right boundary.
-            xout[i] = np.median(xin[i - Lwing:N])  # (i-Lwing to N-1)
+            xout[i] = np.median(xin[i - Lwing : N])  # (i-Lwing to N-1)
         else:  # Middle (N-2*Lwing input vector and filter window overlap).
-            xout[i] = np.median(xin[i - Lwing:i + Lwing + 1])
+            xout[i] = np.median(xin[i - Lwing : i + Lwing + 1])
             # (i-Lwing to i+Lwing)
     return xout
 
@@ -479,7 +482,7 @@ def fft_lowpass(signal, low, high):
     else:
         result = np.fft.rfft(signal)
 
-    freq = np.fft.fftfreq(len(signal))[:len(signal) // 2 + 1]
+    freq = np.fft.fftfreq(len(signal))[: len(signal) // 2 + 1]
     factor = np.ones_like(freq)
     factor[freq > low] = 0.0
     sl = np.logical_and(high < freq, freq < low)
@@ -524,8 +527,21 @@ def md_trenberth(x):
 
     """
     x = np.asanyarray(x)
-    weight = np.array([0.02700, 0.05856, 0.09030, 0.11742, 0.13567, 0.14210,
-                       0.13567, 0.11742, 0.09030, 0.05856, 0.02700])
+    weight = np.array(
+        [
+            0.02700,
+            0.05856,
+            0.09030,
+            0.11742,
+            0.13567,
+            0.14210,
+            0.13567,
+            0.11742,
+            0.09030,
+            0.05856,
+            0.02700,
+        ]
+    )
 
     sz = len(x)
     y = np.zeros(sz - 10)
@@ -537,7 +553,7 @@ def md_trenberth(x):
     return y
 
 
-def pl33tn(x, dt=1.0, T=33.0, mode='valid'):
+def pl33tn(x, dt=1.0, T=33.0, mode="valid"):
     """
     Computes low-passed series from `x` using pl33 filter, with optional
     sample interval `dt` (hours) and filter half-amplitude period T (hours)
@@ -572,18 +588,73 @@ def pl33tn(x, dt=1.0, T=33.0, mode='valid'):
 
     pl33 = np.array(
         [
-            -0.00027, -0.00114, -0.00211, -0.00317, -0.00427, -0.00537,
-            -0.00641, -0.00735, -0.00811, -0.00864, -0.00887, -0.00872,
-            -0.00816, -0.00714, -0.00560, -0.00355, -0.00097, +0.00213,
-            +0.00574, +0.00980, +0.01425, +0.01902, +0.02400, +0.02911,
-            +0.03423, +0.03923, +0.04399, +0.04842, +0.05237, +0.05576,
-            +0.05850, +0.06051, +0.06174, +0.06215, +0.06174, +0.06051,
-            +0.05850, +0.05576, +0.05237, +0.04842, +0.04399, +0.03923,
-            +0.03423, +0.02911, +0.02400, +0.01902, +0.01425, +0.00980,
-            +0.00574, +0.00213, -0.00097, -0.00355, -0.00560, -0.00714,
-            -0.00816, -0.00872, -0.00887, -0.00864, -0.00811, -0.00735,
-            -0.00641, -0.00537, -0.00427, -0.00317, -0.00211, -0.00114,
-            -0.00027
+            -0.00027,
+            -0.00114,
+            -0.00211,
+            -0.00317,
+            -0.00427,
+            -0.00537,
+            -0.00641,
+            -0.00735,
+            -0.00811,
+            -0.00864,
+            -0.00887,
+            -0.00872,
+            -0.00816,
+            -0.00714,
+            -0.00560,
+            -0.00355,
+            -0.00097,
+            +0.00213,
+            +0.00574,
+            +0.00980,
+            +0.01425,
+            +0.01902,
+            +0.02400,
+            +0.02911,
+            +0.03423,
+            +0.03923,
+            +0.04399,
+            +0.04842,
+            +0.05237,
+            +0.05576,
+            +0.05850,
+            +0.06051,
+            +0.06174,
+            +0.06215,
+            +0.06174,
+            +0.06051,
+            +0.05850,
+            +0.05576,
+            +0.05237,
+            +0.04842,
+            +0.04399,
+            +0.03923,
+            +0.03423,
+            +0.02911,
+            +0.02400,
+            +0.01902,
+            +0.01425,
+            +0.00980,
+            +0.00574,
+            +0.00213,
+            -0.00097,
+            -0.00355,
+            -0.00560,
+            -0.00714,
+            -0.00816,
+            -0.00872,
+            -0.00887,
+            -0.00864,
+            -0.00811,
+            -0.00735,
+            -0.00641,
+            -0.00537,
+            -0.00427,
+            -0.00317,
+            -0.00211,
+            -0.00114,
+            -0.00027,
         ]
     )
 
@@ -591,7 +662,7 @@ def pl33tn(x, dt=1.0, T=33.0, mode='valid'):
 
     dt = float(dt) * (33.0 / T)
 
-    filter_time = np.arange(0.0, 33.0, dt, dtype='d')
+    filter_time = np.arange(0.0, 33.0, dt, dtype="d")
     # N = len(filter_time)
     filter_time = np.hstack((-filter_time[-1:0:-1], filter_time))
 

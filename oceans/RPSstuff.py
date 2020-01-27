@@ -4,7 +4,7 @@ import numpy as np
 import numpy.ma as ma
 
 
-earth_radius = 6371.e3
+earth_radius = 6371.0e3
 
 
 def h2hms(hours):
@@ -18,9 +18,9 @@ def h2hms(hours):
 
     """
     hour = np.floor(hours)
-    mins = np.remainder(hours, 1.) * 60.
+    mins = np.remainder(hours, 1.0) * 60.0
     mn = np.floor(mins)
-    secs = np.round(np.remainder(mins, 1.) * 60.)
+    secs = np.round(np.remainder(mins, 1.0) * 60.0)
     return hour, mn, secs
 
 
@@ -109,10 +109,15 @@ def julian(y, m=0, d=0, h=0, mi=0, s=0, noon=False):
     i = m > 2
     mo[i] = m[i] - 3
     yr[i] = y[i]
-    c = np.floor(yr / 100.)
+    c = np.floor(yr / 100.0)
     yr = yr - c * 100
-    j = (np.floor((146097 * c) / 4.) + np.floor((1461 * yr) / 4.) +
-         np.floor((153 * mo + 2) / 5.) + d + 1721119)
+    j = (
+        np.floor((146097 * c) / 4.0)
+        + np.floor((1461 * yr) / 4.0)
+        + np.floor((153 * mo + 2) / 5.0)
+        + d
+        + 1721119
+    )
 
     if noon:
         j = j + (h - 12) / 24
@@ -188,11 +193,11 @@ def gregorian(jd, noon=False):
     # line out...
 
     jd = np.atleast_1d(jd)
-    jd = jd + 2.e-9
+    jd = jd + 2.0e-9
 
     if noon:
         h = np.remainder(jd, 1) * 24 + 12
-        i = (h >= 24)
+        i = h >= 24
         jd[i] = jd[i] + 1
         h[i] = h[i] - 24
 
@@ -213,7 +218,7 @@ def gregorian(jd, noon=False):
     y = y * 100 + j
     mo = m - 9
     yr = y + 1
-    i = (m < 10)
+    i = m < 10
     mo[i] = m[i] + 3
     yr[i] = y[i]
 
@@ -489,7 +494,7 @@ def coast2bln(coast, bln_file):
         bln[ind[k], 1] = int(1)
 
     bln = bln[:-1]
-    np.savetxt(bln_file, bln, fmt='%g')
+    np.savetxt(bln_file, bln, fmt="%g")
 
 
 def fixcoast(coast):
@@ -504,7 +509,7 @@ def fixcoast(coast):
 
     """
 
-    ind = coast == -99999.
+    ind = coast == -99999.0
     coast[ind] = np.NaN
 
     ind = np.where(np.isnan(coast[:, 0]))[0]
