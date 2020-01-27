@@ -1,7 +1,6 @@
 from copy import copy
 
 import numpy as np
-
 import seawater as sw
 from seawater.constants import OMEGA, earth_radius
 
@@ -194,7 +193,7 @@ def cph(bvfr2):
 
     # Root squared preserving the sign.
     bvfr = np.sqrt(np.abs(bvfr2)) * np.sign(bvfr2)
-    return bvfr * 60. * 60. / (2. * np.pi)
+    return bvfr * 60.0 * 60.0 / (2.0 * np.pi)
 
 
 def shear(z, u, v=0):
@@ -238,7 +237,7 @@ def shear(z, u, v=0):
     m, n = z.shape
     iup = np.arange(0, m - 1)
     ilo = np.arange(1, m)
-    z_ave = (z[iup, :] + z[ilo, :]) / 2.
+    z_ave = (z[iup, :] + z[ilo, :]) / 2.0
     vel = np.sqrt(u ** 2 + v ** 2)
     diff_vel = np.diff(vel, axis=0)
     diff_z = np.diff(z, axis=0)
@@ -437,7 +436,7 @@ def visc(s, t, p):
     """
     s, t, p = np.broadcast_arrays(s, t, p)
 
-    visc = 1e-4 * (17.91 - 0.5381 * t + 0.00694 * t**2 + 0.02305 * s)
+    visc = 1e-4 * (17.91 - 0.5381 * t + 0.00694 * t ** 2 + 0.02305 * s)
     visc /= sw.dens(s, t, p)
 
     return visc
@@ -482,13 +481,15 @@ def tcond(s, t, p):
     s, t, p = list(map(np.asanyarray, (s, t, p)))
 
     if False:  # Castelli's option.
-        therm = 100. * (5.5286e-3 + 3.4025e-8 * p + 1.8364e-5 *
-                        t - 3.3058e-9 * t ** 3)  # [W/m/K]
+        therm = 100.0 * (
+            5.5286e-3 + 3.4025e-8 * p + 1.8364e-5 * t - 3.3058e-9 * t ** 3
+        )  # [W/m/K]
 
     # 1) Caldwell's option # 2 - simplified formula, accurate to 0.5% (eqn. 9)
     # in [cal/cm/C/sec]
-    therm = 0.001365 * (1. + 0.003 * t - 1.025e-5 * t ** 2 + 0.0653 *
-                        (1e-4 * p) - 0.00029 * s)
+    therm = 0.001365 * (
+        1.0 + 0.003 * t - 1.025e-5 * t ** 2 + 0.0653 * (1e-4 * p) - 0.00029 * s
+    )
     return therm * 418.4  # [cal/cm/C/sec] ->[ W/m/K]
 
 
@@ -545,7 +546,7 @@ def spice(s, t, p):
     pt = sw.ptmp(s, t, p)
 
     B = np.zeros((6, 5))
-    B[0, 0] = 0.
+    B[0, 0] = 0.0
     B[0, 1] = 7.7442e-001
     B[0, 2] = -5.85e-003
     B[0, 3] = -9.84e-004
@@ -603,11 +604,17 @@ def psu2ppt(psu):
     """
 
     a = [0.008, -0.1692, 25.3851, 14.0941, -7.0261, 2.7081]
-    return (a[1] + a[2] * psu ** 0.5 + a[3] * psu + a[4] * psu ** 1.5 + a[5] *
-            psu ** 2 + a[6] * psu ** 2.5)
+    return (
+        a[1]
+        + a[2] * psu ** 0.5
+        + a[3] * psu
+        + a[4] * psu ** 1.5
+        + a[5] * psu ** 2
+        + a[6] * psu ** 2.5
+    )
 
 
-def soundspeed(S, T, D, equation='mackenzie'):
+def soundspeed(S, T, D, equation="mackenzie"):
     """
     Various sound-speed equations.
     1)  soundspeed(s, t, d) returns the sound speed (m/sec) given vectors
@@ -634,7 +641,7 @@ def soundspeed(S, T, D, equation='mackenzie'):
             Added state equation ss
 
     """
-    if equation == 'mackenzie':
+    if equation == "mackenzie":
         c = 1.44896e3
         t = 4.591e0
         t2 = -5.304e-2
@@ -644,66 +651,93 @@ def soundspeed(S, T, D, equation='mackenzie'):
         d2 = 1.675e-7
         ts = -1.025e-2
         td3 = -7.139e-13
-        ssp = (c + t * T + t2 * T * T + t3 * T * T * T + s * (S-35.0) + d *
-               D + d2 * D * D + ts * T * (S-35.0) + td3 * T * D * D * D)
-    elif equation == 'del_grosso':
+        ssp = (
+            c
+            + t * T
+            + t2 * T * T
+            + t3 * T * T * T
+            + s * (S - 35.0)
+            + d * D
+            + d2 * D * D
+            + ts * T * (S - 35.0)
+            + td3 * T * D * D * D
+        )
+    elif equation == "del_grosso":
         # Del grosso uses pressure in kg/cm^2.  To get to this from dbars
         # we  must divide by "g".  From the UNESCO algorithms (referring to
         # ANON (1970) BULLETIN GEODESIQUE) we have this formula for g as a
         # function of latitude and pressure.  We set latitude to 45 degrees
         # for convenience!
-        XX = np.sin(45 * np.pi/180)
-        GR = 9.780318 * (1.0 + (5.2788E-3 + 2.36E-5 * XX) * XX) + 1.092E-6 * D
+        XX = np.sin(45 * np.pi / 180)
+        GR = 9.780318 * (1.0 + (5.2788e-3 + 2.36e-5 * XX) * XX) + 1.092e-6 * D
         P = D / GR
         # This is from VSOUND.f.
         C000 = 1402.392
-        DCT = (0.501109398873e1 - (0.550946843172e-1 - 0.221535969240e-3 * T) *
-               T) * T
+        DCT = (
+            0.501109398873e1 - (0.550946843172e-1 - 0.221535969240e-3 * T) * T
+        ) * T
         DCS = (0.132952290781e1 + 0.128955756844e-3 * S) * S
-        DCP = (0.156059257041e0 + (0.244998688441e-4 - 0.883392332513e-8 * P) *
-               P) * P
-        DCSTP = ((-0.127562783426e-1 * T * S + 0.635191613389e-2 * T * P +
-                  0.265484716608e-7 * T * T * P * P - 0.159349479045e-5 * T *
-                  P * P + 0.522116437235e-9 * T * P * P * P -
-                  0.438031096213e-6 * T * T * T * P) - 0.161674495909e-8 * S *
-                 S * P * P + 0.968403156410e-4 * T * T * S +
-                 0.485639620015e-5 * T * S * S * P - 0.340597039004e-3 * T *
-                 S * P)
+        DCP = (
+            0.156059257041e0 + (0.244998688441e-4 - 0.883392332513e-8 * P) * P
+        ) * P
+        DCSTP = (
+            (
+                -0.127562783426e-1 * T * S
+                + 0.635191613389e-2 * T * P
+                + 0.265484716608e-7 * T * T * P * P
+                - 0.159349479045e-5 * T * P * P
+                + 0.522116437235e-9 * T * P * P * P
+                - 0.438031096213e-6 * T * T * T * P
+            )
+            - 0.161674495909e-8 * S * S * P * P
+            + 0.968403156410e-4 * T * T * S
+            + 0.485639620015e-5 * T * S * S * P
+            - 0.340597039004e-3 * T * S * P
+        )
         ssp = C000 + DCT + DCS + DCP + DCSTP
-    elif equation == 'chen':
+    elif equation == "chen":
         P0 = D
         # This is copied directly from the UNESCO algorithms.
         # CHECKVALUE: SVEL=1731.995 M/S, S=40 (IPSS-78),T=40 DEG C,P=10000 DBAR
         # SCALE PRESSURE TO BARS
-        P = P0 / 10.
+        P = P0 / 10.0
         SR = np.sqrt(np.abs(S))
         # S**2 TERM.
-        D = 1.727E-3 - 7.9836E-6 * P
+        D = 1.727e-3 - 7.9836e-6 * P
         # S**3/2 TERM.
-        B1 = 7.3637E-5 + 1.7945E-7 * T
-        B0 = -1.922E-2 - 4.42E-5 * T
+        B1 = 7.3637e-5 + 1.7945e-7 * T
+        B0 = -1.922e-2 - 4.42e-5 * T
         B = B0 + B1 * P
         # S**1 TERM.
-        A3 = (-3.389E-13 * T + 6.649E-12) * T + 1.100E-10
-        A2 = ((7.988E-12 * T - 1.6002E-10) * T + 9.1041E-9) * T - 3.9064E-7
-        A1 = ((((-2.0122E-10 * T + 1.0507E-8) * T - 6.4885E-8) * T -
-               1.2580E-5) * T + 9.4742E-5)
-        A0 = ((((-3.21E-8 * T + 2.006E-6) * T + 7.164E-5) * T - 1.262E-2) *
-              T + 1.389)
+        A3 = (-3.389e-13 * T + 6.649e-12) * T + 1.100e-10
+        A2 = ((7.988e-12 * T - 1.6002e-10) * T + 9.1041e-9) * T - 3.9064e-7
+        A1 = (
+            ((-2.0122e-10 * T + 1.0507e-8) * T - 6.4885e-8) * T - 1.2580e-5
+        ) * T + 9.4742e-5
+        A0 = (
+            ((-3.21e-8 * T + 2.006e-6) * T + 7.164e-5) * T - 1.262e-2
+        ) * T + 1.389
         A = ((A3 * P + A2) * P + A1) * P + A0
         # S**0 TERM.
-        C3 = (-2.3643E-12 * T + 3.8504E-10) * T - 9.7729E-9
-        C2 = (((1.0405E-12 * T - 2.5335E-10) * T + 2.5974E-8) * T -
-              1.7107E-6) * T + 3.1260E-5
-        C1 = (((-6.1185E-10 * T + 1.3621E-7) * T - 8.1788E-6) * T +
-              6.8982E-4) * T + 0.153563
-        C0 = ((((3.1464E-9 * T - 1.47800E-6) * T + 3.3420E-4) * T -
-               5.80852E-2) * T + 5.03711) * T + 1402.388
+        C3 = (-2.3643e-12 * T + 3.8504e-10) * T - 9.7729e-9
+        C2 = (
+            ((1.0405e-12 * T - 2.5335e-10) * T + 2.5974e-8) * T - 1.7107e-6
+        ) * T + 3.1260e-5
+        C1 = (
+            ((-6.1185e-10 * T + 1.3621e-7) * T - 8.1788e-6) * T + 6.8982e-4
+        ) * T + 0.153563
+        C0 = (
+            (((3.1464e-9 * T - 1.47800e-6) * T + 3.3420e-4) * T - 5.80852e-2)
+            * T
+            + 5.03711
+        ) * T + 1402.388
         C = ((C3 * P + C2) * P + C1) * P + C0
         # SOUND SPEED RETURN.
         ssp = C + (A + B * SR + D * S) * S
     else:
-        raise TypeError('Unrecognizable equation specified: {}'.format(equation))
+        raise TypeError(
+            "Unrecognizable equation specified: {}".format(equation)
+        )
     return ssp
 
 
@@ -727,7 +761,7 @@ def photic_depth(z, par):
         Index of available `par` data from surface to critical depth
 
     """
-    photic_ix = np.where(par >= par[0] / 100.)[0]
+    photic_ix = np.where(par >= par[0] / 100.0)[0]
     photic_depth = z[photic_ix]
     return photic_depth, photic_ix
 
@@ -831,6 +865,7 @@ def zmld_so(s, t, p, threshold=0.05, smooth=None):
 
     """
     from pandas import rolling
+
     sigma_t = sigmatheta(s, t, p)
     depth = copy(p)
     if smooth is not None:
@@ -881,24 +916,28 @@ def zmld_boyer(s, t, p):
         return mldepthdens_mldindex, mldepthptemp_mldindex
     else:
         # starti = min(find((pres-10).^2==min((pres-10).^2)));
-        starti = np.min(np.where(((p - 10.)**2 == np.min((p - 10.)**2)))[0])
+        starti = np.min(
+            np.where(((p - 10.0) ** 2 == np.min((p - 10.0) ** 2)))[0]
+        )
         starti = 0
         pres = p[starti:m]
         sal = s[starti:m]
         temp = t[starti:m]
 
-        pden = sw.dens0(sal, temp)-1000
+        pden = sw.dens0(sal, temp) - 1000
 
-        mldepthdens_mldindex = m-1
+        mldepthdens_mldindex = m - 1
         for i, pp in enumerate(pden):
-            if np.abs(pden[starti] - pp) > .03:
+            if np.abs(pden[starti] - pp) > 0.03:
                 mldepthdens_mldindex = i
                 break
 
         # Interpolate to exactly match the potential density threshold.
-        presseg = [pres[mldepthdens_mldindex-1], pres[mldepthdens_mldindex]]
-        pdenseg = [pden[starti] - pden[mldepthdens_mldindex-1], pden[starti] -
-                   pden[mldepthdens_mldindex]]
+        presseg = [pres[mldepthdens_mldindex - 1], pres[mldepthdens_mldindex]]
+        pdenseg = [
+            pden[starti] - pden[mldepthdens_mldindex - 1],
+            pden[starti] - pden[mldepthdens_mldindex],
+        ]
         P = np.polyfit(presseg, pdenseg, 1)
         presinterp = np.linspace(presseg[0], presseg[1], 3)
         pdenthreshold = np.polyval(P, presinterp)
@@ -908,16 +947,18 @@ def zmld_boyer(s, t, p):
         mldepthdens_mldindex = presinterp[ix]
 
         # Search for the first level that exceeds the temperature threshold.
-        mldepthptmp_mldindex = m-1
+        mldepthptmp_mldindex = m - 1
         for i, tt in enumerate(temp):
             if np.abs(temp[starti] - tt) > 0.2:
                 mldepthptmp_mldindex = i
                 break
 
         # Interpolate to exactly match the temperature threshold.
-        presseg = [pres[mldepthptmp_mldindex-1], pres[mldepthptmp_mldindex]]
-        tempseg = [temp[starti] - temp[mldepthptmp_mldindex-1],
-                   temp[starti] - temp[mldepthptmp_mldindex]]
+        presseg = [pres[mldepthptmp_mldindex - 1], pres[mldepthptmp_mldindex]]
+        tempseg = [
+            temp[starti] - temp[mldepthptmp_mldindex - 1],
+            temp[starti] - temp[mldepthptmp_mldindex],
+        ]
         P = np.polyfit(presseg, tempseg, 1)
         presinterp = np.linspace(presseg[0], presseg[1], 3)
         tempthreshold = np.polyval(P, presinterp)
@@ -976,9 +1017,13 @@ def o2sol_SP_pt_benson_krause_84(SP, pt):
 
     # Equation 8 from Garcia and Gordon 1992 accoring to Pilson.
     lnCo = (
-        A[0] + A[1]*Ts + A[2]*Ts**2 + A[3]*Ts**3
-        + A[4]*Ts**4 + A[5]*Ts**5
-        + S * (B[0] + B[1]*Ts + B[2]*Ts**2 + B[3]*Ts**3)
-        + C0*S**2
+        A[0]
+        + A[1] * Ts
+        + A[2] * Ts ** 2
+        + A[3] * Ts ** 3
+        + A[4] * Ts ** 4
+        + A[5] * Ts ** 5
+        + S * (B[0] + B[1] * Ts + B[2] * Ts ** 2 + B[3] * Ts ** 3)
+        + C0 * S ** 2
     )
     return np.exp(lnCo)

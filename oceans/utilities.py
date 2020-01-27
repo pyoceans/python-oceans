@@ -14,6 +14,7 @@ class match_args_return(object):
     versus ndarray.
 
     """
+
     def __init__(self, func):
         self.func = func
         self.__doc__ = func.__doc__
@@ -21,7 +22,7 @@ class match_args_return(object):
 
     def __call__(self, *args, **kw):
         # Check if is array
-        self.array = np.any([hasattr(a, '__iter__') for a in args])
+        self.array = np.any([hasattr(a, "__iter__") for a in args])
 
         # Check if is masked
         self.masked = np.any([np.ma.isMaskedArray(a) for a in args])

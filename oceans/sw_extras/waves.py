@@ -1,5 +1,4 @@
 import gsw
-
 import numpy as np
 
 
@@ -83,6 +82,7 @@ class Waves(object):
     Ks  = 1.00485953746193
 
     """
+
     def __init__(self, h, T=None, L=None, thetao=None, Ho=None, lat=None):
         self.T = np.asarray(T, dtype=np.float)
         self.L = np.asarray(L, dtype=np.float)
@@ -92,9 +92,9 @@ class Waves(object):
 
         if isinstance(h, str):
             if L is not None:
-                if h == 'deep':
-                    self.h = self.L / 2.
-                elif h == 'shallow':
+                if h == "deep":
+                    self.h = self.L / 2.0
+                elif h == "shallow":
                     self.h = self.L * 0.05
         else:
             self.h = np.asarray(h, dtype=np.float)
@@ -115,18 +115,18 @@ class Waves(object):
             f = g * self.k * np.tanh(self.k * self.h) - self.omega ** 2
 
             while np.abs(f.max()) > 1e-10:
-                dfdk = (g * self.k * self.h *
-                        (1 / (np.cosh(self.k * self.h))) ** 2 +
-                        g * np.tanh(self.k * self.h))
+                dfdk = g * self.k * self.h * (
+                    1 / (np.cosh(self.k * self.h))
+                ) ** 2 + g * np.tanh(self.k * self.h)
                 self.k = self.k - f / dfdk
                 # FIXME:
                 f = g * self.k * np.tanh(self.k * self.h) - self.omega ** 2
 
             self.L = 2 * np.pi / self.k
             if isinstance(h, str):
-                if h == 'deep':
-                    self.h = self.L / 2.
-                elif h == 'shallow':
+                if h == "deep":
+                    self.h = self.L / 2.0
+                elif h == "shallow":
                     self.h = self.L * 0.05
         else:
             self.Lo = self.L / np.tanh(2 * np.pi * self.h / self.L)
@@ -147,10 +147,13 @@ class Waves(object):
             self.theta = np.NaN
             self.Kr = np.NaN
         if thetao is not None:
-            self.theta = np.rad2deg(np.asin(self.C / self.Co *
-                                            np.sin(np.deg2rad(self.thetao))))
-            self.Kr = np.sqrt(np.cos(np.deg2rad(self.thetao)) /
-                              np.cos(np.deg2rad(self.theta)))
+            self.theta = np.rad2deg(
+                np.asin(self.C / self.Co * np.sin(np.deg2rad(self.thetao)))
+            )
+            self.Kr = np.sqrt(
+                np.cos(np.deg2rad(self.thetao))
+                / np.cos(np.deg2rad(self.theta))
+            )
 
         if Ho is None:
             self.H = np.NaN
