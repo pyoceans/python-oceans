@@ -2,6 +2,7 @@ language: minimal
 
 sudo: false
 
+dist: xenial
 services:
   - xvfb
 
@@ -17,6 +18,8 @@ matrix:
       env: PY=3.7
     - name: "python-3.8"
       env: PY=3.8
+    - name: "doctests"
+      env: PY=3
     - name: "coding_standards"
       env: PY=3
     - name: "tarball"
@@ -44,9 +47,12 @@ install:
 
 script:
   - if [[ $TRAVIS_JOB_NAME == python-* ]]; then
-      pytest -vv oceans --doctest-modules ;
       cp -r tests/ /tmp ;
       pushd /tmp && pytest -n 2 -rxs --cov=oceans tests && popd ;
+    fi
+
+  - if [[ $TRAVIS_JOB_NAME == doctests ]]; then
+      pytest -vv oceans --doctest-modules ;
     fi
   
   - if [[ $TRAVIS_JOB_NAME == 'coding_standards' ]]; then
