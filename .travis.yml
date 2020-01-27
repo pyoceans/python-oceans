@@ -2,10 +2,8 @@ language: minimal
 
 sudo: false
 
-addons:
-  apt:
-    packages:
-      - xvfb
+services:
+  - xvfb
 
 env:
   global:
@@ -40,10 +38,6 @@ before_install:
     conda create --name TEST python=$PY --file requirements.txt --file requirements-dev.txt
     source activate TEST
     conda info --all
-  # GUI tests.
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 3
 
 install:
   - pip install -e . --no-deps --force-reinstall
