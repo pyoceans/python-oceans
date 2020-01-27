@@ -479,8 +479,8 @@ def binave(datain, r):
 
     # Compute bin averaged series.
     lines = datain.size // r
-    z = datain[0 : (lines * rows)].reshape(rows, lines, order="F")
-    bindata = np.r_[np.mean(z, axis=0), np.mean(datain[(lines * r) :])]
+    z = datain[0: (lines * rows)].reshape(rows, lines, order="F")
+    bindata = np.r_[np.mean(z, axis=0), np.mean(datain[(lines * r):])]
 
     return bindata
 

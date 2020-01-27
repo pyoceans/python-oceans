@@ -41,11 +41,11 @@ def lanc(numwt, haf):
     wt = 0.5 * (1.0 + np.cos(np.pi * ii * 1.0 / numwt))
     ii = np.arange(1, numwt)
     xx = np.pi * 2 * haf * ii
-    wt[1 : numwt + 1] = wt[1 : numwt + 1] * np.sin(xx) / xx
-    summ = wt[1 : numwt + 1].sum()
+    wt[1: numwt + 1] = wt[1: numwt + 1] * np.sin(xx) / xx
+    summ = wt[1: numwt + 1].sum()
     xx = wt.sum() + summ
     wt /= xx
-    return np.r_[wt[::-1], wt[1 : numwt + 1]]
+    return np.r_[wt[::-1], wt[1: numwt + 1]]
 
 
 def smoo1(datain, window_len=11, window="hanning"):
@@ -139,7 +139,7 @@ def smoo1(datain, window_len=11, window="hanning"):
         w = eval("np." + window + "(window_len)")
 
     data_out = np.convolve(w / w.sum(), s, mode="same")
-    return data_out[window_len - 1 : -window_len + 1]
+    return data_out[window_len - 1: -window_len + 1]
 
 
 def smoo2(A, hei, wid, kind="hann", badflag=-9999, beta=14):
@@ -337,12 +337,12 @@ def weim(x, N, kind="hann", badflag=-9999, beta=14):
     for i in range(lx):
         if i <= ln:
             xx = x[: ln + i + 1]
-            ww = w[ln - i :]
+            ww = w[ln - i:]
         elif i >= lf:
-            xx = x[i - ln :]
+            xx = x[i - ln:]
             ww = w[: lf - i - 1]
         else:
-            xx = x[i - ln : i + ln + 1]
+            xx = x[i - ln: i + ln + 1]
             ww = w.copy()
 
         # Counting only NON-NaNs, both in the input array and in the window
@@ -449,11 +449,11 @@ def medfilt1(x, L=3):
     # NOTE: Use np.ndenumerate in case I expand to +1D case
     for i, xi in enumerate(xin):
         if i < Lwing:  # Left boundary.
-            xout[i] = np.median(xin[0 : i + Lwing + 1])  # (0 to i + Lwing)
+            xout[i] = np.median(xin[0: i + Lwing + 1])  # (0 to i + Lwing)
         elif i >= N - Lwing:  # Right boundary.
-            xout[i] = np.median(xin[i - Lwing : N])  # (i-Lwing to N-1)
+            xout[i] = np.median(xin[i - Lwing: N])  # (i-Lwing to N-1)
         else:  # Middle (N-2*Lwing input vector and filter window overlap).
-            xout[i] = np.median(xin[i - Lwing : i + Lwing + 1])
+            xout[i] = np.median(xin[i - Lwing: i + Lwing + 1])
             # (i-Lwing to i+Lwing)
     return xout
 
