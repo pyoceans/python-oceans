@@ -1,0 +1,5 @@
+*.egg-info
+.cache
+build/
+dist/
+.ipynb_checkpoints/
