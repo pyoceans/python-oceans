@@ -15,48 +15,56 @@ env:
 matrix:
   fast_finish: true
   include:
-  - name: default
-    env: TEST_TARGET=default PY=3.7
-  - name: coding_standards
-    env: TEST_TARGET=coding_standards PY=3.7
-  - name: docs
-    env: TEST_TARGET=docs PY=3.7
+    - name: "python-3.7"
+      env: PY=3.7
+    - name: "python-3.8"
+      env: PY=3.8
+    - name: "coding_standards"
+      env: PY=3
+    - name: "tarball"
+      env: PY=3
+    - name: "docs"
+      env: PY=3
 
 before_install:
-  - wget http://bit.ly/miniconda -O miniconda.sh
-  - bash miniconda.sh -b -p $HOME/miniconda
-  - export PATH="$HOME/miniconda/bin:$PATH"
-  - conda config --set always_yes yes --set changeps1 no --set show_channel_urls true
-  - conda update conda
-  - conda config --remove channels defaults --force
-  - conda config --add channels conda-forge --force
-  - conda create --name TEST python=$PY --file requirements.txt --file requirements-dev.txt
-  - source activate TEST
+  # Install miniconda and create TEST env.
+  - |
+    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+    bash miniconda.sh -b -p $HOME/miniconda
+    export PATH="$HOME/miniconda/bin:$PATH"
+    conda config --set always_yes yes --set changeps1 no --set show_channel_urls true
+    conda update --quiet conda
+    conda config --add channels conda-forge --force
+    conda config --set channel_priority strict
+    conda config --set safety_checks disabled
+    conda create --name TEST python=$PY --file requirements.txt --file requirements-dev.txt
+    source activate TEST
+    conda info --all
   # GUI tests.
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
-  — sleep 3
+  - sleep 3
 
 install:
-  # Test source distribution.
-  - python setup.py sdist && version=$(python setup.py --version) && pushd dist  && pip install oceans-${version}.tar.gz && popd
+  - pip install -e . --no-deps --force-reinstall
 
 script:
-  - if [[ $TEST_TARGET == 'default' ]]; then
+  - if [[ $TRAVIS_JOB_NAME == python-* ]]; then
       pytest -vv oceans --doctest-modules ;
     fi
   
-  - if [[ $TEST_TARGET == 'coding_standards' ]]; then
-      flake8 --max-line-length=105 oceans --exclude=_version.py ;
+  - if [[ $TRAVIS_JOB_NAME == 'coding_standards' ]]; then
+      pytest --flake8 -m flake8 ;
     fi
 
-  - if [[ $TEST_TARGET == 'docs' ]]; then
-      set -e ;
-      conda install doctr ;
-      pushd docs ;
-      make clean html linkcheck ;
-      popd ;
-      python -m doctr deploy --sync --built-docs docs/build/html . ;
+  - |
+    if [[ $TRAVIS_JOB_NAME == 'docs' ]]; then
+      set -e
+      conda install doctr
+      pushd docs
+      make clean html linkcheck
+      popd
+      python -m doctr deploy --key-path github_deploy_key.enc --built-docs docs/build/html .
     fi
 
 doctr:
@@ -75,4 +83,4 @@ deploy:
     repo: pyoceans/python-oceans
     tags: true
     all_branches: master
-    condition: '$TEST_TARGET == "default"'
+    condition: '$TRAVIS_JOB_NAME == "docs"'
