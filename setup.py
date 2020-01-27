@@ -20,7 +20,7 @@ long_description = '{}\n{}'.format(read('README.rst'), read('CHANGES.txt'))
 
 # Dependencies.
 hard = ['gsw', 'matplotlib', 'numpy', 'seawater']
-soft = {'full': ['cartopy' 'iris', 'netcdf4', 'pandas', 'scipy']}
+soft = {'full': ['cartopy', 'iris', 'netcdf4', 'pandas', 'scipy']}
 
 setup(
     name='oceans',
