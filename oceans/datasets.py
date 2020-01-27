@@ -241,7 +241,6 @@ def etopo_subset(bbox, tfile=None, smoo=False):
     """
     Get a etopo subset.
     Should work on any netCDF with x, y, data
-    http://www.trondkristiansen.com/wp-content/uploads/downloads/2011/07/contourICEMaps.py
 
     Examples
     --------
@@ -252,6 +251,7 @@ def etopo_subset(bbox, tfile=None, smoo=False):
     >>> fig, ax = plt.subplots()
     >>> cs = ax.pcolormesh(lon, lat, bathy)
 
+    Based on trondkristiansen contourICEMaps.py
     """
     if tfile is None:
         tfile = "http://gamone.whoi.edu/thredds/dodsC/usgs/data0/bathy/ETOPO2v2c_f4.nc"

@@ -86,8 +86,8 @@ def stick_plot(time, u, v, **kw):
 def landmask(M, color="0.8"):
     """
     Plot land mask.
-    http://www.trondkristiansen.com/wp-content/uploads/downloads/2011/07/mpl_util.py.
 
+    Based on trondkristiansen mpl_util.py.
     """
     # Make a constant colormap, default = grey
     constmap = np.matplotlib.colors.ListedColormap([color])
@@ -107,9 +107,8 @@ def landmask(M, color="0.8"):
 def level_colormap(levels, cmap=None):
     """
     Make a colormap based on an increasing sequence of levels.
-    http://www.trondkristiansen.com/wp-content/uploads/downloads/
-    2011/07/mpl_util.py.
 
+    Based on trondkristiansen.com mpl_util.py.
     """
     # Start with an existing colormap.
     if not cmap:
