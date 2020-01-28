@@ -16,9 +16,6 @@ email = "ocefpaf@gmail.com"
 maintainer = "Filipe Fernandes"
 authors = [u"André Palóczy", "Arnaldo Russo", "Filipe Fernandes"]
 
-LICENSE = read("LICENSE.txt")
-long_description = "{}\n{}".format(read("README.rst"), read("CHANGES.txt"))
-
 # Dependencies.
 hard = ["gsw", "matplotlib", "numpy", "seawater"]
 soft = {"full": ["cartopy", "iris", "netcdf4", "pandas", "scipy"]}
@@ -29,8 +26,9 @@ setup(
     cmdclass=versioneer.get_cmdclass(),
     packages=find_packages(),
     package_data={"oceans": ["colormaps/cmap_data/*.dat"]},
-    license=LICENSE,
-    long_description=long_description,
+    license="BSD-3-Clause",
+    long_description=f'{read("README.md")}',
+    long_description_content_type="text/markdown",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",
@@ -45,6 +43,7 @@ setup(
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
     ],
     description="Misc functions for oceanographic data analysis",
     author=authors,
@@ -56,5 +55,6 @@ setup(
     keywords=["oceanography", "data analysis"],
     extras_require=soft,
     install_requires=hard,
+    python_requires='>=3.6',
     tests_require=["pytest"],
 )
