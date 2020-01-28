@@ -72,7 +72,7 @@ script:
       pushd docs
       make clean html linkcheck
       popd
-      python -m doctr deploy --key-path github_deploy_key.enc --built-docs docs/build/html .
+      python -m doctr deploy . --key-path github_deploy_key.enc --built-docs docs/build/html/
     fi
 
 doctr:
@@ -91,4 +91,4 @@ deploy:
     repo: pyoceans/python-oceans
     tags: true
     all_branches: master
-    condition: '$TRAVIS_JOB_NAME == "docs"'
+    condition: '$TRAVIS_JOB_NAME == "tarball"'
