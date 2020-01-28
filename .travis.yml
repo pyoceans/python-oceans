@@ -91,4 +91,4 @@ deploy:
     repo: pyoceans/python-oceans
     tags: true
     all_branches: master
-    condition: '$TRAVIS_JOB_NAME == "docs"'
+    condition: '$TRAVIS_JOB_NAME == "tarball"'
