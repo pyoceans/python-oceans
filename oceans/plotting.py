@@ -43,7 +43,7 @@ def stick_plot(time, u, v, **kw):
     from pandas import DatetimeIndex
     from pandas.plotting import register_matplotlib_converters
 
-    register_matplotlib_converters(True)
+    register_matplotlib_converters()
 
     width = kw.pop("width", 0.002)
     headwidth = kw.pop("headwidth", 0)
