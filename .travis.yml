@@ -60,7 +60,7 @@ script:
   - if [[ $TRAVIS_JOB_NAME == doctests ]]; then
       pytest -vv oceans --doctest-modules ;
     fi
-  
+
   - if [[ $TRAVIS_JOB_NAME == 'coding_standards' ]]; then
       pytest --flake8 -m flake8 ;
     fi

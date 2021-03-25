@@ -2,7 +2,6 @@ from copy import copy
 
 import numpy as np
 import seawater as sw
-
 from seawater.constants import OMEGA, earth_radius
 
 
@@ -674,13 +673,9 @@ def soundspeed(S, T, D, equation="mackenzie"):
         P = D / GR
         # This is from VSOUND.f.
         C000 = 1402.392
-        DCT = (
-            0.501109398873e1 - (0.550946843172e-1 - 0.221535969240e-3 * T) * T
-        ) * T
+        DCT = (0.501109398873e1 - (0.550946843172e-1 - 0.221535969240e-3 * T) * T) * T
         DCS = (0.132952290781e1 + 0.128955756844e-3 * S) * S
-        DCP = (
-            0.156059257041e0 + (0.244998688441e-4 - 0.883392332513e-8 * P) * P
-        ) * P
+        DCP = (0.156059257041e0 + (0.244998688441e-4 - 0.883392332513e-8 * P) * P) * P
         DCSTP = (
             (
                 -0.127562783426e-1 * T * S
@@ -715,9 +710,7 @@ def soundspeed(S, T, D, equation="mackenzie"):
         A1 = (
             ((-2.0122e-10 * T + 1.0507e-8) * T - 6.4885e-8) * T - 1.2580e-5
         ) * T + 9.4742e-5
-        A0 = (
-            ((-3.21e-8 * T + 2.006e-6) * T + 7.164e-5) * T - 1.262e-2
-        ) * T + 1.389
+        A0 = (((-3.21e-8 * T + 2.006e-6) * T + 7.164e-5) * T - 1.262e-2) * T + 1.389
         A = ((A3 * P + A2) * P + A1) * P + A0
         # S**0 TERM.
         C3 = (-2.3643e-12 * T + 3.8504e-10) * T - 9.7729e-9
@@ -728,17 +721,14 @@ def soundspeed(S, T, D, equation="mackenzie"):
             ((-6.1185e-10 * T + 1.3621e-7) * T - 8.1788e-6) * T + 6.8982e-4
         ) * T + 0.153563
         C0 = (
-            (((3.1464e-9 * T - 1.47800e-6) * T + 3.3420e-4) * T - 5.80852e-2)
-            * T
+            (((3.1464e-9 * T - 1.47800e-6) * T + 3.3420e-4) * T - 5.80852e-2) * T
             + 5.03711
         ) * T + 1402.388
         C = ((C3 * P + C2) * P + C1) * P + C0
         # SOUND SPEED RETURN.
         ssp = C + (A + B * SR + D * S) * S
     else:
-        raise TypeError(
-            "Unrecognizable equation specified: {}".format(equation)
-        )
+        raise TypeError(f"Unrecognizable equation specified: {equation}")
     return ssp
 
 
@@ -917,9 +907,7 @@ def zmld_boyer(s, t, p):
         return mldepthdens_mldindex, mldepthptemp_mldindex
     else:
         # starti = min(find((pres-10).^2==min((pres-10).^2)));
-        starti = np.min(
-            np.where(((p - 10.0) ** 2 == np.min((p - 10.0) ** 2)))[0]
-        )
+        starti = np.min(np.where((p - 10.0) ** 2 == np.min((p - 10.0) ** 2))[0])
         starti = 0
         pres = p[starti:m]
         sal = s[starti:m]

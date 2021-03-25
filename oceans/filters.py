@@ -434,7 +434,7 @@ def medfilt1(x, L=3):
         return None
 
     if L > N:
-        msg = "Input filter window length must be shorter than series: L = {0:d}, len(x) = {1:d}".format  # noqa
+        msg = "Input filter window length must be shorter than series: L = {:d}, len(x) = {:d}".format  # noqa
         raise ValueError(msg(L, N))
         return None
 
@@ -540,7 +540,7 @@ def md_trenberth(x):
             0.09030,
             0.05856,
             0.02700,
-        ]
+        ],
     )
 
     sz = len(x)
@@ -655,7 +655,7 @@ def pl33tn(x, dt=1.0, T=33.0, mode="valid"):
             -0.00211,
             -0.00114,
             -0.00027,
-        ]
+        ],
     )
 
     _dt = np.linspace(-33, 33, 67)

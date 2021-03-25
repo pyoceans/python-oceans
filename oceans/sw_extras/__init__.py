@@ -23,7 +23,6 @@ from oceans.sw_extras.sw_extras import (
 )
 from oceans.sw_extras.waves import Waves
 
-
 __all__ = [
     N,
     cor_beta,
