@@ -2,7 +2,7 @@ import gsw
 import numpy as np
 
 
-class Waves(object):
+class Waves:
     r"""
     Solves the wave dispersion relationship via Newton-Raphson.
 
@@ -148,11 +148,10 @@ class Waves(object):
             self.Kr = np.NaN
         if thetao is not None:
             self.theta = np.rad2deg(
-                np.asin(self.C / self.Co * np.sin(np.deg2rad(self.thetao)))
+                np.asin(self.C / self.Co * np.sin(np.deg2rad(self.thetao))),
             )
             self.Kr = np.sqrt(
-                np.cos(np.deg2rad(self.thetao))
-                / np.cos(np.deg2rad(self.theta))
+                np.cos(np.deg2rad(self.thetao)) / np.cos(np.deg2rad(self.theta)),
             )
 
         if Ho is None:

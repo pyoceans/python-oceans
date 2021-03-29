@@ -71,9 +71,7 @@ def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None, zc=None):
         t = np.reshape(t, (n, 1))
         tp = np.dot(C, np.linalg.solve(A, t))
         if 0:  # NOTE: `scaloa2.m`
-            mD = np.sum(np.linalg.solve(A, t)) / np.sum(
-                np.sum(np.linalg.inv(A))
-            )
+            mD = np.sum(np.linalg.solve(A, t)) / np.sum(np.sum(np.linalg.inv(A)))
             t = t - mD
             tp = C * (np.linalg.solve(A, t))
             tp = tp + mD * np.ones(tp.shape)

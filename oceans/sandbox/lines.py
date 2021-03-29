@@ -2,7 +2,6 @@ import os
 
 import numpy as np
 
-
 _default_path = os.path.join(os.path.dirname(__file__), "data")
 
 
@@ -123,7 +122,7 @@ def LineCurvature2D(Vertices, Lines=None):
             np.arange(2, Vertices.shape[0] + 1),
         ]
     else:
-        raise ValueError("Cannot recognized {!r}.".format(Lines))
+        raise ValueError(f"Cannot recognized {Lines!r}.")
 
     # Get left and right neighbor of each points.
     Na = np.zeros(Vertices.shape[0], dtype=np.int)
@@ -176,39 +175,27 @@ def LineCurvature2D(Vertices, Lines=None):
     a = np.zeros_like(x)
     b = np.zeros_like(a)
     a[:, 0] = (
-        invM[:, 0, 0] * x[:, 0]
-        + invM[:, 1, 0] * x[:, 1]
-        + invM[:, 2, 0] * x[:, 2]
+        invM[:, 0, 0] * x[:, 0] + invM[:, 1, 0] * x[:, 1] + invM[:, 2, 0] * x[:, 2]
     )
 
     a[:, 1] = (
-        invM[:, 0, 1] * x[:, 0]
-        + invM[:, 1, 1] * x[:, 1]
-        + invM[:, 2, 1] * x[:, 2]
+        invM[:, 0, 1] * x[:, 0] + invM[:, 1, 1] * x[:, 1] + invM[:, 2, 1] * x[:, 2]
     )
 
     a[:, 2] = (
-        invM[:, 0, 2] * x[:, 0]
-        + invM[:, 1, 2] * x[:, 1]
-        + invM[:, 2, 2] * x[:, 2]
+        invM[:, 0, 2] * x[:, 0] + invM[:, 1, 2] * x[:, 1] + invM[:, 2, 2] * x[:, 2]
     )
 
     b[:, 0] = (
-        invM[:, 0, 0] * y[:, 0]
-        + invM[:, 1, 0] * y[:, 1]
-        + invM[:, 2, 0] * y[:, 2]
+        invM[:, 0, 0] * y[:, 0] + invM[:, 1, 0] * y[:, 1] + invM[:, 2, 0] * y[:, 2]
     )
 
     b[:, 1] = (
-        invM[:, 0, 1] * y[:, 0]
-        + invM[:, 1, 1] * y[:, 1]
-        + invM[:, 2, 1] * y[:, 2]
+        invM[:, 0, 1] * y[:, 0] + invM[:, 1, 1] * y[:, 1] + invM[:, 2, 1] * y[:, 2]
     )
 
     b[:, 2] = (
-        invM[:, 0, 2] * y[:, 0]
-        + invM[:, 1, 2] * y[:, 1]
-        + invM[:, 2, 2] * y[:, 2]
+        invM[:, 0, 2] * y[:, 0] + invM[:, 1, 2] * y[:, 1] + invM[:, 2, 2] * y[:, 2]
     )
 
     # Calculate the curvature from the fitted polygon.

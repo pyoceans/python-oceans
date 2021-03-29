@@ -4,17 +4,16 @@ from setuptools import find_packages, setup
 
 import versioneer
 
-
 rootpath = os.path.abspath(os.path.dirname(__file__))
 
 
 def read(*parts):
-    return open(os.path.join(rootpath, *parts), "r").read()
+    return open(os.path.join(rootpath, *parts)).read()
 
 
 email = "ocefpaf@gmail.com"
 maintainer = "Filipe Fernandes"
-authors = [u"André Palóczy", "Arnaldo Russo", "Filipe Fernandes"]
+authors = ["André Palóczy", "Arnaldo Russo", "Filipe Fernandes"]
 
 # Dependencies.
 hard = ["gsw", "matplotlib", "numpy", "seawater"]
@@ -55,6 +54,6 @@ setup(
     keywords=["oceanography", "data analysis"],
     extras_require=soft,
     install_requires=hard,
-    python_requires='>=3.6',
+    python_requires=">=3.6",
     tests_require=["pytest"],
 )

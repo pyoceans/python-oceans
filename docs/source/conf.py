@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Configuration file for the Sphinx documentation builder.
 #
@@ -24,7 +23,6 @@ copyright = "2018, Filipe Fernandes"
 author = "Filipe Fernandes"
 
 from oceans._version import get_versions
-
 
 version = release = get_versions()["version"]
 del get_versions
@@ -116,7 +114,7 @@ html_sidebars = {
         "relations.html",  # needs 'show_related': True theme option to display
         "searchbox.html",
         "donate.html",
-    ]
+    ],
 }
 
 

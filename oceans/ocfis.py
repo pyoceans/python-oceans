@@ -190,7 +190,7 @@ def mld(SA, CT, p, criterion="pdvar"):
         sig_diff = Sig0 + 0.125
         idx_mld = sigma <= sig_diff
     else:
-        raise NameError("Unknown criteria {}".format(criterion))
+        raise NameError(f"Unknown criteria {criterion}")
 
     MLD = ma.masked_all_like(p)
     MLD[idx_mld] = p[idx_mld]
@@ -421,7 +421,7 @@ def complex_demodulation(series, f, fc, axis=-1):
     # phase = np.arctan2(np.imag(cc), np.real(cc))
 
     filtered_series = amplitude * np.exp(
-        -2 * np.pi * 1j * (1 / T) * series.time_in_seconds
+        -2 * np.pi * 1j * (1 / T) * series.time_in_seconds,
     )
     new_series = filtered_series.real, series.time
     # Return cc, amplitude, phase, dfs, filtered_series
@@ -535,9 +535,7 @@ def bin_dates(self, freq, tz=None):
     """
     from pandas import date_range
 
-    new_index = date_range(
-        start=self.index[0], end=self.index[-1], freq=freq, tz=tz
-    )
+    new_index = date_range(start=self.index[0], end=self.index[-1], freq=freq, tz=tz)
     new_series = self.groupby(new_index.asof).mean()
     # Averages at the center.
     secs = new_index.freq.delta.total_seconds()
@@ -581,7 +579,7 @@ def despike(self, n=3, recursive=False):
 
     result = self.values.copy()
     outliers = np.abs(self.values - np.nanmean(self.values)) >= n * np.nanstd(
-        self.values
+        self.values,
     )
 
     removed = np.count_nonzero(outliers)
@@ -711,7 +709,7 @@ def get_profile(x, y, f, xi, yi, mode="nearest", order=3):
             xi.max() > x.max(),
             yi.min() < y.min(),
             yi.max() > y.max(),
-        ]
+        ],
     )
 
     if conditions.any():
