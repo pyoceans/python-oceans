@@ -35,5 +35,4 @@ jobs:
       shell: bash -l {0}
       run: |
         source activate TEST
-        pytest -rxs --cov=oceans --vcr-record=none tests
-        
+        pytest -rxs --cov=oceans --vcr-record=none tests      
