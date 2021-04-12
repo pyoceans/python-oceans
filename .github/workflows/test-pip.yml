@@ -1,0 +1,38 @@
+name: Tests pip
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+jobs:
+  setup-pypy:
+    name: Setup PyPy ${{ matrix.pypy }} ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        pypy-version:
+        - 'pypy-2.7'
+        - 'pypy-3.6'
+        - 'pypy-3.7'
+        - 'pypy-2.7-v7.3.2'
+        - 'pypy-3.6-v7.3.2'
+        - 'pypy-3.7-v7.3.2'
+        - 'pypy-3.6-v7.3.x'
+        - 'pypy-3.7-v7.x'
+        - 'pypy-2.7-v7.3.4rc1'
+        - 'pypy-3.7-nightly'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+  
+      - name: setup-python ${{ matrix.pypy }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.pypy }}
+  
+      - name: PyPy and Python version
+        run: python --version
