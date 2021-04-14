@@ -1,11 +1,10 @@
-
-repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v3.4.0
   hooks:
     - id: check-ast
     - id: end-of-file-fixer
       exclude: github_deploy_key.enc
+      exclude: github_deploy_key_wesleybowman_utide.enc
     - id: check-docstring-first
     - id: check-added-large-files
     - id: requirements-txt-fixer
@@ -27,6 +26,18 @@ repos:
     - id: isort
       additional_dependencies: [toml]
       args: ["--profile", "black", "--filter-files"]
+  rev: 3.8.4
+  hooks:
+    - id: flake8
+      exclude: docs/source/conf.py
+      args: [--max-line-length=105]
+
+- repo: https://github.com/pre-commit/mirrors-isort
+  rev: v5.7.0
+  hooks:
+  - id: isort
+    additional_dependencies: [toml]
+    args: [--project=utide, --multi-line=3, --lines-after-imports=2, --lines-between-types=1, --trailing-comma, --force-grid-wrap=0, --use-parentheses, --line-width=88]
 
 - repo: https://github.com/psf/black
   rev: 20.8b1
@@ -44,4 +55,5 @@ repos:
 - repo: https://github.com/asottile/add-trailing-comma
   rev: v2.1.0
   hooks:
+    - id: add-trailing-comma
     - id: add-trailing-comma
