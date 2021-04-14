@@ -35,11 +35,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-<<<<<<< Updated upstream
   
-=======
-
->>>>>>> Stashed changes
       - name: setup-python ${{ matrix.pypy }}
         uses: actions/setup-python@v2
         with:
@@ -50,3 +46,4 @@ jobs:
 
       - name: Run simple code
         run: python -c 'import math; print(math.factorial(5))'
+        
