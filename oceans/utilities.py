@@ -7,7 +7,7 @@ def basename(fname):
     return os.path.splitext(os.path.basename(fname))
 
 
-class match_args_return(object):
+class match_args_return:
     """
     Function decorator to homogenize input arguments and to make the output
     match the original input with respect to scalar versus array, and masked

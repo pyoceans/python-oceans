@@ -2,7 +2,6 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.ma as ma
-
 from matplotlib.artist import Artist
 from matplotlib.dates import date2num
 from matplotlib.lines import Line2D
@@ -56,7 +55,7 @@ def stick_plot(time, u, v, **kw):
         raise AssertionError(
             "Stickplot angles must be `uv` so that"
             "if *U*==*V* the angle of the arrow on"
-            "the plot is 45 degrees CCW from the *x*-axis."
+            "the plot is 45 degrees CCW from the *x*-axis.",
         )
 
     if isinstance(time, DatetimeIndex):
@@ -76,7 +75,7 @@ def stick_plot(time, u, v, **kw):
         headwidth=headwidth,
         headlength=headlength,
         headaxislength=headaxislength,
-        **kw
+        **kw,
     )
 
     ax.axes.get_yaxis().set_visible(False)
@@ -131,7 +130,9 @@ def level_colormap(levels, cmap=None):
     cdict = {"red": tuple(R), "green": tuple(G), "blue": tuple(B)}
 
     return matplotlib.colors.LinearSegmentedColormap(
-        "%s_levels" % cmap.name, cdict, 256
+        "%s_levels" % cmap.name,
+        cdict,
+        256,
     )
 
 
@@ -198,7 +199,7 @@ def plot_spectrum(data, fs):
     plt.show()
 
 
-class EditPoints(object):
+class EditPoints:
     """
     Edit points on a graph with the mouse.  Handles only one set of points.
 
@@ -252,9 +253,7 @@ class EditPoints(object):
         canvas.mpl_connect("draw_event", self.draw_callback)
         canvas.mpl_connect("button_press_event", self.button_press_callback)
         canvas.mpl_connect("key_press_event", self.key_press_callback)
-        canvas.mpl_connect(
-            "button_release_event", self.button_release_callback
-        )
+        canvas.mpl_connect("button_release_event", self.button_release_callback)
         canvas.mpl_connect("motion_notify_event", self.motion_notify_callback)
         self.canvas = canvas
 
@@ -297,9 +296,7 @@ class EditPoints(object):
             ind = None
 
         if self.verbose:
-            print(
-                "\nClicked at ({}, {})".format(event.xdata, event.ydata)
-            )  # noqa
+            print(f"\nClicked at ({event.xdata}, {event.ydata})")  # noqa
         return ind
 
     def button_press_callback(self, event):
@@ -320,9 +317,7 @@ class EditPoints(object):
         self.pick_pos = (x[self._ind], y[self._ind])
 
         if self.verbose:
-            print(
-                "\nGot point: ({}), ind: {}".format(self.pick_pos, self._ind)
-            )  # noqa
+            print(f"\nGot point: ({self.pick_pos}), ind: {self._ind}")  # noqa
 
     def button_release_callback(self, event):
         """
@@ -351,7 +346,7 @@ class EditPoints(object):
                 self._ind = None
 
             if self.verbose:
-                print("\nToggle {:d}".format(self.showpoint))  # noqa
+                print(f"\nToggle {self.showpoint:d}")  # noqa
             return get_pointsxy(self.points)
         elif event.key == "d":
             x, y = get_pointsxy(self.points)
@@ -359,9 +354,7 @@ class EditPoints(object):
             if ind is not None:
                 if self.verbose:
                     print(
-                        "\nDeleted ({}, {}) ind: {}".format(
-                            x[ind], y[ind], ind
-                        )
+                        "\nDeleted ({}, {}) ind: {}".format(x[ind], y[ind], ind),
                     )  # noqa
                 x = np.delete(x, ind)
                 y = np.delete(y, ind)
@@ -378,7 +371,7 @@ class EditPoints(object):
                 self.points.set_ydata(np.r_[self.points.get_ydata(), ey])
                 self.line.set_data(self.points.get_data())
                 if self.verbose:
-                    print("\nInserting: ({}, {})".format(ex, ey))  # noqa
+                    print(f"\nInserting: ({ex}, {ey})")  # noqa
                 break
 
         self.canvas.draw()
@@ -402,8 +395,8 @@ class EditPoints(object):
         x[self._ind] = self.pick_pos[0] + dx
         y[self._ind] = self.pick_pos[1] + dy
         if self.verbose:
-            print("\nevent.xdata {}".format(event.xdata))  # noqa
-            print("\nevent.ydata {}".format(event.ydata))  # noqa
+            print(f"\nevent.xdata {event.xdata}")  # noqa
+            print(f"\nevent.ydata {event.ydata}")  # noqa
         self.points.set_xdata(x)
         self.points.set_ydata(y)
         self.line.set_data(list(zip(self.points.get_data())))

@@ -1,7 +1,6 @@
 import warnings
 
 import numpy as np
-
 from netCDF4 import Dataset
 
 from oceans.ocfis import get_profile, wrap_lon180
@@ -21,7 +20,7 @@ def _woa_variable(variable):
     v = _VAR.get(variable)
     if not v:
         raise ValueError(
-            f'Unrecognizable variable. Expected one of {list(_VAR.keys())}, got "{variable}".'
+            f'Unrecognizable variable. Expected one of {list(_VAR.keys())}, got "{variable}".',
         )
     return v
 
@@ -35,7 +34,7 @@ def _woa_url(variable, time_period, resolution):
         pref = "woa09"
         warnings.warn(
             f'The variable "{variable}" is only available at 1 degree resolution, '
-            f'annual time period, and "{pref}".'
+            f'annual time period, and "{pref}".',
         )
         return f"{base}/" f"{pref}/" f"{variable}_annual_1deg.nc"
     else:
@@ -50,7 +49,7 @@ def _woa_url(variable, time_period, resolution):
     grid = grids.get(resolution)
     if not grid:
         raise ValueError(
-            f'Unrecognizable resolution. Expected one of {list(grids.keys())}, got "{resolution}".'
+            f'Unrecognizable resolution. Expected one of {list(grids.keys())}, got "{resolution}".',
         )
     res = grid[0]
     gg = grid[1]
@@ -90,7 +89,7 @@ def _woa_url(variable, time_period, resolution):
     if not tt:
         raise ValueError(
             f"Unrecognizable time_period. "
-            f'Expected one of {list(time_periods.keys())}, got "{time_period}".'
+            f'Expected one of {list(time_periods.keys())}, got "{time_period}".',
         )
 
     url = (
@@ -102,9 +101,7 @@ def _woa_url(variable, time_period, resolution):
     return url
 
 
-def woa_profile(
-    lon, lat, variable="temperature", time_period="annual", resolution="1"
-):
+def woa_profile(lon, lat, variable="temperature", time_period="annual", resolution="1"):
     """
     Return an iris.cube instance from a World Ocean Atlas variable at a
     given lon, lat point.
@@ -143,9 +140,7 @@ def woa_profile(
     """
     import iris
 
-    url = _woa_url(
-        variable=variable, time_period=time_period, resolution=resolution
-    )
+    url = _woa_url(variable=variable, time_period=time_period, resolution=resolution)
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
@@ -222,9 +217,7 @@ def woa_subset(
     url = _woa_url(variable, time_period, resolution)
     cubes = iris.load_raw(url)
     cubes = [
-        cube.intersection(
-            longitude=(bbox[0], bbox[1]), latitude=(bbox[2], bbox[3])
-        )
+        cube.intersection(longitude=(bbox[0], bbox[1]), latitude=(bbox[2], bbox[3]))
         for cube in cubes
     ]
 

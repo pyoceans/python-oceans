@@ -59,7 +59,7 @@ def gamma_G_north_atlantic(SP, pt):
             [2.0, 4.0, -8.16468531808416],
             [1.0, 5.0, 5.58313794099231],
             [0.0, 6.0, -0.156149127884621],
-        ]
+        ],
     )
 
     gamma_NAtl = Fit[0, 2] * np.ones_like(SP)
@@ -106,7 +106,7 @@ def gamma_G_south_atlantic(SP, pt):
             [2.0, 4.0, 28.7899447141466],
             [1.0, 5.0, -8.73093192235768],
             [0.0, 6.0, 1.25587481738340],
-        ]
+        ],
     )
 
     gamma_SAtl = Fit[0, 2] * np.ones_like(SP)
@@ -154,7 +154,7 @@ def gamma_G_pacific(SP, pt):
             [2.0, 4.0, 25.1352444814321],
             [1.0, 5.0, -5.58077135773059],
             [0.0, 6.0, 0.0505878919989799],
-        ]
+        ],
     )
 
     gamma_Pac = Fit[0, 2] * np.ones_like(SP)
@@ -202,7 +202,7 @@ def gamma_G_indian(SP, pt):
             [2.0, 4.0, 13.2992863063285],
             [1.0, 5.0, -6.93690276392252],
             [0.0, 6.0, 1.42081034484842],
-        ]
+        ],
     )
 
     gamma_Ind = Fit[0, 2] * np.ones_like(SP)
@@ -250,7 +250,7 @@ def gamma_G_southern_ocean(SP, pt, p):
             [2.0, 4.0, 1.95823443401631],
             [1.0, 5.0, -10.8585153444218],
             [0.0, 6.0, 1.44257249650877],
-        ]
+        ],
     )
 
     gamma_SOce_N = Fit_N[0, 2] * np.ones_like(SP)
@@ -277,7 +277,7 @@ def gamma_G_southern_ocean(SP, pt, p):
             [2.0, 2.0, 3.68258441217306],
             [1.0, 3.0, 264.211505260770],
             [0.0, 4.0, 20.1983279379898],
-        ]
+        ],
     )
 
     p_ref, pt_ref, c_pt = 700.0, 2.5, 0.65
@@ -399,7 +399,7 @@ def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
             102.57,
             98.79,
             100,
-        ]
+        ],
     )
 
     io_lat = np.array(
@@ -422,7 +422,7 @@ def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
             2.9,
             10,
             20,
-        ]
+        ],
     )
 
     # Definition of the Pacific part.
@@ -454,7 +454,7 @@ def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
             102.57,
             98.79,
             100.0,
-        ]
+        ],
     )
 
     po_lat = np.array(
@@ -485,43 +485,37 @@ def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
             2.9,
             10,
             20,
-        ]
+        ],
     )
 
     # Definition of the polygon filters.
     io_polygon = Path(list(zip(io_lon, io_lat)))
     po_polygon = Path(list(zip(po_lon, po_lat)))
     i_inter_indian_pacific = in_polygon(lon, lat, io_polygon) * in_polygon(
-        lon, lat, po_polygon
+        lon,
+        lat,
+        po_polygon,
     )
 
-    i_indian = np.logical_xor(
-        in_polygon(lon, lat, io_polygon), i_inter_indian_pacific
-    )
+    i_indian = np.logical_xor(in_polygon(lon, lat, io_polygon), i_inter_indian_pacific)
     i_pacific = in_polygon(lon, lat, po_polygon)
     i_atlantic = (1 - i_pacific) * (1 - i_indian)
 
     # Definition of the Atlantic weighting function.
     charac1_sa = lat < -10.0
     charac2_sa = np.logical_and(lat <= 10.0, lat >= -10.0)
-    w_sa = charac1_sa + charac2_sa * (
-        0.5 + 0.5 * np.cos(np.pi * (lat + 10.0) / 20.0)
-    )
+    w_sa = charac1_sa + charac2_sa * (0.5 + 0.5 * np.cos(np.pi * (lat + 10.0) / 20.0))
 
     # Definition of the Southern Ocean weighting function.
     charac1_so = lat < -40.0
     charac2_so = np.logical_and(lat <= -20.0, lat >= -40.0)
-    w_so = charac1_so + charac2_so * (
-        0.5 + 0.5 * np.cos(np.pi * (lat + 40.0) / 20.0)
-    )
+    w_so = charac1_so + charac2_so * (0.5 + 0.5 * np.cos(np.pi * (lat + 40.0) / 20.0))
 
     # Combination of the North and South Atlantic.
     gamma_Atl = (1.0 - w_sa) * gamma_NAtl + w_sa * gamma_SAtl
 
     # Combination of the middle parts.
-    gamma_middle = (
-        i_pacific * gamma_Pac + i_atlantic * gamma_Atl + i_indian * gamma_Ind
-    )
+    gamma_middle = i_pacific * gamma_Pac + i_atlantic * gamma_Atl + i_indian * gamma_Ind
 
     # Combination of the Northern and Southern parts.
     gamma_GP = w_so * gamma_SOce + (1.0 - w_so) * gamma_middle

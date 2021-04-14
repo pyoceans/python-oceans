@@ -87,7 +87,7 @@ def test_kdpar():
             1.1003,
             1.0465,
             0.9971,
-        ]
+        ],
     )
 
     press = np.array(
@@ -167,7 +167,7 @@ def test_kdpar():
             77.0,
             78.0,
             79.0,
-        ]
+        ],
     )
 
     kd, par_surface = swe.kdpar(press, PAR, boundary=25)
