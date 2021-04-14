@@ -45,5 +45,4 @@ jobs:
         run: python --version
 
       - name: Run simple code
-        run: python -c 'import math; print(math.factorial(5))'
-        
+        run: python -c 'import math; print(math.factorial(5))'     
