@@ -1,4 +1,4 @@
-name: pip-tests
+name: Pip-tests
 
 on:
   pull_request:
@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.7", "3.8", "3.9"]
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
 
     steps:
     - uses: actions/checkout@v2
@@ -19,13 +19,15 @@ jobs:
     - name: Setup python
       uses: actions/setup-python@v2
 
+    - name: Install proj
+      run: sudo apt-get install proj-bin
+
     - name: Python ${{ matrix.python-version }}
       run: |
+        pip numpy cython
         pip install -r requirements.txt -r requirements-dev.txt
         pip install -e . --no-deps --force-reinstall
         
     - name: pip-tests
       run: |
         pytest -rxs --cov=oceans tests
-  
-     
