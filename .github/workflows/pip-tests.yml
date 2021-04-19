@@ -20,7 +20,7 @@ jobs:
       uses: actions/setup-python@v2
 
     - name: Install proj
-      run: sudo apt-get install proj-bin
+      run: sudo apt-get install proj-bin libgeos-dev libproj15
 
     - name: Python ${{ matrix.python-version }}
       run: |
