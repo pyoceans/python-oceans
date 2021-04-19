@@ -24,7 +24,7 @@ jobs:
         pip install -r requirements.txt -r requirements-dev.txt
         pip install -e . --no-deps --force-reinstall
         
-    - name: Tests
+    - name: pip-tests
       run: |
         pytest -rxs --cov=oceans tests
   
