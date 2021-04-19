@@ -23,6 +23,7 @@ jobs:
         conda-channels: conda-forge
 
     - name: Python ${{ matrix.python-version }}
+      shell: bash -l {0}
       run: |
         conda create --name TEST python=${{ matrix.python-version }} --file requirements.txt --file requirements-dev.txt
         source activate TEST
@@ -31,6 +32,7 @@ jobs:
         conda list
 
     - name: Tests
+      shell: bash -l {0}
       run: |
         source activate TEST
         pytest -rxs --cov=oceans tests
