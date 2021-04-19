@@ -20,14 +20,14 @@ jobs:
       uses: actions/setup-python@v2
 
     - name: Install proj
-      run: sudo apt-get install proj-bin libgeos-dev libproj15
+      run: sudo apt-get install libgeos-dev libproj-dev
 
     - name: Python ${{ matrix.python-version }}
       run: |
         pip install numpy cython
         pip install -r requirements.txt -r requirements-dev.txt
         pip install -e . --no-deps --force-reinstall
-        
+
     - name: pip-tests
       run: |
         pytest -rxs --cov=oceans tests
