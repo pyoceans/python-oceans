@@ -24,7 +24,7 @@ jobs:
 
     - name: Python ${{ matrix.python-version }}
       run: |
-        pip numpy cython
+        pip install numpy cython
         pip install -r requirements.txt -r requirements-dev.txt
         pip install -e . --no-deps --force-reinstall
         
