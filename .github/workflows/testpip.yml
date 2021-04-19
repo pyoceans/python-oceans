@@ -1,4 +1,4 @@
-name: Tests pip
+name: Tests
 
 on:
   pull_request:
@@ -6,34 +6,26 @@ on:
     branches: [master]
 
 jobs:
-  setup-pypy:
-    name: Setup PyPy ${{ matrix.pypy }} ${{ matrix.os }}
+  run:
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false
       matrix:
+        python-version: ["3.7", "3.8", "3.9"]
         os: [windows-latest, ubuntu-latest, macos-latest]
-        pypy-version:
-        - 'pypy-2.7'
-        - 'pypy-3.6'
-        - 'pypy-3.7'
-        - 'pypy-2.7-v7.3.2'
-        - 'pypy-3.6-v7.3.2'
-        - 'pypy-3.7-v7.3.2'
-        - 'pypy-3.6-v7.3.x'
-        - 'pypy-3.7-v7.x'
-        - 'pypy-2.7-v7.3.4rc1'
-        - 'pypy-3.7-nightly'
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-  
-      - name: setup-python ${{ matrix.pypy }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.pypy }}
-  
-      - name: PyPy and Python version
-        run: python --version
+    - uses: actions/checkout@v2
+
+    - name: Setup python
+      uses: actions/setup-python@v2
+
+    - name: Python ${{ matrix.python-version }}
+      run: |
+        pip install -r requirements.txt -r requirements-dev.txt
+        pip install -e . --no-deps --force-reinstall
         
+    - name: Tests
+      run: |
+        pytest -rxs --cov=oceans tests
+  
+     
