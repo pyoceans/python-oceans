@@ -1,48 +1,34 @@
 name: Test-Pip
 
 on: 
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - '**.md'
   pull_request:
-    paths-ignore:
-      - '**.md'
-  schedule:
-    - cron: 30 3 * * *
+  push:
+    branches: [master]
 
 jobs:
-  setup-pypy:
-    name: Setup PyPy ${{ matrix.pypy }} ${{ matrix.os }}
+  run:
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-18.04, ubuntu-latest]
-        pypy:
-        - 'pypy-2.7'
-        - 'pypy-3.6'
-        - 'pypy-3.7'
-        - 'pypy-2.7-v7.3.2'
-        - 'pypy-3.6-v7.3.2'
-        - 'pypy-3.7-v7.3.2'
-        - 'pypy-3.6-v7.3.x'
-        - 'pypy-3.7-v7.x'
-        - 'pypy-2.7-v7.3.4rc1'
-        - 'pypy-3.7-nightly'
+        python-version: ["3.7", "3.8", "3.9"]
+        os: [ubuntu-latest]
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+    - uses: actions/checkout@v2
   
-      - name: setup-python ${{ matrix.pypy }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.pypy }}
+    - name: setup-python
+      uses: actions/setup-python@v2
   
-      - name: PyPy and Python version
-        run: python --version
+    - name: Install proj and geos for cartopy
+      run: sudo apt-get install libgeos-dev libproj-dev
 
-      - name: Run simple code
-        run: python -c 'import math; print(math.factorial(5))'     
+    - name: Python ${{ matrix.python-version }}
+      run: |
+        # cartopy is not pep517/518 yet
+        pip install numpy cython
+        pip install -r requirements.txt -r requirements-dev.txt
+        pip install -e . --no-deps --force-reinstall
+
+    - name: pip-tests
+      run: |
+        pytest -rxs --cov=oceans tests     
