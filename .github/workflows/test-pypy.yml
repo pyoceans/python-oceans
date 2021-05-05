@@ -31,4 +31,4 @@ jobs:
 
     - name: pip-tests
       run: |
-        pytest -rxs --cov=oceans tests     
+        pytest -rxs --cov=oceans tests
