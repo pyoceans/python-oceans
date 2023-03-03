@@ -269,7 +269,7 @@ def etopo_subset(bbox, tfile=None, smoo=False):
         bathy = etopo.variables["z"][jmin:jmax, imin:imax]
 
     if smoo:
-        from scipy.ndimage.filters import gaussian_filter
+        from scipy.ndimage import gaussian_filter
 
         bathy = gaussian_filter(bathy, sigma=1)
 
