@@ -1,6 +1,7 @@
 *.egg-info
 .cache
+.coverage
+.ipynb_checkpoints/
 build/
 dist/
 oceans/_version.py
-.ipynb_checkpoints/
