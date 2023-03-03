@@ -42,4 +42,4 @@ jobs:
       shell: bash -l {0}
       run: >
         micromamba activate TEST
-        && pytest -vv oceans --doctest-modules
+        && python -m pytest -vv oceans --doctest-modules
