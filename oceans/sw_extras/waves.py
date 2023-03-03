@@ -59,11 +59,11 @@ class Waves:
     G     = 0.22176735425004176
     >>> wav = Waves(h=10, T=None, L=100)
     >>> print("ho/Lo = %s" % wav.hoLo)
-    ho/Lo = 0.05568933069002106
+    ho/Lo = 0.055689330690021056
     >>> print("ho/L  = %s" % wav.hoL)
     ho/L  = 0.1
     >>> print("Lo    = %s" % wav.Lo)
-    Lo    = 179.56760973950605
+    Lo    = 179.56760973950608
     >>> print("L     = %s" % wav.L)
     L     = 100.0
     >>> print("k     = %s" % wav.k)
@@ -84,11 +84,11 @@ class Waves:
     """
 
     def __init__(self, h, T=None, L=None, thetao=None, Ho=None, lat=None):
-        self.T = np.asarray(T, dtype=np.floating)
-        self.L = np.asarray(L, dtype=np.floating)
-        self.Ho = np.asarray(Ho, dtype=np.floating)
-        self.lat = np.asarray(lat, dtype=np.floating)
-        self.thetao = np.asarray(thetao, dtype=np.floating)
+        self.T = np.asarray(T, dtype=np.float64)
+        self.L = np.asarray(L, dtype=np.float64)
+        self.Ho = np.asarray(Ho, dtype=np.float64)
+        self.lat = np.asarray(lat, dtype=np.float64)
+        self.thetao = np.asarray(thetao, dtype=np.float64)
 
         if isinstance(h, str):
             if L is not None:
@@ -97,7 +97,7 @@ class Waves:
                 elif h == "shallow":
                     self.h = self.L * 0.05
         else:
-            self.h = np.asarray(h, dtype=np.floating)
+            self.h = np.asarray(h, dtype=np.float64)
 
         if lat is None:
             g = 9.81  # Default gravity.
