@@ -131,7 +131,7 @@ def LineCurvature2D(Vertices, Lines=None):
         raise ValueError(f"Cannot recognized {Lines!r}.")
 
     # Get left and right neighbor of each points.
-    Na = np.zeros(Vertices.shape[0], dtype=np.int)
+    Na = np.zeros(Vertices.shape[0], dtype=np.integer)
     Nb = np.zeros_like(Na)
     # As int because we use it to index an array...
 

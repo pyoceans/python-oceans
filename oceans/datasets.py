@@ -317,18 +317,25 @@ def get_isobath(bbox, iso=-200, tfile=None, smoo=False):
     >>> lon, lat, bathy = etopo_subset(bbox=bbox, smoo=True)
     >>> fig, ax = plt.subplots()
     >>> cs = ax.pcolormesh(lon, lat, bathy)
-    >>> for segment in segments:
+    >>> for segment in segments[0]:
     ...     lines = ax.plot(segment[:, 0], segment[:, -1], "k", linewidth=2)
     ...
 
     """
-    import matplotlib._contour as contour
+    import contourpy
 
     lon, lat, topo = etopo_subset(bbox, tfile=tfile, smoo=smoo)
 
-    # Required args for QuadContourGenerator.
-    mask, corner_mask, nchunk = None, True, 0
-    c = contour.QuadContourGenerator(lon, lat, topo, mask, corner_mask, nchunk)
+    c = contourpy.contour_generator(
+        lon,
+        lat,
+        topo,
+        name="mpl2014",
+        line_type=contourpy.LineType.SeparateCode,
+        fill_type=contourpy.FillType.OuterCode,
+        corner_mask=True,
+        chunk_size=0,
+    )
     res = c.create_contour(iso)
     nseg = len(res) // 2
     segments = res[:nseg]

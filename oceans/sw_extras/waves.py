@@ -84,11 +84,11 @@ class Waves:
     """
 
     def __init__(self, h, T=None, L=None, thetao=None, Ho=None, lat=None):
-        self.T = np.asarray(T, dtype=np.float)
-        self.L = np.asarray(L, dtype=np.float)
-        self.Ho = np.asarray(Ho, dtype=np.float)
-        self.lat = np.asarray(lat, dtype=np.float)
-        self.thetao = np.asarray(thetao, dtype=np.float)
+        self.T = np.asarray(T, dtype=np.floating)
+        self.L = np.asarray(L, dtype=np.floating)
+        self.Ho = np.asarray(Ho, dtype=np.floating)
+        self.lat = np.asarray(lat, dtype=np.floating)
+        self.thetao = np.asarray(thetao, dtype=np.floating)
 
         if isinstance(h, str):
             if L is not None:
@@ -97,7 +97,7 @@ class Waves:
                 elif h == "shallow":
                     self.h = self.L * 0.05
         else:
-            self.h = np.asarray(h, dtype=np.float)
+            self.h = np.asarray(h, dtype=np.floating)
 
         if lat is None:
             g = 9.81  # Default gravity.

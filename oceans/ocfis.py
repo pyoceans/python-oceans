@@ -524,7 +524,7 @@ def binave(datain, r):
 
     """
 
-    datain, rows = np.asarray(datain), np.asarray(r, dtype=np.int)
+    datain, rows = np.asarray(datain), np.asarray(r, dtype=np.integer)
 
     if datain.ndim != 1:
         raise ValueError("Must be a 1D array.")
