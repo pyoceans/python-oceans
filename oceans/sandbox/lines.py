@@ -26,12 +26,14 @@ def LineNormals2D(Vertices, Lines):
     --------
     >>> import numpy as np
     >>> import matplotlib.pyplot as plt
-    >>> data = np.load(os.path.join(_default_path, 'testdata.npz'))
-    >>> Lines, Vertices = data['Lines'], data['Vertices']
+    >>> data = np.load(os.path.join(_default_path, "testdata.npz"))
+    >>> Lines, Vertices = data["Lines"], data["Vertices"]
     >>> N = LineNormals2D(Vertices, Lines)
     >>> fig, ax = plt.subplots(nrows=1, ncols=1)
-    >>> _ = ax.plot(np.c_[Vertices[:, 0], Vertices[:,0 ] + 10 * N[:, 0]].T,
-    ...            np.c_[Vertices[:, 1], Vertices[:, 1] + 10 * N[:, 1]].T)
+    >>> _ = ax.plot(
+    ...     np.c_[Vertices[:, 0], Vertices[:, 0] + 10 * N[:, 0]].T,
+    ...     np.c_[Vertices[:, 1], Vertices[:, 1] + 10 * N[:, 1]].T,
+    ... )
 
     Function based on LineNormals2D.m written by
     D.Kroon University of Twente (August 2011)
@@ -56,8 +58,8 @@ def LineNormals2D(Vertices, Lines):
     # Differences.  Points which are closer give a more accurate estimate of
     # the normal).
     LL = np.sqrt(DT[:, 0] ** 2 + DT[:, 1] ** 2)
-    DT[:, 0] = DT[:, 0] / np.maximum(LL ** 2, eps)
-    DT[:, 1] = DT[:, 1] / np.maximum(LL ** 2, eps)
+    DT[:, 0] = DT[:, 0] / np.maximum(LL**2, eps)
+    DT[:, 1] = DT[:, 1] / np.maximum(LL**2, eps)
 
     D1 = np.zeros_like(Vertices)
     D2 = np.zeros_like(Vertices)
@@ -95,19 +97,23 @@ def LineCurvature2D(Vertices, Lines=None):
     --------
     >>> import numpy as np
     >>> import matplotlib.pyplot as plt
-    >>> data = np.load(os.path.join(_default_path, 'testdata.npz'))
-    >>> Lines, Vertices = data['Lines'], data['Vertices']
+    >>> data = np.load(os.path.join(_default_path, "testdata.npz"))
+    >>> Lines, Vertices = data["Lines"], data["Vertices"]
     >>> k = LineCurvature2D(Vertices, Lines)
     >>> N = LineNormals2D(Vertices, Lines)
     >>> k = k * 100
     >>> fig, ax = plt.subplots(nrows=1, ncols=1)
-    >>> _ = ax.plot(np.c_[Vertices[:, 0], Vertices[:, 0] + k * N[:, 0]].T,
-    ...             np.c_[Vertices[:, 1], Vertices[:, 1] + k * N[:, 1]].T, 'g')
-    >>> _ = ax.plot(np.c_[Vertices[Lines[:, 0] - 1, 0],
-    ...                   Vertices[Lines[:, 1] - 1, 0]].T,
-    ...             np.c_[Vertices[Lines[:, 0] - 1, 1],
-    ...                   Vertices[Lines[:, 1] - 1, 1]].T, 'b')
-    >>> _ = ax.plot(Vertices[:, 0], Vertices[:, 1], 'r.')
+    >>> _ = ax.plot(
+    ...     np.c_[Vertices[:, 0], Vertices[:, 0] + k * N[:, 0]].T,
+    ...     np.c_[Vertices[:, 1], Vertices[:, 1] + k * N[:, 1]].T,
+    ...     "g",
+    ... )
+    >>> _ = ax.plot(
+    ...     np.c_[Vertices[Lines[:, 0] - 1, 0], Vertices[Lines[:, 1] - 1, 0]].T,
+    ...     np.c_[Vertices[Lines[:, 0] - 1, 1], Vertices[Lines[:, 1] - 1, 1]].T,
+    ...     "b",
+    ... )
+    >>> _ = ax.plot(Vertices[:, 0], Vertices[:, 1], "r.")
 
     Function based on LineCurvature2D.m written by
     D.Kroon University of Twente (August 2011)
@@ -162,13 +168,13 @@ def LineCurvature2D(Vertices, Lines=None):
     M = np.c_[
         np.ones_like(Tb),
         -Ta,
-        Ta ** 2,
+        Ta**2,
         np.ones_like(Tb),
         np.zeros_like(Tb),
         np.zeros_like(Tb),
         np.ones_like(Tb),
         -Tb,
-        Tb ** 2,
+        Tb**2,
     ]
 
     invM = inverse3(M)

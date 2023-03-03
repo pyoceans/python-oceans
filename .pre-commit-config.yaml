@@ -1,7 +1,7 @@
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v3.4.0
+  rev: v4.4.0
   hooks:
     - id: check-ast
     - id: end-of-file-fixer
@@ -14,34 +14,43 @@ repos:
     - id: trailing-whitespace
     - id: debug-statements
 
-- repo: https://gitlab.com/pycqa/flake8
-  rev: 3.9.0
-  hooks:
-    - id: flake8
-      exclude: docs/source/conf.py
-      args: [--max-line-length=105, "--ignore=E203,W503"]
 
-- repo: https://github.com/pycqa/isort
-  rev: 5.7.0
+# - repo: https://github.com/econchick/interrogate
+#   rev: 1.5.0
+#   hooks:
+#     - id: interrogate
+#       exclude: ^(docs|setup.py|tests)
+#       args: [--config=pyproject.toml]
+
+- repo: https://github.com/keewis/blackdoc
+  rev: v0.3.8
   hooks:
-    - id: isort
-      additional_dependencies: [toml]
-      args: ["--profile", "black", "--filter-files"]
+    - id: blackdoc
+
+- repo: https://github.com/charliermarsh/ruff-pre-commit
+  rev: v0.0.253
+  hooks:
+    - id: ruff
 
 - repo: https://github.com/psf/black
-  rev: 20.8b1
+  rev: 23.1.0
   hooks:
   - id: black
     language_version: python3
 
-- repo: https://github.com/asottile/pyupgrade
-  rev: v2.10.0
+- repo: https://github.com/codespell-project/codespell
+  rev: v2.2.2
   hooks:
-    - id: pyupgrade
+    - id: codespell
       args:
-        - --py36-plus
+        - --ignore-words-list=pres
 
 - repo: https://github.com/asottile/add-trailing-comma
-  rev: v2.1.0
+  rev: v2.4.0
   hooks:
     - id: add-trailing-comma
+
+- repo: https://github.com/tox-dev/pyproject-fmt
+  rev: "0.9.2"
+  hooks:
+    - id: pyproject-fmt

@@ -132,10 +132,10 @@ def N(bvfr2):
     --------
     >>> import numpy as np
     >>> import oceans.sw_extras.sw_extras as swe
-    >>> s = np.array([[0, 0, 0], [15, 15, 15], [30, 30, 30],[35,35,35]])
+    >>> s = np.array([[0, 0, 0], [15, 15, 15], [30, 30, 30], [35, 35, 35]])
     >>> t = np.repeat(15, s.size).reshape(s.shape)
     >>> p = [[0], [250], [500], [1000]]
-    >>> lat = [30,32,35]
+    >>> lat = [30, 32, 35]
     >>> swe.N(sw.bfrq(s, t, p, lat)[0])
     array([[0.02124956, 0.02125302, 0.02125843],
            [0.02110919, 0.02111263, 0.02111801],
@@ -174,10 +174,10 @@ def cph(bvfr2):
     --------
     >>> import numpy as np
     >>> import oceans.sw_extras.sw_extras as swe
-    >>> s = np.array([[0, 0, 0], [15, 15, 15], [30, 30, 30],[35,35,35]])
+    >>> s = np.array([[0, 0, 0], [15, 15, 15], [30, 30, 30], [35, 35, 35]])
     >>> t = np.repeat(15, s.size).reshape(s.shape)
     >>> p = [[0], [250], [500], [1000]]
-    >>> lat = [30,32,35]
+    >>> lat = [30, 32, 35]
     >>> swe.cph(sw.bfrq(s, t, p, lat)[0])
     array([[12.17509899, 12.17708145, 12.18018192],
            [12.09467754, 12.09664676, 12.09972655],
@@ -223,8 +223,7 @@ def shear(z, u, v=0):
     --------
     >>> import oceans.sw_extras.sw_extras as swe
     >>> z = [[0], [250], [500], [1000]]
-    >>> u = [[0.5, 0.5, 0.5], [0.15, 0.15, 0.15],
-    ...      [0.03, 0.03, .03], [0.,0.,0.]]
+    >>> u = [[0.5, 0.5, 0.5], [0.15, 0.15, 0.15], [0.03, 0.03, 0.03], [0.0, 0.0, 0.0]]
     >>> swe.shear(z, u)[0]
     array([[-1.4e-03, -1.4e-03, -1.4e-03],
            [-4.8e-04, -4.8e-04, -4.8e-04],
@@ -238,7 +237,7 @@ def shear(z, u, v=0):
     iup = np.arange(0, m - 1)
     ilo = np.arange(1, m)
     z_ave = (z[iup, :] + z[ilo, :]) / 2.0
-    vel = np.sqrt(u ** 2 + v ** 2)
+    vel = np.sqrt(u**2 + v**2)
     diff_vel = np.diff(vel, axis=0)
     diff_z = np.diff(z, axis=0)
     shr = diff_vel / diff_z
@@ -276,13 +275,12 @@ def richnumb(bvfr2, S2):
     >>> import numpy as np
     >>> import seawater as sw
     >>> import oceans.sw_extras.sw_extras as swe
-    >>> s = np.array([[0, 0, 0], [15, 15, 15], [30, 30, 30],[ 35, 35, 35]])
+    >>> s = np.array([[0, 0, 0], [15, 15, 15], [30, 30, 30], [35, 35, 35]])
     >>> t = np.repeat(15, s.size).reshape(s.shape)
     >>> p = [[0], [250], [500], [1000]]
     >>> lat = [30, 32, 35]
     >>> bvfr2 = sw.bfrq(s, t, p, lat)[0]
-    >>> vel = [[0.5, 0.5, 0.5], [0.15, 0.15, 0.15],
-    ...        [0.03, 0.03, .03], [0.,0.,0.]]
+    >>> vel = [[0.5, 0.5, 0.5], [0.15, 0.15, 0.15], [0.03, 0.03, 0.03], [0.0, 0.0, 0.0]]
     >>> S2 = swe.shear(p, vel)[0] ** 2
     >>> swe.richnumb(bvfr2, S2)
     array([[  230.37941215,   230.45444299,   230.57181258],
@@ -358,8 +356,8 @@ def inertial_period(lat):
     Examples
     --------
     >>> import oceans.sw_extras.sw_extras as swe
-    >>> lat = 30.
-    >>> swe.inertial_period(lat)/3600
+    >>> lat = 30.0
+    >>> swe.inertial_period(lat) / 3600
     23.93484986278565
 
     """
@@ -389,11 +387,11 @@ def strat_period(N):
     >>> import numpy as np
     >>> import seawater as sw
     >>> import oceans.sw_extras.sw_extras as swe
-    >>> s = np.array([[0, 0, 0], [15, 15, 15], [30, 30, 30],[35,35,35]])
+    >>> s = np.array([[0, 0, 0], [15, 15, 15], [30, 30, 30], [35, 35, 35]])
     >>> t = np.repeat(15, s.size).reshape(s.shape)
     >>> p = [[0], [250], [500], [1000]]
-    >>> lat = [30,32,35]
-    >>> swe.strat_period(swe.N( sw.bfrq(s, t, p, lat)[0]))
+    >>> lat = [30, 32, 35]
+    >>> swe.strat_period(swe.N(sw.bfrq(s, t, p, lat)[0]))
     array([[295.68548089, 295.63734267, 295.56208791],
            [297.6515901 , 297.60313502, 297.52738493],
            [729.91402019, 729.79520847, 729.60946944]])
@@ -428,7 +426,7 @@ def visc(s, t, p):
     Examples
     --------
     >>> import oceans.sw_extras.sw_extras as swe
-    >>> swe.visc(40., 40., 1000.)
+    >>> swe.visc(40.0, 40.0, 1000.0)
     8.200192496633804e-07
 
     Modifications: Original 1998/01/19 - Ayal Anis 1998
@@ -436,7 +434,7 @@ def visc(s, t, p):
     """
     s, t, p = np.broadcast_arrays(s, t, p)
 
-    visc = 1e-4 * (17.91 - 0.5381 * t + 0.00694 * t ** 2 + 0.02305 * s)
+    visc = 1e-4 * (17.91 - 0.5381 * t + 0.00694 * t**2 + 0.02305 * s)
     visc /= sw.dens(s, t, p)
 
     return visc
@@ -482,13 +480,13 @@ def tcond(s, t, p):
 
     if False:  # Castelli's option.
         therm = 100.0 * (
-            5.5286e-3 + 3.4025e-8 * p + 1.8364e-5 * t - 3.3058e-9 * t ** 3
+            5.5286e-3 + 3.4025e-8 * p + 1.8364e-5 * t - 3.3058e-9 * t**3
         )  # [W/m/K]
 
     # 1) Caldwell's option # 2 - simplified formula, accurate to 0.5% (eqn. 9)
     # in [cal/cm/C/sec]
     therm = 0.001365 * (
-        1.0 + 0.003 * t - 1.025e-5 * t ** 2 + 0.0653 * (1e-4 * p) - 0.00029 * s
+        1.0 + 0.003 * t - 1.025e-5 * t**2 + 0.0653 * (1e-4 * p) - 0.00029 * s
     )
     return therm * 418.4  # [cal/cm/C/sec] ->[ W/m/K]
 
@@ -606,11 +604,11 @@ def psu2ppt(psu):
     a = [0.008, -0.1692, 25.3851, 14.0941, -7.0261, 2.7081]
     return (
         a[1]
-        + a[2] * psu ** 0.5
+        + a[2] * psu**0.5
         + a[3] * psu
-        + a[4] * psu ** 1.5
-        + a[5] * psu ** 2
-        + a[6] * psu ** 2.5
+        + a[4] * psu**1.5
+        + a[5] * psu**2
+        + a[6] * psu**2.5
     )
 
 
@@ -851,7 +849,7 @@ def zmld_so(s, t, p, threshold=0.05, smooth=None):
     References
     ----------
     Mitchell B. G., Holm-Hansen, O., 1991. Observations of modeling of the
-        Antartic phytoplankton crop in relation to mixing depth. Deep Sea
+        Antarctic phytoplankton crop in relation to mixing depth. Deep Sea
         Research, 38(89):981-1007. doi:10.1016/0198-0149(91)90093-U
 
     """
@@ -984,7 +982,14 @@ def o2sol_SP_pt_benson_krause_84(SP, pt):
     >>> SP = [34.7118, 34.8915, 35.0256, 34.8472, 34.7366, 34.7324]
     >>> pt = [28.8099, 28.4392, 22.7862, 10.2262, 6.8272, 4.3236]
     >>> o2sol = o2sol_SP_pt_benson_krause_84(SP, pt)
-    >>> expected = [194.68254317, 195.61350628, 214.65593602, 273.56528327, 295.15807614, 312.95987166]
+    >>> expected = [
+    ...     194.68254317,
+    ...     195.61350628,
+    ...     214.65593602,
+    ...     273.56528327,
+    ...     295.15807614,
+    ...     312.95987166,
+    ... ]
     >>> np.testing.assert_almost_equal(expected, o2sol)
 
 
@@ -998,21 +1003,21 @@ def o2sol_SP_pt_benson_krause_84(SP, pt):
 
     Ts = np.log((298.15 - pt68) / (273.15 + pt68))
 
-    # The coefficents for Benson and Krause 1984
+    # The coefficients for Benson and Krause 1984
     # from the table 1 of Garcia and Gordon (1992).
     A = [5.80871, 3.20291, 4.17887, 5.10006, -9.86643e-2, 3.80369]
     B = [-7.01577e-3, -7.70028e-3, -1.13864e-2, -9.51519e-3]
     C0 = -2.75915e-7
 
-    # Equation 8 from Garcia and Gordon 1992 accoring to Pilson.
+    # Equation 8 from Garcia and Gordon 1992 according to Pilson.
     lnCo = (
         A[0]
         + A[1] * Ts
-        + A[2] * Ts ** 2
-        + A[3] * Ts ** 3
-        + A[4] * Ts ** 4
-        + A[5] * Ts ** 5
-        + S * (B[0] + B[1] * Ts + B[2] * Ts ** 2 + B[3] * Ts ** 3)
-        + C0 * S ** 2
+        + A[2] * Ts**2
+        + A[3] * Ts**3
+        + A[4] * Ts**4
+        + A[5] * Ts**5
+        + S * (B[0] + B[1] * Ts + B[2] * Ts**2 + B[3] * Ts**3)
+        + C0 * S**2
     )
     return np.exp(lnCo)

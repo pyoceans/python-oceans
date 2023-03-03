@@ -1,6 +1,19 @@
-include README.rst
 include *.txt
-recursive-include oceans *.py
-include oceans/colormaps/cmap_data/*.dat
-include versioneer.py
-include oceans/_version.py
+include README.md
+include pyproject.toml
+
+graft oceans
+
+prune docs
+prune tests
+prune notebooks
+prune *.egg-info
+prune .github
+
+exclude *.yml
+exclude .pre-commit-config.yaml
+exclude .gitignore
+exclude .isort.cfg
+exclude oceans/_version.py
+exclude code-of-conduct.md
+exclude .gitattributes

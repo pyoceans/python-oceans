@@ -129,10 +129,11 @@ def woa_profile(lon, lat, variable="temperature", time_period="annual", resoluti
     --------
     >>> import matplotlib.pyplot as plt
     >>> from oceans.datasets import woa_profile
-    >>> cube = woa_profile(-143, 10, variable='temperature',
-    ...                    time_period='annual', resolution='5')
+    >>> cube = woa_profile(
+    ...     -143, 10, variable="temperature", time_period="annual", resolution="5"
+    ... )
     >>> fig, ax = plt.subplots(figsize=(2.25, 5))
-    >>> z = cube.coord(axis='Z').points
+    >>> z = cube.coord(axis="Z").points
     >>> l = ax.plot(cube[0, :].data, z)
     >>> ax.grid(True)
     >>> ax.invert_yaxis()
@@ -187,7 +188,9 @@ def woa_subset(
     >>> import matplotlib.pyplot as plt
     >>> from oceans.colormaps import cm
     >>> bbox = [2.5, 357.5, -87.5, 87.5]
-    >>> cube = woa_subset(bbox, variable='temperature', time_period='annual', resolution='5')
+    >>> cube = woa_subset(
+    ...     bbox, variable="temperature", time_period="annual", resolution="5"
+    ... )
     >>> c = cube[0, 0, ...]  # Slice singleton time and first level.
     >>> cs = iplt.pcolormesh(c, cmap=cm.avhrr)
     >>> cbar = plt.colorbar(cs)
@@ -196,18 +199,23 @@ def woa_subset(
     >>> import iris
     >>> from oceans.colormaps import get_color
     >>> colors = get_color(12)
-    >>> months = 'Jan Feb Apr Mar May Jun Jul Aug Sep Oct Nov Dec'.split()
+    >>> months = "Jan Feb Apr Mar May Jun Jul Aug Sep Oct Nov Dec".split()
     >>> bbox = [-143, -141, 10, 12]
     >>> fig, ax = plt.subplots(figsize=(5, 5))
     >>> for month in months:
-    ...     cube = woa_subset(bbox, time_period=month, variable='temperature', resolution='1')
+    ...     cube = woa_subset(
+    ...         bbox, time_period=month, variable="temperature", resolution="1"
+    ...     )
     ...     grid_areas = iris.analysis.cartography.area_weights(cube)
-    ...     c = cube.collapsed(['longitude', 'latitude'], iris.analysis.MEAN, weights=grid_areas)
-    ...     z = c.coord(axis='Z').points
+    ...     c = cube.collapsed(
+    ...         ["longitude", "latitude"], iris.analysis.MEAN, weights=grid_areas
+    ...     )
+    ...     z = c.coord(axis="Z").points
     ...     l = ax.plot(c[0, :].data, z, label=month, color=next(colors))
+    ...
     >>> ax.grid(True)
     >>> ax.invert_yaxis()
-    >>> leg = ax.legend(loc='lower left')
+    >>> leg = ax.legend(loc="lower left")
     >>> _ = ax.set_ylim(200, 0)
 
     """
@@ -310,7 +318,8 @@ def get_isobath(bbox, iso=-200, tfile=None, smoo=False):
     >>> fig, ax = plt.subplots()
     >>> cs = ax.pcolormesh(lon, lat, bathy)
     >>> for segment in segments:
-    ...     lines = ax.plot(segment[:, 0], segment[:, -1], 'k', linewidth=2)
+    ...     lines = ax.plot(segment[:, 0], segment[:, -1], "k", linewidth=2)
+    ...
 
     """
     import matplotlib._contour as contour

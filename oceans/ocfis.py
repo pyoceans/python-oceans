@@ -71,12 +71,14 @@ def uv2spdir(u, v, mag=0, rot=0):
     >>> from oceans.ocfis import uv2spdir
     >>> u = [+0, -0.5, -0.50, +0.90]
     >>> v = [+1, +0.5, -0.45, -0.85]
-    >>> wd, ws = uv2spdir(u,v)
+    >>> wd, ws = uv2spdir(u, v)
     >>> fig, ax = plt.subplots(subplot_kw=dict(polar=True))
     >>> kw = dict(arrowstyle="->")
     >>> wd = np.deg2rad(wd)
-    >>> lines = [ax.annotate("", xy=(d, s), xytext=(0, 0), arrowprops=kw)
-    ...  for d, s in zip(wd, ws)]
+    >>> lines = [
+    ...     ax.annotate("", xy=(d, s), xytext=(0, 0), arrowprops=kw)
+    ...     for d, s in zip(wd, ws)
+    ... ]
     >>> _ = ax.set_ylim(0, np.max(ws))
 
     """
@@ -116,10 +118,10 @@ def del_eta_del_x(U, f, g, balance="geostrophic", R=None):
         detadx = f * U / g
 
     elif balance == "gradient":
-        detadx = (U ** 2 / R + f * U) / g
+        detadx = (U**2 / R + f * U) / g
 
     elif balance == "max_gradient":
-        detadx = (R * f ** 2) / (4 * g)
+        detadx = (R * f**2) / (4 * g)
 
     return detadx
 
@@ -216,37 +218,38 @@ def pcaben(u, v):
     minor axis (minrax)
     major azimuth (majaz)
     minor azimuth (minaz)
-    elipticity (elptcty)
+    ellipticity (elptcty)
 
     Examples
     --------
     >>> import matplotlib.pyplot as plt
     >>> from oceans.ocfis import pcaben, uv2spdir
-    >>> u = np.r_[(0., 1., -2., -1., 1.), np.random.randn(10)]
-    >>> v = np.r_[(3., 1., 0., -1., -1.), np.random.randn(10)]
+    >>> u = np.r_[(0.0, 1.0, -2.0, -1.0, 1.0), np.random.randn(10)]
+    >>> v = np.r_[(3.0, 1.0, 0.0, -1.0, -1.0), np.random.randn(10)]
     >>> (mjrax, mjaz, mirax, miaz, el), (x1, x2, y1, y2) = pcaben(u, v)
     >>> fig, ax = plt.subplots()
-    >>> _ = ax.plot(x1, y1,'r-', x2, y2, 'r-')
-    >>> ax.set_aspect('equal')
-    >>> _ = ax.set_xlabel('U component')
-    >>> _ = ax.set_ylabel('V component')
-    >>> _ = ax.plot(u, v, 'bo')
+    >>> _ = ax.plot(x1, y1, "r-", x2, y2, "r-")
+    >>> ax.set_aspect("equal")
+    >>> _ = ax.set_xlabel("U component")
+    >>> _ = ax.set_ylabel("V component")
+    >>> _ = ax.plot(u, v, "bo")
     >>> _ = ax.axis([-3.2, 3.2, -3.2, 3.2])
     >>> mdir, mspd = uv2spdir(u.mean(), v.mean())
-    >>> _ = ax.plot([0, u.mean()],[0, v.mean()], 'k-')
+    >>> _ = ax.plot([0, u.mean()], [0, v.mean()], "k-")
     >>> flatness = 1 - mirax / mjrax
     >>> if False:
-    ...     print('Mean u = {}'.format(u.mean()))
-    ...     print('Mean v = {}'.format(v.mean()))
-    ...     print('Mean magnitude: {}'.format(mspd))
-    ...     print('Direction: {}'.format(mdir))
-    ...     print('Axis 1 Length: {}'.format(mjrax))
-    ...     print('Axis 1 Azimuth: {}'.format(mjaz))
-    ...     print('Axis 2 Length: {}'.format.format(mirax))
-    ...     print('Axis 2 Azimuth: {}'.format(miaz))
-    ...     print('elipticity is : {}'.format(el))
-    ...     print('Negative (positive) means clockwise (anti-clockwise)')
-    ...     print('Flatness: {}'.format(flatness))
+    ...     print("Mean u = {}".format(u.mean()))
+    ...     print("Mean v = {}".format(v.mean()))
+    ...     print("Mean magnitude: {}".format(mspd))
+    ...     print("Direction: {}".format(mdir))
+    ...     print("Axis 1 Length: {}".format(mjrax))
+    ...     print("Axis 1 Azimuth: {}".format(mjaz))
+    ...     print("Axis 2 Length: {}".format.format(mirax))
+    ...     print("Axis 2 Azimuth: {}".format(miaz))
+    ...     print("ellipticity is : {}".format(el))
+    ...     print("Negative (positive) means clockwise (anti-clockwise)")
+    ...     print("Flatness: {}".format(flatness))
+    ...
 
     Notes:
     https://pubs.usgs.gov/of/2002/of02-217/m-files/pcaben.m
@@ -452,12 +455,64 @@ def binave(datain, r):
     Examples
     --------
     >>> from oceans.ocfis import binave
-    >>> data = [10., 11., 13., 2., 34., 21.5, 6.46, 6.27, 7.0867, 15., 123.,
-    ...         3.2, 0.52, 18.2, 10., 11., 13., 2., 34., 21.5, 6.46, 6.27,
-    ...         7.0867, 15., 123., 3.2, 0.52, 18.2, 10., 11., 13., 2., 34.,
-    ...         21.5, 6.46, 6.27, 7.0867, 15., 123., 3.2, 0.52, 18.2, 10.,
-    ...         11., 13., 2., 34., 21.5, 6.46, 6.27, 7.0867, 15., 123., 3.2,
-    ...         0.52, 18.2]
+    >>> data = [
+    ...     10.0,
+    ...     11.0,
+    ...     13.0,
+    ...     2.0,
+    ...     34.0,
+    ...     21.5,
+    ...     6.46,
+    ...     6.27,
+    ...     7.0867,
+    ...     15.0,
+    ...     123.0,
+    ...     3.2,
+    ...     0.52,
+    ...     18.2,
+    ...     10.0,
+    ...     11.0,
+    ...     13.0,
+    ...     2.0,
+    ...     34.0,
+    ...     21.5,
+    ...     6.46,
+    ...     6.27,
+    ...     7.0867,
+    ...     15.0,
+    ...     123.0,
+    ...     3.2,
+    ...     0.52,
+    ...     18.2,
+    ...     10.0,
+    ...     11.0,
+    ...     13.0,
+    ...     2.0,
+    ...     34.0,
+    ...     21.5,
+    ...     6.46,
+    ...     6.27,
+    ...     7.0867,
+    ...     15.0,
+    ...     123.0,
+    ...     3.2,
+    ...     0.52,
+    ...     18.2,
+    ...     10.0,
+    ...     11.0,
+    ...     13.0,
+    ...     2.0,
+    ...     34.0,
+    ...     21.5,
+    ...     6.46,
+    ...     6.27,
+    ...     7.0867,
+    ...     15.0,
+    ...     123.0,
+    ...     3.2,
+    ...     0.52,
+    ...     18.2,
+    ... ]
     >>> binave(data, 24)
     array([16.564725 , 21.1523625, 22.4670875])
 
@@ -526,11 +581,11 @@ def bin_dates(self, freq, tz=None):
     --------
     >>> import numpy as np
     >>> from pandas import Series, date_range
-    >>> n = 24*30
+    >>> n = 24 * 30
     >>> sig = np.random.rand(n) + 2 * np.cos(2 * np.pi * np.arange(n))
-    >>> dates = date_range(start='1/1/2000', periods=n, freq='H')
+    >>> dates = date_range(start="1/1/2000", periods=n, freq="H")
     >>> series = Series(data=sig, index=dates)
-    >>> new_series = bin_dates(series, freq='D', tz=None)
+    >>> new_series = bin_dates(series, freq="D", tz=None)
 
     """
     from pandas import date_range
@@ -602,7 +657,7 @@ def pol2cart(theta, radius, units="deg"):
 
     Examples
     --------
-    >>> pol2cart(0, 1, units='deg')
+    >>> pol2cart(0, 1, units="deg")
     (1.0, 0.0)
 
     """
@@ -746,7 +801,7 @@ def shiftdim(x, n=None):
     Examples
     --------
     >>> import oceans.ocfis as ff
-    >>> a = np.random.rand(1,1,3,1,2)
+    >>> a = np.random.rand(1, 1, 3, 1, 2)
     >>> print("a shape and dimension: %s, %s" % (a.shape, a.ndim))
     a shape and dimension: (1, 1, 3, 1, 2), 5
     >>> # print(range(a.ndim))

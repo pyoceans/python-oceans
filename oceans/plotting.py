@@ -23,17 +23,17 @@ def stick_plot(time, u, v, **kw):
     Examples
     --------
     >>> from pandas import date_range
-    >>> time = date_range(start='1990-11-01 00:00', end='1991-2-1 00:00')
-    >>> u = np.sin(0.1 * time.to_julian_date().values) ** 2 -0.5
+    >>> time = date_range(start="1990-11-01 00:00", end="1991-2-1 00:00")
+    >>> u = np.sin(0.1 * time.to_julian_date().values) ** 2 - 0.5
     >>> v = np.cos(0.1 * time.to_julian_date().values)
-    >>> fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, figsize=(10, 6),
-    ...                                     sharex=True)
+    >>> fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, figsize=(10, 6), sharex=True)
     >>> q = stick_plot(time, u, v, ax=ax0)
-    >>> qk = ax0.quiverkey(q, 0.2, 0.65, 1, "1 m s$^{-1}$",
-    ...                    labelpos='N', coordinates='axes')
-    >>> l = ax1.plot(time.to_pydatetime(), np.sqrt(u**2 + v**2), label='speed')
-    >>> l0 = ax2.plot(time.to_pydatetime(), u, label='u')
-    >>> l1 = ax2.plot(time.to_pydatetime(), v, label='v')
+    >>> qk = ax0.quiverkey(
+    ...     q, 0.2, 0.65, 1, "1 m s$^{-1}$", labelpos="N", coordinates="axes"
+    ... )
+    >>> l = ax1.plot(time.to_pydatetime(), np.sqrt(u**2 + v**2), label="speed")
+    >>> l0 = ax2.plot(time.to_pydatetime(), u, label="u")
+    >>> l1 = ax2.plot(time.to_pydatetime(), v, label="v")
 
     Based on Stephane Raynaud's example from:
     https://www.mail-archive.com/matplotlib-users@lists.sourceforge.net/msg18051.html
@@ -216,9 +216,9 @@ class EditPoints:
     >>> r = 1.5
     >>> xs = r * np.cos(theta)
     >>> ys = r * np.sin(theta)
-    >>> points = ax.plot(xs, ys, 'ko')
+    >>> points = ax.plot(xs, ys, "ko")
     >>> p = EditPoints(fig, ax, points[0], verbose=True)
-    >>> _ = ax.set_title('Click and drag a point to move it')
+    >>> _ = ax.set_title("Click and drag a point to move it")
     >>> _ = ax.axis([-2, 2, -2, 2])
 
     Based on https://matplotlib.org/examples/event_handling/poly_editor.html
@@ -354,7 +354,7 @@ class EditPoints:
             if ind is not None:
                 if self.verbose:
                     print(
-                        "\nDeleted ({}, {}) ind: {}".format(x[ind], y[ind], ind),
+                        f"\nDeleted ({x[ind]}, {y[ind]}) ind: {ind}",
                     )  # noqa
                 x = np.delete(x, ind)
                 y = np.delete(y, ind)

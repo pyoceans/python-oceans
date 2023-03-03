@@ -106,13 +106,13 @@ class Waves:
 
         if L is None:
             self.omega = 2 * np.pi / self.T
-            self.Lo = (g * self.T ** 2) / 2 / np.pi
+            self.Lo = (g * self.T**2) / 2 / np.pi
             # Returns wavenumber of the gravity wave dispersion relation using
             # newtons method. The initial guess is shallow water wavenumber.
             self.k = self.omega / np.sqrt(g)
             # TODO: May change to,
             # self.k = self.w ** 2 / (g * np.sqrt(self.w ** 2 * self.h / g))
-            f = g * self.k * np.tanh(self.k * self.h) - self.omega ** 2
+            f = g * self.k * np.tanh(self.k * self.h) - self.omega**2
 
             while np.abs(f.max()) > 1e-10:
                 dfdk = g * self.k * self.h * (
@@ -120,7 +120,7 @@ class Waves:
                 ) ** 2 + g * np.tanh(self.k * self.h)
                 self.k = self.k - f / dfdk
                 # FIXME:
-                f = g * self.k * np.tanh(self.k * self.h) - self.omega ** 2
+                f = g * self.k * np.tanh(self.k * self.h) - self.omega**2
 
             self.L = 2 * np.pi / self.k
             if isinstance(h, str):
