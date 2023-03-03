@@ -28,7 +28,7 @@ def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None, zc=None):
 
     Notes
     -----
-    The funcion `scaloa` assumes that the user knows `err` and `corrlen` or
+    The function `scaloa` assumes that the user knows `err` and `corrlen` or
     that these parameters where chosen arbitrary.  The usual guess are the
     first baroclinic Rossby radius for `corrlen` and 0.1 e 0.2 to the sampling
     error.
@@ -53,12 +53,12 @@ def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None, zc=None):
 
     # Correlation matrix between stations (A) and cross correlation (stations
     # and grid points (C)).
-    A = (1 - err) * np.exp(-d2 / corrlen ** 2)
-    C = (1 - err) * np.exp(-dc2 / corrlen ** 2)
+    A = (1 - err) * np.exp(-d2 / corrlen**2)
+    C = (1 - err) * np.exp(-dc2 / corrlen**2)
 
     if 0:  # NOTE: If the parameter zc is used (`scaloa2.m`)
-        A = (1 - d2 / zc ** 2) * np.exp(-d2 / corrlen ** 2)
-        C = (1 - dc2 / zc ** 2) * np.exp(-dc2 / corrlen ** 2)
+        A = (1 - d2 / zc**2) * np.exp(-d2 / corrlen**2)
+        C = (1 - dc2 / zc**2) * np.exp(-dc2 / corrlen**2)
 
     # Add the diagonal matrix associated with the sampling error.  We use the
     # diagonal because the error is assumed to be random.  This means it just

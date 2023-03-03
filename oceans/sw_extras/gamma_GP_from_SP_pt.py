@@ -66,7 +66,7 @@ def gamma_G_north_atlantic(SP, pt):
     for k in range(1, len(Fit)):
         i = Fit[k, 0]
         j = Fit[k, 1]
-        gamma_NAtl = gamma_NAtl + Fit[k, 2] * (SP ** i * pt ** j)
+        gamma_NAtl = gamma_NAtl + Fit[k, 2] * (SP**i * pt**j)
 
     return gamma_NAtl
 
@@ -114,7 +114,7 @@ def gamma_G_south_atlantic(SP, pt):
     for k in range(1, len(Fit)):
         i = Fit[k, 0]
         j = Fit[k, 1]
-        gamma_SAtl = gamma_SAtl + Fit[k, 2] * (SP ** i * pt ** j)
+        gamma_SAtl = gamma_SAtl + Fit[k, 2] * (SP**i * pt**j)
 
     return gamma_SAtl
 
@@ -162,7 +162,7 @@ def gamma_G_pacific(SP, pt):
     for k in range(1, len(Fit)):
         i = Fit[k, 0]
         j = Fit[k, 1]
-        gamma_Pac = gamma_Pac + Fit[k, 2] * (SP ** i * pt ** j)
+        gamma_Pac = gamma_Pac + Fit[k, 2] * (SP**i * pt**j)
 
     return gamma_Pac
 
@@ -210,7 +210,7 @@ def gamma_G_indian(SP, pt):
     for k in range(1, len(Fit)):
         i = Fit[k, 0]
         j = Fit[k, 1]
-        gamma_Ind = gamma_Ind + Fit[k, 2] * (SP ** i * pt ** j)
+        gamma_Ind = gamma_Ind + Fit[k, 2] * (SP**i * pt**j)
 
     return gamma_Ind
 
@@ -258,7 +258,7 @@ def gamma_G_southern_ocean(SP, pt, p):
     for k in range(1, len(Fit_N)):
         i = Fit_N[k, 0]
         j = Fit_N[k, 1]
-        gamma_SOce_N = gamma_SOce_N + Fit_N[k, 2] * (SP ** i * pt ** j)
+        gamma_SOce_N = gamma_SOce_N + Fit_N[k, 2] * (SP**i * pt**j)
 
     Fit_S = np.array(
         [
@@ -287,7 +287,7 @@ def gamma_G_southern_ocean(SP, pt, p):
     for k in range(1, len(Fit_S)):
         i = Fit_S[k, 0]
         j = Fit_S[k, 1]
-        gamma_A = gamma_A + Fit_S[k, 2] * (SP ** i * pt ** j)
+        gamma_A = gamma_A + Fit_S[k, 2] * (SP**i * pt**j)
 
     gamma_SOce_S = (
         gamma_A
@@ -337,15 +337,84 @@ def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
     Examples
     --------
     >>> from oceans.sw_extras.gamma_GP_from_SP_pt import gamma_GP_from_SP_pt
-    >>> SP = [35.066, 35.086, 35.089, 35.078, 35.025, 34.851, 34.696, 34.572,
-    ...      34.531, 34.509, 34.496, 34.452, 34.458, 34.456, 34.488, 34.536,
-    ...      34.579, 34.612, 34.642, 34.657, 34.685, 34.707, 34.72, 34.729]
-    >>> pt = [12.25, 12.21, 12.09, 11.99, 11.69, 10.54, 9.35, 8.36, 7.86, 7.43,
-    ...       6.87, 6.04, 5.5, 4.9, 4.04, 3.29, 2.78, 2.45, 2.211, 2.011,
-    ...       1.894, 1.788, 1.554, 1.38]
-    >>> p = [1.0, 48.0, 97.0, 145.0, 194.0, 291.0, 388.0, 485.0, 581.0, 678.0,
-    ...      775.0, 872.0, 969.0, 1066.0, 1260.0, 1454.0, 1647.0, 1841.0,
-    ...      2020.0, 2216.0, 2413.0, 2611.0, 2878.0, 3000.0]
+    >>> SP = [
+    ...     35.066,
+    ...     35.086,
+    ...     35.089,
+    ...     35.078,
+    ...     35.025,
+    ...     34.851,
+    ...     34.696,
+    ...     34.572,
+    ...     34.531,
+    ...     34.509,
+    ...     34.496,
+    ...     34.452,
+    ...     34.458,
+    ...     34.456,
+    ...     34.488,
+    ...     34.536,
+    ...     34.579,
+    ...     34.612,
+    ...     34.642,
+    ...     34.657,
+    ...     34.685,
+    ...     34.707,
+    ...     34.72,
+    ...     34.729,
+    ... ]
+    >>> pt = [
+    ...     12.25,
+    ...     12.21,
+    ...     12.09,
+    ...     11.99,
+    ...     11.69,
+    ...     10.54,
+    ...     9.35,
+    ...     8.36,
+    ...     7.86,
+    ...     7.43,
+    ...     6.87,
+    ...     6.04,
+    ...     5.5,
+    ...     4.9,
+    ...     4.04,
+    ...     3.29,
+    ...     2.78,
+    ...     2.45,
+    ...     2.211,
+    ...     2.011,
+    ...     1.894,
+    ...     1.788,
+    ...     1.554,
+    ...     1.38,
+    ... ]
+    >>> p = [
+    ...     1.0,
+    ...     48.0,
+    ...     97.0,
+    ...     145.0,
+    ...     194.0,
+    ...     291.0,
+    ...     388.0,
+    ...     485.0,
+    ...     581.0,
+    ...     678.0,
+    ...     775.0,
+    ...     872.0,
+    ...     969.0,
+    ...     1066.0,
+    ...     1260.0,
+    ...     1454.0,
+    ...     1647.0,
+    ...     1841.0,
+    ...     2020.0,
+    ...     2216.0,
+    ...     2413.0,
+    ...     2611.0,
+    ...     2878.0,
+    ...     3000.0,
+    ... ]
     >>> lon, lat, n = [187.317, -41.6667, 24]
     >>> gamma_GP_from_SP_pt(SP, pt, p, lon, lat)
     array([26.66339976, 26.68613362, 26.71169809, 26.72286813, 26.74102625,

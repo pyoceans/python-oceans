@@ -19,13 +19,12 @@
 # -- Project information -----------------------------------------------------
 
 project = "oceans"
-copyright = "2018, Filipe Fernandes"
+copyright = "2023, Filipe Fernandes"
 author = "Filipe Fernandes"
 
-from oceans._version import get_versions
+import oceans
 
-version = release = get_versions()["version"]
-del get_versions
+version = release = oceans.__version__
 
 # -- General configuration ---------------------------------------------------
 
@@ -62,7 +61,7 @@ master_doc = "index"
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.

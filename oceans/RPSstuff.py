@@ -29,7 +29,7 @@ def hms2h(h, m=None, s=None):
 
     Examples
     --------
-    >>> hms2h(12., 30., 36.)
+    >>> hms2h(12.0, 30.0, 36.0)
     12.51
     >>> # Or,
     >>> hms2h(123036)
@@ -297,7 +297,7 @@ def rms(u):
         m, n = u.shape
     else:
         m = u.size
-    return np.sqrt(np.sum(u ** 2) / m)
+    return np.sqrt(np.sum(u**2) / m)
 
 
 def z0toCn(z0, H):

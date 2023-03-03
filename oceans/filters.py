@@ -22,12 +22,12 @@ def lanc(numwt, haf):
     >>> h = 2.5 * np.sin(2 * np.pi * t / 12.42)
     >>> h += 1.5 * np.sin(2 * np.pi * t / 12.0)
     >>> h += 0.3 * np.random.randn(len(t))
-    >>> wt = lanc(96+1+96, 1./40)
-    >>> low = np.convolve(wt, h, mode='same')
+    >>> wt = lanc(96 + 1 + 96, 1.0 / 40)
+    >>> low = np.convolve(wt, h, mode="same")
     >>> high = h - low
     >>> fig, (ax0, ax1) = plt.subplots(nrows=2)
-    >>> _ = ax0.plot(high, label='high')
-    >>> _ = ax1.plot(low, label='low')
+    >>> _ = ax0.plot(high, label="high")
+    >>> _ = ax1.plot(low, label="low")
     >>> _ = ax0.legend(numpoints=1)
     >>> _ = ax1.legend(numpoints=1)
 
@@ -84,28 +84,29 @@ def smoo1(datain, window_len=11, window="hanning"):
     >>> from oceans.filters import smoo1
     >>> import numpy as np
     >>> import matplotlib.pyplot as plt
-    >>> time = np.linspace( -4, 4, 100 )
+    >>> time = np.linspace(-4, 4, 100)
     >>> series = np.sin(time)
-    >>> noise_series = series + np.random.randn( len(time) ) * 0.1
+    >>> noise_series = series + np.random.randn(len(time)) * 0.1
     >>> data_out = smoo1(series)
     >>> ws = 31
     >>> ax = plt.subplot(211)
     >>> _ = ax.plot(np.ones(ws))
-    >>> windows = ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']
+    >>> windows = ["flat", "hanning", "hamming", "bartlett", "blackman"]
     >>> for w in windows[1:]:
-    ...     _ = eval('plt.plot(np.' + w + '(ws) )')
+    ...     _ = eval("plt.plot(np." + w + "(ws) )")
     >>> _ = ax.axis([0, 30, 0, 1.1])
     >>> leg = ax.legend(windows)
-    >>> _ = plt.title('The smoothing windows')
+    >>> _ = plt.title("The smoothing windows")
     >>> ax = plt.subplot(212)
-    >>> l1, = ax.plot(series)
-    >>> l2, = ax.plot(noise_series)
+    >>> (l1,) = ax.plot(series)
+    >>> (l2,) = ax.plot(noise_series)
     >>> for w in windows:
     ...     _ = plt.plot(smoo1(noise_series, 10, w))
-    >>> l = ['original signal', 'signal with noise']
+    ...
+    >>> l = ["original signal", "signal with noise"]
     >>> l.extend(windows)
     >>> leg = ax.legend(l)
-    >>> _ = plt.title('Smoothing a noisy signal')
+    >>> _ = plt.title("Smoothing a noisy signal")
 
     TODO: window parameter can be the window itself (i.e. an array)
     instead of a string.
@@ -390,28 +391,44 @@ def medfilt1(x, L=3):
     >>> import matplotlib.pyplot as plt
     >>> # 100 pseudo-random integers ranging from 1 to 100, plus three large
     >>> # outliers for illustration.
-    >>> x = np.r_[np.ceil(np.random.rand(25)*100), [1000],
-    ...           np.ceil(np.random.rand(25)*100), [2000],
-    ...           np.ceil(np.random.rand(25)*100), [3000],
-    ...           np.ceil(np.random.rand(25)*100)]
+    >>> x = np.r_[
+    ...     np.ceil(np.random.rand(25) * 100),
+    ...     [1000],
+    ...     np.ceil(np.random.rand(25) * 100),
+    ...     [2000],
+    ...     np.ceil(np.random.rand(25) * 100),
+    ...     [3000],
+    ...     np.ceil(np.random.rand(25) * 100),
+    ... ]
     >>> L = 2
     >>> xout = medfilt1(x=x, L=L)
     >>> ax = plt.subplot(211)
     >>> l1, l2 = ax.plot(x), ax.plot(xout)
     >>> ax.grid(True)
     >>> y1min, y1max = np.min(xout) * 0.5, np.max(xout) * 2.0
-    >>> leg1 = ax.legend(['x (pseudo-random)','xout'])
-    >>> t1 = ax.set_title('''Median filter with window length %s.
-    ...                   Removes outliers, tracks remaining signal)''' % L)
+    >>> leg1 = ax.legend(["x (pseudo-random)", "xout"])
+    >>> t1 = ax.set_title(
+    ...     '''Median filter with window length %s.
+    ...                   Removes outliers, tracks remaining signal)'''
+    ...     % L
+    ... )
     >>> L = 103
     >>> xout = medfilt1(x=x, L=L)
     >>> ax = plt.subplot(212)
-    >>> l1, l2, = ax.plot(x), ax.plot(xout)
+    >>> (
+    ...     l1,
+    ...     l2,
+    ... ) = ax.plot(
+    ...     x
+    ... ), ax.plot(xout)
     >>> ax.grid(True)
     >>> y2min, y2max = np.min(xout) * 0.5, np.max(xout) * 2.0
     >>> leg2 = ax.legend(["Same x (pseudo-random)", "xout"])
-    >>> t2 = ax.set_title('''Median filter with window length %s.
-    ...                   Removes outliers and noise''' % L)
+    >>> t2 = ax.set_title(
+    ...     '''Median filter with window length %s.
+    ...                   Removes outliers and noise'''
+    ...     % L
+    ... )
     >>> ax = plt.subplot(211)
     >>> lims1 = ax.set_ylim([min(y1min, y2min), max(y1max, y2max)])
     >>> ax = plt.subplot(212)
@@ -469,10 +486,10 @@ def fft_lowpass(signal, low, high):
     >>> x = 2.5 * np.sin(2 * np.pi * t / 12.42)
     >>> x += 1.5 * np.sin(2 * np.pi * t / 12.0)
     >>> x += 0.3 * np.random.randn(len(t))
-    >>> filtered = fft_lowpass(x, low=1/30, high=1/40)
+    >>> filtered = fft_lowpass(x, low=1 / 30, high=1 / 40)
     >>> fig, ax = plt.subplots()
-    >>> l1, = ax.plot(t, x, label='original')
-    >>> l2, = ax.plot(t, filtered, label='filtered')
+    >>> (l1,) = ax.plot(t, x, label="original")
+    >>> (l2,) = ax.plot(t, filtered, label="filtered")
     >>> legend = ax.legend()
 
     """
@@ -520,9 +537,9 @@ def md_trenberth(x):
     >>> x += 0.3 * np.random.randn(len(t))
     >>> filtered = md_trenberth(x)
     >>> fig, ax = plt.subplots()
-    >>> l1, = ax.plot(t, x, label='original')
-    >>> pad = [np.NaN]*5
-    >>> l2, = ax.plot(t, np.r_[pad, filtered, pad], label='filtered')
+    >>> (l1,) = ax.plot(t, x, label="original")
+    >>> pad = [np.NaN] * 5
+    >>> (l2,) = ax.plot(t, np.r_[pad, filtered, pad], label="filtered")
     >>> legend = ax.legend()
 
     """
@@ -573,14 +590,14 @@ def pl33tn(x, dt=1.0, T=33.0, mode="valid"):
     >>> x = 2.5 * np.sin(2 * np.pi * t / 12.42)
     >>> x += 1.5 * np.sin(2 * np.pi * t / 12.0)
     >>> x += 0.3 * np.random.randn(len(t))
-    >>> filtered_33 = pl33tn(x, dt=4.0)   # 33 hr filter
+    >>> filtered_33 = pl33tn(x, dt=4.0)  # 33 hr filter
     >>> filtered_33d3 = pl33tn(x, dt=4.0, T=72.0)  # 3 day filter
     >>> fig, ax = plt.subplots()
-    >>> l1, = ax.plot(t, x, label='original')
-    >>> pad = [np.NaN]*8
-    >>> l2, = ax.plot(t, np.r_[pad, filtered_33, pad], label='33 hours')
-    >>> pad = [np.NaN]*17
-    >>> l3, = ax.plot(t, np.r_[pad, filtered_33d3, pad], label='3 days')
+    >>> (l1,) = ax.plot(t, x, label="original")
+    >>> pad = [np.NaN] * 8
+    >>> (l2,) = ax.plot(t, np.r_[pad, filtered_33, pad], label="33 hours")
+    >>> pad = [np.NaN] * 17
+    >>> (l3,) = ax.plot(t, np.r_[pad, filtered_33d3, pad], label="3 days")
     >>> legend = ax.legend()
 
 
