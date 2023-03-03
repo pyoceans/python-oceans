@@ -1,4 +1,6 @@
-[![PyPI Package](https://img.shields.io/pypi/v/oceans.svg)](https://pypi.org/project/oceans/) [![Travis Build Status](https://travis-ci.org/pyoceans/python-oceans.svg?branch=master)](https://travis-ci.org/pyoceans/python-oceans) [![DOI](https://zenodo.org/badge/11956337.svg)](https://zenodo.org/badge/latestdoi/11956337)
+[![PyPI Package](https://img.shields.io/pypi/v/oceans.svg)](https://pypi.org/project/oceans/)
+[![Tests](https://github.com/pyoceans/python-oceans/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/pyoceans/python-oceans/actions/workflows/tests.yml)
+[![DOI](https://zenodo.org/badge/11956337.svg)](https://zenodo.org/badge/latestdoi/11956337)
 
 # Python Oceans
 
