@@ -4,6 +4,7 @@ import numpy as np
 from netCDF4 import Dataset
 
 from oceans.ocfis import get_profile, wrap_lon180
+import functools
 
 
 def _woa_variable(variable):
@@ -101,6 +102,7 @@ def _woa_url(variable, time_period, resolution):
     return url
 
 
+@functools.lru_cache(maxsize=256)
 def woa_profile(lon, lat, variable="temperature", time_period="annual", resolution="1"):
     """
     Return an iris.cube instance from a World Ocean Atlas variable at a
@@ -160,6 +162,7 @@ def woa_profile(lon, lat, variable="temperature", time_period="annual", resoluti
     return cube.interpolate(**kw)
 
 
+@functools.lru_cache(maxsize=256)
 def woa_subset(
     bbox,
     variable="temperature",
@@ -239,7 +242,8 @@ def woa_subset(
         return [c for c in cubes if c.var_name == f"{v}_mn"][0]
 
 
-def etopo_subset(bbox, tfile=None, smoo=False):
+@functools.lru_cache(maxsize=256)
+def etopo_subset(min_lon, max_lon, min_lat, max_lat, tfile=None, smoo=False):
     """
     Get a etopo subset.
     Should work on any netCDF with x, y, data
@@ -249,7 +253,7 @@ def etopo_subset(bbox, tfile=None, smoo=False):
     >>> from oceans.datasets import etopo_subset
     >>> import matplotlib.pyplot as plt
     >>> bbox = [-43, -30, -22, -17]
-    >>> lon, lat, bathy = etopo_subset(bbox=bbox, smoo=True)
+    >>> lon, lat, bathy = etopo_subset(*bbox, smoo=True)
     >>> fig, ax = plt.subplots()
     >>> cs = ax.pcolormesh(lon, lat, bathy)
 
@@ -262,6 +266,7 @@ def etopo_subset(bbox, tfile=None, smoo=False):
         lons = etopo.variables["x"][:]
         lats = etopo.variables["y"][:]
 
+        bbox = min_lon, max_lon, min_lat, max_lat
         imin, imax, jmin, jmax = _get_indices(bbox, lons, lats)
         lon, lat = np.meshgrid(lons[imin:imax], lats[jmin:jmax])
 
@@ -317,14 +322,14 @@ def get_isobath(bbox, iso=-200, tfile=None, smoo=False):
     >>> lon, lat, bathy = etopo_subset(bbox=bbox, smoo=True)
     >>> fig, ax = plt.subplots()
     >>> cs = ax.pcolormesh(lon, lat, bathy)
-    >>> for segment in segments[0]:
+    >>> for segment in segments:
     ...     lines = ax.plot(segment[:, 0], segment[:, -1], "k", linewidth=2)
     ...
 
     """
     import contourpy
 
-    lon, lat, topo = etopo_subset(bbox, tfile=tfile, smoo=smoo)
+    lon, lat, topo = etopo_subset(*bbox, tfile=tfile, smoo=smoo)
 
     c = contourpy.contour_generator(
         lon,
@@ -339,6 +344,8 @@ def get_isobath(bbox, iso=-200, tfile=None, smoo=False):
     res = c.create_contour(iso)
     nseg = len(res) // 2
     segments = res[:nseg]
+    if len(segments) == 1:
+        segments = segments[0]
     return segments
 
 
