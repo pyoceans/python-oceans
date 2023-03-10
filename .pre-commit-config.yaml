@@ -28,7 +28,7 @@ repos:
     - id: blackdoc
 
 - repo: https://github.com/charliermarsh/ruff-pre-commit
-  rev: v0.0.253
+  rev: v0.0.254
   hooks:
     - id: ruff
 
@@ -39,7 +39,7 @@ repos:
     language_version: python3
 
 - repo: https://github.com/codespell-project/codespell
-  rev: v2.2.2
+  rev: v2.2.4
   hooks:
     - id: codespell
       args:
