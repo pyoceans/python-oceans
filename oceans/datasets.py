@@ -1,10 +1,10 @@
+import functools
 import warnings
 
 import numpy as np
 from netCDF4 import Dataset
 
 from oceans.ocfis import get_profile, wrap_lon180
-import functools
 
 
 def _woa_variable(variable):
@@ -105,7 +105,7 @@ def _woa_url(variable, time_period, resolution):
 @functools.lru_cache(maxsize=256)
 def woa_profile(lon, lat, variable="temperature", time_period="annual", resolution="1"):
     """
-    Return an iris.cube instance from a World Ocean Atlas variable at a
+    Return a xarray DAtaset instance from a World Ocean Atlas variable at a
     given lon, lat point.
 
     Parameters
@@ -125,121 +125,105 @@ def woa_profile(lon, lat, variable="temperature", time_period="annual", resoluti
 
     Returns
     -------
-    Iris.cube instance with the climatology.
+    xr.Dataset instance with the climatology.
 
     Examples
     --------
     >>> import matplotlib.pyplot as plt
     >>> from oceans.datasets import woa_profile
-    >>> cube = woa_profile(
+    >>> woa = woa_profile(
     ...     -143, 10, variable="temperature", time_period="annual", resolution="5"
     ... )
     >>> fig, ax = plt.subplots(figsize=(2.25, 5))
-    >>> z = cube.coord(axis="Z").points
-    >>> l = ax.plot(cube[0, :].data, z)
+    >>> woa.plot(ax=ax, y="depth")
     >>> ax.grid(True)
     >>> ax.invert_yaxis()
 
     """
-    import iris
+    import cf_xarray  # noqa
+    import xarray as xr
 
     url = _woa_url(variable=variable, time_period=time_period, resolution=resolution)
-
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        cubes = iris.load_raw(url)
-
-    # TODO: should we be using `an` instead of `mn`?
     v = _woa_variable(variable)
-    cube = [c for c in cubes if c.var_name == f"{v}_mn"][0]
-    scheme = iris.analysis.Nearest()
-    sample_points = [("longitude", lon), ("latitude", lat)]
-    kw = {
-        "sample_points": sample_points,
-        "scheme": scheme,
-        "collapse_scalar": True,
-    }
-    return cube.interpolate(**kw)
+
+    ds = xr.open_dataset(url, decode_times=False)
+    ds = ds[f"{v}_mn"]
+    return ds.cf.sel({"X": lon, "Y": lat}, method="nearest")
 
 
 @functools.lru_cache(maxsize=256)
 def woa_subset(
-    bbox,
+    min_lon,
+    max_lon,
+    min_lat,
+    max_lat,
     variable="temperature",
     time_period="annual",
     resolution="5",
     full=False,
 ):
     """
-    Return an iris.cube instance from a World Ocean Atlas variable at a
+    Return an xarray Dataset instance from a World Ocean Atlas variable at a
     given lon, lat bounding box.
 
     Parameters
     ----------
-    bbox: list, tuple
-          minx, maxx, miny, maxy positions to extract.
+    min_lon, max_lon, min_lat, max_lat: positions to extract.
     See `woa_profile` for the other options.
 
     Returns
     -------
-    `iris.Cube` instance with the climatology.
+    `xr.Dataset` instance with the climatology.
 
     Examples
     --------
     >>> # Extract a 2D surface -- Annual temperature climatology:
-    >>> import iris.plot as iplt
     >>> import matplotlib.pyplot as plt
-    >>> from oceans.colormaps import cm
-    >>> bbox = [2.5, 357.5, -87.5, 87.5]
-    >>> cube = woa_subset(
-    ...     bbox, variable="temperature", time_period="annual", resolution="5"
+    >>> from cmcrameri import cm
+    >>> from oceans.datasets import woa_subset
+    >>> bbox = [-177.5, 177.5, -87.5, 87.5]
+    >>> woa = woa_subset(
+    ...     *bbox, variable="temperature", time_period="annual", resolution="5"
     ... )
-    >>> c = cube[0, 0, ...]  # Slice singleton time and first level.
-    >>> cs = iplt.pcolormesh(c, cmap=cm.avhrr)
-    >>> cbar = plt.colorbar(cs)
+    >>> woa.squeeze().sel(depth=0).plot(cmap=cm.lajolla)
 
     >>> # Extract a square around the Mariana Trench averaging into a profile.
-    >>> import iris
+    >>> import matplotlib.pyplot as plt
+    >>> import numpy as np
     >>> from oceans.colormaps import get_color
     >>> colors = get_color(12)
     >>> months = "Jan Feb Apr Mar May Jun Jul Aug Sep Oct Nov Dec".split()
+    >>> def area_weights_avg(woa):
+    ...     woa = woa["t_mn"].squeeze()
+    ...     weights = np.cos(np.deg2rad(woa["lat"])).where(~woa.isnull())
+    ...     weights /= weights.mean()
+    ...     return (woa * weights).mean(dim=["lon", "lat"])
+    ...
     >>> bbox = [-143, -141, 10, 12]
     >>> fig, ax = plt.subplots(figsize=(5, 5))
     >>> for month in months:
-    ...     cube = woa_subset(
-    ...         bbox, time_period=month, variable="temperature", resolution="1"
+    ...     woa = woa_subset(
+    ...         *bbox, time_period=month, variable="temperature", resolution="1"
     ...     )
-    ...     grid_areas = iris.analysis.cartography.area_weights(cube)
-    ...     c = cube.collapsed(
-    ...         ["longitude", "latitude"], iris.analysis.MEAN, weights=grid_areas
-    ...     )
-    ...     z = c.coord(axis="Z").points
-    ...     l = ax.plot(c[0, :].data, z, label=month, color=next(colors))
+    ...     profile = area_weights_avg(woa)
+    ...     profile.plot(ax=ax, y="depth", label=month, color=next(colors))
     ...
     >>> ax.grid(True)
     >>> ax.invert_yaxis()
     >>> leg = ax.legend(loc="lower left")
-    >>> _ = ax.set_ylim(200, 0)
+    >>> ax.set_ylim(200, 0)
 
     """
-    import iris
+    import cf_xarray  # noqa
+    import xarray as xr
 
-    v = _woa_variable(variable)
     url = _woa_url(variable, time_period, resolution)
-    cubes = iris.load_raw(url)
-    cubes = [
-        cube.intersection(longitude=(bbox[0], bbox[1]), latitude=(bbox[2], bbox[3]))
-        for cube in cubes
-    ]
-
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        cubes = iris.cube.CubeList(cubes)
-
+    ds = xr.open_dataset(url, decode_times=False)
+    ds = ds.cf.sel({"X": slice(min_lon, max_lon), "Y": slice(min_lat, max_lat)})
+    v = _woa_variable(variable)
     if full:
-        return cubes
-    else:
-        return [c for c in cubes if c.var_name == f"{v}_mn"][0]
+        return ds
+    return ds[[f"{v}_mn"]]  # always return a dataset
 
 
 @functools.lru_cache(maxsize=256)
@@ -322,7 +306,7 @@ def get_isobath(bbox, iso=-200, tfile=None, smoo=False):
     >>> lon, lat, bathy = etopo_subset(bbox=bbox, smoo=True)
     >>> fig, ax = plt.subplots()
     >>> cs = ax.pcolormesh(lon, lat, bathy)
-    >>> for segment in segments:
+    >>> for segment in segmentsz:
     ...     lines = ax.plot(segment[:, 0], segment[:, -1], "k", linewidth=2)
     ...
 
