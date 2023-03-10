@@ -135,7 +135,7 @@ def woa_profile(lon, lat, variable="temperature", time_period="annual", resoluti
     ...     -143, 10, variable="temperature", time_period="annual", resolution="5"
     ... )
     >>> fig, ax = plt.subplots(figsize=(2.25, 5))
-    >>> woa.plot(ax=ax, y="depth")
+    >>> l = woa.plot(ax=ax, y="depth")
     >>> ax.grid(True)
     >>> ax.invert_yaxis()
 
@@ -185,7 +185,7 @@ def woa_subset(
     >>> woa = woa_subset(
     ...     *bbox, variable="temperature", time_period="annual", resolution="5"
     ... )
-    >>> woa.squeeze().sel(depth=0).plot(cmap=cm.lajolla)
+    >>> cs = woa["t_mn"].sel(depth=0).plot(cmap=cm.lajolla)
 
     >>> # Extract a square around the Mariana Trench averaging into a profile.
     >>> import matplotlib.pyplot as plt
@@ -206,12 +206,12 @@ def woa_subset(
     ...         *bbox, time_period=month, variable="temperature", resolution="1"
     ...     )
     ...     profile = area_weights_avg(woa)
-    ...     profile.plot(ax=ax, y="depth", label=month, color=next(colors))
+    ...     l = profile.plot(ax=ax, y="depth", label=month, color=next(colors))
     ...
     >>> ax.grid(True)
     >>> ax.invert_yaxis()
     >>> leg = ax.legend(loc="lower left")
-    >>> ax.set_ylim(200, 0)
+    >>> _ = ax.set_ylim(200, 0)
 
     """
     import cf_xarray  # noqa
@@ -287,7 +287,7 @@ def get_depth(lon, lat, tfile=None):
         lat.min() - offset,
         lat.max() + offset,
     ]
-    lons, lats, bathy = etopo_subset(bbox, tfile=tfile, smoo=False)
+    lons, lats, bathy = etopo_subset(*bbox, tfile=tfile, smoo=False)
 
     return get_profile(lons, lats, bathy, lon, lat, mode="nearest", order=3)
 
@@ -303,10 +303,10 @@ def get_isobath(bbox, iso=-200, tfile=None, smoo=False):
     >>> import matplotlib.pyplot as plt
     >>> bbox = [-43, -30, -22, -17]
     >>> segments = get_isobath(bbox=bbox, iso=-200, smoo=True)
-    >>> lon, lat, bathy = etopo_subset(bbox=bbox, smoo=True)
+    >>> lon, lat, bathy = etopo_subset(*bbox, smoo=True)
     >>> fig, ax = plt.subplots()
     >>> cs = ax.pcolormesh(lon, lat, bathy)
-    >>> for segment in segmentsz:
+    >>> for segment in segments:
     ...     lines = ax.plot(segment[:, 0], segment[:, -1], "k", linewidth=2)
     ...
 
