@@ -1,7 +1,7 @@
 black
 cartopy
+cf_xarray
 check-manifest
-iris
 nbsphinx
 netcdf4
 pandas
@@ -11,3 +11,4 @@ pytest-xdist
 scipy
 sphinx
 twine
+xarray
