@@ -1,3 +1,4 @@
+cmcrameri
 contourpy
 gsw
 matplotlib>=3.6.0
