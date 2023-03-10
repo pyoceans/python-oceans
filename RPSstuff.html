@@ -1,19 +1,18 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>oceans.RPSstuff &#8212; oceans 0.6.0+3.gd749886 documentation</title>
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>oceans.RPSstuff &#8212; oceans 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="oceans.filters" href="filters.html" />
@@ -62,36 +61,64 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="datasets.html"><code class="docutils literal notranslate"><span class="pre">oceans.datasets</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="colormaps.html"><code class="docutils literal notranslate"><span class="pre">oceans.colormaps</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="plotting.html"><code class="docutils literal notranslate"><span class="pre">oceans.plotting</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="ocfis.html"><code class="docutils literal notranslate"><span class="pre">oceans.ocfis</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="filters.html"><code class="docutils literal notranslate"><span class="pre">oceans.filters</span></code></a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">oceans.RPSstuff</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.datasets</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="colormaps.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.colormaps</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.plotting</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="ocfis.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.ocfis</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="filters.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.filters</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.RPSstuff</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.angled"><code class="docutils literal notranslate"><span class="pre">angled()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.coast2bln"><code class="docutils literal notranslate"><span class="pre">coast2bln()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.fixcoast"><code class="docutils literal notranslate"><span class="pre">fixcoast()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.gmax"><code class="docutils literal notranslate"><span class="pre">gmax()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.gmean"><code class="docutils literal notranslate"><span class="pre">gmean()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.gmedian"><code class="docutils literal notranslate"><span class="pre">gmedian()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.gmin"><code class="docutils literal notranslate"><span class="pre">gmin()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.gregorian"><code class="docutils literal notranslate"><span class="pre">gregorian()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.gstd"><code class="docutils literal notranslate"><span class="pre">gstd()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.gsum"><code class="docutils literal notranslate"><span class="pre">gsum()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.h2hms"><code class="docutils literal notranslate"><span class="pre">h2hms()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.hms2h"><code class="docutils literal notranslate"><span class="pre">hms2h()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.ij2ind"><code class="docutils literal notranslate"><span class="pre">ij2ind()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.ind2ij"><code class="docutils literal notranslate"><span class="pre">ind2ij()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.jdmat2jdrps"><code class="docutils literal notranslate"><span class="pre">jdmat2jdrps()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.jdrps2jdmat"><code class="docutils literal notranslate"><span class="pre">jdrps2jdmat()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.julian"><code class="docutils literal notranslate"><span class="pre">julian()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.lagcor"><code class="docutils literal notranslate"><span class="pre">lagcor()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.ms2hms"><code class="docutils literal notranslate"><span class="pre">ms2hms()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.near"><code class="docutils literal notranslate"><span class="pre">near()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.rms"><code class="docutils literal notranslate"><span class="pre">rms()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.s2hms"><code class="docutils literal notranslate"><span class="pre">s2hms()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.shift"><code class="docutils literal notranslate"><span class="pre">shift()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.short_calc"><code class="docutils literal notranslate"><span class="pre">short_calc()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.ss2"><code class="docutils literal notranslate"><span class="pre">ss2()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.swantime"><code class="docutils literal notranslate"><span class="pre">swantime()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.z0toCn"><code class="docutils literal notranslate"><span class="pre">z0toCn()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.RPSstuff.z0tocd"><code class="docutils literal notranslate"><span class="pre">z0tocd()</span></code></a></li>
+</ul>
+</li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="filters.html" title="previous chapter"><code class="docutils literal notranslate"><span class="pre">oceans.filters</span></code></a></li>
+      <li>Previous: <a href="filters.html" title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.filters</span></code></a></li>
   </ul></li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -108,33 +135,33 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="module-oceans.RPSstuff">
-<span id="oceans-rpsstuff"></span><h1><a class="reference internal" href="#module-oceans.RPSstuff" title="oceans.RPSstuff"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.RPSstuff</span></code></a><a class="headerlink" href="#module-oceans.RPSstuff" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="oceans.RPSstuff.angled">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">angled</code><span class="sig-paren">(</span><em>h</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#angled"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.angled" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>ANGLED: Returns the phase angles in degrees of a matrix with complex</dt>
-<dd>elements.</dd>
-<dt>Usage:</dt>
-<dd>deg = angled(h)
+  <section id="module-oceans.RPSstuff">
+<span id="oceans-rpsstuff"></span><h1><a class="reference internal" href="#module-oceans.RPSstuff" title="oceans.RPSstuff"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.RPSstuff</span></code></a><a class="headerlink" href="#module-oceans.RPSstuff" title="Permalink to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.angled">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">angled</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#angled"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.angled" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>ANGLED: Returns the phase angles in degrees of a matrix with complex</dt><dd><p>elements.</p>
+</dd>
+<dt>Usage:</dt><dd><p>deg = angled(h)
 h = complex matrix
-deg = angle in math convention (degrees counterclockwise from “east”)</dd>
+deg = angle in math convention (degrees counterclockwise from “east”)</p>
+</dd>
 </dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.coast2bln">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">coast2bln</code><span class="sig-paren">(</span><em>coast</em>, <em>bln_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#coast2bln"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.coast2bln" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.coast2bln">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">coast2bln</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coast</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bln_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#coast2bln"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.coast2bln" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts a matlab coast (two column array w/ nan for line breaks) into
 a Surfer blanking file.</p>
 <p>Where coast is a two column vector and bln_file is the output file name.</p>
 <p>Needs <cite>fixcoast</cite>.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.fixcoast">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">fixcoast</code><span class="sig-paren">(</span><em>coast</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#fixcoast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.fixcoast" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.fixcoast">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">fixcoast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coast</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#fixcoast"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.fixcoast" title="Permalink to this definition">¶</a></dt>
 <dd><p>FIXCOAST  Makes sure coastlines meet Signell’s conventions.</p>
 <p>Fixes coastline is in the format we want.  Assumes that lon/lat are in the
 first two columns of the matrix coast, and that coastline segments are
@@ -143,33 +170,33 @@ row of NaNs separates each segment, and makes sure that the first and last
 rows contain NaNs.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.gmax">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">gmax</code><span class="sig-paren">(</span><em>x</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#gmax"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.gmax" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.gmax">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">gmax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#gmax"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.gmax" title="Permalink to this definition">¶</a></dt>
 <dd><p>Just like max, except that it skips over bad points.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.gmean">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">gmean</code><span class="sig-paren">(</span><em>x</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#gmean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.gmean" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.gmean">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">gmean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#gmean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.gmean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Just like mean, except that it skips over bad points.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.gmedian">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">gmedian</code><span class="sig-paren">(</span><em>x</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#gmedian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.gmedian" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.gmedian">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">gmedian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#gmedian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.gmedian" title="Permalink to this definition">¶</a></dt>
 <dd><p>Just like median, except that it skips over bad points.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.gmin">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">gmin</code><span class="sig-paren">(</span><em>x</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#gmin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.gmin" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.gmin">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">gmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#gmin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.gmin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Just like min, except that it skips over bad points.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.gregorian">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">gregorian</code><span class="sig-paren">(</span><em>jd</em>, <em>noon=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#gregorian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.gregorian" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.gregorian">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">gregorian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#gregorian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.gregorian" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts decimal Julian days to Gregorian dates using the astronomical
 conversion, but with time zero starting at midnight instead of noon.  In
 this convention, Julian day 2440000 begins at 0000 hours, May 23, 1968.
@@ -186,42 +213,42 @@ mi = minute (0-59)
 sec = decimal seconds
 example: [1990 12 12 0 0 0] is midnight on Dec 12, 1990.</p>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gregorian</span><span class="p">(</span><span class="mi">2440000</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gregorian</span><span class="p">(</span><span class="mi">2440000</span><span class="p">)</span>
 <span class="go">array([[1968.,    5.,   23.,    0.,    0.,    0.]])</span>
 </pre></div>
 </div>
 <p>AUTHOR: Rich Signell  (<a class="reference external" href="mailto:rsignell&#37;&#52;&#48;usgs&#46;gov">rsignell<span>&#64;</span>usgs<span>&#46;</span>gov</a>)</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.gstd">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">gstd</code><span class="sig-paren">(</span><em>x</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#gstd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.gstd" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.gstd">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">gstd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#gstd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.gstd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Just like std, except that it skips over bad points.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.gsum">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">gsum</code><span class="sig-paren">(</span><em>x</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#gsum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.gsum" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.gsum">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">gsum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#gsum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.gsum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Just like sum, except that it skips over bad points.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.h2hms">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">h2hms</code><span class="sig-paren">(</span><em>hours</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#h2hms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.h2hms" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.h2hms">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">h2hms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hours</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#h2hms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.h2hms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts hours to hours, minutes, and seconds.</p>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h2hms</span><span class="p">(</span><span class="mf">12.51</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h2hms</span><span class="p">(</span><span class="mf">12.51</span><span class="p">)</span>
 <span class="go">(12.0, 30.0, 36.0)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.hms2h">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">hms2h</code><span class="sig-paren">(</span><em>h</em>, <em>m=None</em>, <em>s=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#hms2h"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.hms2h" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.hms2h">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">hms2h</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">h</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#hms2h"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.hms2h" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts hours, minutes, and seconds to hours.</p>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hms2h</span><span class="p">(</span><span class="mf">12.</span><span class="p">,</span> <span class="mf">30.</span><span class="p">,</span> <span class="mf">36.</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hms2h</span><span class="p">(</span><span class="mf">12.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="mf">36.0</span><span class="p">)</span>
 <span class="go">12.51</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Or,</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">hms2h</span><span class="p">(</span><span class="mi">123036</span><span class="p">)</span>
@@ -230,53 +257,53 @@ example: [1990 12 12 0 0 0] is midnight on Dec 12, 1990.</p>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.ij2ind">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">ij2ind</code><span class="sig-paren">(</span><em>a</em>, <em>i</em>, <em>j</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#ij2ind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.ij2ind" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.ij2ind">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">ij2ind</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#ij2ind"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.ij2ind" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.ind2ij">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">ind2ij</code><span class="sig-paren">(</span><em>a</em>, <em>ind</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#ind2ij"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.ind2ij" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.ind2ij">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">ind2ij</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ind</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#ind2ij"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.ind2ij" title="Permalink to this definition">¶</a></dt>
 <dd><p>ind2ij returns i, j indices of array.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.jdmat2jdrps">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">jdmat2jdrps</code><span class="sig-paren">(</span><em>jdmat</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#jdmat2jdrps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.jdmat2jdrps" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.jdmat2jdrps">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">jdmat2jdrps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jdmat</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#jdmat2jdrps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.jdmat2jdrps" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert Matlab’s Serial Day to Signell’s Julian days
 matlab’s serial date = 1 at 0000 UTC, 1-Jan-0000.</p>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">jdmat2jdrps</span><span class="p">(</span><span class="mi">718941</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">jdmat2jdrps</span><span class="p">(</span><span class="mi">718941</span><span class="p">)</span>
 <span class="go">array([2440000.])</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.jdrps2jdmat">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">jdrps2jdmat</code><span class="sig-paren">(</span><em>jd</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#jdrps2jdmat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.jdrps2jdmat" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.jdrps2jdmat">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">jdrps2jdmat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jd</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#jdrps2jdmat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.jdrps2jdmat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert Signell’s Julian days to Matlab’s Serial day
 matlab’s serial date = 1 at 0000 UTC, 1-Jan-0000.</p>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">jdrps2jdmat</span><span class="p">(</span><span class="mi">2440000</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">jdrps2jdmat</span><span class="p">(</span><span class="mi">2440000</span><span class="p">)</span>
 <span class="go">array([718941.])</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.julian">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">julian</code><span class="sig-paren">(</span><em>y</em>, <em>m=0</em>, <em>d=0</em>, <em>h=0</em>, <em>mi=0</em>, <em>s=0</em>, <em>noon=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#julian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.julian" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.julian">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">julian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#julian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.julian" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts Gregorian calendar dates to Julian dates</p>
 <p>USAGE: [j]=julian(y,m,d,h)</p>
-<dl class="docutils">
-<dt>DESCRIPTION:  Converts Gregorian dates to decimal Julian days using the</dt>
-<dd>astronomical conversion, but with time zero starting at
+<dl class="simple">
+<dt>DESCRIPTION:  Converts Gregorian dates to decimal Julian days using the</dt><dd><p>astronomical conversion, but with time zero starting at
 midnight instead of noon.  In this convention, Julian day
 2440000 begins at 0000 hours, May 23, 1968. The decimal
 Julian day, with double precision, yields an accuracy of
-decimal days of about 0.1 milliseconds.</dd>
+decimal days of about 0.1 milliseconds.</p>
+</dd>
 </dl>
 <p>If you want Julian days to start and end at noon set <cite>noon</cite> to True.</p>
 <p>INPUT:
@@ -291,111 +318,111 @@ h : decimal hours (assumed 0 if absent)</p>
 j : decimal Julian day number</p>
 <p>last revised 1/3/96 by Rich Signell (<a class="reference external" href="mailto:rsignell&#37;&#52;&#48;usgs&#46;gov">rsignell<span>&#64;</span>usgs<span>&#46;</span>gov</a>)</p>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">julian</span><span class="p">(</span><span class="mi">1968</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">julian</span><span class="p">(</span><span class="mi">1968</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="go">array([2440000.])</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.lagcor">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">lagcor</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#lagcor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.lagcor" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.lagcor">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">lagcor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#lagcor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.lagcor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds lagged correlations between two series.
 a and b are two column vectors
 n is range of lags
 cor is correlation as fn of lag.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.ms2hms">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">ms2hms</code><span class="sig-paren">(</span><em>millisecs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#ms2hms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.ms2hms" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.ms2hms">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">ms2hms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">millisecs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#ms2hms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.ms2hms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts milliseconds to integer hour, minute, seconds.</p>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ms2hms</span><span class="p">(</span><span class="mf">1e3</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ms2hms</span><span class="p">(</span><span class="mf">1e3</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
 <span class="go">(0.0, 1.0, 0.0)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.near">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">near</code><span class="sig-paren">(</span><em>x</em>, <em>x0</em>, <em>n=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#near"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.near" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.near">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">near</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#near"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.near" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given an 1D array <cite>x</cite> and a scalar <cite>x0</cite>, returns the <cite>n</cite> indices of the
 element of <cite>x</cite> closest to <cite>x0</cite>.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.rms">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">rms</code><span class="sig-paren">(</span><em>u</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#rms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.rms" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.rms">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">rms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#rms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.rms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute root mean square for each column of matrix u.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.s2hms">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">s2hms</code><span class="sig-paren">(</span><em>secs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#s2hms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.s2hms" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.s2hms">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">s2hms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">secs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#s2hms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.s2hms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts seconds to integer hour,minute,seconds
 Usage: hour, min, sec = s2hms(secs)</p>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s2hms</span><span class="p">(</span><span class="mi">3600</span> <span class="o">+</span> <span class="mi">60</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">s2hms</span><span class="p">(</span><span class="mi">3600</span> <span class="o">+</span> <span class="mi">60</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 <span class="go">(1.0, 1.0, 1)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.shift">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">shift</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#shift"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.shift" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.shift">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">shift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#shift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.shift" title="Permalink to this definition">¶</a></dt>
 <dd><p>a and b are vectors
 n is number of points of a to cut off
 anew and bnew will be the same length.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.short_calc">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">short_calc</code><span class="sig-paren">(</span><em>amin</em>, <em>amax</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#short_calc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.short_calc" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.short_calc">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">short_calc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">amin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amax</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#short_calc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.short_calc" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.ss2">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">ss2</code><span class="sig-paren">(</span><em>jd</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#ss2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.ss2" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.ss2">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">ss2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jd</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#ss2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.ss2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return Gregorian start and stop dates of Julian day variable
 Usage:  start, stop = ss2(jd)</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.swantime">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">swantime</code><span class="sig-paren">(</span><em>a</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#swantime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.swantime" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.swantime">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">swantime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#swantime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.swantime" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts SWAN default time format to datetime object.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.z0toCn">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">z0toCn</code><span class="sig-paren">(</span><em>z0</em>, <em>H</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#z0toCn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.z0toCn" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.z0toCn">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">z0toCn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">H</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#z0toCn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.z0toCn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert roughness height z0 to Chezy “C” and Manning’s “n” which is a
 function of the water depth</p>
-<dl class="docutils">
-<dt>Inputs:</dt>
-<dd>z0 = roughness height (meters)
-H = water depth (meters) (can be vector)</dd>
-<dt>Outputs:</dt>
-<dd>C = Chezy “C” (non-dimensional)
-n = Manning’s “n” (non-dimensional)</dd>
+<dl class="simple">
+<dt>Inputs:</dt><dd><p>z0 = roughness height (meters)
+H = water depth (meters) (can be vector)</p>
+</dd>
+<dt>Outputs:</dt><dd><p>C = Chezy “C” (non-dimensional)
+n = Manning’s “n” (non-dimensional)</p>
+</dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># finds vectors C and n corresponding to a z0=0.003</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># finds vectors C and n corresponding to a z0=0.003</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># and a range of water depths from 2--200 meters.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">C</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">z0toCn</span><span class="p">(</span><span class="mf">0.003</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">200</span><span class="p">))</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.RPSstuff.z0tocd">
-<code class="descclassname">oceans.RPSstuff.</code><code class="descname">z0tocd</code><span class="sig-paren">(</span><em>z0</em>, <em>zr</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#z0tocd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.RPSstuff.z0tocd" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.RPSstuff.z0tocd">
+<span class="sig-prename descclassname"><span class="pre">oceans.RPSstuff.</span></span><span class="sig-name descname"><span class="pre">z0tocd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/RPSstuff.html#z0tocd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.RPSstuff.z0tocd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates CD at a given ZR corresponding to Z0.</p>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -405,11 +432,11 @@ n = Manning’s “n” (non-dimensional)</dd>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2018, Filipe Fernandes.
+      &copy;2023, Filipe Fernandes.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.1.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
       |
       <a href="_sources/RPSstuff.rst.txt"

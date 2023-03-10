@@ -1,19 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>oceans.plotting &#8212; oceans 0.6.0+3.gd749886 documentation</title>
-    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>oceans.plotting &#8212; oceans 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
    
@@ -61,14 +59,14 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../datasets.html"><code class="docutils literal notranslate"><span class="pre">oceans.datasets</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../colormaps.html"><code class="docutils literal notranslate"><span class="pre">oceans.colormaps</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../plotting.html"><code class="docutils literal notranslate"><span class="pre">oceans.plotting</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../ocfis.html"><code class="docutils literal notranslate"><span class="pre">oceans.ocfis</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../filters.html"><code class="docutils literal notranslate"><span class="pre">oceans.filters</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../RPSstuff.html"><code class="docutils literal notranslate"><span class="pre">oceans.RPSstuff</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.datasets</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../colormaps.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.colormaps</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../plotting.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.plotting</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ocfis.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.ocfis</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../filters.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.filters</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../RPSstuff.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.RPSstuff</span></code></a></li>
 </ul>
 
 <div class="relations">
@@ -81,17 +79,15 @@
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -111,19 +107,17 @@
   <h1>Source code for oceans.plotting</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">matplotlib</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">matplotlib.artist</span> <span class="k">import</span> <span class="n">Artist</span>
-<span class="kn">from</span> <span class="nn">matplotlib.dates</span> <span class="k">import</span> <span class="n">date2num</span>
-<span class="kn">from</span> <span class="nn">matplotlib.lines</span> <span class="k">import</span> <span class="n">Line2D</span>
-
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">numpy.ma</span> <span class="k">as</span> <span class="nn">ma</span>
+<span class="kn">from</span> <span class="nn">matplotlib.artist</span> <span class="kn">import</span> <span class="n">Artist</span>
+<span class="kn">from</span> <span class="nn">matplotlib.dates</span> <span class="kn">import</span> <span class="n">date2num</span>
+<span class="kn">from</span> <span class="nn">matplotlib.lines</span> <span class="kn">import</span> <span class="n">Line2D</span>
 
-
-<span class="kn">from</span> <span class="nn">oceans.ocfis</span> <span class="k">import</span> <span class="n">cart2pol</span>
+<span class="kn">from</span> <span class="nn">oceans.ocfis</span> <span class="kn">import</span> <span class="n">cart2pol</span>
 
 
 <div class="viewcode-block" id="stick_plot"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.stick_plot">[docs]</a><span class="k">def</span> <span class="nf">stick_plot</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    time: list/arrays of datetime objects</span>
@@ -136,35 +130,40 @@
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; from pandas import date_range</span>
-<span class="sd">    &gt;&gt;&gt; time = date_range(start=&#39;1990-11-01 00:00&#39;, end=&#39;1991-2-1 00:00&#39;)</span>
-<span class="sd">    &gt;&gt;&gt; u = np.sin(0.1 * time.to_julian_date().values) ** 2 -0.5</span>
+<span class="sd">    &gt;&gt;&gt; time = date_range(start=&quot;1990-11-01 00:00&quot;, end=&quot;1991-2-1 00:00&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; u = np.sin(0.1 * time.to_julian_date().values) ** 2 - 0.5</span>
 <span class="sd">    &gt;&gt;&gt; v = np.cos(0.1 * time.to_julian_date().values)</span>
-<span class="sd">    &gt;&gt;&gt; fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, figsize=(10, 6),</span>
-<span class="sd">    ...                                     sharex=True)</span>
+<span class="sd">    &gt;&gt;&gt; fig, (ax0, ax1, ax2) = plt.subplots(nrows=3, figsize=(10, 6), sharex=True)</span>
 <span class="sd">    &gt;&gt;&gt; q = stick_plot(time, u, v, ax=ax0)</span>
-<span class="sd">    &gt;&gt;&gt; qk = ax0.quiverkey(q, 0.2, 0.65, 1, &quot;1 m s$^{-1}$&quot;,</span>
-<span class="sd">    ...                    labelpos=&#39;N&#39;, coordinates=&#39;axes&#39;)</span>
-<span class="sd">    &gt;&gt;&gt; l = ax1.plot(time.to_pydatetime(), np.sqrt(u**2 + v**2), label=&#39;speed&#39;)</span>
-<span class="sd">    &gt;&gt;&gt; l0 = ax2.plot(time.to_pydatetime(), u, label=&#39;u&#39;)</span>
-<span class="sd">    &gt;&gt;&gt; l1 = ax2.plot(time.to_pydatetime(), v, label=&#39;v&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; qk = ax0.quiverkey(</span>
+<span class="sd">    ...     q, 0.2, 0.65, 1, &quot;1 m s$^{-1}$&quot;, labelpos=&quot;N&quot;, coordinates=&quot;axes&quot;</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; l = ax1.plot(time.to_pydatetime(), np.sqrt(u**2 + v**2), label=&quot;speed&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; l0 = ax2.plot(time.to_pydatetime(), u, label=&quot;u&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; l1 = ax2.plot(time.to_pydatetime(), v, label=&quot;v&quot;)</span>
 
 <span class="sd">    Based on Stephane Raynaud&#39;s example from:</span>
 <span class="sd">    https://www.mail-archive.com/matplotlib-users@lists.sourceforge.net/msg18051.html</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">DatetimeIndex</span>
+    <span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DatetimeIndex</span>
+    <span class="kn">from</span> <span class="nn">pandas.plotting</span> <span class="kn">import</span> <span class="n">register_matplotlib_converters</span>
 
-    <span class="n">width</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;width&#39;</span><span class="p">,</span> <span class="mf">0.002</span><span class="p">)</span>
-    <span class="n">headwidth</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;headwidth&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">headlength</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;headlength&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">headaxislength</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;headaxislength&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">angles</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;angles&#39;</span><span class="p">,</span> <span class="s1">&#39;uv&#39;</span><span class="p">)</span>
-    <span class="n">ax</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;ax&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">register_matplotlib_converters</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="n">angles</span> <span class="o">!=</span> <span class="s1">&#39;uv&#39;</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s1">&#39;Stickplot angles must be `uv` so that&#39;</span>
-                             <span class="s1">&#39;if *U*==*V* the angle of the arrow on&#39;</span>
-                             <span class="s1">&#39;the plot is 45 degrees CCW from the *x*-axis.&#39;</span><span class="p">)</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;width&quot;</span><span class="p">,</span> <span class="mf">0.002</span><span class="p">)</span>
+    <span class="n">headwidth</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;headwidth&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">headlength</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;headlength&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">headaxislength</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;headaxislength&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">angles</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;angles&quot;</span><span class="p">,</span> <span class="s2">&quot;uv&quot;</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ax&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">angles</span> <span class="o">!=</span> <span class="s2">&quot;uv&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
+            <span class="s2">&quot;Stickplot angles must be `uv` so that&quot;</span>
+            <span class="s2">&quot;if *U*==*V* the angle of the arrow on&quot;</span>
+            <span class="s2">&quot;the plot is 45 degrees CCW from the *x*-axis.&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">DatetimeIndex</span><span class="p">):</span>
         <span class="n">time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">to_pydatetime</span><span class="p">()</span>
@@ -173,20 +172,29 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 
-    <span class="n">q</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">quiver</span><span class="p">(</span><span class="n">date2num</span><span class="p">(</span><span class="n">time</span><span class="p">),</span> <span class="p">[[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">)],</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span>
-                  <span class="n">angles</span><span class="o">=</span><span class="s1">&#39;uv&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">headwidth</span><span class="o">=</span><span class="n">headwidth</span><span class="p">,</span>
-                  <span class="n">headlength</span><span class="o">=</span><span class="n">headlength</span><span class="p">,</span> <span class="n">headaxislength</span><span class="o">=</span><span class="n">headaxislength</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">quiver</span><span class="p">(</span>
+        <span class="n">date2num</span><span class="p">(</span><span class="n">time</span><span class="p">),</span>
+        <span class="p">[[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">)],</span>
+        <span class="n">u</span><span class="p">,</span>
+        <span class="n">v</span><span class="p">,</span>
+        <span class="n">angles</span><span class="o">=</span><span class="s2">&quot;uv&quot;</span><span class="p">,</span>
+        <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+        <span class="n">headwidth</span><span class="o">=</span><span class="n">headwidth</span><span class="p">,</span>
+        <span class="n">headlength</span><span class="o">=</span><span class="n">headlength</span><span class="p">,</span>
+        <span class="n">headaxislength</span><span class="o">=</span><span class="n">headaxislength</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kw</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="n">ax</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">get_yaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">xaxis_date</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">q</span></div>
 
 
-<div class="viewcode-block" id="landmask"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.landmask">[docs]</a><span class="k">def</span> <span class="nf">landmask</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;0.8&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="landmask"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.landmask">[docs]</a><span class="k">def</span> <span class="nf">landmask</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;0.8&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot land mask.</span>
-<span class="sd">    http://www.trondkristiansen.com/wp-content/uploads/downloads/2011/07/mpl_util.py.</span>
 
+<span class="sd">    Based on trondkristiansen mpl_util.py.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Make a constant colormap, default = grey</span>
     <span class="n">constmap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">ListedColormap</span><span class="p">([</span><span class="n">color</span><span class="p">])</span>
@@ -200,15 +208,14 @@
 
     <span class="c1"># Draw the mask by pcolor.</span>
     <span class="n">M</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked_where</span><span class="p">(</span><span class="n">M</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">M</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">pcolor</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">shading</span><span class="o">=</span><span class="s1">&#39;flat&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">constmap</span><span class="p">)</span></div>
+    <span class="n">plt</span><span class="o">.</span><span class="n">pcolor</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">shading</span><span class="o">=</span><span class="s2">&quot;flat&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">constmap</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="level_colormap"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.level_colormap">[docs]</a><span class="k">def</span> <span class="nf">level_colormap</span><span class="p">(</span><span class="n">levels</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a colormap based on an increasing sequence of levels.</span>
-<span class="sd">    http://www.trondkristiansen.com/wp-content/uploads/downloads/</span>
-<span class="sd">    2011/07/mpl_util.py.</span>
 
+<span class="sd">    Based on trondkristiansen.com mpl_util.py.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Start with an existing colormap.</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">cmap</span><span class="p">:</span>
@@ -216,28 +223,28 @@
 
     <span class="c1"># Spread the colors maximally.</span>
     <span class="n">nlev</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">)</span>
-    <span class="n">S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nlev</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">nlev</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nlev</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">nlev</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">A</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
 
     <span class="c1"># Normalize the levels to interval [0, 1].</span>
-    <span class="n">levels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">levels</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float&#39;</span><span class="p">)</span>
+    <span class="n">levels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">levels</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">)</span>
     <span class="n">L</span> <span class="o">=</span> <span class="p">(</span><span class="n">levels</span> <span class="o">-</span> <span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">levels</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
     <span class="c1"># Make the color dictionary.</span>
     <span class="n">R</span> <span class="o">=</span> <span class="p">[(</span><span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nlev</span><span class="p">)]</span>
     <span class="n">G</span> <span class="o">=</span> <span class="p">[(</span><span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nlev</span><span class="p">)]</span>
     <span class="n">B</span> <span class="o">=</span> <span class="p">[(</span><span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nlev</span><span class="p">)]</span>
-    <span class="n">cdict</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;red&#39;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">R</span><span class="p">),</span>
-        <span class="s1">&#39;green&#39;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">G</span><span class="p">),</span>
-        <span class="s1">&#39;blue&#39;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
-    <span class="p">}</span>
+    <span class="n">cdict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;red&quot;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">R</span><span class="p">),</span> <span class="s2">&quot;green&quot;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">G</span><span class="p">),</span> <span class="s2">&quot;blue&quot;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">B</span><span class="p">)}</span>
 
-    <span class="k">return</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">LinearSegmentedColormap</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_levels&#39;</span> <span class="o">%</span> <span class="n">cmap</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">cdict</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">LinearSegmentedColormap</span><span class="p">(</span>
+        <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">_levels&quot;</span> <span class="o">%</span> <span class="n">cmap</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">cdict</span><span class="p">,</span>
+        <span class="mi">256</span><span class="p">,</span>
+    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_pointsxy"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.get_pointsxy">[docs]</a><span class="k">def</span> <span class="nf">get_pointsxy</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return x, y of the given point object.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -245,7 +252,7 @@
 
 
 <div class="viewcode-block" id="compass"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.compass">[docs]</a><span class="k">def</span> <span class="nf">compass</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="o">**</span><span class="n">arrowprops</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compass draws a graph that displays the vectors with</span>
 <span class="sd">    components `u` and `v` as arrows from the origin.</span>
 
@@ -259,16 +266,17 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Create plot.</span>
-    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">subplot_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;polar&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">subplot_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;polar&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
 
     <span class="n">angles</span><span class="p">,</span> <span class="n">radii</span> <span class="o">=</span> <span class="n">cart2pol</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
     <span class="c1"># Arrows or sticks?</span>
-    <span class="n">kw</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;arrowstyle&#39;</span><span class="p">:</span> <span class="s1">&#39;-&gt;&#39;</span><span class="p">}</span>
+    <span class="n">kw</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;arrowstyle&quot;</span><span class="p">:</span> <span class="s2">&quot;-&gt;&quot;</span><span class="p">}</span>
     <span class="n">kw</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">arrowprops</span><span class="p">)</span>
-    <span class="p">[</span><span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">radius</span><span class="p">),</span> <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-                 <span class="n">arrowprops</span><span class="o">=</span><span class="n">kw</span><span class="p">)</span> <span class="k">for</span>
-     <span class="n">angle</span><span class="p">,</span> <span class="n">radius</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">radii</span><span class="p">)]</span>
+    <span class="p">[</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="n">angle</span><span class="p">,</span> <span class="n">radius</span><span class="p">),</span> <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">arrowprops</span><span class="o">=</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">angle</span><span class="p">,</span> <span class="n">radius</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">angles</span><span class="p">,</span> <span class="n">radii</span><span class="p">)</span>
+    <span class="p">]</span>
 
     <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">radii</span><span class="p">))</span>
 
@@ -276,7 +284,7 @@
 
 
 <div class="viewcode-block" id="plot_spectrum"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.plot_spectrum">[docs]</a><span class="k">def</span> <span class="nf">plot_spectrum</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plots a Single-Sided Amplitude Spectrum of y(t).</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -292,14 +300,14 @@
     <span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">N</span><span class="p">]</span>
 
     <span class="c1"># Plotting the spectrum.</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">semilogx</span><span class="p">(</span><span class="n">frq</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Freq (Hz)&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;|Y(freq)|&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">semilogx</span><span class="p">(</span><span class="n">frq</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Freq (Hz)&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;|Y(freq)|&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="EditPoints"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints">[docs]</a><span class="k">class</span> <span class="nc">EditPoints</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="EditPoints"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints">[docs]</a><span class="k">class</span> <span class="nc">EditPoints</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Edit points on a graph with the mouse.  Handles only one set of points.</span>
 
 <span class="sd">    Key-bindings:</span>
@@ -315,39 +323,45 @@
 <span class="sd">    &gt;&gt;&gt; r = 1.5</span>
 <span class="sd">    &gt;&gt;&gt; xs = r * np.cos(theta)</span>
 <span class="sd">    &gt;&gt;&gt; ys = r * np.sin(theta)</span>
-<span class="sd">    &gt;&gt;&gt; points = ax.plot(xs, ys, &#39;ko&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; points = ax.plot(xs, ys, &quot;ko&quot;)</span>
 <span class="sd">    &gt;&gt;&gt; p = EditPoints(fig, ax, points[0], verbose=True)</span>
-<span class="sd">    &gt;&gt;&gt; _ = ax.set_title(&#39;Click and drag a point to move it&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; _ = ax.set_title(&quot;Click and drag a point to move it&quot;)</span>
 <span class="sd">    &gt;&gt;&gt; _ = ax.axis([-2, 2, -2, 2])</span>
 
 <span class="sd">    Based on https://matplotlib.org/examples/event_handling/poly_editor.html</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">epsilon</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># Maximum pixel distance to count as a point hit.</span>
     <span class="n">showpoint</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">matplotlib</span><span class="o">.</span><span class="n">interactive</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">points</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;First add points to a figure or canvas.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;First add points to a figure or canvas.&quot;</span><span class="p">)</span>
         <span class="n">canvas</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dragged</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="n">points</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">get_pointsxy</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">line</span> <span class="o">=</span> <span class="n">Line2D</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">markerfacecolor</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span>
-                           <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">animated</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">line</span> <span class="o">=</span> <span class="n">Line2D</span><span class="p">(</span>
+            <span class="n">x</span><span class="p">,</span>
+            <span class="n">y</span><span class="p">,</span>
+            <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+            <span class="n">markerfacecolor</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
+            <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+            <span class="n">animated</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">line</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_ind</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># The active point.</span>
 
-        <span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s1">&#39;draw_event&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">draw_callback</span><span class="p">)</span>
-        <span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s1">&#39;button_press_event&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">button_press_callback</span><span class="p">)</span>
-        <span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s1">&#39;key_press_event&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_press_callback</span><span class="p">)</span>
-        <span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s1">&#39;button_release_event&#39;</span><span class="p">,</span>
-                           <span class="bp">self</span><span class="o">.</span><span class="n">button_release_callback</span><span class="p">)</span>
-        <span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s1">&#39;motion_notify_event&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">motion_notify_callback</span><span class="p">)</span>
+        <span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s2">&quot;draw_event&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">draw_callback</span><span class="p">)</span>
+        <span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s2">&quot;button_press_event&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">button_press_callback</span><span class="p">)</span>
+        <span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s2">&quot;key_press_event&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_press_callback</span><span class="p">)</span>
+        <span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s2">&quot;button_release_event&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">button_release_callback</span><span class="p">)</span>
+        <span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s2">&quot;motion_notify_event&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">motion_notify_callback</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span> <span class="o">=</span> <span class="n">canvas</span>
 
 <div class="viewcode-block" id="EditPoints.draw_callback"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints.draw_callback">[docs]</a>    <span class="k">def</span> <span class="nf">draw_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
@@ -356,10 +370,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">bbox</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Drawing...&#39;</span><span class="p">)</span>  <span class="c1"># noqa</span></div>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Drawing...&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span></div>
 
 <div class="viewcode-block" id="EditPoints.points_changed"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints.points_changed">[docs]</a>    <span class="k">def</span> <span class="nf">points_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This method is called whenever the points object is called.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -370,10 +384,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">line</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="n">vis</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Points modified.&#39;</span><span class="p">)</span>  <span class="c1"># noqa</span></div>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Points modified.&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span></div>
 
 <div class="viewcode-block" id="EditPoints.get_ind_under_point"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints.get_ind_under_point">[docs]</a>    <span class="k">def</span> <span class="nf">get_ind_under_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the index of the point under mouse if within epsilon tolerance.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -384,16 +398,16 @@
         <span class="n">indseq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="n">d</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">ind</span> <span class="o">=</span> <span class="n">indseq</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;d[ind] </span><span class="si">{}</span><span class="s1"> epsilon </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">))</span>  <span class="c1"># noqa</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;d[ind] </span><span class="si">{}</span><span class="s2"> epsilon </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">))</span>  <span class="c1"># noqa</span>
         <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">:</span>
             <span class="n">ind</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Clicked at (</span><span class="si">{}</span><span class="s1">, </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">xdata</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">ydata</span><span class="p">))</span>  <span class="c1"># noqa</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Clicked at (</span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">xdata</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">ydata</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
         <span class="k">return</span> <span class="n">ind</span></div>
 
 <div class="viewcode-block" id="EditPoints.button_press_callback"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints.button_press_callback">[docs]</a>    <span class="k">def</span> <span class="nf">button_press_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Whenever a mouse button is pressed.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -410,10 +424,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pick_pos</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_ind</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_ind</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Got point: (</span><span class="si">{}</span><span class="s1">), ind: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pick_pos</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ind</span><span class="p">))</span>  <span class="c1"># noqa</span></div>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Got point: (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pick_pos</span><span class="si">}</span><span class="s2">), ind: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_ind</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span></div>
 
 <div class="viewcode-block" id="EditPoints.button_release_callback"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints.button_release_callback">[docs]</a>    <span class="k">def</span> <span class="nf">button_release_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Whenever a mouse button is released.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -423,38 +437,40 @@
             <span class="k">return</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ind</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Button released.&#39;</span><span class="p">)</span>  <span class="c1"># noqa</span></div>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Button released.&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span></div>
 
 <div class="viewcode-block" id="EditPoints.key_press_callback"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints.key_press_callback">[docs]</a>    <span class="k">def</span> <span class="nf">key_press_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Whenever a key is pressed.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">event</span><span class="o">.</span><span class="n">inaxes</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;t&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;t&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">showpoint</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">showpoint</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">line</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">showpoint</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">showpoint</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ind</span> <span class="o">=</span> <span class="kc">None</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Toggle </span><span class="si">{:d}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">showpoint</span><span class="p">))</span>  <span class="c1"># noqa</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Toggle </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">showpoint</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
             <span class="k">return</span> <span class="n">get_pointsxy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;d&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;d&quot;</span><span class="p">:</span>
             <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">get_pointsxy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
             <span class="n">ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_ind_under_point</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">ind</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Deleted (</span><span class="si">{}</span><span class="s1">, </span><span class="si">{}</span><span class="s1">) ind: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="n">ind</span><span class="p">))</span>  <span class="c1"># noqa</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Deleted (</span><span class="si">{</span><span class="n">x</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">y</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span><span class="si">}</span><span class="s2">) ind: </span><span class="si">{</span><span class="n">ind</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="p">)</span>  <span class="c1"># noqa</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ind</span><span class="p">)</span>
                 <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">ind</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">set_xdata</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">set_ydata</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">line</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">get_data</span><span class="p">())</span>
-        <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;i&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;i&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Insert point&#39;</span><span class="p">)</span>  <span class="c1"># noqa</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Insert point&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
             <span class="n">xs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">get_xdata</span><span class="p">()</span>
             <span class="n">ex</span><span class="p">,</span> <span class="n">ey</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">xdata</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">ydata</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
@@ -462,13 +478,13 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">set_ydata</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">get_ydata</span><span class="p">(),</span> <span class="n">ey</span><span class="p">])</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">line</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">get_data</span><span class="p">())</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Inserting: (</span><span class="si">{}</span><span class="s1">, </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="n">ey</span><span class="p">))</span>  <span class="c1"># noqa</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Inserting: (</span><span class="si">{</span><span class="n">ex</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">ey</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
                 <span class="k">break</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="EditPoints.motion_notify_callback"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints.motion_notify_callback">[docs]</a>    <span class="k">def</span> <span class="nf">motion_notify_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        On mouse movement.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -486,8 +502,8 @@
         <span class="n">x</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_ind</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pick_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">dx</span>
         <span class="n">y</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_ind</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pick_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">dy</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">event.xdata </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">xdata</span><span class="p">))</span>  <span class="c1"># noqa</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">event.ydata </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">ydata</span><span class="p">))</span>  <span class="c1"># noqa</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">event.xdata </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">xdata</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">event.ydata </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">ydata</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">set_xdata</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">set_ydata</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">line</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">get_data</span><span class="p">())))</span>
@@ -497,7 +513,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">bbox</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Moving&#39;</span><span class="p">)</span>  <span class="c1"># noqa</span></div></div>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Moving&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span></div></div>
 </pre></div>
 
           </div>
@@ -507,11 +523,11 @@
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2018, Filipe Fernandes.
+      &copy;2023, Filipe Fernandes.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.1.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

@@ -1,19 +1,20 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>oceans.ocfis &#8212; oceans 0.6.0+3.gd749886 documentation</title>
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>oceans.ocfis &#8212; oceans 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="oceans.filters" href="filters.html" />
@@ -63,37 +64,58 @@
 
 
 <h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="datasets.html"><code class="docutils literal notranslate"><span class="pre">oceans.datasets</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="colormaps.html"><code class="docutils literal notranslate"><span class="pre">oceans.colormaps</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="plotting.html"><code class="docutils literal notranslate"><span class="pre">oceans.plotting</span></code></a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">oceans.ocfis</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="filters.html"><code class="docutils literal notranslate"><span class="pre">oceans.filters</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="RPSstuff.html"><code class="docutils literal notranslate"><span class="pre">oceans.RPSstuff</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.datasets</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="colormaps.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.colormaps</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.plotting</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.ocfis</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.ocfis.alphanum_key"><code class="docutils literal notranslate"><span class="pre">alphanum_key()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.ocfis.bin_dates"><code class="docutils literal notranslate"><span class="pre">bin_dates()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.ocfis.binave"><code class="docutils literal notranslate"><span class="pre">binave()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.ocfis.binavg"><code class="docutils literal notranslate"><span class="pre">binavg()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.ocfis.cart2pol"><code class="docutils literal notranslate"><span class="pre">cart2pol()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.ocfis.complex_demodulation"><code class="docutils literal notranslate"><span class="pre">complex_demodulation()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.ocfis.del_eta_del_x"><code class="docutils literal notranslate"><span class="pre">del_eta_del_x()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.ocfis.despike"><code class="docutils literal notranslate"><span class="pre">despike()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.ocfis.get_profile"><code class="docutils literal notranslate"><span class="pre">get_profile()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.ocfis.lagcorr"><code class="docutils literal notranslate"><span class="pre">lagcorr()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.ocfis.mld"><code class="docutils literal notranslate"><span class="pre">mld()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.ocfis.pcaben"><code class="docutils literal notranslate"><span class="pre">pcaben()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.ocfis.pol2cart"><code class="docutils literal notranslate"><span class="pre">pol2cart()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.ocfis.series_spline"><code class="docutils literal notranslate"><span class="pre">series_spline()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.ocfis.shiftdim"><code class="docutils literal notranslate"><span class="pre">shiftdim()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.ocfis.spdir2uv"><code class="docutils literal notranslate"><span class="pre">spdir2uv()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.ocfis.spec_rot"><code class="docutils literal notranslate"><span class="pre">spec_rot()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.ocfis.strip_mask"><code class="docutils literal notranslate"><span class="pre">strip_mask()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.ocfis.uv2spdir"><code class="docutils literal notranslate"><span class="pre">uv2spdir()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.ocfis.wrap_lon180"><code class="docutils literal notranslate"><span class="pre">wrap_lon180()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oceans.ocfis.wrap_lon360"><code class="docutils literal notranslate"><span class="pre">wrap_lon360()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="filters.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.filters</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="RPSstuff.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.RPSstuff</span></code></a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="plotting.html" title="previous chapter"><code class="docutils literal notranslate"><span class="pre">oceans.plotting</span></code></a></li>
-      <li>Next: <a href="filters.html" title="next chapter"><code class="docutils literal notranslate"><span class="pre">oceans.filters</span></code></a></li>
+      <li>Previous: <a href="plotting.html" title="previous chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.plotting</span></code></a></li>
+      <li>Next: <a href="filters.html" title="next chapter"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.filters</span></code></a></li>
   </ul></li>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
 
 
 
@@ -110,64 +132,112 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="module-oceans.ocfis">
-<span id="oceans-ocfis"></span><h1><a class="reference internal" href="#module-oceans.ocfis" title="oceans.ocfis"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.ocfis</span></code></a><a class="headerlink" href="#module-oceans.ocfis" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="oceans.ocfis.alphanum_key">
-<code class="descclassname">oceans.ocfis.</code><code class="descname">alphanum_key</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#alphanum_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.ocfis.alphanum_key" title="Permalink to this definition">¶</a></dt>
+  <section id="module-oceans.ocfis">
+<span id="oceans-ocfis"></span><h1><a class="reference internal" href="#module-oceans.ocfis" title="oceans.ocfis"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.ocfis</span></code></a><a class="headerlink" href="#module-oceans.ocfis" title="Permalink to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.ocfis.alphanum_key">
+<span class="sig-prename descclassname"><span class="pre">oceans.ocfis.</span></span><span class="sig-name descname"><span class="pre">alphanum_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#alphanum_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.ocfis.alphanum_key" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="function">
-<dt id="oceans.ocfis.bin_dates">
-<code class="descclassname">oceans.ocfis.</code><code class="descname">bin_dates</code><span class="sig-paren">(</span><em>self</em>, <em>freq</em>, <em>tz=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#bin_dates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.ocfis.bin_dates" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.ocfis.bin_dates">
+<span class="sig-prename descclassname"><span class="pre">oceans.ocfis.</span></span><span class="sig-name descname"><span class="pre">bin_dates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#bin_dates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.ocfis.bin_dates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Take a pandas time Series and return a new Series on the specified
 frequency.</p>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">Series</span><span class="p">,</span> <span class="n">date_range</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">24</span><span class="o">*</span><span class="mi">30</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">Series</span><span class="p">,</span> <span class="n">date_range</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">30</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dates</span> <span class="o">=</span> <span class="n">date_range</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s1">&#39;1/1/2000&#39;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;H&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dates</span> <span class="o">=</span> <span class="n">date_range</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="s2">&quot;1/1/2000&quot;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;H&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">series</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">sig</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">dates</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">new_series</span> <span class="o">=</span> <span class="n">bin_dates</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="n">tz</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_series</span> <span class="o">=</span> <span class="n">bin_dates</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="n">tz</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.ocfis.binave">
-<code class="descclassname">oceans.ocfis.</code><code class="descname">binave</code><span class="sig-paren">(</span><em>datain</em>, <em>r</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#binave"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.ocfis.binave" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.ocfis.binave">
+<span class="sig-prename descclassname"><span class="pre">oceans.ocfis.</span></span><span class="sig-name descname"><span class="pre">binave</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#binave"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.ocfis.binave" title="Permalink to this definition">¶</a></dt>
 <dd><p>Averages vector data in bins of length r. The last bin may be the
 average of less than r elements. Useful for computing daily average time
 series (with r=24 for hourly data).</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> (<em>array_like</em>) – </li>
-<li><strong>r</strong> (<em>int</em>) – bin length</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>array_like</em>) – </p></li>
+<li><p><strong>r</strong> (<em>int</em>) – bin length</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>bindata</strong> – bin-averaged vector</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array_like</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>bindata</strong> – bin-averaged vector</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array_like</p>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>Original from MATLAB AIRSEA TOOLBOX.</p>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">oceans.ocfis</span> <span class="k">import</span> <span class="n">binave</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">,</span> <span class="mf">13.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">34.</span><span class="p">,</span> <span class="mf">21.5</span><span class="p">,</span> <span class="mf">6.46</span><span class="p">,</span> <span class="mf">6.27</span><span class="p">,</span> <span class="mf">7.0867</span><span class="p">,</span> <span class="mf">15.</span><span class="p">,</span> <span class="mf">123.</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="mf">3.2</span><span class="p">,</span> <span class="mf">0.52</span><span class="p">,</span> <span class="mf">18.2</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">,</span> <span class="mf">13.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">34.</span><span class="p">,</span> <span class="mf">21.5</span><span class="p">,</span> <span class="mf">6.46</span><span class="p">,</span> <span class="mf">6.27</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="mf">7.0867</span><span class="p">,</span> <span class="mf">15.</span><span class="p">,</span> <span class="mf">123.</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">,</span> <span class="mf">0.52</span><span class="p">,</span> <span class="mf">18.2</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">11.</span><span class="p">,</span> <span class="mf">13.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">34.</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="mf">21.5</span><span class="p">,</span> <span class="mf">6.46</span><span class="p">,</span> <span class="mf">6.27</span><span class="p">,</span> <span class="mf">7.0867</span><span class="p">,</span> <span class="mf">15.</span><span class="p">,</span> <span class="mf">123.</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">,</span> <span class="mf">0.52</span><span class="p">,</span> <span class="mf">18.2</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="mf">11.</span><span class="p">,</span> <span class="mf">13.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">34.</span><span class="p">,</span> <span class="mf">21.5</span><span class="p">,</span> <span class="mf">6.46</span><span class="p">,</span> <span class="mf">6.27</span><span class="p">,</span> <span class="mf">7.0867</span><span class="p">,</span> <span class="mf">15.</span><span class="p">,</span> <span class="mf">123.</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">,</span>
-<span class="gp">... </span>        <span class="mf">0.52</span><span class="p">,</span> <span class="mf">18.2</span><span class="p">]</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">oceans.ocfis</span> <span class="kn">import</span> <span class="n">binave</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="mf">10.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">11.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">13.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">2.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">34.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">21.5</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">6.46</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">6.27</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">7.0867</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">15.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">123.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">3.2</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">0.52</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">18.2</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">10.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">11.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">13.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">2.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">34.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">21.5</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">6.46</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">6.27</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">7.0867</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">15.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">123.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">3.2</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">0.52</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">18.2</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">10.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">11.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">13.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">2.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">34.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">21.5</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">6.46</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">6.27</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">7.0867</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">15.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">123.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">3.2</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">0.52</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">18.2</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">10.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">11.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">13.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">2.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">34.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">21.5</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">6.46</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">6.27</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">7.0867</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">15.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">123.0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">3.2</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">0.52</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mf">18.2</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">binave</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span>
 <span class="go">array([16.564725 , 21.1523625, 22.4670875])</span>
 </pre></div>
@@ -178,9 +248,9 @@ series (with r=24 for hourly data).</p>
 08/05/1999: version 2.0</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.ocfis.binavg">
-<code class="descclassname">oceans.ocfis.</code><code class="descname">binavg</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>db</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#binavg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.ocfis.binavg" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.ocfis.binavg">
+<span class="sig-prename descclassname"><span class="pre">oceans.ocfis.</span></span><span class="sig-name descname"><span class="pre">binavg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#binavg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.ocfis.binavg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bins y(x) into db spacing.  The spacing is given in <cite>x</cite> units.
 y = np.random.random(20)
 x = np.arange(len(y))
@@ -190,12 +260,12 @@ plt.plot(x, y, ‘k.-‘)
 plt.plot(xb, yb, ‘r.-‘)</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.ocfis.cart2pol">
-<code class="descclassname">oceans.ocfis.</code><code class="descname">cart2pol</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#cart2pol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.ocfis.cart2pol" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.ocfis.cart2pol">
+<span class="sig-prename descclassname"><span class="pre">oceans.ocfis.</span></span><span class="sig-name descname"><span class="pre">cart2pol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#cart2pol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.ocfis.cart2pol" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert from Cartesian to polar coordinates.</p>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">]</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.5</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cart2pol</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 <span class="go">(array([1.57079633, 2.35619449]), array([1.        , 0.70710678]))</span>
@@ -203,9 +273,9 @@ plt.plot(xb, yb, ‘r.-‘)</p>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.ocfis.complex_demodulation">
-<code class="descclassname">oceans.ocfis.</code><code class="descname">complex_demodulation</code><span class="sig-paren">(</span><em>series</em>, <em>f</em>, <em>fc</em>, <em>axis=-1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#complex_demodulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.ocfis.complex_demodulation" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.ocfis.complex_demodulation">
+<span class="sig-prename descclassname"><span class="pre">oceans.ocfis.</span></span><span class="sig-name descname"><span class="pre">complex_demodulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#complex_demodulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.ocfis.complex_demodulation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform a Complex Demodulation
 It acts as a bandpass filter for <cite>f</cite>.</p>
 <p>series =&gt; Time-Series object with data and datetime
@@ -214,68 +284,60 @@ fc =&gt; normalized cutoff [0.2]</p>
 <p>math : series.data * np.exp(2 * np.pi * 1j * (1 / T) * time_in_seconds)</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.ocfis.del_eta_del_x">
-<code class="descclassname">oceans.ocfis.</code><code class="descname">del_eta_del_x</code><span class="sig-paren">(</span><em>U</em>, <em>f</em>, <em>g</em>, <em>balance='geostrophic'</em>, <em>R=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#del_eta_del_x"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.ocfis.del_eta_del_x" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.ocfis.del_eta_del_x">
+<span class="sig-prename descclassname"><span class="pre">oceans.ocfis.</span></span><span class="sig-name descname"><span class="pre">del_eta_del_x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">U</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">balance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'geostrophic'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#del_eta_del_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.ocfis.del_eta_del_x" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate :mat: <cite>frac{partial eta} {partial x}</cite> for different
 force balances</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>U</strong> (<em>array_like</em>) – velocity magnitude [m/s]</li>
-<li><strong>f</strong> (<em>float</em>) – Coriolis parameter</li>
-<li><strong>d</strong> (<em>float</em>) – Acceleration of gravity</li>
-<li><strong>balance</strong> (<em>str</em><em>, </em><em>optional</em>) – geostrophic [default], gradient or max_gradient</li>
-<li><strong>R</strong> (<em>float</em><em>, </em><em>optional</em>) – Radius</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>U</strong> (<em>array_like</em>) – velocity magnitude [m/s]</p></li>
+<li><p><strong>f</strong> (<em>float</em>) – Coriolis parameter</p></li>
+<li><p><strong>d</strong> (<em>float</em>) – Acceleration of gravity</p></li>
+<li><p><strong>balance</strong> (<em>str</em><em>, </em><em>optional</em>) – geostrophic [default], gradient or max_gradient</p></li>
+<li><p><strong>R</strong> (<em>float</em><em>, </em><em>optional</em>) – Radius</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.ocfis.despike">
-<code class="descclassname">oceans.ocfis.</code><code class="descname">despike</code><span class="sig-paren">(</span><em>self</em>, <em>n=3</em>, <em>recursive=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#despike"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.ocfis.despike" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.ocfis.despike">
+<span class="sig-prename descclassname"><span class="pre">oceans.ocfis.</span></span><span class="sig-name descname"><span class="pre">despike</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#despike"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.ocfis.despike" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replace spikes with np.NaN.
 Removing spikes that are &gt;= n * std.
 default n = 3.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.ocfis.get_profile">
-<code class="descclassname">oceans.ocfis.</code><code class="descname">get_profile</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>f</em>, <em>xi</em>, <em>yi</em>, <em>mode='nearest'</em>, <em>order=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#get_profile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.ocfis.get_profile" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.ocfis.get_profile">
+<span class="sig-prename descclassname"><span class="pre">oceans.ocfis.</span></span><span class="sig-name descname"><span class="pre">get_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'nearest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#get_profile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.ocfis.get_profile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interpolate regular data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x</strong> (<em>two dimensional np.ndarray</em>) – an array for the <span class="math notranslate nohighlight">\(x\)</span> coordinates</li>
-<li><strong>y</strong> (<em>two dimensional np.ndarray</em>) – an array for the <span class="math notranslate nohighlight">\(y\)</span> coordinates</li>
-<li><strong>f</strong> (<em>two dimensional np.ndarray</em>) – an array with the value of the function to be interpolated
-at <span class="math notranslate nohighlight">\(x,y\)</span> coordinates.</li>
-<li><strong>xi</strong> (<em>one dimension np.ndarray</em>) – the <span class="math notranslate nohighlight">\(x\)</span> coordinates of the point where we want
-the function to be interpolated.</li>
-<li><strong>yi</strong> (<em>one dimension np.ndarray</em>) – the <span class="math notranslate nohighlight">\(y\)</span> coordinates of the point where we want
-the function to be interpolated.</li>
-<li><strong>order</strong> (<em>int</em>) – the order of the bivariate spline interpolation</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>two dimensional np.ndarray</em>) – an array for the <span class="math notranslate nohighlight">\(x\)</span> coordinates</p></li>
+<li><p><strong>y</strong> (<em>two dimensional np.ndarray</em>) – an array for the <span class="math notranslate nohighlight">\(y\)</span> coordinates</p></li>
+<li><p><strong>f</strong> (<em>two dimensional np.ndarray</em>) – an array with the value of the function to be interpolated
+at <span class="math notranslate nohighlight">\(x,y\)</span> coordinates.</p></li>
+<li><p><strong>xi</strong> (<em>one dimension np.ndarray</em>) – the <span class="math notranslate nohighlight">\(x\)</span> coordinates of the point where we want
+the function to be interpolated.</p></li>
+<li><p><strong>yi</strong> (<em>one dimension np.ndarray</em>) – the <span class="math notranslate nohighlight">\(y\)</span> coordinates of the point where we want
+the function to be interpolated.</p></li>
+<li><p><strong>order</strong> (<em>int</em>) – the order of the bivariate spline interpolation</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fi</strong> – the value of the interpolating spline at <span class="math notranslate nohighlight">\(xi,yi\)</span></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">one dimension np.ndarray</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fi</strong> – the value of the interpolating spline at <span class="math notranslate nohighlight">\(xi,yi\)</span></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>one dimension np.ndarray</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">oceans.ocfis</span> <span class="k">import</span> <span class="n">get_profile</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">oceans.ocfis</span> <span class="kn">import</span> <span class="n">get_profile</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">360</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="mi">91</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">91</span> <span class="o">*</span> <span class="mi">360</span><span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">91</span><span class="p">,</span> <span class="mi">360</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Paris</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.4</span><span class="p">,</span> <span class="mf">48.9</span><span class="p">]</span>
@@ -289,159 +351,152 @@ the function to be interpolated.</li>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.ocfis.lagcorr">
-<code class="descclassname">oceans.ocfis.</code><code class="descname">lagcorr</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>M=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#lagcorr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.ocfis.lagcorr" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.ocfis.lagcorr">
+<span class="sig-prename descclassname"><span class="pre">oceans.ocfis.</span></span><span class="sig-name descname"><span class="pre">lagcorr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#lagcorr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.ocfis.lagcorr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute lagged correlation between two series.
 Follow emery and Thomson book “summation” notation.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>y</strong> (<em>array</em>) – time-series</li>
-<li><strong>y</strong> – time-series</li>
-<li><strong>M</strong> (<em>integer</em>) – number of lags</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>array</em>) – time-series</p></li>
+<li><p><strong>y</strong> – time-series</p></li>
+<li><p><strong>M</strong> (<em>integer</em>) – number of lags</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Cxy</strong> – normalized cross-correlation function</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Cxy</strong> – normalized cross-correlation function</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <p>TODO: Implement Emery and Thomson example.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.ocfis.mld">
-<code class="descclassname">oceans.ocfis.</code><code class="descname">mld</code><span class="sig-paren">(</span><em>SA</em>, <em>CT</em>, <em>p</em>, <em>criterion='pdvar'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#mld"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.ocfis.mld" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.ocfis.mld">
+<span class="sig-prename descclassname"><span class="pre">oceans.ocfis.</span></span><span class="sig-name descname"><span class="pre">mld</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">CT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criterion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pdvar'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#mld"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.ocfis.mld" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the mixed layer depth.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>SA</strong> (<em>array_like</em>) – Absolute Salinity  [g/kg]</li>
-<li><strong>CT</strong> (<em>array_like</em>) – Conservative Temperature [<span class="math notranslate nohighlight">\(^\circ\)</span> C (ITS-90)]</li>
-<li><strong>p</strong> (<em>array_like</em>) – sea pressure [dbar]</li>
-<li><strong>criterion</strong> (<em>str</em><em>, </em><em>optional</em>) – MLD Criteria</li>
-<li><strong>layer depth criteria are</strong> (<em>Mixed</em>) – </li>
-<li><strong>'temperature'</strong> (<em>Computed based on constant temperature difference</em>) – </li>
-<li><strong>CT</strong><strong>(</strong><strong>0</strong><strong>) </strong><strong>- T</strong><strong>[</strong><strong>mld</strong><strong>] </strong><strong>= 0.5 degree C.</strong> (<em>criterion</em><em>,</em>) – </li>
-<li><strong>'density'</strong> (<em>computed based on the constant potential density difference</em>) – </li>
-<li><strong>pd</strong><strong>[</strong><strong>0</strong><strong>] </strong><strong>- pd</strong><strong>[</strong><strong>mld</strong><strong>] </strong><strong>= 0.125 in sigma units.</strong> (<em>criterion</em><em>,</em>) – </li>
-<li><strong>'pdvar'</strong> (<em>computed based on variable potential density criterion</em>) – </li>
-<li><strong>- pd</strong><strong>[</strong><strong>mld</strong><strong>] </strong><strong>= var</strong><strong>(</strong><strong>T</strong><strong>[</strong><strong>0</strong><strong>]</strong><strong>, </strong><strong>S</strong><strong>[</strong><strong>0</strong><strong>]</strong><strong>)</strong><strong>, </strong><strong>where var is a variable potential</strong> (<em>pd</em><em>[</em><em>0</em><em>]</em>) – </li>
-<li><strong>difference which corresponds to constant temperature difference of</strong> (<em>density</em>) – </li>
-<li><strong>degree C.</strong> (<em>0.5</em>) – </li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SA</strong> (<em>array_like</em>) – Absolute Salinity  [g/kg]</p></li>
+<li><p><strong>CT</strong> (<em>array_like</em>) – Conservative Temperature [<span class="math notranslate nohighlight">\(^\circ\)</span> C (ITS-90)]</p></li>
+<li><p><strong>p</strong> (<em>array_like</em>) – sea pressure [dbar]</p></li>
+<li><p><strong>criterion</strong> (<em>str</em><em>, </em><em>optional</em>) – MLD Criteria</p></li>
+<li><p><strong>are</strong> (<em>Mixed layer depth criteria</em>) – </p></li>
+<li><p><strong>'temperature'</strong> (<em>Computed based on constant temperature difference</em>) – </p></li>
+<li><p><strong>criterion</strong> – </p></li>
+<li><p><strong>C.</strong> (<em>0.5 degree</em>) – </p></li>
+<li><p><strong>'density'</strong> (<em>computed based on the constant potential density difference</em>) – </p></li>
+<li><p><strong>criterion</strong> – </p></li>
+<li><p><strong>units.</strong> (<em>pd</em><em>[</em><em>0</em><em>] </em><em>- pd</em><em>[</em><em>mld</em><em>] </em><em>= 0.125 in sigma</em>) – </p></li>
+<li><p><strong>'pdvar'</strong> (<em>computed based on variable potential density criterion</em>) – </p></li>
+<li><p><strong>var</strong><strong>(</strong><strong>T</strong><strong>[</strong><strong>0</strong><strong>]</strong> (<em>pd</em><em>[</em><em>0</em><em>] </em><em>- pd</em><em>[</em><em>mld</em><em>] </em><em>=</em>) – </p></li>
+<li><p><strong>S</strong><strong>[</strong><strong>0</strong><strong>]</strong><strong>)</strong> – </p></li>
+<li><p><strong>potential</strong> (<em>where var is a variable</em>) – </p></li>
+<li><p><strong>of</strong> (<em>density difference which corresponds to constant temperature difference</em>) – </p></li>
+<li><p><strong>C.</strong> – </p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>MLD</strong> (<em>array_like</em>) – Mixed layer depth</li>
-<li><strong>idx_mld</strong> (<em>bool array</em>) – Boolean array in the shape of p with MLD index.</li>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>MLD</strong> (<em>array_like</em>) – Mixed layer depth</p></li>
+<li><p><strong>idx_mld</strong> (<em>bool array</em>) – Boolean array in the shape of p with MLD index.</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p class="rubric">References</p>
 <p>Monterey, G., and S. Levitus, 1997: Seasonal variability of mixed
 layer depth for the World Ocean. NOAA Atlas, NESDIS 14, 100 pp.
 Washington, D.C.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.ocfis.pcaben">
-<code class="descclassname">oceans.ocfis.</code><code class="descname">pcaben</code><span class="sig-paren">(</span><em>u</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#pcaben"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.ocfis.pcaben" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.ocfis.pcaben">
+<span class="sig-prename descclassname"><span class="pre">oceans.ocfis.</span></span><span class="sig-name descname"><span class="pre">pcaben</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#pcaben"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.ocfis.pcaben" title="Permalink to this definition">¶</a></dt>
 <dd><p>Principal components of 2-d (e.g. current meter) data
 calculates ellipse parameters for currents.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>u</strong> (<em>array_like</em>) – zonal wind velocity [m s <sup>-1</sup>]</li>
-<li><strong>v</strong> (<em>array_like</em>) – meridional wind velocity [m s <sup>-1</sup>]</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>u</strong> (<em>array_like</em>) – zonal wind velocity [m s <sup>-1</sup>]</p></li>
+<li><p><strong>v</strong> (<em>array_like</em>) – meridional wind velocity [m s <sup>-1</sup>]</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><em>major axis (majrax)</em></li>
-<li><em>minor axis (minrax)</em></li>
-<li><em>major azimuth (majaz)</em></li>
-<li><em>minor azimuth (minaz)</em></li>
-<li><em>elipticity (elptcty)</em></li>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>major axis (majrax)</em></p></li>
+<li><p><em>minor axis (minrax)</em></p></li>
+<li><p><em>major azimuth (majaz)</em></p></li>
+<li><p><em>minor azimuth (minaz)</em></p></li>
+<li><p><em>ellipticity (elptcty)</em></p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">oceans.ocfis</span> <span class="k">import</span> <span class="n">pcaben</span><span class="p">,</span> <span class="n">uv2spdir</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[(</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[(</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">oceans.ocfis</span> <span class="kn">import</span> <span class="n">pcaben</span><span class="p">,</span> <span class="n">uv2spdir</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">mjrax</span><span class="p">,</span> <span class="n">mjaz</span><span class="p">,</span> <span class="n">mirax</span><span class="p">,</span> <span class="n">miaz</span><span class="p">,</span> <span class="n">el</span><span class="p">),</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">)</span> <span class="o">=</span> <span class="n">pcaben</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span><span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="s1">&#39;r-&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;U component&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;V component&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="s1">&#39;bo&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="s2">&quot;r-&quot;</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="s2">&quot;r-&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;U component&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;V component&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="s2">&quot;bo&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="o">-</span><span class="mf">3.2</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.2</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mdir</span><span class="p">,</span> <span class="n">mspd</span> <span class="o">=</span> <span class="n">uv2spdir</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">v</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">mean</span><span class="p">()],[</span><span class="mi">0</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">mean</span><span class="p">()],</span> <span class="s1">&#39;k-&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">mean</span><span class="p">()],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">mean</span><span class="p">()],</span> <span class="s2">&quot;k-&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">flatness</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">mirax</span> <span class="o">/</span> <span class="n">mjrax</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="kc">False</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mean u = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">mean</span><span class="p">()))</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mean v = </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">mean</span><span class="p">()))</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mean magnitude: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mspd</span><span class="p">))</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Direction: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mdir</span><span class="p">))</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Axis 1 Length: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mjrax</span><span class="p">))</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Axis 1 Azimuth: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mjaz</span><span class="p">))</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Axis 2 Length: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mirax</span><span class="p">))</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Axis 2 Azimuth: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">miaz</span><span class="p">))</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;elipticity is : </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">el</span><span class="p">))</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Negative (positive) means clockwise (anti-clockwise)&#39;</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Flatness: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">flatness</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mean u = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">mean</span><span class="p">()))</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mean v = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">mean</span><span class="p">()))</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mean magnitude: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mspd</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Direction: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mdir</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Axis 1 Length: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mjrax</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Axis 1 Azimuth: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mjaz</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Axis 2 Length: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mirax</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Axis 2 Azimuth: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">miaz</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ellipticity is : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">el</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Negative (positive) means clockwise (anti-clockwise)&quot;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Flatness: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">flatness</span><span class="p">))</span>
+<span class="gp">...</span>
 </pre></div>
 </div>
 <p>Notes:
 <a class="reference external" href="https://pubs.usgs.gov/of/2002/of02-217/m-files/pcaben.m">https://pubs.usgs.gov/of/2002/of02-217/m-files/pcaben.m</a></p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.ocfis.pol2cart">
-<code class="descclassname">oceans.ocfis.</code><code class="descname">pol2cart</code><span class="sig-paren">(</span><em>theta</em>, <em>radius</em>, <em>units='deg'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#pol2cart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.ocfis.pol2cart" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.ocfis.pol2cart">
+<span class="sig-prename descclassname"><span class="pre">oceans.ocfis.</span></span><span class="sig-name descname"><span class="pre">pol2cart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#pol2cart"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.ocfis.pol2cart" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert from polar to Cartesian coordinates</p>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pol2cart</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pol2cart</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span><span class="p">)</span>
 <span class="go">(1.0, 0.0)</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.ocfis.series_spline">
-<code class="descclassname">oceans.ocfis.</code><code class="descname">series_spline</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#series_spline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.ocfis.series_spline" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.ocfis.series_spline">
+<span class="sig-prename descclassname"><span class="pre">oceans.ocfis.</span></span><span class="sig-name descname"><span class="pre">series_spline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#series_spline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.ocfis.series_spline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fill NaNs using a spline interpolation.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.ocfis.shiftdim">
-<code class="descclassname">oceans.ocfis.</code><code class="descname">shiftdim</code><span class="sig-paren">(</span><em>x</em>, <em>n=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#shiftdim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.ocfis.shiftdim" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.ocfis.shiftdim">
+<span class="sig-prename descclassname"><span class="pre">oceans.ocfis.</span></span><span class="sig-name descname"><span class="pre">shiftdim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#shiftdim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.ocfis.shiftdim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Matlab-like shiftdim in python.</p>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">oceans.ocfis</span> <span class="k">as</span> <span class="nn">ff</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">oceans.ocfis</span> <span class="k">as</span> <span class="nn">ff</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;a shape and dimension: </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">ndim</span><span class="p">))</span>
 <span class="go">a shape and dimension: (1, 1, 3, 1, 2), 5</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># print(range(a.ndim))</span>
@@ -457,57 +512,49 @@ calculates ellipse parameters for currents.</p>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.ocfis.spdir2uv">
-<code class="descclassname">oceans.ocfis.</code><code class="descname">spdir2uv</code><span class="sig-paren">(</span><em>spd</em>, <em>ang</em>, <em>deg=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#spdir2uv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.ocfis.spdir2uv" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.ocfis.spdir2uv">
+<span class="sig-prename descclassname"><span class="pre">oceans.ocfis.</span></span><span class="sig-name descname"><span class="pre">spdir2uv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ang</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#spdir2uv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.ocfis.spdir2uv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes u, v components from speed and direction.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>spd</strong> (<em>array_like</em>) – speed [m s <sup>-1</sup>]</li>
-<li><strong>ang</strong> (<em>array_like</em>) – direction [deg]</li>
-<li><strong>deg</strong> (<em>bool</em>) – option, True if data is in degrees. Default is False</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spd</strong> (<em>array_like</em>) – speed [m s <sup>-1</sup>]</p></li>
+<li><p><strong>ang</strong> (<em>array_like</em>) – direction [deg]</p></li>
+<li><p><strong>deg</strong> (<em>bool</em>) – option, True if data is in degrees. Default is False</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>u</strong> (<em>array_like</em>) – zonal wind velocity [m s <sup>-1</sup>]</li>
-<li><strong>v</strong> (<em>array_like</em>) – meridional wind velocity [m s <sup>-1</sup>]</li>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>u</strong> (<em>array_like</em>) – zonal wind velocity [m s <sup>-1</sup>]</p></li>
+<li><p><strong>v</strong> (<em>array_like</em>) – meridional wind velocity [m s <sup>-1</sup>]</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.ocfis.spec_rot">
-<code class="descclassname">oceans.ocfis.</code><code class="descname">spec_rot</code><span class="sig-paren">(</span><em>u</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#spec_rot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.ocfis.spec_rot" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.ocfis.spec_rot">
+<span class="sig-prename descclassname"><span class="pre">oceans.ocfis.</span></span><span class="sig-name descname"><span class="pre">spec_rot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#spec_rot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.ocfis.spec_rot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the rotary spectra from u,v velocity components</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>u</strong> (<em>array_like</em>) – zonal wind velocity [m s <sup>-1</sup>]</li>
-<li><strong>v</strong> (<em>array_like</em>) – meridional wind velocity [m s <sup>-1</sup>]</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>u</strong> (<em>array_like</em>) – zonal wind velocity [m s <sup>-1</sup>]</p></li>
+<li><p><strong>v</strong> (<em>array_like</em>) – meridional wind velocity [m s <sup>-1</sup>]</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>cw</strong> (<em>array_like</em>) – Clockwise spectrum [TODO]</li>
-<li><strong>ccw</strong> (<em>array_like</em>) – Counter-clockwise spectrum [TODO]</li>
-<li><strong>puv</strong> (<em>array_like</em>) – Cross spectra [TODO]</li>
-<li><strong>quv</strong> (<em>array_like</em>) – Quadrature spectra [ TODO]</li>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>cw</strong> (<em>array_like</em>) – Clockwise spectrum [TODO]</p></li>
+<li><p><strong>ccw</strong> (<em>array_like</em>) – Counter-clockwise spectrum [TODO]</p></li>
+<li><p><strong>puv</strong> (<em>array_like</em>) – Cross spectra [TODO]</p></li>
+<li><p><strong>quv</strong> (<em>array_like</em>) – Quadrature spectra [ TODO]</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>The spectral energy at some frequency can be decomposed into two circularly
 polarized constituents, one rotating clockwise and other anti-clockwise.</p>
@@ -515,72 +562,70 @@ polarized constituents, one rotating clockwise and other anti-clockwise.</p>
 <p>TODO: puv, quv, cw, ccw = spec_rot(u, v)</p>
 <p class="rubric">References</p>
 <ol class="upperalpha simple" start="10">
-<li>Gonella Deep Sea Res., 833-846, 1972.</li>
+<li><p>Gonella Deep Sea Res., 833-846, 1972.</p></li>
 </ol>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.ocfis.strip_mask">
-<code class="descclassname">oceans.ocfis.</code><code class="descname">strip_mask</code><span class="sig-paren">(</span><em>arr</em>, <em>fill_value=nan</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#strip_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.ocfis.strip_mask" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.ocfis.strip_mask">
+<span class="sig-prename descclassname"><span class="pre">oceans.ocfis.</span></span><span class="sig-name descname"><span class="pre">strip_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#strip_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.ocfis.strip_mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Take a masked array and return its data(filled) + mask.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.ocfis.uv2spdir">
-<code class="descclassname">oceans.ocfis.</code><code class="descname">uv2spdir</code><span class="sig-paren">(</span><em>u</em>, <em>v</em>, <em>mag=0</em>, <em>rot=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#uv2spdir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.ocfis.uv2spdir" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.ocfis.uv2spdir">
+<span class="sig-prename descclassname"><span class="pre">oceans.ocfis.</span></span><span class="sig-name descname"><span class="pre">uv2spdir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#uv2spdir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.ocfis.uv2spdir" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes speed and direction from u, v components.
 Converts rectangular to polar coordinate, geographic convention
 Allows for rotation and magnetic declination correction.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>u</strong> (<em>array_like</em>) – zonal wind velocity [m s <sup>-1</sup>]</li>
-<li><strong>v</strong> (<em>array_like</em>) – meridional wind velocity [m s <sup>-1</sup>]</li>
-<li><strong>mag</strong> (<em>float</em><em>, </em><em>array_like</em><em>, </em><em>optional</em>) – Magnetic correction [deg]</li>
-<li><strong>rot</strong> (<em>float</em><em>, </em><em>array_like</em>) – Angle for rotation [deg]</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>u</strong> (<em>array_like</em>) – zonal wind velocity [m s <sup>-1</sup>]</p></li>
+<li><p><strong>v</strong> (<em>array_like</em>) – meridional wind velocity [m s <sup>-1</sup>]</p></li>
+<li><p><strong>mag</strong> (<em>float</em><em>, </em><em>array_like</em><em>, </em><em>optional</em>) – Magnetic correction [deg]</p></li>
+<li><p><strong>rot</strong> (<em>float</em><em>, </em><em>array_like</em>) – Angle for rotation [deg]</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>ang</strong> (<em>array_like</em>) – direction [deg]</li>
-<li><strong>spd</strong> (<em>array_like</em>) – speed [m s <sup>-1</sup>]</li>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>ang</strong> (<em>array_like</em>) – direction [deg]</p></li>
+<li><p><strong>spd</strong> (<em>array_like</em>) – speed [m s <sup>-1</sup>]</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p class="rubric">Notes</p>
 <p>Zero degrees is north.</p>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">oceans.ocfis</span> <span class="k">import</span> <span class="n">uv2spdir</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">oceans.ocfis</span> <span class="kn">import</span> <span class="n">uv2spdir</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="p">[</span><span class="o">+</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.50</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.90</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.45</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.85</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">wd</span><span class="p">,</span> <span class="n">ws</span> <span class="o">=</span> <span class="n">uv2spdir</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wd</span><span class="p">,</span> <span class="n">ws</span> <span class="o">=</span> <span class="n">uv2spdir</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">subplot_kw</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">polar</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">kw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">arrowstyle</span><span class="o">=</span><span class="s2">&quot;-&gt;&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">wd</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">),</span> <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">arrowprops</span><span class="o">=</span><span class="n">kw</span><span class="p">)</span>
-<span class="gp">... </span> <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">wd</span><span class="p">,</span> <span class="n">ws</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">),</span> <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">arrowprops</span><span class="o">=</span><span class="n">kw</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">wd</span><span class="p">,</span> <span class="n">ws</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ws</span><span class="p">))</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="oceans.ocfis.wrap_lon180">
-<code class="descclassname">oceans.ocfis.</code><code class="descname">wrap_lon180</code><span class="sig-paren">(</span><em>lon</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#wrap_lon180"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.ocfis.wrap_lon180" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.ocfis.wrap_lon180">
+<span class="sig-prename descclassname"><span class="pre">oceans.ocfis.</span></span><span class="sig-name descname"><span class="pre">wrap_lon180</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lon</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#wrap_lon180"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.ocfis.wrap_lon180" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="function">
-<dt id="oceans.ocfis.wrap_lon360">
-<code class="descclassname">oceans.ocfis.</code><code class="descname">wrap_lon360</code><span class="sig-paren">(</span><em>lon</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#wrap_lon360"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#oceans.ocfis.wrap_lon360" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="oceans.ocfis.wrap_lon360">
+<span class="sig-prename descclassname"><span class="pre">oceans.ocfis.</span></span><span class="sig-name descname"><span class="pre">wrap_lon360</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lon</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/ocfis.html#wrap_lon360"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.ocfis.wrap_lon360" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</div>
+</section>
 
 
           </div>
@@ -590,11 +635,11 @@ Allows for rotation and magnetic declination correction.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2018, Filipe Fernandes.
+      &copy;2023, Filipe Fernandes.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.1.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
       |
       <a href="_sources/ocfis.rst.txt"
