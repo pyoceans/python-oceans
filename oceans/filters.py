@@ -706,7 +706,7 @@ def pl33tn(x, dt=1.0, T=33.0, mode="valid"):
         )
         # update attrs
         attrs = {
-            key: f"{value}, subtidal"
+            key: f"{value}, filtered"
             for key, value in x.attrs.items()
             if key != "units"
         }
