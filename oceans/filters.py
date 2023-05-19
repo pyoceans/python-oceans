@@ -704,6 +704,14 @@ def pl33tn(x, dt=1.0, T=33.0, mode="valid"):
             .construct({x.cf["T"].name: "window"})
             .dot(weight)
         )
+        # update attrs
+        attrs = {
+            key: f"{value}, subtidal"
+            for key, value in x.attrs.items()
+            if key != "units"
+        }
+        xf.attrs = attrs
+
     else:  # use numpy
         xf = np.convolve(x, pl33, mode=mode)
 
