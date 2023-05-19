@@ -415,10 +415,7 @@ def medfilt1(x, L=3):
     >>> L = 103
     >>> xout = medfilt1(x=x, L=L)
     >>> ax = plt.subplot(212)
-    >>> (
-    ...     l1,
-    ...     l2,
-    ... ) = ax.plot(
+    >>> (l1, l2,) = ax.plot(
     ...     x
     ... ), ax.plot(xout)
     >>> ax.grid(True)
@@ -582,6 +579,10 @@ def pl33tn(x, dt=1.0, T=33.0, mode="valid"):
     and cosine tapered at each end to return a filtered time series
     xf of the same length.  Assumes length of x greater than 67.
 
+    Can input a DataArray and use dask-supported for lazy execution. In that
+    use case, dt is ignored and calculated from the input DataArray.
+    cf-xarray is also required.
+
     Examples
     --------
     >>> from oceans.filters import pl33tn
@@ -602,6 +603,16 @@ def pl33tn(x, dt=1.0, T=33.0, mode="valid"):
 
 
     """
+
+    import cf_xarray  # noqa: F401
+    import xarray as xr
+
+    if isinstance(x, xr.Dataset):
+        raise TypeError("Input a DataArray not a Dataset.")
+
+    if isinstance(x, xr.DataArray):
+        # find dt in units of hours
+        dt = (x.cf["T"][1] - x.cf["T"][0]) * 1e-9 / 3600
 
     pl33 = np.array(
         [
@@ -686,5 +697,22 @@ def pl33tn(x, dt=1.0, T=33.0, mode="valid"):
     pl33 = np.interp(filter_time, _dt, pl33)
     pl33 /= pl33.sum()
 
-    xf = np.convolve(x, pl33, mode=mode)
+    if isinstance(x, xr.DataArray):
+        weight = xr.DataArray(pl33, dims=["window"])
+        xf = (
+            x.rolling({x.cf["T"].name: len(pl33)}, center=True)
+            .construct({x.cf["T"].name: "window"})
+            .dot(weight)
+        )
+        # update attrs
+        attrs = {
+            key: f"{value}, filtered"
+            for key, value in x.attrs.items()
+            if key != "units"
+        }
+        xf.attrs = attrs
+
+    else:  # use numpy
+        xf = np.convolve(x, pl33, mode=mode)
+
     return xf
