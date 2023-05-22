@@ -768,7 +768,7 @@ def get_profile(x, y, f, xi, yi, mode="nearest", order=3):
     )
 
     if conditions.any():
-        warnings.warn("Warning! Extrapolation!!")
+        warnings.warn("Warning! Extrapolation!!", stacklevel=2)
 
     dx = x[0, 1] - x[0, 0]
     dy = y[1, 0] - y[0, 0]

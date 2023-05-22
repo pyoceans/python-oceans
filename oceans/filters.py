@@ -415,7 +415,10 @@ def medfilt1(x, L=3):
     >>> L = 103
     >>> xout = medfilt1(x=x, L=L)
     >>> ax = plt.subplot(212)
-    >>> (l1, l2,) = ax.plot(
+    >>> (
+    ...     l1,
+    ...     l2,
+    ... ) = ax.plot(
     ...     x
     ... ), ax.plot(xout)
     >>> ax.grid(True)
@@ -461,7 +464,7 @@ def medfilt1(x, L=3):
     Lwing = (L - 1) // 2
 
     # NOTE: Use np.ndenumerate in case I expand to +1D case
-    for i, xi in enumerate(xin):
+    for i, _xi in enumerate(xin):
         if i < Lwing:  # Left boundary.
             xout[i] = np.median(xin[0 : i + Lwing + 1])  # (0 to i + Lwing)
         elif i >= N - Lwing:  # Right boundary.

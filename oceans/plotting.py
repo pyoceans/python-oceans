@@ -366,7 +366,7 @@ class EditPoints:
                 print("Insert point")  # noqa
             xs = self.points.get_xdata()
             ex, ey = event.xdata, event.ydata
-            for i in range(len(xs) - 1):
+            for _i in range(len(xs) - 1):
                 self.points.set_xdata(np.r_[self.points.get_xdata(), ex])
                 self.points.set_ydata(np.r_[self.points.get_ydata(), ey])
                 self.line.set_data(self.points.get_data())
