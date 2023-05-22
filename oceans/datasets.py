@@ -36,6 +36,7 @@ def _woa_url(variable, time_period, resolution):
         warnings.warn(
             f'The variable "{variable}" is only available at 1 degree resolution, '
             f'annual time period, and "{pref}".',
+            stacklevel=2,
         )
         return f"{base}/" f"{pref}/" f"{variable}_annual_1deg.nc"
     else:
