@@ -28,7 +28,7 @@ repos:
     - id: blackdoc
 
 - repo: https://github.com/charliermarsh/ruff-pre-commit
-  rev: v0.0.269
+  rev: v0.0.272
   hooks:
     - id: ruff
 
@@ -39,18 +39,18 @@ repos:
     language_version: python3
 
 - repo: https://github.com/codespell-project/codespell
-  rev: v2.2.4
+  rev: v2.2.5
   hooks:
     - id: codespell
       args:
         - --ignore-words-list=pres
 
 - repo: https://github.com/asottile/add-trailing-comma
-  rev: v2.4.0
+  rev: v2.5.1
   hooks:
     - id: add-trailing-comma
 
 - repo: https://github.com/tox-dev/pyproject-fmt
-  rev: "0.11.2"
+  rev: "0.12.1"
   hooks:
     - id: pyproject-fmt
