@@ -245,7 +245,7 @@ def etopo_subset(min_lon, max_lon, min_lat, max_lat, tfile=None, smoo=False):
     Based on trondkristiansen contourICEMaps.py
     """
     if tfile is None:
-        tfile = "http://gamone.whoi.edu/thredds/dodsC/usgs/data0/bathy/ETOPO2v2c_f4.nc"
+        tfile = "https://gamone.whoi.edu/thredds/dodsC/usgs/data0/bathy/ETOPO2v2c_f4.nc"
 
     with Dataset(tfile, "r") as etopo:
         lons = etopo.variables["x"][:]

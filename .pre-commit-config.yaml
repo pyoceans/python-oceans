@@ -28,12 +28,12 @@ repos:
     - id: blackdoc
 
 - repo: https://github.com/charliermarsh/ruff-pre-commit
-  rev: v0.0.272
+  rev: v0.0.287
   hooks:
     - id: ruff
 
 - repo: https://github.com/psf/black
-  rev: 23.3.0
+  rev: 23.7.0
   hooks:
   - id: black
     language_version: python3
@@ -46,11 +46,11 @@ repos:
         - --ignore-words-list=pres
 
 - repo: https://github.com/asottile/add-trailing-comma
-  rev: v2.5.1
+  rev: v3.1.0
   hooks:
     - id: add-trailing-comma
 
 - repo: https://github.com/tox-dev/pyproject-fmt
-  rev: "0.12.1"
+  rev: "1.1.0"
   hooks:
     - id: pyproject-fmt
