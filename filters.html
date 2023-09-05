@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="./">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>oceans.filters &#8212; oceans 1.1.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/sphinx_highlight.js"></script>
+    <title>oceans.filters &#8212; oceans 1.1.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=28c8e701" />
+    <script src="_static/documentation_options.js?v=58fbf978"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -117,10 +117,10 @@
           <div class="body" role="main">
             
   <section id="module-oceans.filters">
-<span id="oceans-filters"></span><h1><a class="reference internal" href="#module-oceans.filters" title="oceans.filters"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.filters</span></code></a><a class="headerlink" href="#module-oceans.filters" title="Permalink to this heading">¶</a></h1>
+<span id="oceans-filters"></span><h1><a class="reference internal" href="#module-oceans.filters" title="oceans.filters"><code class="xref py py-mod docutils literal notranslate"><span class="pre">oceans.filters</span></code></a><a class="headerlink" href="#module-oceans.filters" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="oceans.filters.fft_lowpass">
-<span class="sig-prename descclassname"><span class="pre">oceans.filters.</span></span><span class="sig-name descname"><span class="pre">fft_lowpass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/filters.html#fft_lowpass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.filters.fft_lowpass" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">oceans.filters.</span></span><span class="sig-name descname"><span class="pre">fft_lowpass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/filters.html#fft_lowpass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.filters.fft_lowpass" title="Link to this definition">¶</a></dt>
 <dd><p>Performs a low pass filer on the series.
 low and high specifies the boundary of the filter.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">oceans.filters</span> <span class="kn">import</span> <span class="n">fft_lowpass</span>
@@ -140,7 +140,7 @@ low and high specifies the boundary of the filter.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="oceans.filters.lanc">
-<span class="sig-prename descclassname"><span class="pre">oceans.filters.</span></span><span class="sig-name descname"><span class="pre">lanc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">numwt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">haf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/filters.html#lanc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.filters.lanc" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">oceans.filters.</span></span><span class="sig-name descname"><span class="pre">lanc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">numwt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">haf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/filters.html#lanc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.filters.lanc" title="Link to this definition">¶</a></dt>
 <dd><p>Generates a numwt + 1 + numwt lanczos cosine low pass filter with -6dB
 (1/4 power, 1/2 amplitude) point at haf</p>
 <dl class="field-list simple">
@@ -173,7 +173,7 @@ For hourly data cpi is cph,</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="oceans.filters.md_trenberth">
-<span class="sig-prename descclassname"><span class="pre">oceans.filters.</span></span><span class="sig-name descname"><span class="pre">md_trenberth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/filters.html#md_trenberth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.filters.md_trenberth" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">oceans.filters.</span></span><span class="sig-name descname"><span class="pre">md_trenberth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/filters.html#md_trenberth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.filters.md_trenberth" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the filtered series using the Trenberth filter as described
 on Monthly Weather Review, vol. 112, No. 2, Feb 1984.</p>
 <p>Input data: series x of dimension 1Xn (must be at least dimension 11)
@@ -197,7 +197,7 @@ Output data: y = md_trenberth(x) where y has dimension 1X(n-10)</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="oceans.filters.medfilt1">
-<span class="sig-prename descclassname"><span class="pre">oceans.filters.</span></span><span class="sig-name descname"><span class="pre">medfilt1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/filters.html#medfilt1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.filters.medfilt1" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">oceans.filters.</span></span><span class="sig-name descname"><span class="pre">medfilt1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/filters.html#medfilt1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.filters.medfilt1" title="Link to this definition">¶</a></dt>
 <dd><p>Median filter for 1d arrays.</p>
 <p>Performs a discrete one-dimensional median filter with window length <cite>L</cite> to
 input vector <cite>x</cite>.  Produces a vector the same size as <cite>x</cite>.  Boundaries are
@@ -270,7 +270,7 @@ producing the median filtered output.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="oceans.filters.pl33tn">
-<span class="sig-prename descclassname"><span class="pre">oceans.filters.</span></span><span class="sig-name descname"><span class="pre">pl33tn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">33.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'valid'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/filters.html#pl33tn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.filters.pl33tn" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">oceans.filters.</span></span><span class="sig-name descname"><span class="pre">pl33tn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">33.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'valid'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/filters.html#pl33tn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.filters.pl33tn" title="Link to this definition">¶</a></dt>
 <dd><p>Computes low-passed series from <cite>x</cite> using pl33 filter, with optional
 sample interval <cite>dt</cite> (hours) and filter half-amplitude period T (hours)
 as input for non-hourly series.</p>
@@ -304,7 +304,7 @@ cf-xarray is also required.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="oceans.filters.smoo1">
-<span class="sig-prename descclassname"><span class="pre">oceans.filters.</span></span><span class="sig-name descname"><span class="pre">smoo1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_len</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">11</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hanning'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/filters.html#smoo1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.filters.smoo1" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">oceans.filters.</span></span><span class="sig-name descname"><span class="pre">smoo1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_len</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">11</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hanning'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/filters.html#smoo1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.filters.smoo1" title="Link to this definition">¶</a></dt>
 <dd><p>Smooth the data using a window with requested size.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -367,7 +367,7 @@ instead of a string.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="oceans.filters.smoo2">
-<span class="sig-prename descclassname"><span class="pre">oceans.filters.</span></span><span class="sig-name descname"><span class="pre">smoo2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hei</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hann'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">badflag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-9999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/filters.html#smoo2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.filters.smoo2" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">oceans.filters.</span></span><span class="sig-name descname"><span class="pre">smoo2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hei</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hann'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">badflag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-9999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/filters.html#smoo2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.filters.smoo2" title="Link to this definition">¶</a></dt>
 <dd><p>Calculates the smoothed array ‘As’ from the original array ‘A’ using the
 specified window of type ‘kind’ and shape (‘hei’, ‘wid’).</p>
 <p>Usage:
@@ -396,7 +396,7 @@ As = smoo2(A, hei, wid, kind=’hann’, badflag=-9999, beta=14)</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="oceans.filters.weim">
-<span class="sig-prename descclassname"><span class="pre">oceans.filters.</span></span><span class="sig-name descname"><span class="pre">weim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hann'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">badflag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-9999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/filters.html#weim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.filters.weim" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">oceans.filters.</span></span><span class="sig-name descname"><span class="pre">weim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'hann'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">badflag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-9999</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">14</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/oceans/filters.html#weim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#oceans.filters.weim" title="Link to this definition">¶</a></dt>
 <dd><p>Calculates the smoothed array ‘xs’ from the original array ‘x’ using the
 specified window of type ‘kind’ and size ‘N’. ‘N’ must be an odd number.</p>
 <p>Usage:
@@ -438,7 +438,7 @@ kaiser window, this parameter does nothing.</p></li>
       &copy;2023, Filipe Fernandes.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
       |

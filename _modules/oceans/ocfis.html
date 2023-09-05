@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>oceans.ocfis &#8212; oceans 1.1.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
+    <title>oceans.ocfis &#8212; oceans 1.1.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=28c8e701" />
+    <script src="../../_static/documentation_options.js?v=58fbf978"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -112,7 +112,9 @@
 <span class="kn">import</span> <span class="nn">numpy.ma</span> <span class="k">as</span> <span class="nn">ma</span>
 
 
-<div class="viewcode-block" id="spdir2uv"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.spdir2uv">[docs]</a><span class="k">def</span> <span class="nf">spdir2uv</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">ang</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="spdir2uv">
+<a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.spdir2uv">[docs]</a>
+<span class="k">def</span> <span class="nf">spdir2uv</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">ang</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes u, v components from speed and direction.</span>
 
@@ -143,7 +145,10 @@
     <span class="k">return</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span></div>
 
 
-<div class="viewcode-block" id="uv2spdir"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.uv2spdir">[docs]</a><span class="k">def</span> <span class="nf">uv2spdir</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">mag</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">rot</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+<div class="viewcode-block" id="uv2spdir">
+<a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.uv2spdir">[docs]</a>
+<span class="k">def</span> <span class="nf">uv2spdir</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">mag</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">rot</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes speed and direction from u, v components.</span>
 <span class="sd">    Converts rectangular to polar coordinate, geographic convention</span>
@@ -200,7 +205,10 @@
     <span class="k">return</span> <span class="n">ang</span><span class="p">,</span> <span class="n">spd</span></div>
 
 
-<div class="viewcode-block" id="del_eta_del_x"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.del_eta_del_x">[docs]</a><span class="k">def</span> <span class="nf">del_eta_del_x</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">balance</span><span class="o">=</span><span class="s2">&quot;geostrophic&quot;</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="del_eta_del_x">
+<a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.del_eta_del_x">[docs]</a>
+<span class="k">def</span> <span class="nf">del_eta_del_x</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">balance</span><span class="o">=</span><span class="s2">&quot;geostrophic&quot;</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate :mat: `\frac{\partial \eta} {\partial x}` for different</span>
 <span class="sd">    force balances</span>
@@ -232,7 +240,10 @@
     <span class="k">return</span> <span class="n">detadx</span></div>
 
 
-<div class="viewcode-block" id="mld"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.mld">[docs]</a><span class="k">def</span> <span class="nf">mld</span><span class="p">(</span><span class="n">SA</span><span class="p">,</span> <span class="n">CT</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="s2">&quot;pdvar&quot;</span><span class="p">):</span>
+
+<div class="viewcode-block" id="mld">
+<a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.mld">[docs]</a>
+<span class="k">def</span> <span class="nf">mld</span><span class="p">(</span><span class="n">SA</span><span class="p">,</span> <span class="n">CT</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="s2">&quot;pdvar&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the mixed layer depth.</span>
 
@@ -306,7 +317,10 @@
     <span class="k">return</span> <span class="n">MLD</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">idx_mld</span></div>
 
 
-<div class="viewcode-block" id="pcaben"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.pcaben">[docs]</a><span class="k">def</span> <span class="nf">pcaben</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+
+<div class="viewcode-block" id="pcaben">
+<a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.pcaben">[docs]</a>
+<span class="k">def</span> <span class="nf">pcaben</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Principal components of 2-d (e.g. current meter) data</span>
 <span class="sd">    calculates ellipse parameters for currents.</span>
@@ -391,7 +405,10 @@
     <span class="k">return</span> <span class="p">(</span><span class="n">majrax</span><span class="p">,</span> <span class="n">majaz</span><span class="p">,</span> <span class="n">minrax</span><span class="p">,</span> <span class="n">minaz</span><span class="p">,</span> <span class="n">elptcty</span><span class="p">),</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="spec_rot"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.spec_rot">[docs]</a><span class="k">def</span> <span class="nf">spec_rot</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+
+<div class="viewcode-block" id="spec_rot">
+<a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.spec_rot">[docs]</a>
+<span class="k">def</span> <span class="nf">spec_rot</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the rotary spectra from u,v velocity components</span>
 
@@ -450,7 +467,10 @@
     <span class="k">return</span> <span class="n">puv</span><span class="p">,</span> <span class="n">quv</span><span class="p">,</span> <span class="n">cw</span><span class="p">,</span> <span class="n">ccw</span><span class="p">,</span> <span class="n">F</span></div>
 
 
-<div class="viewcode-block" id="lagcorr"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.lagcorr">[docs]</a><span class="k">def</span> <span class="nf">lagcorr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="lagcorr">
+<a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.lagcorr">[docs]</a>
+<span class="k">def</span> <span class="nf">lagcorr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute lagged correlation between two series.</span>
 <span class="sd">    Follow emery and Thomson book &quot;summation&quot; notation.</span>
@@ -494,7 +514,10 @@
     <span class="k">return</span> <span class="n">Cxy</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="complex_demodulation"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.complex_demodulation">[docs]</a><span class="k">def</span> <span class="nf">complex_demodulation</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">fc</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+
+<div class="viewcode-block" id="complex_demodulation">
+<a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.complex_demodulation">[docs]</a>
+<span class="k">def</span> <span class="nf">complex_demodulation</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">fc</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Perform a Complex Demodulation</span>
 <span class="sd">    It acts as a bandpass filter for `f`.</span>
@@ -537,7 +560,10 @@
     <span class="k">return</span> <span class="n">new_series</span></div>
 
 
-<div class="viewcode-block" id="binave"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.binave">[docs]</a><span class="k">def</span> <span class="nf">binave</span><span class="p">(</span><span class="n">datain</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+
+<div class="viewcode-block" id="binave">
+<a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.binave">[docs]</a>
+<span class="k">def</span> <span class="nf">binave</span><span class="p">(</span><span class="n">datain</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Averages vector data in bins of length r. The last bin may be the</span>
 <span class="sd">    average of less than r elements. Useful for computing daily average time</span>
@@ -646,7 +672,10 @@
     <span class="k">return</span> <span class="n">bindata</span></div>
 
 
-<div class="viewcode-block" id="binavg"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.binavg">[docs]</a><span class="k">def</span> <span class="nf">binavg</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
+
+<div class="viewcode-block" id="binavg">
+<a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.binavg">[docs]</a>
+<span class="k">def</span> <span class="nf">binavg</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Bins y(x) into db spacing.  The spacing is given in `x` units.</span>
 <span class="sd">    y = np.random.random(20)</span>
@@ -678,7 +707,10 @@
     <span class="k">return</span> <span class="n">xbin</span><span class="p">,</span> <span class="n">ybin</span></div>
 
 
-<div class="viewcode-block" id="bin_dates"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.bin_dates">[docs]</a><span class="k">def</span> <span class="nf">bin_dates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">tz</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="bin_dates">
+<a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.bin_dates">[docs]</a>
+<span class="k">def</span> <span class="nf">bin_dates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">tz</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Take a pandas time Series and return a new Series on the specified</span>
 <span class="sd">    frequency.</span>
@@ -704,7 +736,10 @@
     <span class="k">return</span> <span class="n">new_series</span></div>
 
 
-<div class="viewcode-block" id="series_spline"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.series_spline">[docs]</a><span class="k">def</span> <span class="nf">series_spline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="series_spline">
+<a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.series_spline">[docs]</a>
+<span class="k">def</span> <span class="nf">series_spline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fill NaNs using a spline interpolation.</span>
 
@@ -729,7 +764,10 @@
     <span class="k">return</span> <span class="n">Series</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="despike"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.despike">[docs]</a><span class="k">def</span> <span class="nf">despike</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="despike">
+<a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.despike">[docs]</a>
+<span class="k">def</span> <span class="nf">despike</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Replace spikes with np.NaN.</span>
 <span class="sd">    Removing spikes that are &gt;= n * std.</span>
@@ -757,7 +795,10 @@
     <span class="k">return</span> <span class="n">Series</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="pol2cart"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.pol2cart">[docs]</a><span class="k">def</span> <span class="nf">pol2cart</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span><span class="p">):</span>
+
+<div class="viewcode-block" id="pol2cart">
+<a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.pol2cart">[docs]</a>
+<span class="k">def</span> <span class="nf">pol2cart</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert from polar to Cartesian coordinates</span>
 
@@ -774,7 +815,10 @@
     <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span></div>
 
 
-<div class="viewcode-block" id="cart2pol"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.cart2pol">[docs]</a><span class="k">def</span> <span class="nf">cart2pol</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+
+<div class="viewcode-block" id="cart2pol">
+<a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.cart2pol">[docs]</a>
+<span class="k">def</span> <span class="nf">cart2pol</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert from Cartesian to polar coordinates.</span>
 
@@ -791,14 +835,20 @@
     <span class="k">return</span> <span class="n">theta</span><span class="p">,</span> <span class="n">radius</span></div>
 
 
-<div class="viewcode-block" id="wrap_lon180"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.wrap_lon180">[docs]</a><span class="k">def</span> <span class="nf">wrap_lon180</span><span class="p">(</span><span class="n">lon</span><span class="p">):</span>
+
+<div class="viewcode-block" id="wrap_lon180">
+<a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.wrap_lon180">[docs]</a>
+<span class="k">def</span> <span class="nf">wrap_lon180</span><span class="p">(</span><span class="n">lon</span><span class="p">):</span>
     <span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">((</span><span class="n">lon</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">180</span><span class="p">),</span> <span class="p">(</span><span class="mi">180</span> <span class="o">&lt;</span> <span class="n">lon</span><span class="p">))</span>
     <span class="n">lon</span><span class="p">[</span><span class="n">angles</span><span class="p">]</span> <span class="o">=</span> <span class="n">wrap_lon360</span><span class="p">(</span><span class="n">lon</span><span class="p">[</span><span class="n">angles</span><span class="p">]</span> <span class="o">+</span> <span class="mi">180</span><span class="p">)</span> <span class="o">-</span> <span class="mi">180</span>
     <span class="k">return</span> <span class="n">lon</span></div>
 
 
-<div class="viewcode-block" id="wrap_lon360"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.wrap_lon360">[docs]</a><span class="k">def</span> <span class="nf">wrap_lon360</span><span class="p">(</span><span class="n">lon</span><span class="p">):</span>
+
+<div class="viewcode-block" id="wrap_lon360">
+<a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.wrap_lon360">[docs]</a>
+<span class="k">def</span> <span class="nf">wrap_lon360</span><span class="p">(</span><span class="n">lon</span><span class="p">):</span>
     <span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">positive</span> <span class="o">=</span> <span class="n">lon</span> <span class="o">&gt;</span> <span class="mi">0</span>
     <span class="n">lon</span> <span class="o">=</span> <span class="n">lon</span> <span class="o">%</span> <span class="mi">360</span>
@@ -806,13 +856,19 @@
     <span class="k">return</span> <span class="n">lon</span></div>
 
 
-<div class="viewcode-block" id="alphanum_key"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.alphanum_key">[docs]</a><span class="k">def</span> <span class="nf">alphanum_key</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+
+<div class="viewcode-block" id="alphanum_key">
+<a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.alphanum_key">[docs]</a>
+<span class="k">def</span> <span class="nf">alphanum_key</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
     <span class="n">key</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(\d+)&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
     <span class="n">key</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">key</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]))</span>
     <span class="k">return</span> <span class="n">key</span></div>
 
 
-<div class="viewcode-block" id="get_profile"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.get_profile">[docs]</a><span class="k">def</span> <span class="nf">get_profile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+
+<div class="viewcode-block" id="get_profile">
+<a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.get_profile">[docs]</a>
+<span class="k">def</span> <span class="nf">get_profile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Interpolate regular data.</span>
 
@@ -887,7 +943,10 @@
     <span class="k">return</span> <span class="n">map_coordinates</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="strip_mask"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.strip_mask">[docs]</a><span class="k">def</span> <span class="nf">strip_mask</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">):</span>
+
+<div class="viewcode-block" id="strip_mask">
+<a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.strip_mask">[docs]</a>
+<span class="k">def</span> <span class="nf">strip_mask</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Take a masked array and return its data(filled) + mask.</span>
 
@@ -900,7 +959,10 @@
         <span class="k">return</span> <span class="n">arr</span></div>
 
 
-<div class="viewcode-block" id="shiftdim"><a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.shiftdim">[docs]</a><span class="k">def</span> <span class="nf">shiftdim</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="shiftdim">
+<a class="viewcode-back" href="../../ocfis.html#oceans.ocfis.shiftdim">[docs]</a>
+<span class="k">def</span> <span class="nf">shiftdim</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Matlab-like shiftdim in python.</span>
 
@@ -943,6 +1005,7 @@
         <span class="c1"># When n is negative, shiftdim shifts the dimensions</span>
         <span class="c1"># to the right and pads with singletons.</span>
         <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="o">-</span><span class="n">n</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span></div>
+
 </pre></div>
 
           </div>
@@ -955,7 +1018,7 @@
       &copy;2023, Filipe Fernandes.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>

@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>oceans.plotting &#8212; oceans 1.1.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
+    <title>oceans.plotting &#8212; oceans 1.1.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=28c8e701" />
+    <script src="../../_static/documentation_options.js?v=58fbf978"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -115,7 +115,9 @@
 <span class="kn">from</span> <span class="nn">oceans.ocfis</span> <span class="kn">import</span> <span class="n">cart2pol</span>
 
 
-<div class="viewcode-block" id="stick_plot"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.stick_plot">[docs]</a><span class="k">def</span> <span class="nf">stick_plot</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+<div class="viewcode-block" id="stick_plot">
+<a class="viewcode-back" href="../../plotting.html#oceans.plotting.stick_plot">[docs]</a>
+<span class="k">def</span> <span class="nf">stick_plot</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -189,7 +191,10 @@
     <span class="k">return</span> <span class="n">q</span></div>
 
 
-<div class="viewcode-block" id="landmask"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.landmask">[docs]</a><span class="k">def</span> <span class="nf">landmask</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;0.8&quot;</span><span class="p">):</span>
+
+<div class="viewcode-block" id="landmask">
+<a class="viewcode-back" href="../../plotting.html#oceans.plotting.landmask">[docs]</a>
+<span class="k">def</span> <span class="nf">landmask</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;0.8&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot land mask.</span>
 
@@ -210,7 +215,10 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">pcolor</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">shading</span><span class="o">=</span><span class="s2">&quot;flat&quot;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">constmap</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="level_colormap"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.level_colormap">[docs]</a><span class="k">def</span> <span class="nf">level_colormap</span><span class="p">(</span><span class="n">levels</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="level_colormap">
+<a class="viewcode-back" href="../../plotting.html#oceans.plotting.level_colormap">[docs]</a>
+<span class="k">def</span> <span class="nf">level_colormap</span><span class="p">(</span><span class="n">levels</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a colormap based on an increasing sequence of levels.</span>
 
@@ -242,7 +250,10 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="get_pointsxy"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.get_pointsxy">[docs]</a><span class="k">def</span> <span class="nf">get_pointsxy</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
+
+<div class="viewcode-block" id="get_pointsxy">
+<a class="viewcode-back" href="../../plotting.html#oceans.plotting.get_pointsxy">[docs]</a>
+<span class="k">def</span> <span class="nf">get_pointsxy</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return x, y of the given point object.</span>
 
@@ -250,7 +261,10 @@
     <span class="k">return</span> <span class="n">points</span><span class="o">.</span><span class="n">get_xdata</span><span class="p">(),</span> <span class="n">points</span><span class="o">.</span><span class="n">get_ydata</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="compass"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.compass">[docs]</a><span class="k">def</span> <span class="nf">compass</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="o">**</span><span class="n">arrowprops</span><span class="p">):</span>
+
+<div class="viewcode-block" id="compass">
+<a class="viewcode-back" href="../../plotting.html#oceans.plotting.compass">[docs]</a>
+<span class="k">def</span> <span class="nf">compass</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="o">**</span><span class="n">arrowprops</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compass draws a graph that displays the vectors with</span>
 <span class="sd">    components `u` and `v` as arrows from the origin.</span>
@@ -282,7 +296,10 @@
     <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
 
 
-<div class="viewcode-block" id="plot_spectrum"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.plot_spectrum">[docs]</a><span class="k">def</span> <span class="nf">plot_spectrum</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fs</span><span class="p">):</span>
+
+<div class="viewcode-block" id="plot_spectrum">
+<a class="viewcode-back" href="../../plotting.html#oceans.plotting.plot_spectrum">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_spectrum</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plots a Single-Sided Amplitude Spectrum of y(t).</span>
 
@@ -305,7 +322,10 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="EditPoints"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints">[docs]</a><span class="k">class</span> <span class="nc">EditPoints</span><span class="p">:</span>
+
+<div class="viewcode-block" id="EditPoints">
+<a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints">[docs]</a>
+<span class="k">class</span> <span class="nc">EditPoints</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Edit points on a graph with the mouse.  Handles only one set of points.</span>
 
@@ -363,7 +383,9 @@
         <span class="n">canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s2">&quot;motion_notify_event&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">motion_notify_callback</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span> <span class="o">=</span> <span class="n">canvas</span>
 
-<div class="viewcode-block" id="EditPoints.draw_callback"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints.draw_callback">[docs]</a>    <span class="k">def</span> <span class="nf">draw_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="EditPoints.draw_callback">
+<a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints.draw_callback">[docs]</a>
+    <span class="k">def</span> <span class="nf">draw_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">background</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">copy_from_bbox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">bbox</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">draw_artist</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">line</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">bbox</span><span class="p">)</span>
@@ -371,7 +393,10 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Drawing...&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span></div>
 
-<div class="viewcode-block" id="EditPoints.points_changed"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints.points_changed">[docs]</a>    <span class="k">def</span> <span class="nf">points_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+
+<div class="viewcode-block" id="EditPoints.points_changed">
+<a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints.points_changed">[docs]</a>
+    <span class="k">def</span> <span class="nf">points_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This method is called whenever the points object is called.</span>
 
@@ -385,7 +410,10 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Points modified.&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span></div>
 
-<div class="viewcode-block" id="EditPoints.get_ind_under_point"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints.get_ind_under_point">[docs]</a>    <span class="k">def</span> <span class="nf">get_ind_under_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+
+<div class="viewcode-block" id="EditPoints.get_ind_under_point">
+<a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints.get_ind_under_point">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_ind_under_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the index of the point under mouse if within epsilon tolerance.</span>
 
@@ -405,7 +433,10 @@
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Clicked at (</span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">xdata</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">event</span><span class="o">.</span><span class="n">ydata</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
         <span class="k">return</span> <span class="n">ind</span></div>
 
-<div class="viewcode-block" id="EditPoints.button_press_callback"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints.button_press_callback">[docs]</a>    <span class="k">def</span> <span class="nf">button_press_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+
+<div class="viewcode-block" id="EditPoints.button_press_callback">
+<a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints.button_press_callback">[docs]</a>
+    <span class="k">def</span> <span class="nf">button_press_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Whenever a mouse button is pressed.</span>
 
@@ -425,7 +456,10 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Got point: (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pick_pos</span><span class="si">}</span><span class="s2">), ind: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_ind</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span></div>
 
-<div class="viewcode-block" id="EditPoints.button_release_callback"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints.button_release_callback">[docs]</a>    <span class="k">def</span> <span class="nf">button_release_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+
+<div class="viewcode-block" id="EditPoints.button_release_callback">
+<a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints.button_release_callback">[docs]</a>
+    <span class="k">def</span> <span class="nf">button_release_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Whenever a mouse button is released.</span>
 
@@ -438,7 +472,10 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Button released.&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span></div>
 
-<div class="viewcode-block" id="EditPoints.key_press_callback"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints.key_press_callback">[docs]</a>    <span class="k">def</span> <span class="nf">key_press_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+
+<div class="viewcode-block" id="EditPoints.key_press_callback">
+<a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints.key_press_callback">[docs]</a>
+    <span class="k">def</span> <span class="nf">key_press_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Whenever a key is pressed.</span>
 
@@ -482,7 +519,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="EditPoints.motion_notify_callback"><a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints.motion_notify_callback">[docs]</a>    <span class="k">def</span> <span class="nf">motion_notify_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+
+<div class="viewcode-block" id="EditPoints.motion_notify_callback">
+<a class="viewcode-back" href="../../plotting.html#oceans.plotting.EditPoints.motion_notify_callback">[docs]</a>
+    <span class="k">def</span> <span class="nf">motion_notify_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        On mouse movement.</span>
 
@@ -512,7 +552,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">bbox</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Moving&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span></div></div>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Moving&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span></div>
+</div>
+
 </pre></div>
 
           </div>
@@ -525,7 +567,7 @@
       &copy;2023, Filipe Fernandes.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>

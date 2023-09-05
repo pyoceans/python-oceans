@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>oceans.datasets &#8212; oceans 1.1.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
+    <title>oceans.datasets &#8212; oceans 1.1.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=28c8e701" />
+    <script src="../../_static/documentation_options.js?v=58fbf978"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -209,7 +209,9 @@
     <span class="k">return</span> <span class="n">url</span>
 
 
-<div class="viewcode-block" id="woa_profile"><a class="viewcode-back" href="../../datasets.html#oceans.datasets.woa_profile">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">256</span><span class="p">)</span>
+<div class="viewcode-block" id="woa_profile">
+<a class="viewcode-back" href="../../datasets.html#oceans.datasets.woa_profile">[docs]</a>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">256</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">woa_profile</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="s2">&quot;temperature&quot;</span><span class="p">,</span> <span class="n">time_period</span><span class="o">=</span><span class="s2">&quot;annual&quot;</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="s2">&quot;1&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return a xarray DAtaset instance from a World Ocean Atlas variable at a</span>
@@ -258,7 +260,10 @@
     <span class="k">return</span> <span class="n">ds</span><span class="o">.</span><span class="n">cf</span><span class="o">.</span><span class="n">sel</span><span class="p">({</span><span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="n">lon</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">:</span> <span class="n">lat</span><span class="p">},</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="woa_subset"><a class="viewcode-back" href="../../datasets.html#oceans.datasets.woa_subset">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">256</span><span class="p">)</span>
+
+<div class="viewcode-block" id="woa_subset">
+<a class="viewcode-back" href="../../datasets.html#oceans.datasets.woa_subset">[docs]</a>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">256</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">woa_subset</span><span class="p">(</span>
     <span class="n">min_lon</span><span class="p">,</span>
     <span class="n">max_lon</span><span class="p">,</span>
@@ -333,7 +338,10 @@
     <span class="k">return</span> <span class="n">ds</span><span class="p">[[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">_mn&quot;</span><span class="p">]]</span>  <span class="c1"># always return a dataset</span></div>
 
 
-<div class="viewcode-block" id="etopo_subset"><a class="viewcode-back" href="../../datasets.html#oceans.datasets.etopo_subset">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">256</span><span class="p">)</span>
+
+<div class="viewcode-block" id="etopo_subset">
+<a class="viewcode-back" href="../../datasets.html#oceans.datasets.etopo_subset">[docs]</a>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">256</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">etopo_subset</span><span class="p">(</span><span class="n">min_lon</span><span class="p">,</span> <span class="n">max_lon</span><span class="p">,</span> <span class="n">min_lat</span><span class="p">,</span> <span class="n">max_lat</span><span class="p">,</span> <span class="n">tfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">smoo</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get a etopo subset.</span>
@@ -351,7 +359,7 @@
 <span class="sd">    Based on trondkristiansen contourICEMaps.py</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">tfile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">tfile</span> <span class="o">=</span> <span class="s2">&quot;http://gamone.whoi.edu/thredds/dodsC/usgs/data0/bathy/ETOPO2v2c_f4.nc&quot;</span>
+        <span class="n">tfile</span> <span class="o">=</span> <span class="s2">&quot;https://gamone.whoi.edu/thredds/dodsC/usgs/data0/bathy/ETOPO2v2c_f4.nc&quot;</span>
 
     <span class="k">with</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">tfile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">etopo</span><span class="p">:</span>
         <span class="n">lons</span> <span class="o">=</span> <span class="n">etopo</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">][:]</span>
@@ -372,7 +380,10 @@
     <span class="k">return</span> <span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">bathy</span></div>
 
 
-<div class="viewcode-block" id="get_depth"><a class="viewcode-back" href="../../datasets.html#oceans.datasets.get_depth">[docs]</a><span class="k">def</span> <span class="nf">get_depth</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">tfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="get_depth">
+<a class="viewcode-back" href="../../datasets.html#oceans.datasets.get_depth">[docs]</a>
+<span class="k">def</span> <span class="nf">get_depth</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">tfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Find the depths for each station on the etopo2 database.</span>
 
@@ -399,7 +410,10 @@
     <span class="k">return</span> <span class="n">get_profile</span><span class="p">(</span><span class="n">lons</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">bathy</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;nearest&quot;</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="get_isobath"><a class="viewcode-back" href="../../datasets.html#oceans.datasets.get_isobath">[docs]</a><span class="k">def</span> <span class="nf">get_isobath</span><span class="p">(</span><span class="n">bbox</span><span class="p">,</span> <span class="n">iso</span><span class="o">=-</span><span class="mi">200</span><span class="p">,</span> <span class="n">tfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">smoo</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="get_isobath">
+<a class="viewcode-back" href="../../datasets.html#oceans.datasets.get_isobath">[docs]</a>
+<span class="k">def</span> <span class="nf">get_isobath</span><span class="p">(</span><span class="n">bbox</span><span class="p">,</span> <span class="n">iso</span><span class="o">=-</span><span class="mi">200</span><span class="p">,</span> <span class="n">tfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">smoo</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Finds an isobath on the etopo2 database and returns</span>
 <span class="sd">    its lon, lat segments for plotting.</span>
@@ -438,6 +452,7 @@
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">segments</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">segments</span> <span class="o">=</span> <span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">segments</span></div>
+
 
 
 <span class="k">def</span> <span class="nf">_minmax</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
@@ -480,7 +495,7 @@
       &copy;2023, Filipe Fernandes.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>

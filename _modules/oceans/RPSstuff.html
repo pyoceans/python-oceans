@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>oceans.RPSstuff &#8212; oceans 1.1.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
+    <title>oceans.RPSstuff &#8212; oceans 1.1.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=28c8e701" />
+    <script src="../../_static/documentation_options.js?v=58fbf978"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -112,7 +112,9 @@
 <span class="n">earth_radius</span> <span class="o">=</span> <span class="mf">6371.0e3</span>
 
 
-<div class="viewcode-block" id="h2hms"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.h2hms">[docs]</a><span class="k">def</span> <span class="nf">h2hms</span><span class="p">(</span><span class="n">hours</span><span class="p">):</span>
+<div class="viewcode-block" id="h2hms">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.h2hms">[docs]</a>
+<span class="k">def</span> <span class="nf">h2hms</span><span class="p">(</span><span class="n">hours</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts hours to hours, minutes, and seconds.</span>
 
@@ -129,7 +131,10 @@
     <span class="k">return</span> <span class="n">hour</span><span class="p">,</span> <span class="n">mn</span><span class="p">,</span> <span class="n">secs</span></div>
 
 
-<div class="viewcode-block" id="hms2h"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.hms2h">[docs]</a><span class="k">def</span> <span class="nf">hms2h</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="hms2h">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.hms2h">[docs]</a>
+<span class="k">def</span> <span class="nf">hms2h</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts hours, minutes, and seconds to hours.</span>
 
@@ -154,7 +159,10 @@
     <span class="k">return</span> <span class="n">hours</span></div>
 
 
-<div class="viewcode-block" id="ms2hms"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.ms2hms">[docs]</a><span class="k">def</span> <span class="nf">ms2hms</span><span class="p">(</span><span class="n">millisecs</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ms2hms">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.ms2hms">[docs]</a>
+<span class="k">def</span> <span class="nf">ms2hms</span><span class="p">(</span><span class="n">millisecs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts milliseconds to integer hour, minute, seconds.</span>
 
@@ -171,7 +179,10 @@
     <span class="k">return</span> <span class="n">hour</span><span class="p">,</span> <span class="n">mn</span><span class="p">,</span> <span class="n">sec</span></div>
 
 
-<div class="viewcode-block" id="julian"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.julian">[docs]</a><span class="k">def</span> <span class="nf">julian</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mi</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">noon</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="julian">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.julian">[docs]</a>
+<span class="k">def</span> <span class="nf">julian</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mi</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">noon</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts Gregorian calendar dates to Julian dates</span>
 
@@ -232,7 +243,10 @@
     <span class="k">return</span> <span class="n">j</span></div>
 
 
-<div class="viewcode-block" id="jdrps2jdmat"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.jdrps2jdmat">[docs]</a><span class="k">def</span> <span class="nf">jdrps2jdmat</span><span class="p">(</span><span class="n">jd</span><span class="p">):</span>
+
+<div class="viewcode-block" id="jdrps2jdmat">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.jdrps2jdmat">[docs]</a>
+<span class="k">def</span> <span class="nf">jdrps2jdmat</span><span class="p">(</span><span class="n">jd</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert Signell&#39;s Julian days to Matlab&#39;s Serial day</span>
 <span class="sd">    matlab&#39;s serial date = 1 at 0000 UTC, 1-Jan-0000.</span>
@@ -246,7 +260,10 @@
     <span class="k">return</span> <span class="n">jd</span> <span class="o">-</span> <span class="n">julian</span><span class="p">(</span><span class="mi">0000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span></div>
 
 
-<div class="viewcode-block" id="jdmat2jdrps"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.jdmat2jdrps">[docs]</a><span class="k">def</span> <span class="nf">jdmat2jdrps</span><span class="p">(</span><span class="n">jdmat</span><span class="p">):</span>
+
+<div class="viewcode-block" id="jdmat2jdrps">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.jdmat2jdrps">[docs]</a>
+<span class="k">def</span> <span class="nf">jdmat2jdrps</span><span class="p">(</span><span class="n">jdmat</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert Matlab&#39;s Serial Day to Signell&#39;s Julian days</span>
 <span class="sd">    matlab&#39;s serial date = 1 at 0000 UTC, 1-Jan-0000.</span>
@@ -260,7 +277,10 @@
     <span class="k">return</span> <span class="n">jdmat</span> <span class="o">+</span> <span class="n">julian</span><span class="p">(</span><span class="mi">0000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span></div>
 
 
-<div class="viewcode-block" id="gregorian"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.gregorian">[docs]</a><span class="k">def</span> <span class="nf">gregorian</span><span class="p">(</span><span class="n">jd</span><span class="p">,</span> <span class="n">noon</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="gregorian">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.gregorian">[docs]</a>
+<span class="k">def</span> <span class="nf">gregorian</span><span class="p">(</span><span class="n">jd</span><span class="p">,</span> <span class="n">noon</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts decimal Julian days to Gregorian dates using the astronomical</span>
 <span class="sd">    conversion, but with time zero starting at midnight instead of noon.  In</span>
@@ -331,7 +351,10 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">yr</span><span class="p">,</span> <span class="n">mo</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">hr</span><span class="p">,</span> <span class="n">mi</span><span class="p">,</span> <span class="n">sc</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="s2hms"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.s2hms">[docs]</a><span class="k">def</span> <span class="nf">s2hms</span><span class="p">(</span><span class="n">secs</span><span class="p">):</span>
+
+<div class="viewcode-block" id="s2hms">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.s2hms">[docs]</a>
+<span class="k">def</span> <span class="nf">s2hms</span><span class="p">(</span><span class="n">secs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts seconds to integer hour,minute,seconds</span>
 <span class="sd">    Usage: hour, min, sec = s2hms(secs)</span>
@@ -349,8 +372,11 @@
     <span class="k">return</span> <span class="n">hr</span><span class="p">,</span> <span class="n">mi</span><span class="p">,</span> <span class="n">sc</span></div>
 
 
+
 <span class="c1"># FIXME: STOPPED HERE</span>
-<div class="viewcode-block" id="ss2"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.ss2">[docs]</a><span class="k">def</span> <span class="nf">ss2</span><span class="p">(</span><span class="n">jd</span><span class="p">):</span>
+<div class="viewcode-block" id="ss2">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.ss2">[docs]</a>
+<span class="k">def</span> <span class="nf">ss2</span><span class="p">(</span><span class="n">jd</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return Gregorian start and stop dates of Julian day variable</span>
 <span class="sd">    Usage:  start, stop = ss2(jd)</span>
@@ -361,7 +387,10 @@
     <span class="k">return</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span></div>
 
 
-<div class="viewcode-block" id="angled"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.angled">[docs]</a><span class="k">def</span> <span class="nf">angled</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
+
+<div class="viewcode-block" id="angled">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.angled">[docs]</a>
+<span class="k">def</span> <span class="nf">angled</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    ANGLED: Returns the phase angles in degrees of a matrix with complex</span>
 <span class="sd">            elements.</span>
@@ -376,12 +405,18 @@
     <span class="k">return</span> <span class="n">pd</span></div>
 
 
-<div class="viewcode-block" id="ij2ind"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.ij2ind">[docs]</a><span class="k">def</span> <span class="nf">ij2ind</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ij2ind">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.ij2ind">[docs]</a>
+<span class="k">def</span> <span class="nf">ij2ind</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
     <span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span>
     <span class="k">return</span> <span class="n">m</span> <span class="o">*</span> <span class="n">i</span> <span class="o">-</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># TODO: Check this +1</span></div>
 
 
-<div class="viewcode-block" id="ind2ij"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.ind2ij">[docs]</a><span class="k">def</span> <span class="nf">ind2ij</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">ind</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ind2ij">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.ind2ij">[docs]</a>
+<span class="k">def</span> <span class="nf">ind2ij</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">ind</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    ind2ij returns i, j indices of array.</span>
 
@@ -393,7 +428,10 @@
     <span class="k">return</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span></div>
 
 
-<div class="viewcode-block" id="rms"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.rms">[docs]</a><span class="k">def</span> <span class="nf">rms</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
+
+<div class="viewcode-block" id="rms">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.rms">[docs]</a>
+<span class="k">def</span> <span class="nf">rms</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute root mean square for each column of matrix u.</span>
 
@@ -406,7 +444,10 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">u</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">m</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="z0toCn"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.z0toCn">[docs]</a><span class="k">def</span> <span class="nf">z0toCn</span><span class="p">(</span><span class="n">z0</span><span class="p">,</span> <span class="n">H</span><span class="p">):</span>
+
+<div class="viewcode-block" id="z0toCn">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.z0toCn">[docs]</a>
+<span class="k">def</span> <span class="nf">z0toCn</span><span class="p">(</span><span class="n">z0</span><span class="p">,</span> <span class="n">H</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert roughness height z0 to Chezy &quot;C&quot; and Manning&#39;s &quot;n&quot; which is a</span>
 <span class="sd">    function of the water depth</span>
@@ -433,7 +474,10 @@
     <span class="k">return</span> <span class="n">C</span><span class="p">,</span> <span class="n">n</span></div>
 
 
-<div class="viewcode-block" id="z0tocd"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.z0tocd">[docs]</a><span class="k">def</span> <span class="nf">z0tocd</span><span class="p">(</span><span class="n">z0</span><span class="p">,</span> <span class="n">zr</span><span class="p">):</span>
+
+<div class="viewcode-block" id="z0tocd">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.z0tocd">[docs]</a>
+<span class="k">def</span> <span class="nf">z0tocd</span><span class="p">(</span><span class="n">z0</span><span class="p">,</span> <span class="n">zr</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates CD at a given ZR corresponding to Z0.</span>
 
@@ -442,14 +486,20 @@
     <span class="k">return</span> <span class="n">cd</span></div>
 
 
-<div class="viewcode-block" id="short_calc"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.short_calc">[docs]</a><span class="k">def</span> <span class="nf">short_calc</span><span class="p">(</span><span class="n">amin</span><span class="p">,</span> <span class="n">amax</span><span class="p">):</span>
+
+<div class="viewcode-block" id="short_calc">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.short_calc">[docs]</a>
+<span class="k">def</span> <span class="nf">short_calc</span><span class="p">(</span><span class="n">amin</span><span class="p">,</span> <span class="n">amax</span><span class="p">):</span>
     <span class="n">rang</span> <span class="o">=</span> <span class="mi">32767</span> <span class="o">-</span> <span class="p">(</span><span class="o">-</span><span class="mi">32767</span><span class="p">)</span>
     <span class="n">add_offset</span> <span class="o">=</span> <span class="p">(</span><span class="n">amax</span> <span class="o">+</span> <span class="n">amin</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span>
     <span class="n">scale_factor</span> <span class="o">=</span> <span class="p">(</span><span class="n">amax</span> <span class="o">-</span> <span class="n">amin</span><span class="p">)</span> <span class="o">/</span> <span class="n">rang</span>
     <span class="k">return</span> <span class="n">add_offset</span><span class="p">,</span> <span class="n">scale_factor</span></div>
 
 
-<div class="viewcode-block" id="gsum"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.gsum">[docs]</a><span class="k">def</span> <span class="nf">gsum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+
+<div class="viewcode-block" id="gsum">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.gsum">[docs]</a>
+<span class="k">def</span> <span class="nf">gsum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Just like sum, except that it skips over bad points.</span>
 
@@ -458,7 +508,10 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">xnew</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="gmean"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.gmean">[docs]</a><span class="k">def</span> <span class="nf">gmean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+
+<div class="viewcode-block" id="gmean">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.gmean">[docs]</a>
+<span class="k">def</span> <span class="nf">gmean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Just like mean, except that it skips over bad points.</span>
 
@@ -467,7 +520,10 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">xnew</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="gmedian"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.gmedian">[docs]</a><span class="k">def</span> <span class="nf">gmedian</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+
+<div class="viewcode-block" id="gmedian">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.gmedian">[docs]</a>
+<span class="k">def</span> <span class="nf">gmedian</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Just like median, except that it skips over bad points.</span>
 
@@ -476,7 +532,10 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">xnew</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="gmin"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.gmin">[docs]</a><span class="k">def</span> <span class="nf">gmin</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+
+<div class="viewcode-block" id="gmin">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.gmin">[docs]</a>
+<span class="k">def</span> <span class="nf">gmin</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Just like min, except that it skips over bad points.</span>
 
@@ -485,7 +544,10 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">xnew</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="gmax"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.gmax">[docs]</a><span class="k">def</span> <span class="nf">gmax</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+
+<div class="viewcode-block" id="gmax">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.gmax">[docs]</a>
+<span class="k">def</span> <span class="nf">gmax</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Just like max, except that it skips over bad points.</span>
 
@@ -494,7 +556,10 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">xnew</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="gstd"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.gstd">[docs]</a><span class="k">def</span> <span class="nf">gstd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+
+<div class="viewcode-block" id="gstd">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.gstd">[docs]</a>
+<span class="k">def</span> <span class="nf">gstd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Just like std, except that it skips over bad points.</span>
 
@@ -503,7 +568,10 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">xnew</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="near"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.near">[docs]</a><span class="k">def</span> <span class="nf">near</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+
+<div class="viewcode-block" id="near">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.near">[docs]</a>
+<span class="k">def</span> <span class="nf">near</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given an 1D array `x` and a scalar `x0`, returns the `n` indices of the</span>
 <span class="sd">    element of `x` closest to `x0`.</span>
@@ -514,7 +582,10 @@
     <span class="k">return</span> <span class="n">index</span><span class="p">[:</span><span class="n">n</span><span class="p">],</span> <span class="n">distance</span><span class="p">[</span><span class="n">index</span><span class="p">[:</span><span class="n">n</span><span class="p">]]</span></div>
 
 
-<div class="viewcode-block" id="swantime"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.swantime">[docs]</a><span class="k">def</span> <span class="nf">swantime</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+
+<div class="viewcode-block" id="swantime">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.swantime">[docs]</a>
+<span class="k">def</span> <span class="nf">swantime</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts SWAN default time format to datetime object.</span>
 
@@ -538,7 +609,10 @@
     <span class="k">return</span> <span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">mon</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">mn</span><span class="p">,</span> <span class="n">sec</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="shift"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.shift">[docs]</a><span class="k">def</span> <span class="nf">shift</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+
+<div class="viewcode-block" id="shift">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.shift">[docs]</a>
+<span class="k">def</span> <span class="nf">shift</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    a and b are vectors</span>
 <span class="sd">    n is number of points of a to cut off</span>
@@ -557,7 +631,10 @@
     <span class="k">return</span> <span class="n">anew</span><span class="p">,</span> <span class="n">bnew</span></div>
 
 
-<div class="viewcode-block" id="lagcor"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.lagcor">[docs]</a><span class="k">def</span> <span class="nf">lagcor</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+
+<div class="viewcode-block" id="lagcor">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.lagcor">[docs]</a>
+<span class="k">def</span> <span class="nf">lagcor</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Finds lagged correlations between two series.</span>
 <span class="sd">    a and b are two column vectors</span>
@@ -576,7 +653,10 @@
     <span class="k">return</span> <span class="n">cor</span></div>
 
 
-<div class="viewcode-block" id="coast2bln"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.coast2bln">[docs]</a><span class="k">def</span> <span class="nf">coast2bln</span><span class="p">(</span><span class="n">coast</span><span class="p">,</span> <span class="n">bln_file</span><span class="p">):</span>
+
+<div class="viewcode-block" id="coast2bln">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.coast2bln">[docs]</a>
+<span class="k">def</span> <span class="nf">coast2bln</span><span class="p">(</span><span class="n">coast</span><span class="p">,</span> <span class="n">bln_file</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts a matlab coast (two column array w/ nan for line breaks) into</span>
 <span class="sd">    a Surfer blanking file.</span>
@@ -596,13 +676,16 @@
         <span class="n">kk</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">ind</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ind</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
         <span class="n">NP</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kk</span><span class="p">))</span>
         <span class="n">bln</span><span class="p">[</span><span class="n">ind</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">NP</span>
-        <span class="n">bln</span><span class="p">[</span><span class="n">ind</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">bln</span><span class="p">[</span><span class="n">ind</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 
     <span class="n">bln</span> <span class="o">=</span> <span class="n">bln</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">bln_file</span><span class="p">,</span> <span class="n">bln</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%g</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="fixcoast"><a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.fixcoast">[docs]</a><span class="k">def</span> <span class="nf">fixcoast</span><span class="p">(</span><span class="n">coast</span><span class="p">):</span>
+
+<div class="viewcode-block" id="fixcoast">
+<a class="viewcode-back" href="../../RPSstuff.html#oceans.RPSstuff.fixcoast">[docs]</a>
+<span class="k">def</span> <span class="nf">fixcoast</span><span class="p">(</span><span class="n">coast</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    FIXCOAST  Makes sure coastlines meet Signell&#39;s conventions.</span>
 
@@ -630,6 +713,7 @@
         <span class="n">coast</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coast</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">coast</span></div>
+
 </pre></div>
 
           </div>
@@ -642,7 +726,7 @@
       &copy;2023, Filipe Fernandes.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>

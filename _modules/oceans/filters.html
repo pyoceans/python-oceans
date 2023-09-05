@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>oceans.filters &#8212; oceans 1.1.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
+    <title>oceans.filters &#8212; oceans 1.1.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=28c8e701" />
+    <script src="../../_static/documentation_options.js?v=58fbf978"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -107,7 +107,9 @@
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
-<div class="viewcode-block" id="lanc"><a class="viewcode-back" href="../../filters.html#oceans.filters.lanc">[docs]</a><span class="k">def</span> <span class="nf">lanc</span><span class="p">(</span><span class="n">numwt</span><span class="p">,</span> <span class="n">haf</span><span class="p">):</span>
+<div class="viewcode-block" id="lanc">
+<a class="viewcode-back" href="../../filters.html#oceans.filters.lanc">[docs]</a>
+<span class="k">def</span> <span class="nf">lanc</span><span class="p">(</span><span class="n">numwt</span><span class="p">,</span> <span class="n">haf</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generates a numwt + 1 + numwt lanczos cosine low pass filter with -6dB</span>
 <span class="sd">    (1/4 power, 1/2 amplitude) point at haf</span>
@@ -154,7 +156,10 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">wt</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">wt</span><span class="p">[</span><span class="mi">1</span> <span class="p">:</span> <span class="n">numwt</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]</span></div>
 
 
-<div class="viewcode-block" id="smoo1"><a class="viewcode-back" href="../../filters.html#oceans.filters.smoo1">[docs]</a><span class="k">def</span> <span class="nf">smoo1</span><span class="p">(</span><span class="n">datain</span><span class="p">,</span> <span class="n">window_len</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="s2">&quot;hanning&quot;</span><span class="p">):</span>
+
+<div class="viewcode-block" id="smoo1">
+<a class="viewcode-back" href="../../filters.html#oceans.filters.smoo1">[docs]</a>
+<span class="k">def</span> <span class="nf">smoo1</span><span class="p">(</span><span class="n">datain</span><span class="p">,</span> <span class="n">window_len</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="s2">&quot;hanning&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Smooth the data using a window with requested size.</span>
 
@@ -249,7 +254,10 @@
     <span class="k">return</span> <span class="n">data_out</span><span class="p">[</span><span class="n">window_len</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">:</span> <span class="o">-</span><span class="n">window_len</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="smoo2"><a class="viewcode-back" href="../../filters.html#oceans.filters.smoo2">[docs]</a><span class="k">def</span> <span class="nf">smoo2</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">hei</span><span class="p">,</span> <span class="n">wid</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;hann&quot;</span><span class="p">,</span> <span class="n">badflag</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">14</span><span class="p">):</span>
+
+<div class="viewcode-block" id="smoo2">
+<a class="viewcode-back" href="../../filters.html#oceans.filters.smoo2">[docs]</a>
+<span class="k">def</span> <span class="nf">smoo2</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">hei</span><span class="p">,</span> <span class="n">wid</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;hann&quot;</span><span class="p">,</span> <span class="n">badflag</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">14</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates the smoothed array &#39;As&#39; from the original array &#39;A&#39; using the</span>
 <span class="sd">    specified window of type &#39;kind&#39; and shape (&#39;hei&#39;, &#39;wid&#39;).</span>
@@ -368,7 +376,10 @@
     <span class="k">return</span> <span class="n">As</span></div>
 
 
-<div class="viewcode-block" id="weim"><a class="viewcode-back" href="../../filters.html#oceans.filters.weim">[docs]</a><span class="k">def</span> <span class="nf">weim</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;hann&quot;</span><span class="p">,</span> <span class="n">badflag</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">14</span><span class="p">):</span>
+
+<div class="viewcode-block" id="weim">
+<a class="viewcode-back" href="../../filters.html#oceans.filters.weim">[docs]</a>
+<span class="k">def</span> <span class="nf">weim</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;hann&quot;</span><span class="p">,</span> <span class="n">badflag</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">14</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates the smoothed array &#39;xs&#39; from the original array &#39;x&#39; using the</span>
 <span class="sd">    specified window of type &#39;kind&#39; and size &#39;N&#39;. &#39;N&#39; must be an odd number.</span>
@@ -470,7 +481,10 @@
     <span class="k">return</span> <span class="n">xs</span></div>
 
 
-<div class="viewcode-block" id="medfilt1"><a class="viewcode-back" href="../../filters.html#oceans.filters.medfilt1">[docs]</a><span class="k">def</span> <span class="nf">medfilt1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+
+<div class="viewcode-block" id="medfilt1">
+<a class="viewcode-back" href="../../filters.html#oceans.filters.medfilt1">[docs]</a>
+<span class="k">def</span> <span class="nf">medfilt1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Median filter for 1d arrays.</span>
 
@@ -581,7 +595,10 @@
     <span class="k">return</span> <span class="n">xout</span></div>
 
 
-<div class="viewcode-block" id="fft_lowpass"><a class="viewcode-back" href="../../filters.html#oceans.filters.fft_lowpass">[docs]</a><span class="k">def</span> <span class="nf">fft_lowpass</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">):</span>
+
+<div class="viewcode-block" id="fft_lowpass">
+<a class="viewcode-back" href="../../filters.html#oceans.filters.fft_lowpass">[docs]</a>
+<span class="k">def</span> <span class="nf">fft_lowpass</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Performs a low pass filer on the series.</span>
 <span class="sd">    low and high specifies the boundary of the filter.</span>
@@ -625,7 +642,10 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">irfft</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">signal</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="md_trenberth"><a class="viewcode-back" href="../../filters.html#oceans.filters.md_trenberth">[docs]</a><span class="k">def</span> <span class="nf">md_trenberth</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+
+<div class="viewcode-block" id="md_trenberth">
+<a class="viewcode-back" href="../../filters.html#oceans.filters.md_trenberth">[docs]</a>
+<span class="k">def</span> <span class="nf">md_trenberth</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the filtered series using the Trenberth filter as described</span>
 <span class="sd">    on Monthly Weather Review, vol. 112, No. 2, Feb 1984.</span>
@@ -676,7 +696,10 @@
     <span class="k">return</span> <span class="n">y</span></div>
 
 
-<div class="viewcode-block" id="pl33tn"><a class="viewcode-back" href="../../filters.html#oceans.filters.pl33tn">[docs]</a><span class="k">def</span> <span class="nf">pl33tn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">33.0</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">):</span>
+
+<div class="viewcode-block" id="pl33tn">
+<a class="viewcode-back" href="../../filters.html#oceans.filters.pl33tn">[docs]</a>
+<span class="k">def</span> <span class="nf">pl33tn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">33.0</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes low-passed series from `x` using pl33 filter, with optional</span>
 <span class="sd">    sample interval `dt` (hours) and filter half-amplitude period T (hours)</span>
@@ -825,6 +848,7 @@
         <span class="n">xf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pl33</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">xf</span></div>
+
 </pre></div>
 
           </div>
@@ -837,7 +861,7 @@
       &copy;2023, Filipe Fernandes.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.2.5</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
