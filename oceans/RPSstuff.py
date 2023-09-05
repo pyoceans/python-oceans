@@ -490,7 +490,7 @@ def coast2bln(coast, bln_file):
         kk = list(range(ind[k] + 1, ind[k + 1]))
         NP = int(len(kk))
         bln[ind[k], 0] = NP
-        bln[ind[k], 1] = int(1)
+        bln[ind[k], 1] = 1
 
     bln = bln[:-1]
     np.savetxt(bln_file, bln, fmt="%g")
