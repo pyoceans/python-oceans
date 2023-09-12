@@ -620,7 +620,7 @@ def pl33tn(x, dt=1.0, T=33.0, mode="valid", t=None):
     # find dt in units of hours
     if isinstance(x, xr.DataArray):
         dt = (x.cf["T"][1] - x.cf["T"][0]) / np.timedelta64(
-            360_000_0000_000,
+            360_000_000_000,
         )
     elif isinstance(x, pd.Series):
         dt = (x.index[1] - x.index[0]) / pd.Timedelta("1H")
