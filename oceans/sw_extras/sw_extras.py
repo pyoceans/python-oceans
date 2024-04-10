@@ -168,7 +168,7 @@ def cph(bvfr2):
     Returns
     -------
     cph : array_like
-          Brünt-Väisälä Frequency [ cylcles hour :sup:`-1`]
+          Brünt-Väisälä Frequency [ cycles hour :sup:`-1`]
 
     Examples
     --------
