@@ -2,6 +2,7 @@ import functools
 import warnings
 
 import numpy as np
+import pooch
 from netCDF4 import Dataset
 
 from oceans.ocfis import get_profile, wrap_lon180
@@ -227,6 +228,16 @@ def woa_subset(
     return ds[[f"{v}_mn"]]  # always return a dataset
 
 
+def _download_etopo2():
+    url = "https://github.com/pyoceans/python-oceans/releases/download"
+    version = "v2024.04"
+
+    return pooch.retrieve(
+        url=f"{url}/{version}/ETOPO2v2c_f4.nc",
+        known_hash="sha256:30159a3f15a06398db3cae4ec75986bedc3317dda8e89d049ddc92ba1c352ff1",
+    )
+
+
 @functools.lru_cache(maxsize=256)
 def etopo_subset(min_lon, max_lon, min_lat, max_lat, tfile=None, smoo=False):
     """
@@ -245,7 +256,7 @@ def etopo_subset(min_lon, max_lon, min_lat, max_lat, tfile=None, smoo=False):
     Based on trondkristiansen contourICEMaps.py
     """
     if tfile is None:
-        tfile = "https://gamone.whoi.edu/thredds/dodsC/usgs/data0/bathy/ETOPO2v2c_f4.nc"
+        tfile = _download_etopo2()
 
     with Dataset(tfile, "r") as etopo:
         lons = etopo.variables["x"][:]
