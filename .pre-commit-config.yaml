@@ -1,7 +1,7 @@
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.4.0
+  rev: v4.6.0
   hooks:
     - id: check-ast
     - id: end-of-file-fixer
@@ -23,23 +23,23 @@ repos:
 #       args: [--config=pyproject.toml]
 
 - repo: https://github.com/keewis/blackdoc
-  rev: v0.3.8
+  rev: v0.3.9
   hooks:
     - id: blackdoc
 
 - repo: https://github.com/charliermarsh/ruff-pre-commit
-  rev: v0.0.287
+  rev: v0.3.5
   hooks:
     - id: ruff
 
 - repo: https://github.com/psf/black
-  rev: 23.7.0
+  rev: 24.3.0
   hooks:
   - id: black
     language_version: python3
 
 - repo: https://github.com/codespell-project/codespell
-  rev: v2.2.5
+  rev: v2.2.6
   hooks:
     - id: codespell
       args:
@@ -51,6 +51,6 @@ repos:
     - id: add-trailing-comma
 
 - repo: https://github.com/tox-dev/pyproject-fmt
-  rev: "1.1.0"
+  rev: "1.7.0"
   hooks:
     - id: pyproject-fmt

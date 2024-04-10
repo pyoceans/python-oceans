@@ -415,7 +415,10 @@ def medfilt1(x, L=3):
     >>> L = 103
     >>> xout = medfilt1(x=x, L=L)
     >>> ax = plt.subplot(212)
-    >>> (l1, l2,) = ax.plot(
+    >>> (
+    ...     l1,
+    ...     l2,
+    ... ) = ax.plot(
     ...     x
     ... ), ax.plot(xout)
     >>> ax.grid(True)
@@ -608,7 +611,7 @@ def pl33tn(x, dt=1.0, T=33.0, mode="valid", t=None):
     import pandas as pd
     import xarray as xr
 
-    if isinstance(x, (xr.Dataset, pd.DataFrame)):
+    if isinstance(x, xr.Dataset | pd.DataFrame):
         raise TypeError("Input a DataArray not a Dataset, or a Series not a DataFrame.")
 
     if isinstance(x, pd.Series) and not isinstance(
