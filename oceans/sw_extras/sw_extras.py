@@ -321,7 +321,7 @@ def cor_beta(lat):
     --------
     >>> import oceans.sw_extras.sw_extras as swe
     >>> swe.cor_beta(0)
-    2.2891225867210798e-11
+    np.float64(2.2891225867210798e-11)
 
     References
     ----------
@@ -358,7 +358,7 @@ def inertial_period(lat):
     >>> import oceans.sw_extras.sw_extras as swe
     >>> lat = 30.0
     >>> swe.inertial_period(lat) / 3600
-    23.93484986278565
+    np.float64(23.93484986278565)
 
     """
     lat = np.asanyarray(lat)
@@ -427,7 +427,7 @@ def visc(s, t, p):
     --------
     >>> import oceans.sw_extras.sw_extras as swe
     >>> swe.visc(40.0, 40.0, 1000.0)
-    8.200192496633804e-07
+    np.float64(8.200192496633804e-07)
 
     Modifications: Original 1998/01/19 - Ayal Anis 1998
 
@@ -466,7 +466,7 @@ def tcond(s, t, p):
     --------
     >>> import oceans.sw_extras.sw_extras as swe
     >>> swe.tcond(35, 20, 0)
-    0.5972445569999999
+    np.float64(0.5972445569999999)
 
     References
     ----------

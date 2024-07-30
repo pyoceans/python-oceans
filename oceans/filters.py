@@ -205,7 +205,7 @@ def smoo2(A, hei, wid, kind="hann", badflag=-9999, beta=14):
     A = np.asanyarray(A)
     Fnan = np.isnan(A)
     imax, jmax = A.shape
-    As = np.NaN * np.ones((imax, jmax))
+    As = np.nan * np.ones((imax, jmax))
 
     for i in range(imax):
         for j in range(jmax):
@@ -257,7 +257,7 @@ def smoo2(A, hei, wid, kind="hann", badflag=-9999, beta=14):
             a = Ac * wdwc
             As[i, j] = a.sum() / wdwc.sum()
     # Assigning NaN to the positions holding NaNs in the original array.
-    As[Fnan] = np.NaN
+    As[Fnan] = np.nan
 
     return As
 
@@ -329,7 +329,7 @@ def weim(x, N, kind="hann", badflag=-9999, beta=14):
     ln = (N - 1) / 2
     lx = x.size
     lf = lx - ln
-    xs = np.NaN * np.ones(lx)
+    xs = np.nan * np.ones(lx)
 
     # Eliminating bad data from mean computation.
     fbad = x == badflag
@@ -459,7 +459,7 @@ def medfilt1(x, L=3):
         msg = "Input sequence has to be 1d: ndim = {}".format
         raise ValueError(msg(xin.ndim))
 
-    xout = np.zeros_like(xin) + np.NaN
+    xout = np.zeros_like(xin) + np.nan
 
     Lwing = (L - 1) // 2
 
@@ -538,7 +538,7 @@ def md_trenberth(x):
     >>> filtered = md_trenberth(x)
     >>> fig, ax = plt.subplots()
     >>> (l1,) = ax.plot(t, x, label="original")
-    >>> pad = [np.NaN] * 5
+    >>> pad = [np.nan] * 5
     >>> (l2,) = ax.plot(t, np.r_[pad, filtered, pad], label="filtered")
     >>> legend = ax.legend()
 
@@ -598,9 +598,9 @@ def pl33tn(x, dt=1.0, T=33.0, mode="valid", t=None):
     >>> filtered_33d3 = pl33tn(x, dt=4.0, T=72.0)  # 3 day filter
     >>> fig, ax = plt.subplots()
     >>> (l1,) = ax.plot(t, x, label="original")
-    >>> pad = [np.NaN] * 8
+    >>> pad = [np.nan] * 8
     >>> (l2,) = ax.plot(t, np.r_[pad, filtered_33, pad], label="33 hours")
-    >>> pad = [np.NaN] * 17
+    >>> pad = [np.nan] * 17
     >>> (l3,) = ax.plot(t, np.r_[pad, filtered_33d3, pad], label="3 days")
     >>> legend = ax.legend()
 

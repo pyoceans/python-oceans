@@ -28,7 +28,7 @@ def _woa_variable(variable):
 
 
 def _woa_url(variable, time_period, resolution):
-    base = "https://data.nodc.noaa.gov/thredds/dodsC"
+    base = "https://www.ncei.noaa.gov/thredds-ocean/dodsC"
 
     v = _woa_variable(variable)
 
