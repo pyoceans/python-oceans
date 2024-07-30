@@ -178,7 +178,7 @@ def smoo2(A, hei, wid, kind="hann", badflag=-9999, beta=14):
     # Checking window type and dimensions
     kinds = ["hann", "hamming", "blackman", "bartlett", "kaiser"]
     if kind not in kinds:
-        raise ValueError("Invalid window type requested: %s" % kind)
+        raise ValueError(f"Invalid window type requested: {kind}")
 
     if (np.mod(hei, 2) == 0) or (np.mod(wid, 2) == 0):
         raise ValueError("Window dimensions must be odd")
@@ -302,7 +302,7 @@ def weim(x, N, kind="hann", badflag=-9999, beta=14):
     # Checking window type and dimensions.
     kinds = ["hann", "hamming", "blackman", "bartlett", "kaiser"]
     if kind not in kinds:
-        raise ValueError("Invalid window type requested: %s" % kind)
+        raise ValueError(f"Invalid window type requested: {kind}")
 
     if np.mod(N, 2) == 0:
         raise ValueError("Window size must be odd")

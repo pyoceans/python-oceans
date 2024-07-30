@@ -130,7 +130,7 @@ def level_colormap(levels, cmap=None):
     cdict = {"red": tuple(R), "green": tuple(G), "blue": tuple(B)}
 
     return matplotlib.colors.LinearSegmentedColormap(
-        "%s_levels" % cmap.name,
+        f"{cmap.name}_levels",
         cdict,
         256,
     )
