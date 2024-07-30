@@ -2,7 +2,7 @@
 build-backend = "setuptools.build_meta"
 requires = [
   "setuptools>=42",
-  "setuptools_scm[toml]>=3.4",
+  "setuptools-scm[toml]>=3.4",
   "wheel",
 ]
 
@@ -10,11 +10,11 @@ requires = [
 name = "oceans"
 description = "Misc functions for oceanographic data analysis"
 readme = "README.md"
-license = {file = "LICENSE.txt"}
+license = { file = "LICENSE.txt" }
 maintainers = [
-    {name = "André Palóczy"},
-    {name = "Arnaldo Russo"},
-    {name = "Filipe Fernandes", email = "ocefpaf+oceans@gmail.com"},
+  { name = "André Palóczy" },
+  { name = "Arnaldo Russo" },
+  { name = "Filipe Fernandes", email = "ocefpaf+oceans@gmail.com" },
 ]
 requires-python = ">=3.10"
 classifiers = [
@@ -27,69 +27,71 @@ dynamic = [
   "dependencies",
   "version",
 ]
-[project.optional-dependencies]
-extras = [
+optional-dependencies.extras = [
   "cartopy",
   "iris",
   "netcdf4",
   "pandas",
   "scipy",
 ]
-[project.urls]
-documentation = "https://pyoceans.github.io/python-oceans/"
-homepage = "https://pypi.python.org/pypi/oceans/"
-repository = "https://github.com/pyoceans/python-oceans"
+urls.documentation = "https://pyoceans.github.io/python-oceans/"
+urls.homepage = "https://pypi.python.org/pypi/oceans/"
+urls.repository = "https://github.com/pyoceans/python-oceans"
 
 [tool.setuptools]
-packages = ["oceans"]
+packages = [ "oceans" ]
 zip-safe = false
 include-package-data = true
 
 [tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
+dependencies = { file = [ "requirements.txt" ] }
 
 [tool.setuptools.package-data]
-oceans = ["colormaps/cmap_data/*.dat"]
+oceans = [ "colormaps/cmap_data/*.dat" ]
 
 [tool.setuptools_scm]
 write_to = "oceans/_version.py"
 write_to_template = "__version__ = '{version}'"
 
 [tool.ruff]
-lint.select = [
-    "A", # flake8-builtins
-    "B", # flake8-bugbear
-    "C4", # flake8-comprehensions
-    "F", # flakes
-    "I", # import sorting
-    "T20", # flake8-print
-    "UP", # upgrade
-]
 target-version = "py311"
 line-length = 79
+lint.select = [
+  "A",   # flake8-builtins
+  "B",   # flake8-bugbear
+  "C4",  # flake8-comprehensions
+  "F",   # flakes
+  "I",   # import sorting
+  "T20", # flake8-print
+  "UP",  # upgrade
+]
 lint.ignore = [
-    "B905",  # zip ztrict arg, enable only for py310
+  "B905", # zip ztrict arg, enable only for py310
 ]
 
-[tool.ruff.lint.per-file-ignores]
-"docs/source/conf.py" = ["E402", "A001"]
-"oceans/plotting.py" = ["T201"]  # `print` found
+lint.per-file-ignores."docs/source/conf.py" = [
+  "A001",
+  "E402",
+]
+lint.per-file-ignores."oceans/plotting.py" = [
+  "T201",
+] # `print` found
 
 [tool.check-manifest]
 ignore = [
-    ".coveragerc",
-    "docs",
-    "docs/*",
-    "notebooks",
-    "notebooks/*",
-    "tests",
-    "tests/*",
+  ".coveragerc",
+  "docs",
+  "docs/*",
+  "notebooks",
+  "notebooks/*",
+  "tests",
+  "tests/*",
 ]
 
 [tool.pytest.ini_options]
 markers = [
-  "web: marks tests require connection (deselect with '-m \"not web\"')"
-  ]
+  "web: marks tests require connection (deselect with '-m \"not web\"')",
+]
 
 [tool.interrogate]
 ignore-init-method = true
@@ -99,7 +101,7 @@ ignore-semiprivate = false
 ignore-private = false
 ignore-module = false
 fail-under = 95
-exclude = ["docs", "tests"]
+exclude = [ "docs", "tests" ]
 verbose = 1
 quiet = false
 color = true
