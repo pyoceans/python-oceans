@@ -4,6 +4,7 @@ import warnings
 import gsw
 import numpy as np
 import numpy.ma as ma
+import pandas as pd
 
 
 def spdir2uv(spd, ang, deg=False):
@@ -583,7 +584,7 @@ def bin_dates(self, freq, tz=None):
     >>> from pandas import Series, date_range
     >>> n = 24 * 30
     >>> sig = np.random.rand(n) + 2 * np.cos(2 * np.pi * np.arange(n))
-    >>> dates = date_range(start="1/1/2000", periods=n, freq="H")
+    >>> dates = date_range(start="1/1/2000", periods=n, freq="h")
     >>> series = Series(data=sig, index=dates)
     >>> new_series = bin_dates(series, freq="D", tz=None)
 
@@ -593,7 +594,7 @@ def bin_dates(self, freq, tz=None):
     new_index = date_range(start=self.index[0], end=self.index[-1], freq=freq, tz=tz)
     new_series = self.groupby(new_index.asof).mean()
     # Averages at the center.
-    secs = new_index.freq.delta.total_seconds()
+    secs = pd.Timedelta(new_index.freq).total_seconds()
     new_series.index = new_series.index.values + int(secs // 2)
     return new_series
 
@@ -625,7 +626,7 @@ def series_spline(self):
 
 def despike(self, n=3, recursive=False):
     """
-    Replace spikes with np.NaN.
+    Replace spikes with np.nan.
     Removing spikes that are >= n * std.
     default n = 3.
 
@@ -638,12 +639,12 @@ def despike(self, n=3, recursive=False):
     )
 
     removed = np.count_nonzero(outliers)
-    result[outliers] = np.NaN
+    result[outliers] = np.nan
 
     counter = 0
     if recursive:
         while outliers.any():
-            result[outliers] = np.NaN
+            result[outliers] = np.nan
             base = np.abs(result - np.nanmean(result))
             outliers = base >= n * np.nanstd(result)
             counter += 1
@@ -658,7 +659,7 @@ def pol2cart(theta, radius, units="deg"):
     Examples
     --------
     >>> pol2cart(0, 1, units="deg")
-    (1.0, 0.0)
+    (np.float64(1.0), np.float64(0.0))
 
     """
     if units in ["deg", "degs"]:
@@ -781,7 +782,7 @@ def get_profile(x, y, f, xi, yi, mode="nearest", order=3):
     return map_coordinates(f, coords, mode=mode, order=order)
 
 
-def strip_mask(arr, fill_value=np.NaN):
+def strip_mask(arr, fill_value=np.nan):
     """
     Take a masked array and return its data(filled) + mask.
 

@@ -445,7 +445,7 @@ def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
     gamma_Pac = gamma_G_pacific(SP, pt)
     gamma_Ind = gamma_G_indian(SP, pt)
     gamma_SOce = gamma_G_southern_ocean(SP, pt, p)
-    # gamma_Arc = np.zeros_like(SP) * np.NaN
+    # gamma_Arc = np.zeros_like(SP) * np.nan
 
     # Definition of the Indian part.
     io_lon = np.array(
@@ -590,7 +590,7 @@ def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
     gamma_GP = w_so * gamma_SOce + (1.0 - w_so) * gamma_middle
 
     # Set NaN in the arctic region.
-    gamma_GP[lat > 66.0] = np.NaN
+    gamma_GP[lat > 66.0] = np.nan
 
     # De-normalization.
     gamma_GP = 20.0 * gamma_GP - 20

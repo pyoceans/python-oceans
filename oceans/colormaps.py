@@ -142,7 +142,7 @@ arrays = {
 }
 
 # Data colormaps.
-for fname in glob("%s/*.dat" % cmap_path):
+for fname in glob(f"{cmap_path}/*.dat"):
     cmap = os.path.basename(fname).split(".")[0]
     data = load_cmap(fname)
     arrays.update({cmap: data})
@@ -150,7 +150,7 @@ for fname in glob("%s/*.dat" % cmap_path):
 cm = Bunch()
 for key, value in arrays.items():
     cm.update({key: cmat2cmpl(value)})
-    cm.update({"%s_r" % key: cmat2cmpl(value, reverse=True)})
+    cm.update({f"{key}_r": cmat2cmpl(value, reverse=True)})
 
 
 def demo():

@@ -144,8 +144,8 @@ class Waves:
         self.Ks = np.sqrt(1 / (1 + self.G) / np.tanh(self.k * self.h))
 
         if thetao is None:
-            self.theta = np.NaN
-            self.Kr = np.NaN
+            self.theta = np.nan
+            self.Kr = np.nan
         if thetao is not None:
             self.theta = np.rad2deg(
                 np.asin(self.C / self.Co * np.sin(np.deg2rad(self.thetao))),
@@ -155,6 +155,6 @@ class Waves:
             )
 
         if Ho is None:
-            self.H = np.NaN
+            self.H = np.nan
         if Ho is not None:
             self.H = self.Ho * self.Ks * self.Kr

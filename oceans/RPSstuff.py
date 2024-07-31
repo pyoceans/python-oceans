@@ -13,7 +13,7 @@ def h2hms(hours):
     Examples
     --------
     >>> h2hms(12.51)
-    (12.0, 30.0, 36.0)
+    (np.float64(12.0), np.float64(30.0), np.float64(36.0))
 
     """
     hour = np.floor(hours)
@@ -33,7 +33,7 @@ def hms2h(h, m=None, s=None):
     12.51
     >>> # Or,
     >>> hms2h(123036)
-    12.51
+    np.float64(12.51)
 
     """
     if not m and not s:
@@ -55,7 +55,7 @@ def ms2hms(millisecs):
     Examples
     --------
     >>> ms2hms(1e3 * 60)
-    (0.0, 1.0, 0.0)
+    (np.float64(0.0), np.float64(1.0), np.float64(0.0))
 
     """
     sec = np.round(millisecs / 1000)
@@ -233,7 +233,7 @@ def s2hms(secs):
     Examples
     --------
     >>> s2hms(3600 + 60 + 1)
-    (1.0, 1.0, 1)
+    (np.float64(1.0), np.float64(1.0), np.int64(1))
 
     """
     hr = np.floor(secs / 3600)
@@ -509,7 +509,7 @@ def fixcoast(coast):
     """
 
     ind = coast == -99999.0
-    coast[ind] = np.NaN
+    coast[ind] = np.nan
 
     ind = np.where(np.isnan(coast[:, 0]))[0]
     dind = np.diff(ind)
@@ -518,9 +518,9 @@ def fixcoast(coast):
     coast = np.delete(coast, ind[idup], axis=0)
 
     if not np.isnan(coast[0, 0]):
-        coast = np.insert(coast, 0, np.NaN, axis=0)
+        coast = np.insert(coast, 0, np.nan, axis=0)
 
     if not np.isnan(coast[-1, -1]):
-        coast = np.append(coast, np.c_[np.NaN, np.NaN], axis=0)
+        coast = np.append(coast, np.c_[np.nan, np.nan], axis=0)
 
     return coast
