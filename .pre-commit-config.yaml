@@ -1,7 +1,7 @@
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.6.0
+  rev: v6.0.0
   hooks:
     - id: check-ast
     - id: end-of-file-fixer
@@ -15,42 +15,59 @@ repos:
     - id: debug-statements
 
 
-# - repo: https://github.com/econchick/interrogate
-#   rev: 1.5.0
-#   hooks:
-#     - id: interrogate
-#       exclude: ^(docs|setup.py|tests)
-#       args: [--config=pyproject.toml]
-
 - repo: https://github.com/keewis/blackdoc
-  rev: v0.3.9
+  rev: v0.4.6
   hooks:
     - id: blackdoc
 
-- repo: https://github.com/charliermarsh/ruff-pre-commit
-  rev: v0.5.5
+
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.15.8
   hooks:
     - id: ruff
+      args: ["--fix", "--show-fixes"]
+    - id: ruff-format
 
-- repo: https://github.com/psf/black
-  rev: 24.4.2
+
+- repo: https://github.com/nbQA-dev/nbQA
+  rev: 1.9.1
   hooks:
-  - id: black
-    language_version: python3
+    - id: nbqa-check-ast
+    - id: nbqa-black
+    - id: nbqa-ruff
+      args: [
+        --fix,
+        --config=ruff.toml,
+        ]
+
+
+- repo: https://github.com/woodruffw/zizmor-pre-commit
+  rev: v1.23.1
+  hooks:
+    - id: zizmor
+
+
+- repo: https://github.com/bdice/nb-strip-paths
+  rev: v0.1.0
+  hooks:
+    - id: nb-strip-paths
+
 
 - repo: https://github.com/codespell-project/codespell
-  rev: v2.3.0
+  rev: v2.4.2
   hooks:
     - id: codespell
       args:
         - --ignore-words-list=pres
 
+
 - repo: https://github.com/asottile/add-trailing-comma
-  rev: v3.1.0
+  rev: v4.0.0
   hooks:
     - id: add-trailing-comma
 
+
 - repo: https://github.com/tox-dev/pyproject-fmt
-  rev: "2.2.0"
+  rev: "v2.20.0"
   hooks:
     - id: pyproject-fmt
