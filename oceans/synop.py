@@ -1,9 +1,8 @@
 import numpy as np
 
 
-def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None, zc=None):
-    """
-    Scalar objective analysis.  Interpolates t(x, y) into tp(xc, yc)
+def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None, zc=None):  # noqa: PLR0913
+    """Scalar objective analysis.  Interpolates t(x, y) into tp(xc, yc)
     Assumes spatial correlation function to be isotropic and Gaussian in the
     form of: C = (1 - err) * np.exp(-d**2 / corrlen**2) where:
     d : Radial distance from the observations.
@@ -34,14 +33,11 @@ def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None, zc=None):
     error.
 
     """
-
     n = len(x)
     x, y = np.reshape(x, (1, n)), np.reshape(y, (1, n))
 
     # Squared distance matrix between the observations.
-    d2 = (np.tile(x, (n, 1)).T - np.tile(x, (n, 1))) ** 2 + (
-        np.tile(y, (n, 1)).T - np.tile(y, (n, 1))
-    ) ** 2
+    d2 = (np.tile(x, (n, 1)).T - np.tile(x, (n, 1))) ** 2 + (np.tile(y, (n, 1)).T - np.tile(y, (n, 1))) ** 2
 
     nv = len(xc)
     xc, yc = np.reshape(xc, (1, nv)), np.reshape(yc, (1, nv))
@@ -71,12 +67,14 @@ def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None, zc=None):
         t = np.reshape(t, (n, 1))
         tp = np.dot(C, np.linalg.solve(A, t))
         if 0:  # NOTE: `scaloa2.m`
-            mD = np.sum(np.linalg.solve(A, t)) / np.sum(np.sum(np.linalg.inv(A)))
+            mD = np.sum(np.linalg.solve(A, t)) / np.sum(
+                np.sum(np.linalg.inv(A)),
+            )
             t = t - mD
             tp = C * (np.linalg.solve(A, t))
             tp = tp + mD * np.ones(tp.shape)
     if not t:
-        print("Computing just the interpolation errors.")  # noqa
+        print("Computing just the interpolation errors.")  # noqa: T201
 
     # Normalized mean error.  Taking the squared root you can get the
     # interpolation error in percentage.

@@ -6,8 +6,7 @@ from seawater.constants import OMEGA, earth_radius
 
 
 def sigma_t(s, t, p):
-    """
-    :math:`\\sigma_{t}` is the remainder of subtracting 1000 kg m :sup:`-3`
+    """:math:`\\sigma_{t}` is the remainder of subtracting 1000 kg m :sup:`-3`
     from the density of a sea water sample at atmospheric pressure.
 
     Parameters
@@ -57,8 +56,7 @@ def sigma_t(s, t, p):
 
 
 def sigmatheta(s, t, p, pr=0):
-    """
-    :math:`\\sigma_{\\theta}` is a measure of the density of ocean water
+    """:math:`\\sigma_{\\theta}` is a measure of the density of ocean water
     where the quantity :math:`\\sigma_{t}` is calculated using the potential
     temperature (:math:`\\theta`) rather than the in situ temperature and
     potential density of water mass relative to the specified reference
@@ -109,8 +107,7 @@ def sigmatheta(s, t, p, pr=0):
 
 
 def N(bvfr2):
-    """
-    Buoyancy frequency is the frequency with which a parcel or particle of
+    """Buoyancy frequency is the frequency with which a parcel or particle of
     fluid displaced a small vertical distance from its equilibrium position in
     a stable environment will oscillate. It will oscillate in simple harmonic
     motion with an angular frequency defined by
@@ -157,8 +154,7 @@ def N(bvfr2):
 
 
 def cph(bvfr2):
-    """
-    Buoyancy frequency in Cycles Per Hour.
+    """Buoyancy frequency in Cycles Per Hour.
 
     Parameters
     ----------
@@ -197,8 +193,7 @@ def cph(bvfr2):
 
 
 def shear(z, u, v=0):
-    r"""
-    Calculates the vertical shear for u, v velocity section.
+    r"""Calculates the vertical shear for u, v velocity section.
 
     .. math::
         \\textrm{shear} = \\frac{\\partial (u^2 + v^2)^{0.5}}{\partial z}
@@ -233,7 +228,7 @@ def shear(z, u, v=0):
     z, u, v = list(map(np.asanyarray, (z, u, v)))
     z, u, v = np.broadcast_arrays(z, u, v)
 
-    m, n = z.shape
+    m, _ = z.shape
     iup = np.arange(0, m - 1)
     ilo = np.arange(1, m)
     z_ave = (z[iup, :] + z[ilo, :]) / 2.0
@@ -245,8 +240,7 @@ def shear(z, u, v=0):
 
 
 def richnumb(bvfr2, S2):
-    r"""
-    Calculates  the ratio of buoyancy to inertial forces which measures the
+    r"""Calculates  the ratio of buoyancy to inertial forces which measures the
     stability of a fluid layer. this functions computes the gradient Richardson
     number in the form of:
 
@@ -290,13 +284,11 @@ def richnumb(bvfr2, S2):
 
     """
     bvfr2, S2 = list(map(np.asanyarray, (bvfr2, S2)))
-    # FIXME: check this for correctness.
     return bvfr2 / S2
 
 
 def cor_beta(lat):
-    """
-    Calculates the Coriolis :math:`\\beta` factor defined by:
+    """Calculates the Coriolis :math:`\\beta` factor defined by:
 
     .. math::
         beta = 2 \\Omega \\cos(lat)
@@ -337,8 +329,7 @@ def cor_beta(lat):
 
 
 def inertial_period(lat):
-    """
-    Calculate the inertial period as:
+    """Calculate the inertial period as:
 
     .. math::
         Ti = \\frac{2\\pi}{f} = \\frac{T_{sd}}{2\\sin\\phi}
@@ -366,8 +357,7 @@ def inertial_period(lat):
 
 
 def strat_period(N):
-    """
-    Stratification period is the inverse of the Buoyancy frequency and it
+    """Stratification period is the inverse of the Buoyancy frequency and it
     is defined by:
 
     .. math:: Tn = \\frac{2\\pi}{N}
@@ -402,8 +392,7 @@ def strat_period(N):
 
 
 def visc(s, t, p):
-    """
-    Calculates kinematic viscosity of sea-water.  Based on Dan Kelley's fit
+    """Calculates kinematic viscosity of sea-water.  Based on Dan Kelley's fit
     to Knauss's TABLE II-8.
 
     Parameters
@@ -441,8 +430,7 @@ def visc(s, t, p):
 
 
 def tcond(s, t, p):
-    """
-    Calculates thermal conductivity of sea-water.
+    """Calculates thermal conductivity of sea-water.
 
     Parameters
     ----------
@@ -479,21 +467,16 @@ def tcond(s, t, p):
     s, t, p = list(map(np.asanyarray, (s, t, p)))
 
     if False:  # Castelli's option.
-        therm = 100.0 * (
-            5.5286e-3 + 3.4025e-8 * p + 1.8364e-5 * t - 3.3058e-9 * t**3
-        )  # [W/m/K]
+        therm = 100.0 * (5.5286e-3 + 3.4025e-8 * p + 1.8364e-5 * t - 3.3058e-9 * t**3)  # [W/m/K]
 
     # 1) Caldwell's option # 2 - simplified formula, accurate to 0.5% (eqn. 9)
     # in [cal/cm/C/sec]
-    therm = 0.001365 * (
-        1.0 + 0.003 * t - 1.025e-5 * t**2 + 0.0653 * (1e-4 * p) - 0.00029 * s
-    )
+    therm = 0.001365 * (1.0 + 0.003 * t - 1.025e-5 * t**2 + 0.0653 * (1e-4 * p) - 0.00029 * s)
     return therm * 418.4  # [cal/cm/C/sec] ->[ W/m/K]
 
 
 def spice(s, t, p):
-    r"""
-    Compute sea spiciness as defined by Flament (2002).
+    r"""Compute sea spiciness as defined by Flament (2002).
 
     .. math:: \pi(\theta,s) = \sum^5_{i=0} \sum^4_{j=0} b_{ij}\theta^i(s-35)^i
 
@@ -540,7 +523,6 @@ def spice(s, t, p):
 
     """
     s, t, p = list(map(np.asanyarray, (s, t, p)))
-    # FIXME: I'm not sure about this next step.
     pt = sw.ptmp(s, t, p)
 
     B = np.zeros((6, 5))
@@ -595,26 +577,16 @@ def spice(s, t, p):
 
 
 def psu2ppt(psu):
-    """
-    Converts salinity from PSU units to PPT
+    """Converts salinity from PSU units to PPT
     http://stommel.tamu.edu/~baum/paleo/ocean/node31.html#PracticalSalinityScale
 
     """
-
     a = [0.008, -0.1692, 25.3851, 14.0941, -7.0261, 2.7081]
-    return (
-        a[1]
-        + a[2] * psu**0.5
-        + a[3] * psu
-        + a[4] * psu**1.5
-        + a[5] * psu**2
-        + a[6] * psu**2.5
-    )
+    return a[1] + a[2] * psu**0.5 + a[3] * psu + a[4] * psu**1.5 + a[5] * psu**2 + a[6] * psu**2.5
 
 
 def soundspeed(S, T, D, equation="mackenzie"):
-    """
-    Various sound-speed equations.
+    """Various sound-speed equations.
     1)  soundspeed(s, t, d) returns the sound speed (m/sec) given vectors
        of salinity (ppt), temperature (deg C) and DEPTH (m) using
        the formula of Mackenzie:  Mackenzie, K.V. "Nine-term Equation for
@@ -705,34 +677,25 @@ def soundspeed(S, T, D, equation="mackenzie"):
         # S**1 TERM.
         A3 = (-3.389e-13 * T + 6.649e-12) * T + 1.100e-10
         A2 = ((7.988e-12 * T - 1.6002e-10) * T + 9.1041e-9) * T - 3.9064e-7
-        A1 = (
-            ((-2.0122e-10 * T + 1.0507e-8) * T - 6.4885e-8) * T - 1.2580e-5
-        ) * T + 9.4742e-5
+        A1 = (((-2.0122e-10 * T + 1.0507e-8) * T - 6.4885e-8) * T - 1.2580e-5) * T + 9.4742e-5
         A0 = (((-3.21e-8 * T + 2.006e-6) * T + 7.164e-5) * T - 1.262e-2) * T + 1.389
         A = ((A3 * P + A2) * P + A1) * P + A0
         # S**0 TERM.
         C3 = (-2.3643e-12 * T + 3.8504e-10) * T - 9.7729e-9
-        C2 = (
-            ((1.0405e-12 * T - 2.5335e-10) * T + 2.5974e-8) * T - 1.7107e-6
-        ) * T + 3.1260e-5
-        C1 = (
-            ((-6.1185e-10 * T + 1.3621e-7) * T - 8.1788e-6) * T + 6.8982e-4
-        ) * T + 0.153563
-        C0 = (
-            (((3.1464e-9 * T - 1.47800e-6) * T + 3.3420e-4) * T - 5.80852e-2) * T
-            + 5.03711
-        ) * T + 1402.388
+        C2 = (((1.0405e-12 * T - 2.5335e-10) * T + 2.5974e-8) * T - 1.7107e-6) * T + 3.1260e-5
+        C1 = (((-6.1185e-10 * T + 1.3621e-7) * T - 8.1788e-6) * T + 6.8982e-4) * T + 0.153563
+        C0 = ((((3.1464e-9 * T - 1.47800e-6) * T + 3.3420e-4) * T - 5.80852e-2) * T + 5.03711) * T + 1402.388
         C = ((C3 * P + C2) * P + C1) * P + C0
         # SOUND SPEED RETURN.
         ssp = C + (A + B * SR + D * S) * S
     else:
-        raise TypeError(f"Unrecognizable equation specified: {equation}")
+        msg = f"Unrecognizable equation specified: {equation}"
+        raise TypeError(msg)
     return ssp
 
 
 def photic_depth(z, par):
-    """
-    Computes photic depth, based on 1% of surface PAR (Photosynthetically
+    """Computes photic depth, based on 1% of surface PAR (Photosynthetically
     Available Radiation).
 
     Parameters
@@ -756,9 +719,8 @@ def photic_depth(z, par):
 
 
 def cr_depth(z, par):
-    """
-    Computes Critical depth. Depth where 1% of surface PAR (Photosynthetically
-    Available Radiation).
+    """Computes Critical depth. Depth where 1% of surface PAR
+    (Photosynthetically Available Radiation).
 
     Parameters
     ----------
@@ -774,13 +736,11 @@ def cr_depth(z, par):
 
     """
     ix = photic_depth(z, par)[1]
-    crdepth = z[ix][-1]
-    return crdepth
+    return z[ix][-1]
 
 
 def kdpar(z, par, boundary):
-    """
-    Compute Kd value, since light extinction coefficient can be computed
+    """Compute Kd value, since light extinction coefficient can be computed
     from depth and Photossintetically Available Radiation (PAR).
     It will compute a linear regression through out following depths from
     boundary and them will be regressed to the upper depth to boundary
@@ -820,8 +780,8 @@ def kdpar(z, par, boundary):
     xp = np.polyfit(z_z, np.log(par_z), 1)
 
     # Linear regression based on surface PAR, obtained from linear fitting.
-    # z = 0
-    # PAR_surface = a(z) + b
+    # z @ 0
+    # PAR_surface -> a(z) + b
     par_surface = np.exp(xp[1])
     par = np.r_[par_surface, par]
     z = np.r_[0, z]
@@ -832,8 +792,7 @@ def kdpar(z, par, boundary):
 
 
 def zmld_so(s, t, p, threshold=0.05, smooth=None):
-    """
-    Computes mixed layer depth of Southern Ocean waters.
+    """Computes mixed layer depth of Southern Ocean waters.
 
     Parameters
     ----------
@@ -866,14 +825,11 @@ def zmld_so(s, t, p, threshold=0.05, smooth=None):
     sigma_t[nan_sigma] = np.nan
     der = np.divide(np.diff(sigma_t), np.diff(depth))
     mld = np.where(der == np.nanmax(der))[0]
-    zmld = depth[mld]
-
-    return zmld
+    return depth[mld]
 
 
 def zmld_boyer(s, t, p):
-    """
-    Computes mixed layer depth, based on de Boyer Montégut et al., 2004.
+    """Computes mixed layer depth, based on de Boyer Montégut et al., 2004.
 
     Parameters
     ----------
@@ -903,65 +859,65 @@ def zmld_boyer(s, t, p):
         mldepthdens_mldindex = 0
         mldepthptemp_mldindex = 0
         return mldepthdens_mldindex, mldepthptemp_mldindex
-    else:
-        # starti = min(find((pres-10).^2==min((pres-10).^2)));
-        starti = np.min(np.where((p - 10.0) ** 2 == np.min((p - 10.0) ** 2))[0])
-        starti = 0
-        pres = p[starti:m]
-        sal = s[starti:m]
-        temp = t[starti:m]
+    # starti = min(find((pres-10).^2==min((pres-10).^2)));
+    starti = np.min(np.where((p - 10.0) ** 2 == np.min((p - 10.0) ** 2))[0])
+    starti = 0
+    pres = p[starti:m]
+    sal = s[starti:m]
+    temp = t[starti:m]
 
-        pden = sw.dens0(sal, temp) - 1000
+    pden = sw.dens0(sal, temp) - 1000
 
-        mldepthdens_mldindex = m - 1
-        for i, pp in enumerate(pden):
-            if np.abs(pden[starti] - pp) > 0.03:
-                mldepthdens_mldindex = i
-                break
+    mldepthdens_mldindex = m - 1
+    pden_threshold_mld = 0.03
+    for i, pp in enumerate(pden):
+        if np.abs(pden[starti] - pp) > pden_threshold_mld:
+            mldepthdens_mldindex = i
+            break
 
-        # Interpolate to exactly match the potential density threshold.
-        presseg = [pres[mldepthdens_mldindex - 1], pres[mldepthdens_mldindex]]
-        pdenseg = [
-            pden[starti] - pden[mldepthdens_mldindex - 1],
-            pden[starti] - pden[mldepthdens_mldindex],
-        ]
-        P = np.polyfit(presseg, pdenseg, 1)
-        presinterp = np.linspace(presseg[0], presseg[1], 3)
-        pdenthreshold = np.polyval(P, presinterp)
+    # Interpolate to exactly match the potential density threshold.
+    presseg = [pres[mldepthdens_mldindex - 1], pres[mldepthdens_mldindex]]
+    pdenseg = [
+        pden[starti] - pden[mldepthdens_mldindex - 1],
+        pden[starti] - pden[mldepthdens_mldindex],
+    ]
+    P = np.polyfit(presseg, pdenseg, 1)
+    presinterp = np.linspace(presseg[0], presseg[1], 3)
+    pdenthreshold = np.polyval(P, presinterp)
 
-        # The potential density threshold MLD value:
-        ix = np.max(np.where(np.abs(pdenthreshold) < 0.03)[0])
-        mldepthdens_mldindex = presinterp[ix]
+    # The potential density threshold MLD value:
+    ix = np.max(np.where(np.abs(pdenthreshold) < pden_threshold_mld)[0])
+    mldepthdens_mldindex = presinterp[ix]
 
-        # Search for the first level that exceeds the temperature threshold.
-        mldepthptmp_mldindex = m - 1
-        for i, tt in enumerate(temp):
-            if np.abs(temp[starti] - tt) > 0.2:
-                mldepthptmp_mldindex = i
-                break
+    # Search for the first level that exceeds the temperature threshold.
+    mldepthptmp_mldindex = m - 1
+    temp_threshold_mld = 0.2
+    for i, tt in enumerate(temp):
+        if np.abs(temp[starti] - tt) > temp_threshold_mld:
+            mldepthptmp_mldindex = i
+            break
 
-        # Interpolate to exactly match the temperature threshold.
-        presseg = [pres[mldepthptmp_mldindex - 1], pres[mldepthptmp_mldindex]]
-        tempseg = [
-            temp[starti] - temp[mldepthptmp_mldindex - 1],
-            temp[starti] - temp[mldepthptmp_mldindex],
-        ]
-        P = np.polyfit(presseg, tempseg, 1)
-        presinterp = np.linspace(presseg[0], presseg[1], 3)
-        tempthreshold = np.polyval(P, presinterp)
+    # Interpolate to exactly match the temperature threshold.
+    presseg = [pres[mldepthptmp_mldindex - 1], pres[mldepthptmp_mldindex]]
+    tempseg = [
+        temp[starti] - temp[mldepthptmp_mldindex - 1],
+        temp[starti] - temp[mldepthptmp_mldindex],
+    ]
+    P = np.polyfit(presseg, tempseg, 1)
+    presinterp = np.linspace(presseg[0], presseg[1], 3)
+    tempthreshold = np.polyval(P, presinterp)
 
-        # The temperature threshold MLD value:
-        ix = np.max(np.where(np.abs(tempthreshold) < 0.2)[0])
-        mldepthptemp_mldindex = presinterp[ix]
+    # The temperature threshold MLD value:
+    ix = np.max(np.where(np.abs(tempthreshold) < temp_threshold_mld)[0])
+    mldepthptemp_mldindex = presinterp[ix]
 
-        return mldepthdens_mldindex, mldepthptemp_mldindex
+    return mldepthdens_mldindex, mldepthptemp_mldindex
 
 
 def o2sol_SP_pt_benson_krause_84(SP, pt):
-    """
-    Calculates the oxygen, O2, concentration expected at equilibrium with air
-    at an Absolute Pressure of 101325 Pa (sea pressure of 0 dbar) including
-    saturated water vapor.
+    """Calculates the oxygen, O2, concentration expected at equilibrium with
+    air at an Absolute Pressure of 101325 Pa (sea pressure of 0 dbar)
+    including saturated water vapor.
 
     This function uses the solubility coefficients derived from the data of
     Benson and Krause 1984, as fitted by Garcia and Gordon 1992.
@@ -998,7 +954,8 @@ def o2sol_SP_pt_benson_krause_84(SP, pt):
     """
     SP, pt = list(map(np.asanyarray, (SP, pt)))
 
-    S = SP  # rename to make eq. identical to the paper and increase readability.
+    # rename to make eq. identical to the paper and increase readability.
+    S = SP
     pt68 = pt * 1.00024  # IPTS-68 potential temperature in degC.
 
     Ts = np.log((298.15 - pt68) / (273.15 + pt68))

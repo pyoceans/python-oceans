@@ -2,8 +2,7 @@ import numpy as np
 
 
 def in_polygon(xp, yp, polygon, transform=None, radius=0.0):
-    """
-    Check is points `xp` and `yp` are inside the `polygon`.
+    """Check is points `xp` and `yp` are inside the `polygon`.
     Polygon is a `matplotlib.path.Path` object.
 
     https://stackoverflow.com/questions/21328854/shapely-and-matplotlib-point-in-polygon-not-accurate-with-geolocation
@@ -21,14 +20,11 @@ def in_polygon(xp, yp, polygon, transform=None, radius=0.0):
     """
     xp, yp = map(np.atleast_1d, (xp, yp))
     points = np.atleast_2d([xp, yp]).T
-    return polygon.contains_points(points, transform=None, radius=0.0)
+    return polygon.contains_points(points, transform=transform, radius=radius)
 
 
 def gamma_G_north_atlantic(SP, pt):
-    """
-    Polynomials definitions: North Atlantic. VERSION 1: WOCE dataset.
-
-    """
+    """Polynomials definitions: North Atlantic. VERSION 1: WOCE dataset."""
     Fit = np.array(
         [
             [0.0, 0.0, 0.868250629754601],
@@ -72,10 +68,7 @@ def gamma_G_north_atlantic(SP, pt):
 
 
 def gamma_G_south_atlantic(SP, pt):
-    """
-    Polynomials definitions: South Atlantic. VERSION 1: WOCE dataset.
-
-    """
+    """Polynomials definitions: South Atlantic. VERSION 1: WOCE dataset."""
     Fit = np.array(
         [
             [0.0, 0.0, 0.970176813506429],
@@ -120,10 +113,7 @@ def gamma_G_south_atlantic(SP, pt):
 
 
 def gamma_G_pacific(SP, pt):
-    """
-    Polynomials definitions: Pacific. VERSION 1: WOCE_dataset.
-
-    """
+    """Polynomials definitions: Pacific. VERSION 1: WOCE_dataset."""
     Fit = np.array(
         [
             [0.0, 0.0, 0.990419160678528],
@@ -168,10 +158,7 @@ def gamma_G_pacific(SP, pt):
 
 
 def gamma_G_indian(SP, pt):
-    """
-    Polynomials definitions: Indian. VERSION 1: WOCE_dataset.
-
-    """
+    """Polynomials definitions: Indian. VERSION 1: WOCE_dataset."""
     Fit = np.array(
         [
             [0.0, 0.0, 0.915127744449523],
@@ -216,10 +203,7 @@ def gamma_G_indian(SP, pt):
 
 
 def gamma_G_southern_ocean(SP, pt, p):
-    """
-    Polynomials definitions: Southern Ocean. VERSION 1: WOCE_dataset.
-
-    """
+    """Polynomials definitions: Southern Ocean. VERSION 1: WOCE_dataset."""
     Fit_N = np.array(
         [
             [0.0, 0.0, 0.874520046342081],
@@ -290,18 +274,14 @@ def gamma_G_southern_ocean(SP, pt, p):
         gamma_A = gamma_A + Fit_S[k, 2] * (SP**i * pt**j)
 
     gamma_SOce_S = (
-        gamma_A
-        * np.exp(-p / p_ref)
-        * (1.0 / 2.0 - 1.0 / 2.0 * np.tanh((40.0 * pt - pt_ref) / c_pt))
+        gamma_A * np.exp(-p / p_ref) * (1.0 / 2.0 - 1.0 / 2.0 * np.tanh((40.0 * pt - pt_ref) / c_pt))
     )
 
-    gamma_SOce = gamma_SOce_N + gamma_SOce_S
-    return gamma_SOce
+    return gamma_SOce_N + gamma_SOce_S
 
 
 def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
-    """
-    Global Polynomial of Neutral Density with respect to Practical Salinity
+    """Global Polynomial of Neutral Density with respect to Practical Salinity
     and potential temperature.
 
     Calculates the Global Polynomial of Neutral Density gammma_GP using an
@@ -445,7 +425,6 @@ def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
     gamma_Pac = gamma_G_pacific(SP, pt)
     gamma_Ind = gamma_G_indian(SP, pt)
     gamma_SOce = gamma_G_southern_ocean(SP, pt, p)
-    # gamma_Arc = np.zeros_like(SP) * np.nan
 
     # Definition of the Indian part.
     io_lon = np.array(
@@ -558,15 +537,18 @@ def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
     )
 
     # Definition of the polygon filters.
-    io_polygon = Path(list(zip(io_lon, io_lat)))
-    po_polygon = Path(list(zip(po_lon, po_lat)))
+    io_polygon = Path(list(zip(io_lon, io_lat, strict=True)))
+    po_polygon = Path(list(zip(po_lon, po_lat, strict=True)))
     i_inter_indian_pacific = in_polygon(lon, lat, io_polygon) * in_polygon(
         lon,
         lat,
         po_polygon,
     )
 
-    i_indian = np.logical_xor(in_polygon(lon, lat, io_polygon), i_inter_indian_pacific)
+    i_indian = np.logical_xor(
+        in_polygon(lon, lat, io_polygon),
+        i_inter_indian_pacific,
+    )
     i_pacific = in_polygon(lon, lat, po_polygon)
     i_atlantic = (1 - i_pacific) * (1 - i_indian)
 
@@ -593,6 +575,4 @@ def gamma_GP_from_SP_pt(SP, pt, p, lon, lat):
     gamma_GP[lat > 66.0] = np.nan
 
     # De-normalization.
-    gamma_GP = 20.0 * gamma_GP - 20
-
-    return gamma_GP
+    return 20.0 * gamma_GP - 20

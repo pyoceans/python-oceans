@@ -3,8 +3,7 @@ import numpy as np
 
 
 class Waves:
-    r"""
-    Solves the wave dispersion relationship via Newton-Raphson.
+    r"""Solves the wave dispersion relationship via Newton-Raphson.
 
     .. math::
         \omega^2 = gk\tanh kh
@@ -83,7 +82,7 @@ class Waves:
 
     """
 
-    def __init__(self, h, T=None, L=None, thetao=None, Ho=None, lat=None):
+    def __init__(self, h, T=None, L=None, thetao=None, Ho=None, lat=None):  # noqa: PLR0915, PLR0913, PLR0912, C901
         self.T = np.asarray(T, dtype=np.float64)
         self.L = np.asarray(L, dtype=np.float64)
         self.Ho = np.asarray(Ho, dtype=np.float64)
@@ -99,10 +98,7 @@ class Waves:
         else:
             self.h = np.asarray(h, dtype=np.float64)
 
-        if lat is None:
-            g = 9.81  # Default gravity.
-        else:
-            g = gsw.grav(lat, p=0)
+        g = 9.81 if lat is None else gsw.grav(lat, p=0)
 
         if L is None:
             self.omega = 2 * np.pi / self.T
@@ -110,16 +106,14 @@ class Waves:
             # Returns wavenumber of the gravity wave dispersion relation using
             # newtons method. The initial guess is shallow water wavenumber.
             self.k = self.omega / np.sqrt(g)
-            # TODO: May change to,
-            # self.k = self.w ** 2 / (g * np.sqrt(self.w ** 2 * self.h / g))
             f = g * self.k * np.tanh(self.k * self.h) - self.omega**2
 
-            while np.abs(f.max()) > 1e-10:
-                dfdk = g * self.k * self.h * (
-                    1 / (np.cosh(self.k * self.h))
-                ) ** 2 + g * np.tanh(self.k * self.h)
+            converge = 1e-10
+            while np.abs(f.max()) > converge:
+                dfdk = g * self.k * self.h * (1 / (np.cosh(self.k * self.h))) ** 2 + g * np.tanh(
+                    self.k * self.h,
+                )
                 self.k = self.k - f / dfdk
-                # FIXME:
                 f = g * self.k * np.tanh(self.k * self.h) - self.omega**2
 
             self.L = 2 * np.pi / self.k

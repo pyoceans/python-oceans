@@ -1,13 +1,12 @@
-import os
+from pathlib import Path
 
 import numpy as np
 
-_default_path = os.path.join(os.path.dirname(__file__), "data")
+_default_path = Path(__file__).parent.joinpath("data")
 
 
 def LineNormals2D(Vertices, Lines):
-    """
-    This function calculates the normals, of the line points using the
+    """This function calculates the normals, of the line points using the
     neighboring points of each contour point, and forward an backward
     differences on the end points.
 
@@ -26,7 +25,7 @@ def LineNormals2D(Vertices, Lines):
     --------
     >>> import numpy as np
     >>> import matplotlib.pyplot as plt
-    >>> data = np.load(os.path.join(_default_path, "testdata.npz"))
+    >>> data = np.load(_default_path.joinpath("testdata.npz"))
     >>> Lines, Vertices = data["Lines"], data["Vertices"]
     >>> N = LineNormals2D(Vertices, Lines)
     >>> fig, ax = plt.subplots(nrows=1, ncols=1)
@@ -49,7 +48,8 @@ def LineNormals2D(Vertices, Lines):
             np.arange(2, Vertices.shape[0] + 1),
         ]
     else:
-        raise ValueError(f"Expected np.array but got {Lines:!r}.")
+        msg = f"Expected np.array but got {Lines:!r}."
+        raise ValueError(msg)
 
     # Calculate tangent vectors.
     DT = Vertices[Lines[:, 0] - 1, :] - Vertices[Lines[:, 1] - 1, :]
@@ -77,8 +77,7 @@ def LineNormals2D(Vertices, Lines):
 
 
 def LineCurvature2D(Vertices, Lines=None):
-    """
-    This function calculates the curvature of a 2D line. It first fits
+    """This function calculates the curvature of a 2D line. It first fits
     polygons to the points. Then calculates the analytical curvature from
     the polygons.
 
@@ -97,7 +96,7 @@ def LineCurvature2D(Vertices, Lines=None):
     --------
     >>> import numpy as np
     >>> import matplotlib.pyplot as plt
-    >>> data = np.load(os.path.join(_default_path, "testdata.npz"))
+    >>> data = np.load(Path(_default_path).joinpath("testdata.npz"))
     >>> Lines, Vertices = data["Lines"], data["Vertices"]
     >>> k = LineCurvature2D(Vertices, Lines)
     >>> N = LineNormals2D(Vertices, Lines)
@@ -128,7 +127,8 @@ def LineCurvature2D(Vertices, Lines=None):
             np.arange(2, Vertices.shape[0] + 1),
         ]
     else:
-        raise ValueError(f"Cannot recognized {Lines!r}.")
+        msg = f"Cannot recognized {Lines!r}."
+        raise ValueError(msg)
 
     # Get left and right neighbor of each points.
     Na = np.zeros(Vertices.shape[0], dtype=np.int64)
@@ -180,45 +180,24 @@ def LineCurvature2D(Vertices, Lines=None):
     invM = inverse3(M)
     a = np.zeros_like(x)
     b = np.zeros_like(a)
-    a[:, 0] = (
-        invM[:, 0, 0] * x[:, 0] + invM[:, 1, 0] * x[:, 1] + invM[:, 2, 0] * x[:, 2]
-    )
+    a[:, 0] = invM[:, 0, 0] * x[:, 0] + invM[:, 1, 0] * x[:, 1] + invM[:, 2, 0] * x[:, 2]
 
-    a[:, 1] = (
-        invM[:, 0, 1] * x[:, 0] + invM[:, 1, 1] * x[:, 1] + invM[:, 2, 1] * x[:, 2]
-    )
+    a[:, 1] = invM[:, 0, 1] * x[:, 0] + invM[:, 1, 1] * x[:, 1] + invM[:, 2, 1] * x[:, 2]
 
-    a[:, 2] = (
-        invM[:, 0, 2] * x[:, 0] + invM[:, 1, 2] * x[:, 1] + invM[:, 2, 2] * x[:, 2]
-    )
+    a[:, 2] = invM[:, 0, 2] * x[:, 0] + invM[:, 1, 2] * x[:, 1] + invM[:, 2, 2] * x[:, 2]
 
-    b[:, 0] = (
-        invM[:, 0, 0] * y[:, 0] + invM[:, 1, 0] * y[:, 1] + invM[:, 2, 0] * y[:, 2]
-    )
+    b[:, 0] = invM[:, 0, 0] * y[:, 0] + invM[:, 1, 0] * y[:, 1] + invM[:, 2, 0] * y[:, 2]
 
-    b[:, 1] = (
-        invM[:, 0, 1] * y[:, 0] + invM[:, 1, 1] * y[:, 1] + invM[:, 2, 1] * y[:, 2]
-    )
+    b[:, 1] = invM[:, 0, 1] * y[:, 0] + invM[:, 1, 1] * y[:, 1] + invM[:, 2, 1] * y[:, 2]
 
-    b[:, 2] = (
-        invM[:, 0, 2] * y[:, 0] + invM[:, 1, 2] * y[:, 1] + invM[:, 2, 2] * y[:, 2]
-    )
+    b[:, 2] = invM[:, 0, 2] * y[:, 0] + invM[:, 1, 2] * y[:, 1] + invM[:, 2, 2] * y[:, 2]
 
     # Calculate the curvature from the fitted polygon.
-    k = (
-        2
-        * (a[:, 1] * b[:, 2] - a[:, 2] * b[:, 1])
-        / ((a[:, 1] ** 2 + b[:, 1] ** 2) ** (3 / 2))
-    )
-
-    return k
+    return 2 * (a[:, 1] * b[:, 2] - a[:, 2] * b[:, 1]) / ((a[:, 1] ** 2 + b[:, 1] ** 2) ** (3 / 2))
 
 
 def inverse3(M):
-    """
-    This function does inv(M), but then for an array of 3x3 matrices.
-
-    """
+    """This function does inv(M), but then for an array of 3x3 matrices."""
     adjM = np.zeros((M.shape[0], 3, 3))
     adjM[:, 0, 0] = M[:, 4] * M[:, 8] - M[:, 7] * M[:, 5]
     adjM[:, 0, 1] = -(M[:, 3] * M[:, 8] - M[:, 6] * M[:, 5])

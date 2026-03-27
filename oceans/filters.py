@@ -2,8 +2,7 @@ import numpy as np
 
 
 def lanc(numwt, haf):
-    """
-    Generates a numwt + 1 + numwt lanczos cosine low pass filter with -6dB
+    """Generates a numwt + 1 + numwt lanczos cosine low pass filter with -6dB
     (1/4 power, 1/2 amplitude) point at haf
 
     Parameters
@@ -49,8 +48,7 @@ def lanc(numwt, haf):
 
 
 def smoo1(datain, window_len=11, window="hanning"):
-    """
-    Smooth the data using a window with requested size.
+    """Smooth the data using a window with requested size.
 
     Parameters
     ----------
@@ -112,20 +110,21 @@ def smoo1(datain, window_len=11, window="hanning"):
     instead of a string.
 
     """
-
     datain = np.asarray(datain)
 
     if datain.ndim != 1:
-        raise ValueError("Smooth only accepts 1 dimension arrays.")
+        msg = "Smooth only accepts 1 dimension arrays."
+        raise ValueError(msg)
 
     if datain.size < window_len:
-        raise ValueError("Input vector needs to be bigger than window size.")
+        msg = "Input vector needs to be bigger than window size."
+        raise ValueError(msg)
 
     if window_len < 3:
         return datain
 
     if window not in ["flat", "hanning", "hamming", "bartlett", "blackman"]:
-        msg = "Window must be is one of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'"  # noqa
+        msg = "Window must be is one of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'"
         raise ValueError(msg)
 
     s = np.r_[
@@ -134,18 +133,13 @@ def smoo1(datain, window_len=11, window="hanning"):
         2 * datain[-1] - datain[-1:-window_len:-1],
     ]
 
-    if window == "flat":  # Moving average.
-        w = np.ones(window_len, "d")
-    else:
-        w = eval("np." + window + "(window_len)")
-
+    w = np.ones(window_len, "d") if window == "flat" else eval("np." + window + "(window_len)")  # noqa: S307
     data_out = np.convolve(w / w.sum(), s, mode="same")
     return data_out[window_len - 1 : -window_len + 1]
 
 
-def smoo2(A, hei, wid, kind="hann", badflag=-9999, beta=14):
-    """
-    Calculates the smoothed array 'As' from the original array 'A' using the
+def smoo2(A, hei, wid, kind="hann", badflag=-9999, beta=14):  # noqa: ARG001, PLR0915, PLR0913, C901
+    """Calculates the smoothed array 'As' from the original array 'A' using the
     specified window of type 'kind' and shape ('hei', 'wid').
 
     Usage:
@@ -178,13 +172,16 @@ def smoo2(A, hei, wid, kind="hann", badflag=-9999, beta=14):
     # Checking window type and dimensions
     kinds = ["hann", "hamming", "blackman", "bartlett", "kaiser"]
     if kind not in kinds:
-        raise ValueError(f"Invalid window type requested: {kind}")
+        msg = f"Invalid window type requested: {kind}"
+        raise ValueError(msg)
 
     if (np.mod(hei, 2) == 0) or (np.mod(wid, 2) == 0):
-        raise ValueError("Window dimensions must be odd")
+        msg = "Window dimensions must be odd"
+        raise ValueError(msg)
 
     if (hei <= 1) or (wid <= 1):
-        raise ValueError("Window shape must be (3,3) or greater")
+        msg = "Window shape must be (3,3) or greater"
+        raise ValueError(msg)
 
     # Creating the 2D window.
     if kind == "kaiser":  # If the window kind is kaiser (beta is required).
@@ -198,9 +195,9 @@ def smoo2(A, hei, wid, kind="hann", badflag=-9999, beta=14):
             kind = "hanning"
         # Computing outer product to make a 2D window out of the original 1d
         # windows.
-        # TODO: Get rid of this evil eval.
+        # NB: Get rid of this evil eval.
         wstr = "np.outer(np." + kind + "(hei), np." + kind + "(wid))"
-    wdw = eval(wstr)
+    wdw = eval(wstr)  # noqa: S307
 
     A = np.asanyarray(A)
     Fnan = np.isnan(A)
@@ -262,9 +259,8 @@ def smoo2(A, hei, wid, kind="hann", badflag=-9999, beta=14):
     return As
 
 
-def weim(x, N, kind="hann", badflag=-9999, beta=14):
-    """
-    Calculates the smoothed array 'xs' from the original array 'x' using the
+def weim(x, N, kind="hann", badflag=-9999, beta=14):  # noqa: ARG001
+    """Calculates the smoothed array 'xs' from the original array 'x' using the
     specified window of type 'kind' and size 'N'. 'N' must be an odd number.
 
     Usage:
@@ -302,10 +298,12 @@ def weim(x, N, kind="hann", badflag=-9999, beta=14):
     # Checking window type and dimensions.
     kinds = ["hann", "hamming", "blackman", "bartlett", "kaiser"]
     if kind not in kinds:
-        raise ValueError(f"Invalid window type requested: {kind}")
+        msg = f"Invalid window type requested: {kind}"
+        raise ValueError(msg)
 
     if np.mod(N, 2) == 0:
-        raise ValueError("Window size must be odd")
+        msg = "Window size must be odd"
+        raise ValueError(msg)
 
     # Creating the window.
     if kind == "kaiser":  # If the window kind is kaiser (beta is required).
@@ -321,8 +319,8 @@ def weim(x, N, kind="hann", badflag=-9999, beta=14):
             # 1D windows.
         wstr = "np." + kind + "(N)"
 
-    # FIXME: Do not use `eval`.
-    w = eval(wstr)
+    # NB: Do not use `eval`.
+    w = eval(wstr)  # noqa: S307
     x = np.asarray(x).flatten()
     Fnan = np.isnan(x).flatten()
 
@@ -365,8 +363,7 @@ def weim(x, N, kind="hann", badflag=-9999, beta=14):
 
 
 def medfilt1(x, L=3):
-    """
-    Median filter for 1d arrays.
+    """Median filter for 1d arrays.
 
     Performs a discrete one-dimensional median filter with window length `L` to
     input vector `x`.  Produces a vector the same size as `x`.  Boundaries are
@@ -407,11 +404,8 @@ def medfilt1(x, L=3):
     >>> ax.grid(True)
     >>> y1min, y1max = np.min(xout) * 0.5, np.max(xout) * 2.0
     >>> leg1 = ax.legend(["x (pseudo-random)", "xout"])
-    >>> t1 = ax.set_title(
-    ...     '''Median filter with window length %s.
-    ...                   Removes outliers, tracks remaining signal)'''
-    ...     % L
-    ... )
+    >>> t1 = ax.set_title('''Median filter with window length %s.
+    ...                   Removes outliers, tracks remaining signal)''' % L)
     >>> L = 103
     >>> xout = medfilt1(x=x, L=L)
     >>> ax = plt.subplot(212)
@@ -424,34 +418,33 @@ def medfilt1(x, L=3):
     >>> ax.grid(True)
     >>> y2min, y2max = np.min(xout) * 0.5, np.max(xout) * 2.0
     >>> leg2 = ax.legend(["Same x (pseudo-random)", "xout"])
-    >>> t2 = ax.set_title(
-    ...     '''Median filter with window length %s.
-    ...                   Removes outliers and noise'''
-    ...     % L
-    ... )
+    >>> t2 = ax.set_title('''Median filter with window length %s.
+    ...                   Removes outliers and noise''' % L)
     >>> ax = plt.subplot(211)
     >>> lims1 = ax.set_ylim([min(y1min, y2min), max(y1max, y2max)])
     >>> ax = plt.subplot(212)
     >>> lims2 = ax.set_ylim([min(y1min, y2min), max(y1max, y2max)])
 
     """
-
     xin = np.atleast_1d(np.asanyarray(x))
     N = len(x)
     L = int(L)  # Ensure L is odd integer so median requires no interpolation.
     if L % 2 == 0:
         L += 1
 
+
     if N < 2:
-        raise ValueError("Input sequence must be >= 2.")
+        msg = "Input sequence must be >= 2."
+        raise ValueError(msg)
         return None
 
     if L < 2:
-        raise ValueError("Input filter window length must be >=2.")
+        msg = "Input filter window length must be >=2."
+        raise ValueError(msg)
         return None
 
     if L > N:
-        msg = "Input filter window length must be shorter than series: L = {:d}, len(x) = {:d}".format  # noqa
+        msg = "Input filter window length must be shorter than series: L = {:d}, len(x) = {:d}".format
         raise ValueError(msg(L, N))
         return None
 
@@ -476,8 +469,7 @@ def medfilt1(x, L=3):
 
 
 def fft_lowpass(signal, low, high):
-    """
-    Performs a low pass filer on the series.
+    """Performs a low pass filer on the series.
     low and high specifies the boundary of the filter.
 
     >>> from oceans.filters import fft_lowpass
@@ -493,11 +485,7 @@ def fft_lowpass(signal, low, high):
     >>> legend = ax.legend()
 
     """
-
-    if len(signal) % 2:
-        result = np.fft.rfft(signal, len(signal))
-    else:
-        result = np.fft.rfft(signal)
+    result = np.fft.rfft(signal, len(signal)) if len(signal) % 2 else np.fft.rfft(signal)
 
     freq = np.fft.fftfreq(len(signal))[: len(signal) // 2 + 1]
     factor = np.ones_like(freq)
@@ -520,8 +508,7 @@ def fft_lowpass(signal, low, high):
 
 
 def md_trenberth(x):
-    """
-    Returns the filtered series using the Trenberth filter as described
+    """Returns the filtered series using the Trenberth filter as described
     on Monthly Weather Review, vol. 112, No. 2, Feb 1984.
 
     Input data: series x of dimension 1Xn (must be at least dimension 11)
@@ -571,8 +558,7 @@ def md_trenberth(x):
 
 
 def pl33tn(x, dt=1.0, T=33.0, mode="valid", t=None):
-    """
-    Computes low-passed series from `x` using pl33 filter, with optional
+    """Computes low-passed series from `x` using pl33 filter, with optional
     sample interval `dt` (hours) and filter half-amplitude period T (hours)
     as input for non-hourly series.
 
@@ -606,19 +592,20 @@ def pl33tn(x, dt=1.0, T=33.0, mode="valid", t=None):
 
 
     """
-
     import cf_xarray  # noqa: F401
     import pandas as pd
     import xarray as xr
 
     if isinstance(x, xr.Dataset | pd.DataFrame):
-        raise TypeError("Input a DataArray not a Dataset, or a Series not a DataFrame.")
+        msg = "Input a DataArray not a Dataset, or a Series not a DataFrame."
+        raise TypeError(msg)
 
     if isinstance(x, pd.Series) and not isinstance(
         x.index,
         pd.core.indexes.datetimes.DatetimeIndex,
     ):
-        raise TypeError("Input Series needs to have parsed datetime indices.")
+        msg = "Input Series needs to have parsed datetime indices."
+        raise TypeError(msg)
 
     # find dt in units of hours
     if isinstance(x, xr.DataArray):
@@ -721,11 +708,7 @@ def pl33tn(x, dt=1.0, T=33.0, mode="valid", t=None):
             .dot(weight, dims="window")
         )
         # update attrs
-        attrs = {
-            key: f"{value}, filtered"
-            for key, value in x.attrs.items()
-            if key != "units"
-        }
+        attrs = {key: f"{value}, filtered" for key, value in x.attrs.items() if key != "units"}
         xf.attrs = attrs
 
     elif isinstance(x, pd.Series):
@@ -741,7 +724,6 @@ def pl33tn(x, dt=1.0, T=33.0, mode="valid", t=None):
 
         # times to match xf
         if t is not None:
-            # Nt = len(filter_time)
             tf = t[Nt - 1 : -Nt + 1]
             return xf, tf
 

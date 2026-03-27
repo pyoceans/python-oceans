@@ -1,17 +1,16 @@
-import matplotlib
+import matplotlib  # noqa: ICN001
 import matplotlib.pyplot as plt
 import numpy as np
-import numpy.ma as ma
 from matplotlib.artist import Artist
 from matplotlib.dates import date2num
 from matplotlib.lines import Line2D
+from numpy import ma
 
 from oceans.ocfis import cart2pol
 
 
 def stick_plot(time, u, v, **kw):
-    """
-    Parameters
+    """Parameters
     ----------
     time: list/arrays of datetime objects
     u, v: list/arrays of 2D vector components.
@@ -51,19 +50,19 @@ def stick_plot(time, u, v, **kw):
     angles = kw.pop("angles", "uv")
     ax = kw.pop("ax", None)
 
+    msg = (
+        "Stickplot angles must be `uv` so that if *U*==*V* the angle of the "
+        "arrow on the plot is 45 degrees CCW from the *x*-axis."
+    )
     if angles != "uv":
-        raise AssertionError(
-            "Stickplot angles must be `uv` so that"
-            "if *U*==*V* the angle of the arrow on"
-            "the plot is 45 degrees CCW from the *x*-axis.",
-        )
+        raise AssertionError(msg)
 
     if isinstance(time, DatetimeIndex):
         time = time.to_pydatetime()
 
     time, u, v = list(map(np.asanyarray, (time, u, v)))
     if not ax:
-        fig, ax = plt.subplots()
+        _, ax = plt.subplots()
 
     q = ax.quiver(
         date2num(time),
@@ -84,8 +83,7 @@ def stick_plot(time, u, v, **kw):
 
 
 def landmask(M, color="0.8"):
-    """
-    Plot land mask.
+    """Plot land mask.
 
     Based on trondkristiansen mpl_util.py.
     """
@@ -105,8 +103,7 @@ def landmask(M, color="0.8"):
 
 
 def level_colormap(levels, cmap=None):
-    """
-    Make a colormap based on an increasing sequence of levels.
+    """Make a colormap based on an increasing sequence of levels.
 
     Based on trondkristiansen.com mpl_util.py.
     """
@@ -137,16 +134,12 @@ def level_colormap(levels, cmap=None):
 
 
 def get_pointsxy(points):
-    """
-    Return x, y of the given point object.
-
-    """
+    """Return x, y of the given point object."""
     return points.get_xdata(), points.get_ydata()
 
 
 def compass(u, v, **arrowprops):
-    """
-    Compass draws a graph that displays the vectors with
+    """Compass draws a graph that displays the vectors with
     components `u` and `v` as arrows from the origin.
 
     Examples
@@ -157,7 +150,6 @@ def compass(u, v, **arrowprops):
     >>> fig, ax = compass(u, v)
 
     """
-
     # Create plot.
     fig, ax = plt.subplots(subplot_kw={"polar": True})
 
@@ -168,7 +160,7 @@ def compass(u, v, **arrowprops):
     kw.update(arrowprops)
     [
         ax.annotate("", xy=(angle, radius), xytext=(0, 0), arrowprops=kw)
-        for angle, radius in zip(angles, radii)
+        for angle, radius in zip(angles, radii, strict=True)
     ]
 
     ax.set_ylim(0, np.max(radii))
@@ -177,10 +169,7 @@ def compass(u, v, **arrowprops):
 
 
 def plot_spectrum(data, fs):
-    """
-    Plots a Single-Sided Amplitude Spectrum of y(t).
-
-    """
+    """Plots a Single-Sided Amplitude Spectrum of y(t)."""
     n = len(data)  # Length of the signal.
     k = np.arange(n)
     T = n / fs
@@ -200,8 +189,7 @@ def plot_spectrum(data, fs):
 
 
 class EditPoints:
-    """
-    Edit points on a graph with the mouse.  Handles only one set of points.
+    """Edit points on a graph with the mouse.  Handles only one set of points.
 
     Key-bindings:
       't' toggle on and off.  (When on, you can move, delete, or add points.)
@@ -228,10 +216,11 @@ class EditPoints:
     epsilon = 5  # Maximum pixel distance to count as a point hit.
     showpoint = True
 
-    def __init__(self, fig, ax, points, verbose=False):
-        matplotlib.interactive(True)
+    def __init__(self, fig, ax, points, *, verbose=False):
+        matplotlib.interactive(b=True)
         if points is None:
-            raise RuntimeError("First add points to a figure or canvas.")
+            msg = "First add points to a figure or canvas."
+            raise RuntimeError(msg)
         canvas = fig.canvas
         self.ax = ax
         self.dragged = None
@@ -253,23 +242,23 @@ class EditPoints:
         canvas.mpl_connect("draw_event", self.draw_callback)
         canvas.mpl_connect("button_press_event", self.button_press_callback)
         canvas.mpl_connect("key_press_event", self.key_press_callback)
-        canvas.mpl_connect("button_release_event", self.button_release_callback)
+        canvas.mpl_connect(
+            "button_release_event",
+            self.button_release_callback,
+        )
         canvas.mpl_connect("motion_notify_event", self.motion_notify_callback)
         self.canvas = canvas
 
-    def draw_callback(self, event):
+    def draw_callback(self, event):  # noqa: ARG002
         self.background = self.canvas.copy_from_bbox(self.ax.bbox)
         self.ax.draw_artist(self.line)
         self.canvas.blit(self.ax.bbox)
 
         if self.verbose:
-            print("\nDrawing...")  # noqa
+            print("\nDrawing...")  # noqa: T201
 
     def points_changed(self, points):
-        """
-        This method is called whenever the points object is called.
-
-        """
+        """This method is called whenever the points object is called."""
         # Only copy the artist props to the line (except visibility).
         vis = self.line.get_visible()
         Artist.update_from(self.line, points)
@@ -277,13 +266,10 @@ class EditPoints:
         self.line.set_visible(vis)
 
         if self.verbose:
-            print("\nPoints modified.")  # noqa
+            print("\nPoints modified.")  # noqa: T201
 
     def get_ind_under_point(self, event):
-        """
-        Get the index of the point under mouse if within epsilon tolerance.
-
-        """
+        """Get the index of the point under mouse if within epsilon tolerance."""
         # Display coordinates.
         arr = self.ax.transData.transform(self.points.get_xydata())
         x, y = arr[:, 0], arr[:, 1]
@@ -291,19 +277,16 @@ class EditPoints:
         indseq = np.nonzero(np.equal(d, np.amin(d)))[0]
         ind = indseq[0]
         if self.verbose:
-            print("d[ind] {} epsilon {}".format(d[ind], self.epsilon))  # noqa
+            print(f"d[ind] {d[ind]} epsilon {self.epsilon}")  # noqa: T201
         if d[ind] >= self.epsilon:
             ind = None
 
         if self.verbose:
-            print(f"\nClicked at ({event.xdata}, {event.ydata})")  # noqa
+            print(f"\nClicked at ({event.xdata}, {event.ydata})")  # noqa: T201
         return ind
 
     def button_press_callback(self, event):
-        """
-        Whenever a mouse button is pressed.
-
-        """
+        """Whenever a mouse button is pressed."""
         if not self.showpoint:
             return
         if not event.inaxes:
@@ -317,28 +300,22 @@ class EditPoints:
         self.pick_pos = (x[self._ind], y[self._ind])
 
         if self.verbose:
-            print(f"\nGot point: ({self.pick_pos}), ind: {self._ind}")  # noqa
+            print(f"\nGot point: ({self.pick_pos}), ind: {self._ind}")  # noqa: T201
 
     def button_release_callback(self, event):
-        """
-        Whenever a mouse button is released.
-
-        """
+        """Whenever a mouse button is released."""
         if not self.showpoint:
             return
         if not event.button:
             return
         self._ind = None
         if self.verbose:
-            print("\nButton released.")  # noqa
+            print("\nButton released.")  # noqa: T201
 
-    def key_press_callback(self, event):
-        """
-        Whenever a key is pressed.
-
-        """
+    def key_press_callback(self, event):  # noqA: C901
+        """Whenever a key is pressed."""
         if not event.inaxes:
-            return
+            return None
         if event.key == "t":
             self.showpoint = not self.showpoint
             self.line.set_visible(self.showpoint)
@@ -346,16 +323,16 @@ class EditPoints:
                 self._ind = None
 
             if self.verbose:
-                print(f"\nToggle {self.showpoint:d}")  # noqa
+                print(f"\nToggle {self.showpoint:d}")  # noqa: T201
             return get_pointsxy(self.points)
-        elif event.key == "d":
+        if event.key == "d":
             x, y = get_pointsxy(self.points)
             ind = self.get_ind_under_point(event)
             if ind is not None:
                 if self.verbose:
-                    print(
+                    print(  # noqa: T201
                         f"\nDeleted ({x[ind]}, {y[ind]}) ind: {ind}",
-                    )  # noqa
+                    )
                 x = np.delete(x, ind)
                 y = np.delete(y, ind)
                 self.points.set_xdata(x)
@@ -363,7 +340,7 @@ class EditPoints:
                 self.line.set_data(self.points.get_data())
         elif event.key == "i":
             if self.verbose:
-                print("Insert point")  # noqa
+                print("Insert point")  # noqa: T201
             xs = self.points.get_xdata()
             ex, ey = event.xdata, event.ydata
             for _i in range(len(xs) - 1):
@@ -371,16 +348,14 @@ class EditPoints:
                 self.points.set_ydata(np.r_[self.points.get_ydata(), ey])
                 self.line.set_data(self.points.get_data())
                 if self.verbose:
-                    print(f"\nInserting: ({ex}, {ey})")  # noqa
+                    print(f"\nInserting: ({ex}, {ey})")  # noqa: T201
                 break
 
         self.canvas.draw()
+        return None
 
     def motion_notify_callback(self, event):
-        """
-        On mouse movement.
-
-        """
+        """On mouse movement."""
         if not self.showpoint:
             return
         if not self._ind:
@@ -395,8 +370,8 @@ class EditPoints:
         x[self._ind] = self.pick_pos[0] + dx
         y[self._ind] = self.pick_pos[1] + dy
         if self.verbose:
-            print(f"\nevent.xdata {event.xdata}")  # noqa
-            print(f"\nevent.ydata {event.ydata}")  # noqa
+            print(f"\nevent.xdata {event.xdata}")  # noqa: T201
+            print(f"\nevent.ydata {event.ydata}")  # noqa: T201
         self.points.set_xdata(x)
         self.points.set_ydata(y)
         self.line.set_data(list(zip(self.points.get_data())))
@@ -406,4 +381,4 @@ class EditPoints:
         self.canvas.blit(self.ax.bbox)
 
         if self.verbose:
-            print("\nMoving")  # noqa
+            print("\nMoving")  # noqa: T201
