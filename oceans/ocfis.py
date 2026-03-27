@@ -3,13 +3,12 @@ import warnings
 
 import gsw
 import numpy as np
-import numpy.ma as ma
 import pandas as pd
+from numpy import ma
 
 
-def spdir2uv(spd, ang, deg=False):
-    """
-    Computes u, v components from speed and direction.
+def spdir2uv(spd, ang, *, deg=False):
+    """Computes u, v components from speed and direction.
 
     Parameters
     ----------
@@ -28,7 +27,6 @@ def spdir2uv(spd, ang, deg=False):
         meridional wind velocity [m s :sup:`-1`]
 
     """
-
     if deg:
         ang = np.deg2rad(ang)
 
@@ -39,8 +37,7 @@ def spdir2uv(spd, ang, deg=False):
 
 
 def uv2spdir(u, v, mag=0, rot=0):
-    """
-    Computes speed and direction from u, v components.
+    """Computes speed and direction from u, v components.
     Converts rectangular to polar coordinate, geographic convention
     Allows for rotation and magnetic declination correction.
 
@@ -83,7 +80,6 @@ def uv2spdir(u, v, mag=0, rot=0):
     >>> _ = ax.set_ylim(0, np.max(ws))
 
     """
-
     u, v, mag, rot = list(map(np.asarray, (u, v, mag, rot)))
 
     vec = u + 1j * v
@@ -96,8 +92,7 @@ def uv2spdir(u, v, mag=0, rot=0):
 
 
 def del_eta_del_x(U, f, g, balance="geostrophic", R=None):
-    r"""
-    Calculate :mat: `\frac{\partial \eta} {\partial x}` for different
+    r"""Calculate :mat: `\frac{\partial \eta} {\partial x}` for different
     force balances
 
     Parameters
@@ -114,7 +109,6 @@ def del_eta_del_x(U, f, g, balance="geostrophic", R=None):
         Radius
 
     """
-
     if balance == "geostrophic":
         detadx = f * U / g
 
@@ -128,8 +122,7 @@ def del_eta_del_x(U, f, g, balance="geostrophic", R=None):
 
 
 def mld(SA, CT, p, criterion="pdvar"):
-    r"""
-    Compute the mixed layer depth.
+    r"""Compute the mixed layer depth.
 
     Parameters
     ----------
@@ -169,7 +162,6 @@ def mld(SA, CT, p, criterion="pdvar"):
     Washington, D.C.
 
     """
-
     SA, CT, p = list(map(np.asanyarray, (SA, CT, p)))
     SA, CT, p = np.broadcast_arrays(SA, CT, p)
     SA, CT, p = list(map(ma.masked_invalid, (SA, CT, p)))
@@ -185,7 +177,7 @@ def mld(SA, CT, p, criterion="pdvar"):
     Tdiff = T0 - 0.5  # 0.8 on the matlab original
 
     if criterion == "temperature":
-        idx_mld = CT > Tdiff
+        idx_mld = Tdiff < CT
     elif criterion == "pdvar":
         pdvar_diff = gsw.rho(S0, Tdiff, p_min) - 1000.0
         idx_mld = sigma <= pdvar_diff
@@ -193,7 +185,8 @@ def mld(SA, CT, p, criterion="pdvar"):
         sig_diff = Sig0 + 0.125
         idx_mld = sigma <= sig_diff
     else:
-        raise NameError(f"Unknown criteria {criterion}")
+        msg = f"Unknown criteria {criterion}"
+        raise NameError(msg)
 
     MLD = ma.masked_all_like(p)
     MLD[idx_mld] = p[idx_mld]
@@ -202,8 +195,7 @@ def mld(SA, CT, p, criterion="pdvar"):
 
 
 def pcaben(u, v):
-    """
-    Principal components of 2-d (e.g. current meter) data
+    """Principal components of 2-d (e.g. current meter) data
     calculates ellipse parameters for currents.
 
     Parameters
@@ -252,11 +244,11 @@ def pcaben(u, v):
     ...     print("Flatness: {}".format(flatness))
     ...
 
-    Notes:
+    Notes
+    -----
     https://pubs.usgs.gov/of/2002/of02-217/m-files/pcaben.m
 
     """
-
     u, v = np.broadcast_arrays(u, v)
 
     C = np.cov(u, v)
@@ -287,8 +279,7 @@ def pcaben(u, v):
 
 
 def spec_rot(u, v):
-    """
-    Compute the rotary spectra from u,v velocity components
+    """Compute the rotary spectra from u,v velocity components
 
     Parameters
     ----------
@@ -322,7 +313,6 @@ def spec_rot(u, v):
     J. Gonella Deep Sea Res., 833-846, 1972.
 
     """
-
     # Individual components Fourier series.
     fu, fv = list(map(np.fft.fft, (u, v)))
 
@@ -336,8 +326,7 @@ def spec_rot(u, v):
     # Quadrature spectra.
     quv = -fu.real * fv.imag + fv.real * fu.imag
 
-    # Rotatory components
-    # TODO: Check the division, 4 (original code) or 8 (paper)?
+    # Rotatory components.
     cw = (pu + pv - 2 * quv) / 4.0
     ccw = (pu + pv + 2 * quv) / 4.0
     N = len(u)
@@ -346,8 +335,7 @@ def spec_rot(u, v):
 
 
 def lagcorr(x, y, M=None):
-    """
-    Compute lagged correlation between two series.
+    """Compute lagged correlation between two series.
     Follow emery and Thomson book "summation" notation.
 
     Parameters
@@ -369,7 +357,6 @@ def lagcorr(x, y, M=None):
     TODO: Implement Emery and Thomson example.
 
     """
-
     x, y = list(map(np.asanyarray, (x, y)))
 
     if not M:
@@ -390,8 +377,7 @@ def lagcorr(x, y, M=None):
 
 
 def complex_demodulation(series, f, fc, axis=-1):
-    """
-    Perform a Complex Demodulation
+    """Perform a Complex Demodulation
     It acts as a bandpass filter for `f`.
 
     series => Time-Series object with data and datetime
@@ -401,40 +387,32 @@ def complex_demodulation(series, f, fc, axis=-1):
     math : series.data * np.exp(2 * np.pi * 1j * (1 / T) * time_in_seconds)
 
     """
-    import scipy.signal as signal
+    from scipy import signal
 
     # Time period ie freq = 1 / T
     T = 2 * np.pi / f
-    # fc = fc * 1 / T # Filipe
 
     # De-mean data.
     d = series.data - series.data.mean(axis=axis)
     dfs = d * np.exp(2 * np.pi * 1j * (1 / T) * series.time_in_seconds)
 
     # Make a 5th order butter filter.
-    # FIXME: Why 5th order? Try signal.buttord!?
     Wn = fc / series.Nyq
 
     [b, a] = signal.butter(5, Wn, btype="low")
 
-    # FIXME: These are a factor of a thousand different from Matlab, why?
-    cc = signal.filtfilt(b, a, dfs)  # FIXME: * 1e3
+    cc = signal.filtfilt(b, a, dfs)
     amplitude = 2 * np.abs(cc)
-
-    # TODO: Fix the outputs.
-    # phase = np.arctan2(np.imag(cc), np.real(cc))
 
     filtered_series = amplitude * np.exp(
         -2 * np.pi * 1j * (1 / T) * series.time_in_seconds,
     )
-    new_series = filtered_series.real, series.time
     # Return cc, amplitude, phase, dfs, filtered_series
-    return new_series
+    return filtered_series.real, series.time
 
 
 def binave(datain, r):
-    """
-    Averages vector data in bins of length r. The last bin may be the
+    """Averages vector data in bins of length r. The last bin may be the
     average of less than r elements. Useful for computing daily average time
     series (with r=24 for hourly data).
 
@@ -524,26 +502,24 @@ def binave(datain, r):
     08/05/1999: version 2.0
 
     """
-
     datain, rows = np.asarray(datain), np.asarray(r, dtype=np.int64)
 
     if datain.ndim != 1:
-        raise ValueError("Must be a 1D array.")
+        msg = "Must be a 1D array."
+        raise ValueError(msg)
 
     if rows <= 0:
-        raise ValueError("Bin size R must be a positive integer.")
+        msg = "Bin size R must be a positive integer."
+        raise ValueError(msg)
 
     # Compute bin averaged series.
     lines = datain.size // r
     z = datain[0 : (lines * rows)].reshape(rows, lines, order="F")
-    bindata = np.r_[np.mean(z, axis=0), np.mean(datain[(lines * r) :])]
-
-    return bindata
+    return np.r_[np.mean(z, axis=0), np.mean(datain[(lines * r) :])]
 
 
 def binavg(x, y, db):
-    """
-    Bins y(x) into db spacing.  The spacing is given in `x` units.
+    """Bins y(x) into db spacing.  The spacing is given in `x` units.
     y = np.random.random(20)
     x = np.arange(len(y))
     xb, yb = binavg(x, y, 2)
@@ -563,19 +539,13 @@ def binavg(x, y, db):
     # But this is the center of the bins.
     xbin = xbin - (db / 2.0)
 
-    # FIXME there is an IndexError if I want to show this.
-    # for n in range(x.size):
-    #    print xbin[inds[n]-1], "<=", x[n], "<", xbin[inds[n]]
-
-    ybin = np.array([y[inds == i].mean() for i in range(0, len(xbin))])
-    # xbin = np.array([x[inds == i].mean() for i in range(0, len(xbin))])
+    ybin = np.array([y[inds == i].mean() for i in range(len(xbin))])
 
     return xbin, ybin
 
 
 def bin_dates(self, freq, tz=None):
-    """
-    Take a pandas time Series and return a new Series on the specified
+    """Take a pandas time Series and return a new Series on the specified
     frequency.
 
     Examples
@@ -586,24 +556,26 @@ def bin_dates(self, freq, tz=None):
     >>> sig = np.random.rand(n) + 2 * np.cos(2 * np.pi * np.arange(n))
     >>> dates = date_range(start="1/1/2000", periods=n, freq="h")
     >>> series = Series(data=sig, index=dates)
-    >>> new_series = bin_dates(series, freq="D", tz=None)
+    >>> new_series = bin_dates(series, freq="1D", tz=None)
 
     """
     from pandas import date_range
 
-    new_index = date_range(start=self.index[0], end=self.index[-1], freq=freq, tz=tz)
+    new_index = date_range(
+        start=self.index[0],
+        end=self.index[-1],
+        freq=freq,
+        tz=tz,
+    )
     new_series = self.groupby(new_index.asof).mean()
     # Averages at the center.
-    secs = pd.Timedelta(new_index.freq).total_seconds()
-    new_series.index = new_series.index.values + int(secs // 2)
+    secs = pd.Timedelta(freq).total_seconds()
+    new_series.index = new_series.index.to_numpy() + int(secs // 2)
     return new_series
 
 
 def series_spline(self):
-    """
-    Fill NaNs using a spline interpolation.
-
-    """
+    """Fill NaNs using a spline interpolation."""
     from pandas import Series, isnull
     from scipy.interpolate import InterpolatedUnivariateSpline
 
@@ -624,9 +596,8 @@ def series_spline(self):
     return Series(result, index=self.index, name=self.name)
 
 
-def despike(self, n=3, recursive=False):
-    """
-    Replace spikes with np.nan.
+def despike(self, n=3, *, recursive=False):
+    """Replace spikes with np.nan.
     Removing spikes that are >= n * std.
     default n = 3.
 
@@ -653,8 +624,7 @@ def despike(self, n=3, recursive=False):
 
 
 def pol2cart(theta, radius, units="deg"):
-    """
-    Convert from polar to Cartesian coordinates
+    """Convert from polar to Cartesian coordinates
 
     Examples
     --------
@@ -670,8 +640,7 @@ def pol2cart(theta, radius, units="deg"):
 
 
 def cart2pol(x, y):
-    """
-    Convert from Cartesian to polar coordinates.
+    """Convert from Cartesian to polar coordinates.
 
     Examples
     --------
@@ -688,7 +657,7 @@ def cart2pol(x, y):
 
 def wrap_lon180(lon):
     lon = np.atleast_1d(lon).copy()
-    angles = np.logical_or((lon < -180), (180 < lon))
+    angles = np.logical_or((lon < -180), (lon > 180))
     lon[angles] = wrap_lon360(lon[angles] + 180) - 180
     return lon
 
@@ -707,9 +676,8 @@ def alphanum_key(s):
     return key
 
 
-def get_profile(x, y, f, xi, yi, mode="nearest", order=3):
-    """
-    Interpolate regular data.
+def get_profile(x, y, f, xi, yi, mode="nearest", order=3):  # noqa: PLR0913
+    """Interpolate regular data.
 
     Parameters
     ----------
@@ -783,21 +751,16 @@ def get_profile(x, y, f, xi, yi, mode="nearest", order=3):
 
 
 def strip_mask(arr, fill_value=np.nan):
-    """
-    Take a masked array and return its data(filled) + mask.
-
-    """
+    """Take a masked array and return its data(filled) + mask."""
     if ma.isMaskedArray(arr):
         mask = np.ma.getmaskarray(arr)
         arr = np.ma.filled(arr, fill_value)
         return mask, arr
-    else:
-        return arr
+    return arr
 
 
 def shiftdim(x, n=None):
-    """
-    Matlab-like shiftdim in python.
+    """Matlab-like shiftdim in python.
 
     Examples
     --------
@@ -822,19 +785,17 @@ def shiftdim(x, n=None):
         if shape[0] == 1:
             shape = shape[1:]
             return no_leading_ones(shape)
-        else:
-            return shape
+        return shape
 
     if n is None:
         # returns the array B with the same number of
         # elements as X but with any leading singleton
         # dimensions removed.
         return x.reshape(no_leading_ones(x.shape))
-    elif n >= 0:
+    if n >= 0:
         # When n is positive, shiftdim shifts the dimensions
         # to the left and wraps the n leading dimensions to the end.
         return x.transpose(np.roll(list(range(x.ndim)), -n))
-    else:
-        # When n is negative, shiftdim shifts the dimensions
-        # to the right and pads with singletons.
-        return x.reshape((1,) * -n + x.shape)
+    # When n is negative, shiftdim shifts the dimensions
+    # to the right and pads with singletons.
+    return x.reshape((1,) * -n + x.shape)

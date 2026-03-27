@@ -1,14 +1,13 @@
 from datetime import datetime
 
 import numpy as np
-import numpy.ma as ma
+from numpy import ma
 
 earth_radius = 6371.0e3
 
 
 def h2hms(hours):
-    """
-    Converts hours to hours, minutes, and seconds.
+    """Converts hours to hours, minutes, and seconds.
 
     Examples
     --------
@@ -24,8 +23,7 @@ def h2hms(hours):
 
 
 def hms2h(h, m=None, s=None):
-    """
-    Converts hours, minutes, and seconds to hours.
+    """Converts hours, minutes, and seconds to hours.
 
     Examples
     --------
@@ -49,8 +47,7 @@ def hms2h(h, m=None, s=None):
 
 
 def ms2hms(millisecs):
-    """
-    Converts milliseconds to integer hour, minute, seconds.
+    """Converts milliseconds to integer hour, minute, seconds.
 
     Examples
     --------
@@ -65,9 +62,8 @@ def ms2hms(millisecs):
     return hour, mn, sec
 
 
-def julian(y, m=0, d=0, h=0, mi=0, s=0, noon=False):
-    """
-    Converts Gregorian calendar dates to Julian dates
+def julian(y, m=0, d=0, h=0, mi=0, s=0, *, noon=False):  # noqa: PLR0913
+    """Converts Gregorian calendar dates to Julian dates
 
     USAGE: [j]=julian(y,m,d,h)
 
@@ -118,17 +114,11 @@ def julian(y, m=0, d=0, h=0, mi=0, s=0, noon=False):
         + 1721119
     )
 
-    if noon:
-        j = j + (h - 12) / 24
-    else:
-        j = j + h / 24
-
-    return j
+    return j + (h - 12) / 24 if noon else j + h / 24
 
 
 def jdrps2jdmat(jd):
-    """
-    Convert Signell's Julian days to Matlab's Serial day
+    """Convert Signell's Julian days to Matlab's Serial day
     matlab's serial date = 1 at 0000 UTC, 1-Jan-0000.
 
     Examples
@@ -141,8 +131,7 @@ def jdrps2jdmat(jd):
 
 
 def jdmat2jdrps(jdmat):
-    """
-    Convert Matlab's Serial Day to Signell's Julian days
+    """Convert Matlab's Serial Day to Signell's Julian days
     matlab's serial date = 1 at 0000 UTC, 1-Jan-0000.
 
     Examples
@@ -154,9 +143,8 @@ def jdmat2jdrps(jdmat):
     return jdmat + julian(0000, 1, 1, 0, 0, 0) - 1
 
 
-def gregorian(jd, noon=False):
-    """
-    Converts decimal Julian days to Gregorian dates using the astronomical
+def gregorian(jd, *, noon=False):
+    """Converts decimal Julian days to Gregorian dates using the astronomical
     conversion, but with time zero starting at midnight instead of noon.  In
     this convention, Julian day 2440000 begins at 0000 hours, May 23, 1968.
     The Julian day does not have to be an integer, and with Matlab's double
@@ -226,8 +214,7 @@ def gregorian(jd, noon=False):
 
 
 def s2hms(secs):
-    """
-    Converts seconds to integer hour,minute,seconds
+    """Converts seconds to integer hour,minute,seconds
     Usage: hour, min, sec = s2hms(secs)
 
     Examples
@@ -243,10 +230,8 @@ def s2hms(secs):
     return hr, mi, sc
 
 
-# FIXME: STOPPED HERE
 def ss2(jd):
-    """
-    Return Gregorian start and stop dates of Julian day variable
+    """Return Gregorian start and stop dates of Julian day variable
     Usage:  start, stop = ss2(jd)
 
     """
@@ -256,8 +241,7 @@ def ss2(jd):
 
 
 def angled(h):
-    """
-    ANGLED: Returns the phase angles in degrees of a matrix with complex
+    """ANGLED: Returns the phase angles in degrees of a matrix with complex
             elements.
 
     Usage:
@@ -266,21 +250,17 @@ def angled(h):
         deg = angle in math convention (degrees counterclockwise from "east")
 
     """
-    pd = np.angle(h, deg=True)
-    return pd
+    return np.angle(h, deg=True)
 
 
 def ij2ind(a, i, j):
-    m, n = a.shape
-    return m * i - j + 1  # TODO: Check this +1
+    m, _ = a.shape
+    return m * i - j + 1
 
 
 def ind2ij(a, ind):
-    """
-    ind2ij returns i, j indices of array.
-
-    """
-    m, n = a.shape
+    """ind2ij returns i, j indices of array."""
+    m, _ = a.shape
     j = np.ceil(ind / m)
     i = np.remainder(ind, m)
     i[i == 0] = m
@@ -288,21 +268,16 @@ def ind2ij(a, ind):
 
 
 def rms(u):
-    """
-    Compute root mean square for each column of matrix u.
-
-    """
-    # TODO: use an axis arg.
+    """Compute root mean square for each column of matrix u."""
     if u.ndim > 1:
-        m, n = u.shape
+        m, _ = u.shape
     else:
         m = u.size
     return np.sqrt(np.sum(u**2) / m)
 
 
 def z0toCn(z0, H):
-    """
-    Convert roughness height z0 to Chezy "C" and Manning's "n" which is a
+    """Convert roughness height z0 to Chezy "C" and Manning's "n" which is a
     function of the water depth
 
     Inputs:
@@ -319,7 +294,6 @@ def z0toCn(z0, H):
     >>> C, n = z0toCn(0.003, np.arange(2, 200))
 
     """
-
     k_s = 30 * z0
     C = 18 * np.log10(12 * H / k_s)
     n = (H ** (1.0 / 6.0)) / C
@@ -328,12 +302,8 @@ def z0toCn(z0, H):
 
 
 def z0tocd(z0, zr):
-    """
-    Calculates CD at a given ZR corresponding to Z0.
-
-    """
-    cd = (0.4 * np.ones(z0.size) / np.log(zr / z0)) ** 2
-    return cd
+    """Calculates CD at a given ZR corresponding to Z0."""
+    return (0.4 * np.ones(z0.size) / np.log(zr / z0)) ** 2
 
 
 def short_calc(amin, amax):
@@ -344,62 +314,43 @@ def short_calc(amin, amax):
 
 
 def gsum(x, **kw):
-    """
-    Just like sum, except that it skips over bad points.
-
-    """
+    """Just like sum, except that it skips over bad points."""
     xnew = ma.masked_invalid(x)
     return np.sum(xnew, **kw)
 
 
 def gmean(x, **kw):
-    """
-    Just like mean, except that it skips over bad points.
-
-    """
+    """Just like mean, except that it skips over bad points."""
     xnew = ma.masked_invalid(x)
     return np.mean(xnew, **kw)
 
 
 def gmedian(x, **kw):
-    """
-    Just like median, except that it skips over bad points.
-
-    """
+    """Just like median, except that it skips over bad points."""
     xnew = ma.masked_invalid(x)
     return np.median(xnew, **kw)
 
 
 def gmin(x, **kw):
-    """
-    Just like min, except that it skips over bad points.
-
-    """
+    """Just like min, except that it skips over bad points."""
     xnew = ma.masked_invalid(x)
     return np.min(xnew, **kw)
 
 
 def gmax(x, **kw):
-    """
-    Just like max, except that it skips over bad points.
-
-    """
+    """Just like max, except that it skips over bad points."""
     xnew = ma.masked_invalid(x)
     return np.max(xnew, **kw)
 
 
 def gstd(x, **kw):
-    """
-    Just like std, except that it skips over bad points.
-
-    """
+    """Just like std, except that it skips over bad points."""
     xnew = ma.masked_invalid(x)
     return np.std(xnew, **kw)
 
 
 def near(x, x0, n=1):
-    """
-    Given an 1D array `x` and a scalar `x0`, returns the `n` indices of the
+    """Given an 1D array `x` and a scalar `x0`, returns the `n` indices of the
     element of `x` closest to `x0`.
 
     """
@@ -409,10 +360,7 @@ def near(x, x0, n=1):
 
 
 def swantime(a):
-    """
-    Converts SWAN default time format to datetime object.
-
-    """
+    """Converts SWAN default time format to datetime object."""
     if isinstance(a, str):
         a = float(a)
         a = np.asanyarray(a)
@@ -429,38 +377,34 @@ def swantime(a):
     a = a - mn / 1e4
     sec = np.floor(a * 1e6)
 
-    return datetime(year, mon, day, hour, mn, sec)
+    return datetime(year, mon, day, hour, mn, sec, tzinfo=datetime.UTC)
 
 
 def shift(a, b, n):
-    """
-    a and b are vectors
+    """A and b are vectors
     n is number of points of a to cut off
     anew and bnew will be the same length.
 
     """
-    # la, lb = a.size, lb = b.size
-
     anew = a[list(range(0 + n, len(a))), :]
 
     if len(anew) > len(b):
-        anew = anew[list(range(0, len(b))), :]
+        anew = anew[list(range(len(b))), :]
         bnew = b
     else:
-        bnew = b[list(range(0, len(anew))), :]
+        bnew = b[list(range(len(anew))), :]
     return anew, bnew
 
 
 def lagcor(a, b, n):
-    """
-    Finds lagged correlations between two series.
+    """Finds lagged correlations between two series.
     a and b are two column vectors
     n is range of lags
     cor is correlation as fn of lag.
 
     """
     cor = []
-    for k in range(0, n + 1):
+    for k in range(n + 1):
         d1, d2 = shift(a, b, k)
         ind = ~np.isnan(d1 + d2)
         c = np.corrcoef(d1[ind], d2[ind])
@@ -471,8 +415,7 @@ def lagcor(a, b, n):
 
 
 def coast2bln(coast, bln_file):
-    """
-    Converts a matlab coast (two column array w/ nan for line breaks) into
+    """Converts a matlab coast (two column array w/ nan for line breaks) into
     a Surfer blanking file.
 
     Where coast is a two column vector and bln_file is the output file name.
@@ -480,15 +423,14 @@ def coast2bln(coast, bln_file):
     Needs `fixcoast`.
 
     """
-
     c2 = fixcoast(coast)
     ind = np.where(np.isnan(c2[:, 0]))[0]
     n = len(ind) - 1
     bln = c2.copy()
 
-    for k in range(0, n - 1):
+    for k in range(n - 1):
         kk = list(range(ind[k] + 1, ind[k + 1]))
-        NP = int(len(kk))
+        NP = len(kk)
         bln[ind[k], 0] = NP
         bln[ind[k], 1] = 1
 
@@ -497,8 +439,7 @@ def coast2bln(coast, bln_file):
 
 
 def fixcoast(coast):
-    """
-    FIXCOAST  Makes sure coastlines meet Signell's conventions.
+    """FIXCOAST  Makes sure coastlines meet Signell's conventions.
 
     Fixes coastline is in the format we want.  Assumes that lon/lat are in the
     first two columns of the matrix coast, and that coastline segments are
@@ -507,7 +448,6 @@ def fixcoast(coast):
     rows contain NaNs.
 
     """
-
     ind = coast == -99999.0
     coast[ind] = np.nan
 

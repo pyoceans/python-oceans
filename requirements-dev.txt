@@ -9,6 +9,7 @@ pytest
 pytest-cov
 pytest-xdist
 scipy
+setuptools-scm
 sphinx
 twine
 xarray

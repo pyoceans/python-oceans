@@ -21,9 +21,8 @@ def _woa_variable(variable):
     }
     v = _VAR.get(variable)
     if not v:
-        raise ValueError(
-            f'Unrecognizable variable. Expected one of {list(_VAR.keys())}, got "{variable}".',
-        )
+        msg = f'Unrecognizable variable. Expected one of {list(_VAR.keys())}, got "{variable}".'
+        raise ValueError(msg)
     return v
 
 
@@ -39,10 +38,9 @@ def _woa_url(variable, time_period, resolution):
             f'annual time period, and "{pref}".',
             stacklevel=2,
         )
-        return f"{base}/" f"{pref}/" f"{variable}_annual_1deg.nc"
-    else:
-        dddd = "decav"
-        pref = "woa18"
+        return f"{base}/{pref}/{variable}_annual_1deg.nc"
+    dddd = "decav"
+    pref = "woa18"
 
     grids = {
         "5": ("5deg", "5d"),
@@ -51,9 +49,8 @@ def _woa_url(variable, time_period, resolution):
     }
     grid = grids.get(resolution)
     if not grid:
-        raise ValueError(
-            f'Unrecognizable resolution. Expected one of {list(grids.keys())}, got "{resolution}".',
-        )
+        msg = f'Unrecognizable resolution. Expected one of {list(grids.keys())}, got "{resolution}".'
+        raise ValueError(msg)
     res = grid[0]
     gg = grid[1]
 
@@ -79,35 +76,33 @@ def _woa_url(variable, time_period, resolution):
 
     time_period = time_period.lower()
     if len(time_period) == 3:
-        tt = [
-            time_periods.get(k)
-            for k in time_periods.keys()
-            if k.startswith(time_period)
-        ][0]
+        tt = [time_periods.get(k) for k in time_periods if k.startswith(time_period)][0]
     elif len(time_period) == 2 and time_period in time_periods.values():
         tt = time_period
     else:
         tt = time_periods.get(time_period)
 
     if not tt:
-        raise ValueError(
-            f"Unrecognizable time_period. "
-            f'Expected one of {list(time_periods.keys())}, got "{time_period}".',
-        )
+        msg = f'Unrecognizable time_period. Expected one of {list(time_periods.keys())}, got "{time_period}".'
+        raise ValueError(msg)
 
-    url = (
+    return (
         f"{base}/"
         "/ncei/woa/"
         f"{variable}/decav/{res}/"
         f"{pref}_{dddd}_{v}{tt}_{gg}.nc"  # '[PREF]_[DDDD]_[V][TT][FF][GG]' Is [FF] used?
     )
-    return url
 
 
 @functools.lru_cache(maxsize=256)
-def woa_profile(lon, lat, variable="temperature", time_period="annual", resolution="1"):
-    """
-    Return a xarray DAtaset instance from a World Ocean Atlas variable at a
+def woa_profile(
+    lon,
+    lat,
+    variable="temperature",
+    time_period="annual",
+    resolution="1",
+):
+    """Return a xarray DAtaset instance from a World Ocean Atlas variable at a
     given lon, lat point.
 
     Parameters
@@ -142,10 +137,14 @@ def woa_profile(lon, lat, variable="temperature", time_period="annual", resoluti
     >>> ax.invert_yaxis()
 
     """
-    import cf_xarray  # noqa
+    import cf_xarray  # noqa: F401
     import xarray as xr
 
-    url = _woa_url(variable=variable, time_period=time_period, resolution=resolution)
+    url = _woa_url(
+        variable=variable,
+        time_period=time_period,
+        resolution=resolution,
+    )
     v = _woa_variable(variable)
 
     ds = xr.open_dataset(url, decode_times=False)
@@ -154,7 +153,7 @@ def woa_profile(lon, lat, variable="temperature", time_period="annual", resoluti
 
 
 @functools.lru_cache(maxsize=256)
-def woa_subset(
+def woa_subset(  # noqa: PLR0913
     min_lon,
     max_lon,
     min_lat,
@@ -162,10 +161,10 @@ def woa_subset(
     variable="temperature",
     time_period="annual",
     resolution="5",
+    *,
     full=False,
 ):
-    """
-    Return an xarray Dataset instance from a World Ocean Atlas variable at a
+    """Return an xarray Dataset instance from a World Ocean Atlas variable at a
     given lon, lat bounding box.
 
     Parameters
@@ -216,12 +215,14 @@ def woa_subset(
     >>> _ = ax.set_ylim(200, 0)
 
     """
-    import cf_xarray  # noqa
+    import cf_xarray  # noqa: F401
     import xarray as xr
 
     url = _woa_url(variable, time_period, resolution)
     ds = xr.open_dataset(url, decode_times=False)
-    ds = ds.cf.sel({"X": slice(min_lon, max_lon), "Y": slice(min_lat, max_lat)})
+    ds = ds.cf.sel(
+        {"X": slice(min_lon, max_lon), "Y": slice(min_lat, max_lat)},
+    )
     v = _woa_variable(variable)
     if full:
         return ds
@@ -239,9 +240,8 @@ def _download_etopo2():
 
 
 @functools.lru_cache(maxsize=256)
-def etopo_subset(min_lon, max_lon, min_lat, max_lat, tfile=None, smoo=False):
-    """
-    Get a etopo subset.
+def etopo_subset(min_lon, max_lon, min_lat, max_lat, tfile=None, *, smoo=False):  # noqa: PLR0913
+    """Get a etopo subset.
     Should work on any netCDF with x, y, data
 
     Examples
@@ -254,6 +254,7 @@ def etopo_subset(min_lon, max_lon, min_lat, max_lat, tfile=None, smoo=False):
     >>> cs = ax.pcolormesh(lon, lat, bathy)
 
     Based on trondkristiansen contourICEMaps.py
+
     """
     if tfile is None:
         tfile = _download_etopo2()
@@ -266,7 +267,7 @@ def etopo_subset(min_lon, max_lon, min_lat, max_lat, tfile=None, smoo=False):
         imin, imax, jmin, jmax = _get_indices(bbox, lons, lats)
         lon, lat = np.meshgrid(lons[imin:imax], lats[jmin:jmax])
 
-        # FIXME: This assumes j, i order.
+        # Assumes j, i order.
         bathy = etopo.variables["z"][jmin:jmax, imin:imax]
 
     if smoo:
@@ -278,8 +279,7 @@ def etopo_subset(min_lon, max_lon, min_lat, max_lat, tfile=None, smoo=False):
 
 
 def get_depth(lon, lat, tfile=None):
-    """
-    Find the depths for each station on the etopo2 database.
+    """Find the depths for each station on the etopo2 database.
 
     Examples
     --------
@@ -304,9 +304,8 @@ def get_depth(lon, lat, tfile=None):
     return get_profile(lons, lats, bathy, lon, lat, mode="nearest", order=3)
 
 
-def get_isobath(bbox, iso=-200, tfile=None, smoo=False):
-    """
-    Finds an isobath on the etopo2 database and returns
+def get_isobath(bbox, iso=-200, tfile=None, *, smoo=False):
+    """Finds an isobath on the etopo2 database and returns
     its lon, lat segments for plotting.
 
     Examples

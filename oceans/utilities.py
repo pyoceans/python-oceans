@@ -1,15 +1,14 @@
-import os
+from pathlib import Path
 
 import numpy as np
 
 
 def basename(fname):
-    return os.path.splitext(os.path.basename(fname))
+    return Path(fname).name
 
 
 class match_args_return:
-    """
-    Function decorator to homogenize input arguments and to make the output
+    """Function decorator to homogenize input arguments and to make the output
     match the original input with respect to scalar versus array, and masked
     versus ndarray.
 
@@ -27,7 +26,7 @@ class match_args_return:
         # Check if is masked
         self.masked = np.any([np.ma.isMaskedArray(a) for a in args])
         newargs = [np.ma.atleast_1d(np.ma.masked_invalid(a)) for a in args]
-        newargs = [a.astype(np.float) for a in newargs]
+        newargs = [a.astype(float) for a in newargs]
         ret = self.func(*newargs, **kw)
         if not self.masked:  # Return a filled array if not masked.
             ret = np.ma.filled(ret, np.nan)

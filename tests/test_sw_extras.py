@@ -1,8 +1,4 @@
-"""
-Test Extra seawater functions
-=============================
-
-"""
+"""Test Extra seawater functions."""
 
 import numpy as np
 
@@ -10,7 +6,8 @@ import oceans.sw_extras as swe
 
 
 def test_kdpar():
-    PAR = np.array(
+    """Test kdpar."""
+    par = np.array(
         [
             389.26,
             386.87,
@@ -170,6 +167,6 @@ def test_kdpar():
         ],
     )
 
-    kd, par_surface = swe.kdpar(press, PAR, boundary=25)
+    kd, par_surface = swe.kdpar(press, par, boundary=25)
     np.testing.assert_almost_equal(kd, 0.13808412818017926)
     np.testing.assert_almost_equal(par_surface, 690.61656440966783)

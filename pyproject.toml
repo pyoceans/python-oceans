@@ -22,6 +22,8 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
 ]
 dynamic = [
   "dependencies",
@@ -42,12 +44,8 @@ urls.repository = "https://github.com/pyoceans/python-oceans"
 packages = [ "oceans" ]
 zip-safe = false
 include-package-data = true
-
-[tool.setuptools.dynamic]
-dependencies = { file = [ "requirements.txt" ] }
-
-[tool.setuptools.package-data]
-oceans = [ "colormaps/cmap_data/*.dat" ]
+dynamic.dependencies = { file = [ "requirements.txt" ] }
+package-data.oceans = [ "colormaps/cmap_data/*.dat" ]
 
 [tool.setuptools_scm]
 write_to = "oceans/_version.py"
@@ -68,14 +66,13 @@ lint.select = [
 lint.ignore = [
   "B905", # zip ztrict arg, enable only for py310
 ]
-
 lint.per-file-ignores."docs/source/conf.py" = [
   "A001",
   "E402",
 ]
 lint.per-file-ignores."oceans/plotting.py" = [
   "T201",
-] # `print` found
+]  # `print` found
 
 [tool.check-manifest]
 ignore = [
@@ -88,8 +85,8 @@ ignore = [
   "tests/*",
 ]
 
-[tool.pytest.ini_options]
-markers = [
+[tool.pytest]
+ini_options.markers = [
   "web: marks tests require connection (deselect with '-m \"not web\"')",
 ]
 

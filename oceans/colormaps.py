@@ -1,12 +1,11 @@
-import os
 from colorsys import hsv_to_rgb
-from glob import glob
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import colors
 
-cmap_path = os.path.join(os.path.dirname(__file__), "cmap_data")
+cmap_path = Path(__file__).parent.joinpath("cmap_data")
 
 
 class Bunch(dict):
@@ -16,21 +15,15 @@ class Bunch(dict):
 
 
 def get_color(color):
-    """
-    https://stackoverflow.com/questions/10254207/color-and-line-writing-using-matplotlib
-
-    """
+    """https://stackoverflow.com/questions/10254207/color-and-line-writing-using-matplotlib"""
     for hue in range(color):
-        hue = 1.0 * hue / color
-        col = [int(x) for x in hsv_to_rgb(hue, 1.0, 230)]
+        h = 1.0 * hue / color
+        col = [int(x) for x in hsv_to_rgb(h, 1.0, 230)]
         yield "#{:02x}{:02x}{:02x}".format(*col)
 
 
-def cmat2cmpl(rgb, reverse=False):
-    """
-    Convert RGB matplotlib colormap.
-
-    """
+def cmat2cmpl(rgb, *, reverse=False):
+    """Convert RGB matplotlib colormap."""
     rgb = np.asanyarray(rgb)
     if reverse:
         rgb = np.flipud(rgb)
@@ -38,11 +31,7 @@ def cmat2cmpl(rgb, reverse=False):
 
 
 def phasemap_cm(m=256):
-    """
-    Colormap periodic/circular data (phase).
-
-    """
-
+    """Colormap periodic/circular data (phase)."""
     theta = 2 * np.pi * np.arange(0, m) / m
     circ = np.exp(1j * theta)
 
@@ -57,16 +46,11 @@ def phasemap_cm(m=256):
     green = np.abs(np.imag(vbluec * np.conj(vredc)))
     blue = np.abs(np.imag(vredc * np.conj(vgreenc)))
 
-    return (
-        1.5
-        * np.c_[red, green, blue]
-        / np.abs(np.imag((vred - vgreen) * np.conj(vred - vblue)))
-    )
+    return 1.5 * np.c_[red, green, blue] / np.abs(np.imag((vred - vgreen) * np.conj(vred - vblue)))
 
 
 def zebra_cm(a=4, m=0.5, n=256):
-    """
-    Zebra palette colormap with NBANDS broad bands and NENTRIES rows in
+    """Zebra palette colormap with NBANDS broad bands and NENTRIES rows in
     the color map.
 
     The default is 4 broad bands
@@ -91,12 +75,11 @@ def zebra_cm(a=4, m=0.5, n=256):
     hue = np.exp(-3.0 * x / n)
     sat = m + (1.0 - m) * (0.5 * (1.0 + sawtooth(2.0 * np.pi * x / (n / a))))
     val = m + (1.0 - m) * 0.5 * (1.0 + np.cos(2.0 * np.pi * x / (n / a / 2.0)))
-    return np.array([hsv_to_rgb(h, s, v) for h, s, v in zip(hue, sat, val)])
+    return np.array([hsv_to_rgb(h, s, v) for h, s, v in zip(hue, sat, val, strict=True)])
 
 
 def ctopo_pos_neg_cm(m=256):
-    """
-    Colormap for positive/negative data with gray scale only
+    """Colormap for positive/negative data with gray scale only
     original from cushman-roisin book cd-rom.
 
     """
@@ -106,11 +89,7 @@ def ctopo_pos_neg_cm(m=256):
 
 
 def avhrr_cm(m=256):
-    """
-    AHVRR colormap used by NOAA Coastwatch.
-
-    """
-
+    """AHVRR colormap used by NOAA Coastwatch."""
     x = np.arange(0.0, m) / (m - 1)
 
     xr = [0.0, 0.2, 0.4, 0.5, 0.6, 0.8, 1.0]
@@ -142,8 +121,8 @@ arrays = {
 }
 
 # Data colormaps.
-for fname in glob(f"{cmap_path}/*.dat"):
-    cmap = os.path.basename(fname).split(".")[0]
+for fname in Path(cmap_path).glob("*.dat"):
+    cmap = Path(fname).stem
     data = load_cmap(fname)
     arrays.update({cmap: data})
 
@@ -157,7 +136,7 @@ def demo():
     data = np.outer(np.arange(0, 1, 0.01), np.ones(10))
     fig = plt.figure(figsize=(10, 5))
     fig.subplots_adjust(top=0.8, bottom=0.05, left=0.01, right=0.99)
-    cmaps = sorted(m for m in cm.keys() if not m.endswith("_r"))
+    cmaps = sorted(m for m in cm.keys() if not m.endswith("_r"))  # noqa: SIM118
     length = len(cmaps)
     for k, cmap in enumerate(cmaps):
         plt.subplot(1, length + 1, k + 1)
