@@ -3,7 +3,6 @@ build-backend = "setuptools.build_meta"
 requires = [
   "setuptools>=42",
   "setuptools-scm[toml]>=3.4",
-  "wheel",
 ]
 
 [project]
@@ -16,10 +15,9 @@ maintainers = [
   { name = "Arnaldo Russo" },
   { name = "Filipe Fernandes", email = "ocefpaf+oceans@gmail.com" },
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 classifiers = [
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
@@ -29,23 +27,16 @@ dynamic = [
   "dependencies",
   "version",
 ]
-optional-dependencies.extras = [
-  "cartopy",
-  "iris",
-  "netcdf4",
-  "pandas",
-  "scipy",
-]
 urls.documentation = "https://pyoceans.github.io/python-oceans/"
 urls.homepage = "https://pypi.python.org/pypi/oceans/"
 urls.repository = "https://github.com/pyoceans/python-oceans"
 
 [tool.setuptools]
 packages = [ "oceans" ]
-zip-safe = false
 include-package-data = true
-dynamic.dependencies = { file = [ "requirements.txt" ] }
 package-data.oceans = [ "colormaps/cmap_data/*.dat" ]
+dynamic.dependencies = { file = [ "requirements.txt" ] }
+zip-safe = false
 
 [tool.setuptools_scm]
 write_to = "oceans/_version.py"
@@ -74,6 +65,19 @@ lint.per-file-ignores."oceans/plotting.py" = [
   "T201",
 ]  # `print` found
 
+[tool.interrogate]
+fail-under = 95
+ignore-init-method = true
+ignore-init-module = false
+ignore-magic = false
+ignore-semiprivate = false
+ignore-private = false
+ignore-module = false
+exclude = [ "docs", "tests" ]
+color = true
+verbose = 1
+quiet = false
+
 [tool.check-manifest]
 ignore = [
   ".coveragerc",
@@ -89,16 +93,3 @@ ignore = [
 ini_options.markers = [
   "web: marks tests require connection (deselect with '-m \"not web\"')",
 ]
-
-[tool.interrogate]
-ignore-init-method = true
-ignore-init-module = false
-ignore-magic = false
-ignore-semiprivate = false
-ignore-private = false
-ignore-module = false
-fail-under = 95
-exclude = [ "docs", "tests" ]
-verbose = 1
-quiet = false
-color = true

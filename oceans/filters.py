@@ -432,7 +432,6 @@ def medfilt1(x, L=3):
     if L % 2 == 0:
         L += 1
 
-
     if N < 2:
         msg = "Input sequence must be >= 2."
         raise ValueError(msg)
