@@ -153,7 +153,7 @@ def woa_profile(
 
 
 @functools.lru_cache(maxsize=256)
-def woa_subset(  # noqa: PLR0913
+def woa_subset(  # noqa: PLR0917, PLR0913
     min_lon,
     max_lon,
     min_lat,

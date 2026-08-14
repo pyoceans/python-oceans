@@ -209,7 +209,7 @@ class EditPoints:
     >>> _ = ax.set_title("Click and drag a point to move it")
     >>> _ = ax.axis([-2, 2, -2, 2])
 
-    Based on https://matplotlib.org/examples/event_handling/poly_editor.html
+    Based on https://matplotlib.org/stable/gallery/event_handling/poly_editor.html
 
     """
 

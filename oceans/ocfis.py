@@ -676,7 +676,7 @@ def alphanum_key(s):
     return key
 
 
-def get_profile(x, y, f, xi, yi, mode="nearest", order=3):  # noqa: PLR0913
+def get_profile(x, y, f, xi, yi, mode="nearest", order=3):  # noqa: PLR0913, PLR0917
     """Interpolate regular data.
 
     Parameters

@@ -138,7 +138,7 @@ def smoo1(datain, window_len=11, window="hanning"):
     return data_out[window_len - 1 : -window_len + 1]
 
 
-def smoo2(A, hei, wid, kind="hann", badflag=-9999, beta=14):  # noqa: ARG001, PLR0915, PLR0913, C901
+def smoo2(A, hei, wid, kind="hann", badflag=-9999, beta=14):  # noqa: ARG001, PLR0917, PLR0915, PLR0913, C901
     """Calculates the smoothed array 'As' from the original array 'A' using the
     specified window of type 'kind' and shape ('hei', 'wid').
 
