@@ -198,3 +198,7 @@ epub_exclude_files = ["search.html"]
 
 
 # -- Extension configuration -------------------------------------------------
+# Ignore self-ref URLs
+linkcheck_ignore = [
+    "https://stackoverflow.com/*",
+]
