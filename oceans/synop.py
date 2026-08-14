@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None, zc=None):  # noqa: PLR0913
+def scaloa(xc, yc, x, y, t=None, corrlen=None, err=None, zc=None):  # noqa: PLR0913, PLR0917
     """Scalar objective analysis.  Interpolates t(x, y) into tp(xc, yc)
     Assumes spatial correlation function to be isotropic and Gaussian in the
     form of: C = (1 - err) * np.exp(-d**2 / corrlen**2) where:

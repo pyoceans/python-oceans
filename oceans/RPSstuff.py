@@ -62,7 +62,7 @@ def ms2hms(millisecs):
     return hour, mn, sec
 
 
-def julian(y, m=0, d=0, h=0, mi=0, s=0, *, noon=False):  # noqa: PLR0913
+def julian(y, m=0, d=0, h=0, mi=0, s=0, *, noon=False):  # noqa: PLR0917, PLR0913
     """Converts Gregorian calendar dates to Julian dates
 
     USAGE: [j]=julian(y,m,d,h)

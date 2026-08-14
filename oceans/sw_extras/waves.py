@@ -82,7 +82,7 @@ class Waves:
 
     """
 
-    def __init__(self, h, T=None, L=None, thetao=None, Ho=None, lat=None):  # noqa: PLR0915, PLR0913, PLR0912, C901
+    def __init__(self, h, T=None, L=None, thetao=None, Ho=None, lat=None):  # noqa: PLR0917, PLR0915, PLR0913, PLR0912, C901
         self.T = np.asarray(T, dtype=np.float64)
         self.L = np.asarray(L, dtype=np.float64)
         self.Ho = np.asarray(Ho, dtype=np.float64)
